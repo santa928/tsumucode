@@ -6,7 +6,8 @@ import {
   type AuthoringExercise,
 } from '../../../scripts/content/compileCourse';
 import { InventorySchema, PlanSchema } from '../../../scripts/release/v2/schema';
-import { editorText, replaceEditorText, readStoredProgress } from './progress';
+import { readStoredProgress } from './progress';
+import { selectAllAndCopyEditorDocument } from './editorDocument';
 import { testBasePath } from './testBasePath';
 import { pythonFixedFixtures } from '../../../src/core/runtime/pythonFixedFixtures.mjs';
 const snapshotFile = '.release-v2/preparation.json';
@@ -27,11 +28,15 @@ async function writeFiles(page: Page, exercise: AuthoringExercise, solution: boo
     const tab = page.getByRole('tab', { name: file.path, exact: true });
     await tab.click();
     await expect(tab).toHaveAttribute('aria-selected', 'true');
-    await expect(
-      page.getByRole('textbox', { name: file.path + ' のコードエディター', exact: true }),
-    ).toHaveAttribute('contenteditable', 'true', { timeout: 15000 });
-    await replaceEditorText(page, file.content);
-    await expect.poll(() => editorText(page)).toBe(file.content);
+    const editor = page.getByRole('textbox', {
+      name: file.path + ' のコードエディター',
+      exact: true,
+    });
+    await expect(editor).toHaveAttribute('contenteditable', 'true', { timeout: 15000 });
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.insertText(file.content);
+    expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
   }
 }
 async function closeFeedback(page: Page) {
@@ -41,7 +46,7 @@ async function closeFeedback(page: Page) {
     await expect(dialog.getByRole('button', { name: '閉じる', exact: true })).toBeEnabled({
       timeout: 15000,
     });
-    await page.keyboard.press('Escape');
+    await dialog.getByRole('button', { name: '閉じる', exact: true }).click();
     await expect(dialog).toBeHidden({ timeout: 15000 });
   }
 }
@@ -77,6 +82,15 @@ async function browserGrade(
   );
   if (pass) await actual.toBe('pass');
   else await actual.toMatch(/^(?:incomplete|code-error)$/u);
+  // 履歴保存の後に進捗保存と画面遷移が続くため、可視の結果まで待つ。
+  await expect(async () => {
+    const feedback = await page.getByRole('dialog', { name: '判定結果' }).isVisible();
+    const completed =
+      pass &&
+      new URL(page.url()).hash.endsWith('/completion') &&
+      (await page.getByTestId('learning-completion').isVisible());
+    expect(feedback || completed).toBe(true);
+  }).toPass({ timeout: 15000 });
   await closeFeedback(page);
 }
 async function nativeGrade(page: Page, pass: boolean) {
@@ -174,15 +188,39 @@ export function declareManifestLearning(native: boolean) {
           await open();
           await writeFiles(page, exercise, true);
           await grade(true);
-          await page.reload();
-          await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+          // 合格すると完了画面へ進む。保存した演習へ戻ってからreloadを検証する。
+          await open();
           const files = new Map(
             [...exercise.files, ...exercise.solutionFiles].map((file) => [file.path, file]),
           );
-          for (const file of files.values()) {
-            await page.getByRole('tab', { name: file.path, exact: true }).click();
-            await expect.poll(() => editorText(page)).toBe(file.content);
-          }
+          const expectSavedFiles = async () => {
+            for (const file of files.values()) {
+              const tab = page.getByRole('tab', { name: file.path, exact: true });
+              await tab.click();
+              await expect(tab).toHaveAttribute('aria-selected', 'true');
+              const editor = page.getByRole('textbox', {
+                name: file.path + ' のコードエディター',
+                exact: true,
+              });
+              expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
+            }
+            // Draftはreadonlyを含むworkspace全filesを保存する。別workspaceの一致は使わない。
+            await expect
+              .poll(
+                async () =>
+                  (await readStoredProgress(page)).drafts.find(
+                    (row) =>
+                      row['courseId'] === course.id && row['workspaceId'] === exercise.workspaceId,
+                  )?.['files'],
+              )
+              .toEqual(
+                Object.fromEntries([...files.values()].map((file) => [file.path, file.content])),
+              );
+          };
+          await expectSavedFiles();
+          await page.reload();
+          await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+          await expectSavedFiles();
           if (expected.runtimeKind === 'next') {
             const stop = page.getByRole('button', { name: '停止', exact: true });
             if (await stop.isEnabled()) await stop.click();

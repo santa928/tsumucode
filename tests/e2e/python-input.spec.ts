@@ -10,7 +10,7 @@ import { editorText, readStoredProgress, replaceEditorText } from './helpers/pro
 const base = testBasePath();
 const consoleDiagnostics = new WeakMap<Page, ReturnType<typeof observeLocalConsole>>();
 
-test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達できる', async ({ page }) => {
+test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達できる', async ({ page }, info) => {
   await page.setViewportSize({ width: 1200, height: 682 });
   await page.goto(
     `${base}#/courses/python-basics/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01`,
@@ -36,6 +36,30 @@ test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達�
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeInViewport();
   // 既存のConsoleのTab停止点にも、入力欄から通常の順序で到達できる。
   const practice = page.getByRole('button', { name: '練習実行', exact: true });
+  const unsupported = page.getByText(
+    'このブラウザでは実行途中の入力に未対応です。上の事前入力でプレビューできます。対話練習には対応するChromiumを使ってください。',
+    { exact: true },
+  );
+  const browserPracticeSupported = await page.evaluate(
+    () =>
+      typeof Reflect.get(WebAssembly, 'Suspending') === 'function' &&
+      typeof Reflect.get(WebAssembly, 'promising') === 'function',
+  );
+  await expect(practice.or(unsupported)).toBeVisible({ timeout: 30_000 });
+  if (!browserPracticeSupported && (await unsupported.isVisible())) {
+    // 未対応時は練習を実行せず、説明と事前入力からConsoleへの経路を確認する。
+    await expect(practice).toHaveCount(0);
+    await page.getByLabel('実行前の入力（1行につきinput 1回）').focus();
+    await page.keyboard.press('Tab');
+    await expect(consoleOutput).toBeFocused();
+    await expect(consoleOutput).toBeInViewport();
+    await info.attach('explicit-unsupported', {
+      body: '対話入力のブラウザ機能なし。未対応説明と事前入力からConsoleへの経路だけを確認し、練習の実行成功には数えない。',
+      contentType: 'text/plain',
+    });
+    return;
+  }
+  await expect(unsupported).toHaveCount(0);
   await expect(practice).toBeEnabled({ timeout: 30_000 });
   await page.getByLabel('実行前の入力（1行につきinput 1回）').focus();
   await page.keyboard.press('Tab');

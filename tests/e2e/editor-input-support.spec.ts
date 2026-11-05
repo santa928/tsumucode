@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { editorText } from './helpers/progress';
+import { editorText, readStoredProgress, waitForDraftSaved } from './helpers/progress';
+import { selectAllAndCopyEditorDocument } from './helpers/editorDocument';
 import {
   STANDARD_EXERCISE_ID,
   STANDARD_EXERCISE_TITLE,
@@ -92,6 +93,58 @@ test('HTMLとCSSで標準入力支援が動作する', async ({ page }) => {
   await page.keyboard.type('main {');
   await page.keyboard.press('Enter');
   await expect.poll(() => editorText(page)).toContain('\n  \n');
+});
+
+test('全文Copyは長い本文と実際の短縮入力を区別し、reload後も全文を確認する', async ({ page }) => {
+  const tab = page.getByRole('tab', { name: 'index.html', exact: true });
+  await tab.click();
+  const editor = page.getByRole('textbox', { name: 'index.html のコードエディター', exact: true });
+  const full = [
+    '<main>',
+    ...Array.from(
+      { length: 180 },
+      (_, index) => `<p>行${String(index)}: 画面外も保存する本文です。</p>`,
+    ),
+    '</main>',
+    '',
+  ].join('\n');
+  const shortened = full.split('\n').slice(0, 12).join('\n');
+  const storedSource = async () => {
+    const draft = (await readStoredProgress(page)).drafts.find(
+      (row) => row['courseId'] === 'html-css' && row['workspaceId'] === STANDARD_EXERCISE_ID,
+    );
+    const files = draft?.['files'];
+    return typeof files === 'object' && files !== null
+      ? (files as Readonly<Record<string, unknown>>)['index.html']
+      : undefined;
+  };
+  const insert = async (content: string) => {
+    await expect(editor).toHaveAttribute('contenteditable', 'true');
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.insertText(content);
+  };
+
+  await insert(full);
+  expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(full);
+  await expect.poll(storedSource).toBe(full);
+
+  await insert(shortened);
+  const copiedShortened = await selectAllAndCopyEditorDocument(page, editor);
+  expect(full.startsWith(shortened)).toBe(true);
+  expect(copiedShortened).toBe(shortened);
+  expect(copiedShortened).not.toBe(full);
+  await expect.poll(storedSource).toBe(shortened);
+
+  await insert(full);
+  expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(full);
+  await expect.poll(storedSource).toBe(full);
+  await waitForDraftSaved(page);
+  await page.reload();
+  await tab.click();
+  await expect(tab).toHaveAttribute('aria-selected', 'true');
+  expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(full);
+  await expect.poll(storedSource).toBe(full);
 });
 
 test('Tab・括弧・引用符・UndoをFileごとに扱う', async ({ page }) => {

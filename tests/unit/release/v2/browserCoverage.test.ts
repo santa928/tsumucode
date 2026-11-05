@@ -104,3 +104,25 @@ describe('actual fixture coverage from browser reports', () => {
     expect(() => readBrowserCoverage(data, [target], 'chromium')).toThrow();
   });
 });
+
+it('requires every logical target when one browser execution carries multiple observations', async () => {
+  const { readBrowserCoverage } = await import('../../../../scripts/release/v2/browserCoverage');
+  const starter = {
+    ...target,
+    key: 'topic/lesson/exercise/starter/starter/browser',
+    caseKind: 'starter',
+    fixtureId: 'starter',
+    expectedStatus: 'not-pass',
+  };
+  const starterRow = { ...row, key: starter.key };
+  const data = report();
+  const attachment = data.suites[0]!.specs[0]!.tests[0]!.results[0]!.attachments[0]!;
+  attachment.body = Buffer.from(JSON.stringify([row, starterRow])).toString('base64');
+  expect(readBrowserCoverage(data, [target, starter], 'chromium')).toEqual(
+    [target.key, starter.key].sort(),
+  );
+  for (const observations of [[row], [row, { ...starterRow, sourceDigest: 'c'.repeat(64) }]]) {
+    attachment.body = Buffer.from(JSON.stringify(observations)).toString('base64');
+    expect(() => readBrowserCoverage(data, [target, starter], 'chromium')).toThrow();
+  }
+});

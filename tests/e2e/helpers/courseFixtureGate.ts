@@ -27,6 +27,7 @@ import type { RunnerRenderResult, ExecutionResult } from '../../../src/core/runt
 import { hashValue } from '../../../scripts/release/v2/identity';
 import { fixtureSourceDigest } from '../../../scripts/release/v2/fixtureSource';
 import type { FixtureObservation } from '../../../scripts/release/v2/browserCoverage';
+import { groupFixtureExecutions } from './fixtureExecutionGroups';
 
 import {
   extendSnapshotPolicyForInteractions,
@@ -522,7 +523,7 @@ async function readFixtureInputs(courseRoot: string, courseId: string) {
 
 const fixtureInputs = new Map<string, ReturnType<typeof readFixtureInputs>>();
 
-/** 不変checkoutの教材入力だけをprocess内で共有する。実行器・観測・合否は共有しない。 */
+/** 不変checkoutの教材入力だけをprocess内で共有する。別testの実行器・観測・合否は共有しない。 */
 export function loadFixtureInputs(courseRoot: string, courseId: string) {
   const key = JSON.stringify([courseRoot, courseId]);
   let input = fixtureInputs.get(key);
@@ -582,15 +583,19 @@ export async function assertCourseFixtureGate(
     });
   }
   const filter = process.env['COURSE_FIXTURE_FILTER'];
-  const cases = allCases.filter(
-    ({ id }) =>
-      (input.caseId === undefined || id === input.caseId) &&
-      (filter === undefined || id.includes(filter)),
+  if (input.caseId !== undefined)
+    expect(allCases.filter(({ id }) => id === input.caseId).map(({ id }) => id)).toEqual([
+      input.caseId,
+    ]);
+  const groups = groupFixtureExecutions(allCases).filter(
+    (cases) =>
+      (input.caseId === undefined || cases.some(({ id }) => id === input.caseId)) &&
+      (filter === undefined || cases.some(({ id }) => id.includes(filter))),
   );
-  if (input.caseId !== undefined) expect(cases.map(({ id }) => id)).toEqual([input.caseId]);
-  expect(cases.length, `Fixture filterに一致するcaseがありません: ${filter ?? ''}`).toBeGreaterThan(
-    0,
-  );
+  expect(
+    groups.length,
+    `Fixture filterに一致するcaseがありません: ${filter ?? ''}`,
+  ).toBeGreaterThan(0);
 
   expect(JSON.stringify(generatedCourse)).not.toMatch(/"solutionFiles"|"fixtures"/u);
 
@@ -621,66 +626,71 @@ export async function assertCourseFixtureGate(
   try {
     let unexpectedSystemErrors = 0;
     const expectedUnhandledRejections: string[] = [];
-    for (const fixtureCase of cases) {
-      await test.step(fixtureCase.id, async () => {
+    for (const cases of groups) {
+      const executionCase = cases[0]!;
+      await test.step(executionCase.id, async () => {
         const previousErrors = await readRuntimeErrors(page);
         let result: ValidationResult;
         try {
-          result = await evaluateCase(page, fixtureCase, input.runtime);
+          result = await evaluateCase(page, executionCase, input.runtime);
         } catch (error) {
           const runtimeErrors = await readRuntimeErrors(page);
           throw new Error(
-            `${fixtureCase.id}: ${error instanceof Error ? error.message : String(error)}; runtimeErrors=${JSON.stringify(runtimeErrors)}`,
+            `${executionCase.id}: ${error instanceof Error ? error.message : String(error)}; runtimeErrors=${JSON.stringify(runtimeErrors)}`,
             { cause: error },
           );
         }
-        let assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
-        if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
-          unexpectedSystemErrors += 1;
-          assertionContext += `\nruntimeErrors=${JSON.stringify(await readRuntimeErrors(page))}`;
-        }
-        if (fixtureCase.expectedStatus === 'not-pass') {
-          expect(result.status, assertionContext).not.toBe('pass');
-          expect(result.status, assertionContext).not.toBe('system-error');
-          observe(fixtureCase, result);
-          return;
-        }
-        expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
-        if (fixtureCase.expectedDiagnosticCodes !== undefined) {
-          const diagnosticCodes = [
-            ...new Set(
-              result.diagnostics
-                .filter(({ severity }) => severity === 'error')
-                .map(({ code }) => code),
-            ),
-          ].sort();
-          expect(diagnosticCodes, assertionContext).toEqual(
-            [...fixtureCase.expectedDiagnosticCodes].sort(),
-          );
-        }
-        const failedFeedbackRuleIds = fixtureFeedbackRuleIds(
-          result.checks,
-          input.runtime.feedbackScope,
-        );
-        expect(failedFeedbackRuleIds, assertionContext).toEqual(
-          [...(fixtureCase.expectedFeedbackRuleIds ?? [])].sort(),
-        );
-        if (
-          fixtureCase.expectedStatus === 'code-error' &&
-          fixtureCase.expectedDiagnosticCodes?.includes('javascript-runtime')
-        ) {
-          const errors = await readRuntimeErrors(page);
-          const actualMessages = result.diagnostics
-            .filter(({ severity }) => severity === 'error')
-            .map(({ message }) => message);
-          for (const rejection of errors.unhandledRejections.slice(
-            previousErrors.unhandledRejections.length,
-          )) {
-            expect(actualMessages, assertionContext).toContain(rejection);
-            expectedUnhandledRejections.push(rejection);
+        let rejections: readonly string[] = [];
+        for (const fixtureCase of cases) {
+          let assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
+          if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
+            unexpectedSystemErrors += 1;
+            assertionContext += `\nruntimeErrors=${JSON.stringify(await readRuntimeErrors(page))}`;
           }
+          if (fixtureCase.expectedStatus === 'not-pass') {
+            expect(result.status, assertionContext).not.toBe('pass');
+            expect(result.status, assertionContext).not.toBe('system-error');
+            observe(fixtureCase, result);
+            continue;
+          }
+          expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
+          if (fixtureCase.expectedDiagnosticCodes !== undefined) {
+            const diagnosticCodes = [
+              ...new Set(
+                result.diagnostics
+                  .filter(({ severity }) => severity === 'error')
+                  .map(({ code }) => code),
+              ),
+            ].sort();
+            expect(diagnosticCodes, assertionContext).toEqual(
+              [...fixtureCase.expectedDiagnosticCodes].sort(),
+            );
+          }
+          const failedFeedbackRuleIds = fixtureFeedbackRuleIds(
+            result.checks,
+            input.runtime.feedbackScope,
+          );
+          expect(failedFeedbackRuleIds, assertionContext).toEqual(
+            [...(fixtureCase.expectedFeedbackRuleIds ?? [])].sort(),
+          );
+          if (
+            fixtureCase.expectedStatus === 'code-error' &&
+            fixtureCase.expectedDiagnosticCodes?.includes('javascript-runtime')
+          ) {
+            const errors = await readRuntimeErrors(page);
+            const actualMessages = result.diagnostics
+              .filter(({ severity }) => severity === 'error')
+              .map(({ message }) => message);
+            rejections = errors.unhandledRejections.slice(
+              previousErrors.unhandledRejections.length,
+            );
+            for (const rejection of rejections) {
+              expect(actualMessages, assertionContext).toContain(rejection);
+            }
+          }
+          observe(fixtureCase, result);
         }
-        observe(fixtureCase, result);
+        expectedUnhandledRejections.push(...rejections);
       });
     }
 
