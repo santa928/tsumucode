@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, writeFile, rm, cp } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -8,6 +8,65 @@ afterEach(async () => {
   vi.restoreAllMocks();
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
+/** 旧台帳の判定を実compilerへ接続する、2コース各1Lessonの合成入力。 */
+async function writeShadowFixture(
+  root: string,
+  pythonAccuracy: 'approved' | 'rejected',
+): Promise<void> {
+  const sourceRoot = path.join(root, 'content');
+  await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+  await cp(path.join(sourceRoot, 'html-css'), path.join(sourceRoot, 'python-basics'), {
+    recursive: true,
+  });
+  const coursePath = path.join(sourceRoot, 'python-basics/course.yaml');
+  await writeFile(
+    coursePath,
+    (await readFile(coursePath, 'utf8')).replace('id: html-css', 'id: python-basics'),
+  );
+  // python-basicsという歴史IDだけを使うHTML fixture。Python実行器の検査ではない。
+  const { computeLessonSourceHash } =
+    await import('../../../../scripts/content/verifyContentReview');
+  const quality = path.join(root, 'docs/quality');
+  await mkdir(quality, { recursive: true });
+  for (const [courseId, reviewName, approvalName, accuracy] of [
+    ['html-css', 'content-review.yaml', 'release-approval.yaml', 'approved'],
+    [
+      'python-basics',
+      'content-review-python-basics.yaml',
+      'python-release-approval.yaml',
+      pythonAccuracy,
+    ],
+  ] as const) {
+    const hash = await computeLessonSourceHash(
+      path.join(sourceRoot, courseId, 'chapters/ch00-web-map/lessons/lesson-first-heading'),
+    );
+    await writeFile(
+      path.join(quality, reviewName),
+      `schemaVersion: 1
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+lessons:
+  - lessonId: lesson-first-heading
+    sourceHash: "${hash}"
+    authorId: fixture-original-author
+    reviewerId: fixture-independent-reviewer
+    accuracy: ${accuracy}
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+`,
+    );
+    await writeFile(
+      path.join(quality, approvalName),
+      courseId === 'python-basics'
+        ? `status: approved\nverifiedSourceCommit: ${'a'.repeat(40)}\n`
+        : 'status: draft\nverifiedSourceCommit: draft\n',
+    );
+  }
+}
 describe('release v2 command boundary', () => {
   it('writes a real manifest-derived shadow report with old record states and no new approvals', async () => {
     const compiler = await import('../../../../scripts/content/compile');
@@ -65,6 +124,72 @@ describe('release v2 command boundary', () => {
         .currentDeployment,
     ).toBe('unverified');
   }, 90_000);
+  it.each([
+    { pythonAccuracy: 'approved', invalidCourses: [] },
+    { pythonAccuracy: 'rejected', invalidCourses: ['python-basics'] },
+  ] as const)(
+    'writes a real shadow report without new approvals: $pythonAccuracy',
+    async ({ pythonAccuracy, invalidCourses }) => {
+      const compiler = await import('../../../../scripts/content/compile');
+      const actualCompile = compiler.compileContent;
+      const compile = vi.spyOn(compiler, 'compileContent').mockImplementation((options) => {
+        if (!options.checkOnly) throw new Error('Shadow must not stage unused generated artifacts');
+        return actualCompile(options);
+      });
+      const { runCli } = await import('../../../../scripts/release/v2/cli');
+      const root = await mkdtemp(path.join(os.tmpdir(), 'release-cli-'));
+      roots.push(root);
+      const output = path.join(root, 'shadow.json');
+      await writeShadowFixture(root, pythonAccuracy);
+      await runCli(['shadow', '--root', root, '--output', output]);
+      expect(compile).toHaveBeenCalledTimes(1);
+      const report = JSON.parse(await readFile(output, 'utf8')) as {
+        status: string;
+        inventory: { courses: { id: string; lessons: unknown[] }[] };
+        shadow: {
+          courses: {
+            courseId: string;
+            contentRows: string;
+            publication: string;
+            learnerApproval: string;
+            currentDeployment: string;
+          }[];
+        };
+      };
+      expect(report.status).toBe('shadow-only');
+      expect(report.inventory.courses.map((course) => course.id)).toEqual([
+        'html-css',
+        'python-basics',
+      ]);
+      expect(report.inventory.courses.every((course) => course.lessons.length === 1)).toBe(true);
+      expect(
+        report.shadow.courses.every(
+          (course) =>
+            course.learnerApproval === 'historical-only' &&
+            course.currentDeployment === 'unverified',
+        ),
+      ).toBe(true);
+      await expect(
+        readFile(path.join(root, 'public/generated/content/catalog-v3.json')),
+      ).rejects.toMatchObject({ code: 'ENOENT' });
+      expect(
+        report.shadow.courses
+          .filter((course) => course.contentRows !== 'valid')
+          .map((course) => course.courseId),
+      ).toEqual(invalidCourses);
+      expect(
+        report.shadow.courses.find((course) => course.courseId === 'html-css')!.publication,
+      ).toBe('pending');
+      expect(
+        report.shadow.courses.find((course) => course.courseId === 'python-basics')!.publication,
+      ).toBe('recorded-approved-unbound');
+      expect(
+        report.shadow.courses.find((course) => course.courseId === 'python-basics')!
+          .currentDeployment,
+      ).toBe('unverified');
+    },
+    90_000,
+  );
   it('refuses unknown commands, options, missing output and existing output ownership', async () => {
     const { runCli } = await import('../../../../scripts/release/v2/cli');
     await expect(runCli(['deploy'])).rejects.toThrow();
