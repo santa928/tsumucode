@@ -19,9 +19,9 @@ const exec = promisify(execFile);
 let root: string;
 const courseIds = ['python-practice', 'python-oop'];
 const policyPath = 'docs/quality/content-v2-receipts.json';
-async function inventory() {
+async function inventory(ids = courseIds) {
   return buildInventory(
-    await Promise.all(courseIds.map((id) => compileCourse(path.join(root, 'content', id)))),
+    await Promise.all(ids.map((id) => compileCourse(path.join(root, 'content', id)))),
   );
 }
 beforeAll(async () => {
@@ -119,7 +119,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
   });
 
   it('共有glossaryを変えた実践の古いinventoryと更新済inventoryを両方拒否', async () => {
-    const input = await inventory();
+    const input = await inventory(['python-practice']);
     const file = path.join(root, 'content/python-practice/glossary.yaml');
     const original = await readFile(file, 'utf8');
     try {
@@ -129,10 +129,11 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
         /current source/,
       );
       await expect(
-        readVerifiedPythonHistoricalAcceptances(root, await inventory()),
+        readVerifiedPythonHistoricalAcceptances(root, await inventory(['python-practice'])),
       ).rejects.toThrow(/learner content/);
     } finally {
       await writeFile(file, original);
+      expect(await readFile(file, 'utf8')).toBe(original);
     }
   });
 
