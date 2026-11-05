@@ -46,10 +46,14 @@ test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達�
       typeof Reflect.get(WebAssembly, 'promising') === 'function',
   );
   await expect(practice.or(unsupported)).toBeVisible({ timeout: 30_000 });
+  const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
+  // 未対応説明は初回プレビュー中も表示される。入力可能になってからTabの起点にする。
+  await expect(input).toBeEnabled({ timeout: 30_000 });
   if (!browserPracticeSupported && (await unsupported.isVisible())) {
     // 未対応時は練習を実行せず、説明と事前入力からConsoleへの経路を確認する。
     await expect(practice).toHaveCount(0);
-    await page.getByLabel('実行前の入力（1行につきinput 1回）').focus();
+    await input.focus();
+    await expect(input).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(consoleOutput).toBeFocused();
     await expect(consoleOutput).toBeInViewport();
@@ -61,7 +65,8 @@ test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達�
   }
   await expect(unsupported).toHaveCount(0);
   await expect(practice).toBeEnabled({ timeout: 30_000 });
-  await page.getByLabel('実行前の入力（1行につきinput 1回）').focus();
+  await input.focus();
+  await expect(input).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(practice).toBeFocused();
   await page.keyboard.press('Tab');

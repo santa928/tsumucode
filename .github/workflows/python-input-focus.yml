@@ -1,0 +1,44 @@
+name: Python input focus
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tests/e2e/python-input.spec.ts
+      - tests/e2e/helpers/**
+      - src/adapters/runtime/python/**
+      - src/features/learning/pages/EditableExercisePage.tsx
+      - src/features/learning/components/*PythonPractice*
+      - playwright.config.ts
+      - package*.json
+      - Dockerfile
+      - .github/workflows/python-input-focus.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-input-focus-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  firefox-input-focus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Build the existing browser image
+        run: ./scripts/docker-compose.sh build app
+      - name: Verify input readiness and natural Tab order in Firefox
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app sh -c '
+          npm run content:compile && npm run build:app &&
+          npm run test:e2e -- tests/e2e/python-input.spec.ts
+          --project=firefox
+          --grep "Pythonの入力・対話練習・Consoleへ通常スクロールで到達できる$"
+          --workers=1 --retries=0 --trace=off --reporter=list'
