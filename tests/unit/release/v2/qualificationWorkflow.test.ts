@@ -9,6 +9,41 @@ import { parse } from 'yaml';
 import { hashBytes } from '../../../../scripts/release/v2/identity';
 const exec = promisify(execFile);
 
+it('isolated browser jobs run concurrently while every frozen suite remains mandatory', async () => {
+  const workflow = parse(await readFile('.github/workflows/release-v2-checks.yml', 'utf8')) as {
+    jobs: Record<string, {
+      'runs-on'?: string;
+      needs?: string | string[];
+      permissions?: Record<string, string>;
+      strategy?: { 'fail-fast': boolean; 'max-parallel': number; matrix: { suite: string[] } };
+      steps: { name?: string; uses?: string; run?: string; with?: Record<string, string> }[];
+    }>;
+  };
+  const browser = workflow.jobs.browser!;
+  expect(browser['runs-on']).toBe('ubuntu-24.04');
+  expect(browser.permissions).toEqual({ contents: 'read' });
+  expect(browser.strategy!['max-parallel']).toBeGreaterThan(1);
+  expect(browser.strategy!['max-parallel']).toBeLessThanOrEqual(browser.strategy!.matrix.suite.length);
+  expect(browser.strategy!['fail-fast']).toBe(false);
+  expect(browser.strategy!.matrix.suite).toEqual([
+    'browser-firefox', 'browser-chromium-1', 'browser-chromium-2', 'browser-webkit',
+  ]);
+  // 全jobは同じ固定入力を別runnerへ取得し、suite別の証拠を残す。
+  const downloads = browser.steps.filter((step) => step.uses?.startsWith('actions/download-artifact@'));
+  expect(downloads.map((step) => step.with)).toEqual([
+    { 'artifact-ids': '${{ inputs.candidate_artifact_id }}', path: 'dist' },
+    { 'artifact-ids': '${{ inputs.metadata_artifact_id }}', path: '.release-v2' },
+  ]);
+  expect(browser.steps.find((step) => step.name === 'Execute frozen browser obligations')?.run)
+    .toContain('run-suite --suite "$SUITE"');
+  expect(browser.steps.find((step) => step.name === 'Preserve passed receipts and bounded reports')?.with?.name)
+    .toBe('receipts-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}');
+  // matrix全件が完了してから下流の必須検査へ進む。
+  expect(browser.needs).toBe('boundary');
+  expect(workflow.jobs.public_boundary!.needs).toBe('browser');
+  expect(workflow.jobs.performance!.needs).toBe('public_boundary');
+});
+
 it.each([
   ['browser', 'browser-firefox'],
   ['public_boundary', 'browser-public'],

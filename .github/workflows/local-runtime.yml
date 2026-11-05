@@ -37,6 +37,9 @@ on:
       - src/features/learning/session/LearningSessionController.ts
       - tests/local/python-learning.spec.ts
       - tests/local/python-practice.spec.ts
+      - tests/e2e/helpers/**
+      - tests/local/manifest-next-learning.spec.ts
+      - playwright.learning-native.config.ts
       - tests/e2e/python-input.spec.ts
       - tests/e2e/python-interactive.spec.ts
       - src/features/learning/components/*PythonPractice*
@@ -101,6 +104,9 @@ on:
       - src/features/learning/session/LearningSessionController.ts
       - tests/local/python-learning.spec.ts
       - tests/local/python-practice.spec.ts
+      - tests/e2e/helpers/**
+      - tests/local/manifest-next-learning.spec.ts
+      - playwright.learning-native.config.ts
       - tests/e2e/python-input.spec.ts
       - tests/e2e/python-interactive.spec.ts
       - src/features/learning/components/*PythonPractice*
@@ -174,6 +180,15 @@ jobs:
         with:
           artifact-ids: ${{ inputs.metadata_artifact_id }}
           path: .release-v2
+      - name: Build Native verification image and check baked imports
+        run: |
+          set -euo pipefail
+          docker build --file Dockerfile.learning --target learning-native-checks --tag "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" .
+          # ホスト原稿をmountせず、後段でも使う同じimageの実依存を先に検査する。
+          docker run --rm --init --user 1000:1000 --network none --read-only --cpus 1 --memory 512m --pids-limit 128 \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --tmpfs /tmp:rw,nosuid,nodev,size=64m,uid=1000,gid=1000 \
+            "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node scripts/local/native-import-preflight.mjs
       - name: Prepare fixed one-shot Node image
         run: |
           # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
@@ -212,6 +227,8 @@ jobs:
             ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml run --rm --no-deps --entrypoint node "$service" --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync(process.argv[1], "utf8"))' "$catalog_path" > ".release-v2/native-catalogs/$service.json"
             ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file ".release-v2/native-catalogs/$service.json" --output ".release-v2/native-catalogs/$service-verified.json"
           done
+          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync("scripts/local/compiled-native-workspaces.json", "utf8"))' > .release-v2/native-catalogs/learning-native.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file .release-v2/native-catalogs/learning-native.json --output .release-v2/native-catalogs/learning-native-verified.json
       - name: Start isolated learning stack
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
       - name: Verify real Browser HTTP, HMR and Preview boundary
@@ -488,9 +505,6 @@ jobs:
         if: inputs.candidate_artifact_id != ''
         run: |
           set -euo pipefail
-          docker build --file Dockerfile.learning --target learning-native-checks --tag "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" .
-          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync("scripts/local/compiled-native-workspaces.json", "utf8"))' > .release-v2/native-catalogs/learning-native.json
-          ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file .release-v2/native-catalogs/learning-native.json --output .release-v2/native-catalogs/learning-native-verified.json
           mkdir -p .release-v2/native-learning-reports
           for engine in chromium firefox webkit; do
             docker run --rm --init --user 1000:1000 --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
