@@ -6,25 +6,25 @@ lessons:
   - lessonId: javascript-ch00-l01
     authorId: codex-issue261-javascript-clarity-author
     reviewerId: /root/review_js_clarity
-    sourceHash: be6a3db76c1279e9591776982117e217aa408b8172b53a3f6190b76b13cf1405
+    sourceHash: b326604082ebfecbedd9c03926a88f461399c7a5aa3e30e7094d644c821d247c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 'Issue #261の新規独立内容レビュー。全4Slide・Goal・課題・Rule・Hint・Starter/Solution・参照用語を再照合し、意味を先に示す説明と対象→更新→実値→判定の案内を承認。掲載7コードブロックと変更文書以外35ファイルは旧承認版と同byteで、examplesExecutedは旧実行記録の限定再利用。今回の実行・Browser・初心者3役の再観察ではない。旧行・hash・再利用条件はissue-261-javascript-content-review.mdに保持。Release bindingはdraft。'
+    notes: 'Issue #261の表示側原本に対する新規独立差分レビュー。8fb5837cから工程票observeだけを更新し、実表示経路・Goal・課題本文・実UI名・2採点ルールの整合を再照合して承認。掲載7コードブロックと他36ファイルは同byte、exercise.yamlもobserve以外は不変。examplesExecutedは旧実行記録の限定再利用で、新規実行・初心者3役の再観察ではない。Browser未確認。旧原本と新hashの根拠はissue-261-javascript-content-review.mdの追記に保持。Release bindingはdraft。'
   - lessonId: javascript-ch01-l01
     authorId: codex-issue261-javascript-clarity-author
     reviewerId: /root/review_js_clarity
-    sourceHash: b613cef51cd10243931de04cc8739b87988b3d3d1931b0ee5120d3723039d92e
+    sourceHash: 22761d30a3d7e1dd910fcfaa4b10624cef67906b63b66228295a99cb30240801
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 'Issue #261の新規独立内容レビュー。全4Slide・Goal・課題・Rule・Hint・Starter/Solution・参照用語を再照合し、Consoleの意味説明と丸括弧内の変更→出力順→判定の案内を承認。掲載4コードブロックと変更文書以外20ファイルは旧承認版と同byteで、examplesExecutedは旧実行記録の限定再利用。今回の実行・Browser・初心者3役の再観察ではない。旧行・hash・再利用条件はissue-261-javascript-content-review.mdに保持。Release bindingはdraft。'
+    notes: 'Issue #261の表示側原本に対する新規独立差分レビュー。8fb5837cから工程票observeと課題本文のConsoleタブ操作を同期し、実表示経路・Goal・実UI名・r05/r06の値の種類と出力順を再照合して承認。掲載4コードブロックと他20ファイルは同byte、exercise.yamlもobserve以外は不変。examplesExecutedは旧実行記録の限定再利用で、新規実行・初心者3役の再観察ではない。Browser未確認。旧原本と新hashの根拠はissue-261-javascript-content-review.mdの追記に保持。Release bindingはdraft。'
   - lessonId: javascript-ch01-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
