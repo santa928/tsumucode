@@ -31,8 +31,7 @@ const guides: Readonly<Record<string, CourseGuide>> = {
   react: {
     before:
       'TypeScriptの型の形（interface）・関数・読み取り専用の配列と、JavaScriptの画面操作を使います。',
-    practice:
-      '小さい修正を重ね、手順付きのクイズ制作から、別の仕様に沿うクイズ制作へ進みます。',
+    practice: '小さい修正を重ね、手順付きのクイズ制作から、別の仕様に沿うクイズ制作へ進みます。',
     outside:
       'HTTPによるサーバー処理や画面URLの切り替えはNext.js側で学びます。修了だけで実務能力を保証しません。',
   },
