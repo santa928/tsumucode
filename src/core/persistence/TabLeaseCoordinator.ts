@@ -1582,9 +1582,13 @@ class LeaseHandleImpl implements TabLeaseHandle {
           this.#snapshot.status === 'read-only' &&
           this.#pendingTakeover === undefined &&
           this.#owner?.ownerId === owner.ownerId &&
-          this.#owner.token === owner.token &&
-          this.#owner.expiresAt <= this.#runtime.now()
+          this.#owner.token === owner.token
         ) {
+          // timerと時計の境界差で早く起きても、実際の期限までは編集権を渡さない。
+          if (this.#owner.expiresAt > this.#runtime.now()) {
+            this.#scheduleExpiry(this.#owner);
+            return;
+          }
           this.#retireToken(owner.token);
           this.#beginClaim();
         }
