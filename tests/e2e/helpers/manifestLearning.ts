@@ -41,7 +41,7 @@ async function closeFeedback(page: Page) {
     await expect(dialog.getByRole('button', { name: '閉じる', exact: true })).toBeEnabled({
       timeout: 15000,
     });
-    await page.keyboard.press('Escape');
+    await dialog.getByRole('button', { name: '閉じる', exact: true }).click();
     await expect(dialog).toBeHidden({ timeout: 15000 });
   }
 }
@@ -75,6 +75,15 @@ async function browserGrade(
   );
   if (pass) await actual.toBe('pass');
   else await actual.toMatch(/^(?:incomplete|code-error)$/u);
+  // 履歴保存の後に進捗保存と画面遷移が続くため、可視の結果まで待つ。
+  await expect(async () => {
+    const feedback = await page.getByRole('dialog', { name: '判定結果' }).isVisible();
+    const completed =
+      pass &&
+      new URL(page.url()).hash.endsWith('/completion') &&
+      (await page.getByTestId('learning-completion').isVisible());
+    expect(feedback || completed).toBe(true);
+  }).toPass({ timeout: 15000 });
   await closeFeedback(page);
 }
 async function nativeGrade(page: Page, pass: boolean) {
@@ -172,15 +181,21 @@ export function declareManifestLearning(native: boolean) {
           await open();
           await writeFiles(page, exercise, true);
           await grade(true);
-          await page.reload();
-          await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+          // 合格すると完了画面へ進む。保存した演習へ戻ってからreloadを検証する。
+          await open();
           const files = new Map(
             [...exercise.files, ...exercise.solutionFiles].map((file) => [file.path, file]),
           );
-          for (const file of files.values()) {
-            await page.getByRole('tab', { name: file.path, exact: true }).click();
-            await expect.poll(() => editorText(page)).toBe(file.content);
-          }
+          const expectSavedFiles = async () => {
+            for (const file of files.values()) {
+              await page.getByRole('tab', { name: file.path, exact: true }).click();
+              await expect.poll(() => editorText(page)).toBe(file.content);
+            }
+          };
+          await expectSavedFiles();
+          await page.reload();
+          await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+          await expectSavedFiles();
           if (expected.runtimeKind === 'next') {
             const stop = page.getByRole('button', { name: '停止', exact: true });
             if (await stop.isEnabled()) await stop.click();
