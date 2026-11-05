@@ -49,7 +49,9 @@ export function LibraryIndexPage() {
           <h1 ref={heading} tabIndex={-1}>
             {course.title} スライド目次
           </h1>
-          <p className="tc-library-index-lead">進捗を変えずに、すべてのスライドを自由に読めます</p>
+          <p className="tc-library-index-lead">
+            演習の合否と下書きを変えずに、すべてのスライドを自由に読めます。読書の続き位置は、この端末・このサイトに別に保存します。
+          </p>
         </div>
         <Link to={`/courses/${course.id}`} className="tc-library-study-return">
           通常学習へ戻る

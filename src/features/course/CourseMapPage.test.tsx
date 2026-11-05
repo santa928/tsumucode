@@ -85,6 +85,17 @@ describe('CourseMapPage', () => {
     expect(screen.getByText(/最終工程で全工程をまとめて判定/u)).toBeInTheDocument();
   });
 
+  it('前提・到達点・対象外・支援の減らし方を入口で区別する', async () => {
+    renderCourseMap();
+    expect(await screen.findByText('始める前に')).toBeInTheDocument();
+    expect(screen.getByText('できるようになること')).toBeInTheDocument();
+    expect(screen.getByText('このコースで扱わないこと')).toBeInTheDocument();
+    expect(screen.getByText('練習の進め方')).toBeInTheDocument();
+    expect(
+      screen.getByText('ページの動きを作るJavaScriptや、サーバーへの公開手順は扱いません。'),
+    ).toBeInTheDocument();
+  });
+
   it('全工程合格でも記録と最終工程での制作完成判定を区別する', async () => {
     const fixture = profileCompletionFixture();
     useCourseProgress.mockReturnValue({

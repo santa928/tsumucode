@@ -11,6 +11,7 @@ import { summarizeCatalogCourseProgress } from '../progress/catalogCourseProgres
 import { useCourseProgress } from '../progress/useCourseProgress';
 import { FIRST_ACTIVITY } from './firstActivity';
 import { HomeFirstStep } from './HomeFirstStep';
+import { courseGuide } from '../course/courseGuide';
 
 const ProgressTransferPanel = lazy(() =>
   import('../progress/ProgressTransferPanel').then(({ ProgressTransferPanel: Panel }) => ({
@@ -51,6 +52,7 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
           ? `${course.title}：つづきから`
           : `${course.title}：最初のピースを置く`;
   const titleId = `course-title-${course.id}`;
+  const guide = courseGuide(course.id);
 
   return (
     <StackedCard
@@ -79,8 +81,14 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
         <dl className="mt-5 grid grid-cols-1 gap-x-4 gap-y-2 border-t border-workshop-border pt-5 sm:grid-cols-[auto_minmax(0,1fr)]">
           <dt className="font-bold">対象</dt>
           <dd>{course.audience}</dd>
+          {guide ? (
+            <>
+              <dt className="font-bold">始める前に</dt>
+              <dd>{guide.before}</dd>
+            </>
+          ) : null}
           <dt className="font-bold">進め方</dt>
-          <dd>スライドとコード実習</dd>
+          <dd>{guide?.practice ?? 'スライドとコード実習'}</dd>
         </dl>
         <PieceProgress
           className="mt-6"

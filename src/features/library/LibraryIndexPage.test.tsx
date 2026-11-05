@@ -146,7 +146,9 @@ describe('LibraryIndexPage', () => {
       await screen.findByRole('heading', { level: 1, name: 'HTML & CSS スライド目次' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('進捗を変えずに、すべてのスライドを自由に読めます'),
+      screen.getByText(
+        '演習の合否と下書きを変えずに、すべてのスライドを自由に読めます。読書の続き位置は、この端末・このサイトに別に保存します。',
+      ),
     ).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Webページの土台' })).toBeInTheDocument();
     expect(screen.getByText('基礎レッスン')).toBeInTheDocument();

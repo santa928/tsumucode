@@ -13,6 +13,7 @@ import { useCourseProgress } from '../progress/useCourseProgress';
 import { findLessonResumeDraft, lessonReadingTarget } from '../progress/lessonResumeTarget';
 import { sharedGuidedProjectStages } from '../progress/sharedGuidedProjectStages';
 import { useEditingCapability } from '../../shared/device/editingCapability';
+import { courseGuide } from './courseGuide';
 
 const KIND_LABEL = {
   standard: '基礎レッスン',
@@ -23,6 +24,7 @@ const KIND_LABEL = {
 /** Courseの現在進捗を示し、以前の達成記録と現在のコードの再判定を区別する。 */
 export function CourseMapPage() {
   const course = useLoaderData<typeof courseLoader>();
+  const guide = courseGuide(course.id);
   const canEdit = useEditingCapability();
   const lessons = useMemo(
     () => course.phases.flatMap(({ chapters }) => chapters.flatMap(({ lessons: items }) => items)),
@@ -79,7 +81,20 @@ export function CourseMapPage() {
         <h1 id="course-map-title" className="mt-4 text-4xl font-black md:text-5xl">
           {map.title}
         </h1>
-        <p className="mt-4 max-w-2xl text-lg text-workshop-muted">{map.description}</p>
+        {guide ? (
+          <dl className="mt-4 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-2 text-workshop-muted sm:grid-cols-[auto_minmax(0,1fr)]">
+            <dt className="font-bold">始める前に</dt>
+            <dd>{guide.before}</dd>
+            <dt className="font-bold">できるようになること</dt>
+            <dd>{map.description}</dd>
+            <dt className="font-bold">このコースで扱わないこと</dt>
+            <dd>{guide.outside}</dd>
+            <dt className="font-bold">練習の進め方</dt>
+            <dd>{guide.practice}</dd>
+          </dl>
+        ) : (
+          <p className="mt-4 max-w-2xl text-lg text-workshop-muted">{map.description}</p>
+        )}
         {!canEdit ? (
           <p className="mt-4 max-w-2xl text-workshop-muted">
             解説の閲覧位置と、演習の合格記録は別です。保存した閲覧位置があれば、そこから解説を開きます。演習は編集できるPCで取り組めます。

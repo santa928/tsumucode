@@ -174,6 +174,10 @@ describe('HomePage', () => {
       screen.getByRole('heading', { level: 3, name: fixtureCatalog.courses[0]!.title }),
     ).toBeInTheDocument();
     expect(screen.getByText(fixtureCatalog.courses[0]!.audience)).toBeInTheDocument();
+    expect(screen.getByText('プログラミングの経験は必要ありません。')).toBeInTheDocument();
+    expect(
+      screen.getByText('説明と小さい修正から始め、手順付きの制作、仕様に沿う制作へ進みます。'),
+    ).toBeInTheDocument();
     expect(screen.getByText('15分')).toBeInTheDocument();
     expect(screen.getByText('公開中')).toBeInTheDocument();
     expect(
