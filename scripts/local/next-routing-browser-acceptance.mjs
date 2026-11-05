@@ -6,6 +6,7 @@ import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
+import { selectNextDataResponse } from './next-data-browser-navigation.mjs';
 
 // 作者/CI専用。通常Lessonから固定実Nextの表示・操作・保存・失敗回復を確認する。
 const bridges = [await bridge(4173, 'web'), await bridge(4175, 'preview')];
@@ -132,17 +133,19 @@ try {
         await expect(preview().locator('#count')).toHaveText(count);
       }
     } else if (lesson === 'next-ch03-l01') {
-      await page.getByLabel('表示する応答').selectOption('data/fresh');
+      const rootUrl = await page.getByTitle('Next.jsの実サーバーPreview').getAttribute('src');
+      assert.ok(rootUrl);
+      await selectNextDataResponse(page, rootUrl, 'data/fresh');
       const first = await preview().locator('#read-id').textContent();
-      await page.getByLabel('表示する応答').selectOption('');
-      await page.getByLabel('表示する応答').selectOption('data/fresh');
+      await selectNextDataResponse(page, rootUrl, '');
+      await selectNextDataResponse(page, rootUrl, 'data/fresh');
       await expect(preview().locator('#read-id')).not.toHaveText(first);
-      await page.getByLabel('表示する応答').selectOption('data/cached');
+      await selectNextDataResponse(page, rootUrl, 'data/cached');
       const cached = await preview().locator('#read-id').textContent();
-      await page.getByLabel('表示する応答').selectOption('');
-      await page.getByLabel('表示する応答').selectOption('data/cached');
+      await selectNextDataResponse(page, rootUrl, '');
+      await selectNextDataResponse(page, rootUrl, 'data/cached');
       await expect(preview().locator('#read-id')).toHaveText(cached);
-      await page.getByLabel('表示する応答').selectOption('');
+      await selectNextDataResponse(page, rootUrl, '');
     } else if (chapter === 'next-ch04') {
       const handle = await page.getByTitle('Next.jsの実サーバーPreview').elementHandle();
       const frame = await handle.contentFrame();
