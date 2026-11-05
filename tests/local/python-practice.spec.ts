@@ -16,6 +16,82 @@ async function draft(page: Page, id: string) {
   );
 }
 
+test('#196: Home再入場の練習実行は旧clientの回収を待ち、停止とSource・過去成功を保つ', async ({
+  page,
+}, info) => {
+  test.setTimeout(120_000);
+  const id = 'python-basics-ch01-l02';
+  const source = 'name = input()\nprint(name)\n';
+  await page.goto(route(id));
+  const grade = page.getByRole('button', { name: '判定する', exact: true });
+  await expect(grade).toBeEnabled({ timeout: 30_000 });
+  await replaceEditorText(page, source);
+  await grade.click();
+  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+  await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  const before = await draft(page, id);
+  const coursesBefore = (await readStoredProgress(page)).courses;
+  const panel = page.getByRole('region', { name: 'CPythonの練習実行', exact: true });
+  const input = panel.getByLabel('練習へ送る1行（空欄は空文字列）');
+  await panel.getByRole('button', { name: '練習実行', exact: true }).click();
+  await expect(input).toBeFocused({ timeout: 10_000 });
+  await input.fill('Home離脱で破棄する未送信入力196');
+
+  let releaseCleanup!: () => void;
+  const cleanupGate = new Promise<void>((resolve) => {
+    releaseCleanup = resolve;
+  });
+  let reachedCleanup!: () => void;
+  const cleanupReached = new Promise<void>((resolve) => {
+    reachedCleanup = resolve;
+  });
+  // 応答を偽造せず、旧cancelの送信だけを遅らせる。実CPythonとcontrollerを使う。
+  await page.route('**/api/practice/runs/*/cancel', async (request) => {
+    reachedCleanup();
+    await cleanupGate;
+    await request.continue();
+  });
+  try {
+    await page.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' }).click();
+    await cleanupReached;
+    // 同じdocument内のHash Router遷移でmoduleと旧clientの回収Promiseを維持する。
+    await page.evaluate((hash) => {
+      window.location.hash = hash;
+    }, route(id).slice(1));
+    await expect(panel.getByRole('button', { name: '練習実行', exact: true })).toBeEnabled();
+    await panel.getByRole('button', { name: '練習実行', exact: true }).click();
+    await expect(panel).toContainText('練習実行を準備しています。未採点です。');
+    await page.screenshot({
+      path: info.outputPath('home-reentry-cleanup-wait.png'),
+      fullPage: true,
+    });
+  } finally {
+    releaseCleanup();
+  }
+  await expect(input).toBeFocused({ timeout: 10_000 });
+  await expect(input).toHaveValue('');
+  await input.fill('再入場の同run入力196');
+  await input.press('Enter');
+  await expect(panel.getByText('正常終了しました。未採点です。', { exact: true })).toBeVisible();
+  await expect(panel.getByRole('region', { name: '練習のConsole出力' })).toContainText(
+    '再入場の同run入力196',
+  );
+  await panel.getByRole('button', { name: '練習実行', exact: true }).click();
+  await expect(input).toBeFocused();
+  await panel.getByRole('button', { name: '練習を中止', exact: true }).click();
+  await expect(panel.getByText('練習を中止しました。未採点です。', { exact: true })).toBeVisible();
+  const after = await draft(page, id);
+  expect(after?.['files']).toEqual({ 'main.py': source });
+  expect(after?.['validationHistory']).toEqual(before?.['validationHistory']);
+  expect(after?.['lastPassingSnapshots']).toEqual(before?.['lastPassingSnapshots']);
+  expect((await readStoredProgress(page)).courses).toEqual(coursesBefore);
+  expect(JSON.stringify(await readStoredProgress(page))).not.toContain('同run入力196');
+  expect(JSON.stringify(await readStoredProgress(page))).not.toContain('未送信入力196');
+  await page.screenshot({ path: info.outputPath('home-reentry-stopped.png'), fullPage: true });
+});
+
 test('対話練習は同runへ入力し、空行/EOF/中止を分けて進捗と成功版を保持する', async ({
   page,
 }, info) => {

@@ -180,6 +180,79 @@ function deferred() {
   return { promise, resolve };
 }
 
+it.each([false, true])(
+  '#196: 別clientの回収待ち中にstopしたclientは回収reject=%s後も再開しない',
+  async (rejectCleanup) => {
+    const current = await snapshot();
+    const digest = Uint8Array.from(current.identity.sourceHash.match(/../gu) ?? [], (byte) =>
+      Number.parseInt(byte, 16),
+    ).buffer;
+    vi.stubGlobal('crypto', { subtle: { digest: vi.fn(async () => digest) } });
+    vi.useFakeTimers();
+    const delivered = deferred();
+    const cleanupBlocked = deferred();
+    const releaseCleanup = deferred();
+    const fetchMock = vi.fn(async (path: string) => {
+      if (path.endsWith('/session')) return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      if (path.endsWith('/practice/runs')) return Response.json(current);
+      if (path.endsWith('/cancel')) {
+        cleanupBlocked.resolve();
+        await releaseCleanup.promise;
+        if (rejectCleanup) throw new Error('回収失敗');
+      }
+      return Response.json({
+        ...current,
+        phase: 'ended',
+        reason: 'cancelled',
+        removed: true,
+        purged: path.endsWith('/ack'),
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const previous = new LocalPythonPracticeClient();
+    const running = previous.start(request, delivered.resolve).catch((error: unknown) => error);
+    await delivered.promise;
+    const stopping = previous.stop().catch((error: unknown) => error);
+    await cleanupBlocked.promise;
+    const waiting = new LocalPythonPracticeClient();
+    const received = vi.fn();
+    const waitingRun = waiting.start(request, received).catch((error: unknown) => error);
+    try {
+      await vi.advanceTimersByTimeAsync(0);
+      await waiting.stop();
+    } finally {
+      releaseCleanup.resolve();
+      await stopping;
+      await vi.advanceTimersByTimeAsync(150);
+      await running;
+      await waitingRun;
+    }
+    expect(fetchMock.mock.calls.filter(([path]) => path.endsWith('/session'))).toHaveLength(1);
+    expect(fetchMock.mock.calls.filter(([path]) => path.endsWith('/practice/runs'))).toHaveLength(
+      1,
+    );
+    expect(received).not.toHaveBeenCalled();
+
+    if (rejectCleanup) {
+      // 完了した失敗を共有し続けず、次clientは実controllerの排他エラーを受け取る。
+      fetchMock.mockImplementation(async (path: string) =>
+        path.endsWith('/session')
+          ? Response.json({ apiVersion: 1, token: 'b'.repeat(64) })
+          : Response.json({ error: '回収未確認のため作成を拒否します。' }, { status: 409 }),
+      );
+      const nextReceived = vi.fn();
+      await expect(new LocalPythonPracticeClient().start(request, nextReceived)).rejects.toThrow(
+        '回収未確認のため作成を拒否します。',
+      );
+      expect(fetchMock.mock.calls.filter(([path]) => path.endsWith('/session'))).toHaveLength(2);
+      expect(fetchMock.mock.calls.filter(([path]) => path.endsWith('/practice/runs'))).toHaveLength(
+        2,
+      );
+      expect(nextReceived).not.toHaveBeenCalled();
+    }
+  },
+);
+
 it.each(['cancel', 'ack'] as const)(
   '#196: 旧clientの%s待ち中は別clientが新しいrunを作成しない',
   async (blockedPhase) => {
@@ -206,8 +279,7 @@ it.each(['cancel', 'ack'] as const)(
     let oldPurged = false;
     let creations = 0;
     const fetchMock = vi.fn(async (path: string) => {
-      if (path.endsWith('/session'))
-        return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      if (path.endsWith('/session')) return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
       if (path.endsWith('/practice/runs')) {
         creations += 1;
         if (creations === 1) return Response.json(current);
@@ -234,9 +306,10 @@ it.each(['cancel', 'ack'] as const)(
     const stopping = previousClient.stop();
     await cleanupBlocked.promise;
     const received = vi.fn();
-    const nextRunning = new LocalPythonPracticeClient()
-      .start(nextRequest, received)
-      .then(() => undefined, (error: unknown) => error);
+    const nextRunning = new LocalPythonPracticeClient().start(nextRequest, received).then(
+      () => undefined,
+      (error: unknown) => error,
+    );
     let result: unknown;
     try {
       // digestとfetchは即時解決するmock。未解決なのは明示した旧回収gateだけ。
@@ -277,23 +350,26 @@ it.each(['hash', 'session'] as const)(
       },
     });
     const calls: string[] = [];
-    vi.stubGlobal('fetch', vi.fn(async (path: string) => {
-      calls.push(path);
-      if (path.endsWith('/session')) {
-        if (blockedPhase === 'session') {
-          preparationBlocked.resolve();
-          await releasePreparation.promise;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (path: string) => {
+        calls.push(path);
+        if (path.endsWith('/session')) {
+          if (blockedPhase === 'session') {
+            preparationBlocked.resolve();
+            await releasePreparation.promise;
+          }
+          return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
         }
-        return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
-      }
-      return Response.json({
-        ...current,
-        phase: 'ended',
-        reason: 'cancelled',
-        removed: true,
-        purged: path.endsWith('/ack'),
-      });
-    }));
+        return Response.json({
+          ...current,
+          phase: 'ended',
+          reason: 'cancelled',
+          removed: true,
+          purged: path.endsWith('/ack'),
+        });
+      }),
+    );
     const client = new LocalPythonPracticeClient();
     const received = vi.fn();
     const running = client.start(request, received);
