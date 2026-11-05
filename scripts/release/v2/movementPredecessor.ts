@@ -6,6 +6,7 @@ import { BaselineProofSchema, CapturedBaselineSchema, validateCapturedBaseline }
 import { ArtifactManifestSchema, hashBytes, hashValue } from './identity';
 import { ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 import { MovementLearnerAcceptanceSchema } from './learnerMovement';
+import { PYTHON_REFERENCE_UPDATE } from './pythonReferenceCarry';
 import {
   type BaselineSchema,
   BuildIdentitySchema,
@@ -71,7 +72,12 @@ const QualificationHistorySchema = z
       })
       .loose(),
     content: z
-      .object({ movementLearnerAcceptance: z.array(MovementLearnerAcceptanceSchema).length(2) })
+      .object({
+        movementLearnerAcceptance: z.union([
+          z.array(MovementLearnerAcceptanceSchema).length(2),
+          z.array(MovementLearnerAcceptanceSchema).length(4),
+        ]),
+      })
       .loose(),
   })
   .loose();
@@ -83,6 +89,7 @@ const PythonHeaderSchema = z
           .object({
             stage: z.literal('python-first'),
             candidateContentCommit: CommitSchema,
+            pythonReferenceUpdates: z.literal(PYTHON_REFERENCE_UPDATE).optional(),
             baseline: z.object({ sourceRecordDigest: DigestSchema }).loose(),
           })
           .loose(),
@@ -192,10 +199,24 @@ export function verifyPythonMovementPredecessor(
   const checked = verifyPrior(snapshot.movementInputs, snapshot.inventory, captured.baseline);
   if (snapshot.plan.movementDeclarationDigest !== checked.declarationDigest)
     throw Error('Python predecessor declaration differs from frozen plan');
-  for (const [fromLessonId, toLessonId, kind] of [
+  const expectedCarries = [
     ['python-basics-ch01-l08', 'python-basics-ch01-l12', 'content-delta'],
     ['python-basics-ch01-l09', 'python-basics-ch01-l13', 'identical-move'],
-  ] as const) {
+    ...(prior.data.declaration.body.pythonReferenceUpdates
+      ? ([
+          ['python-basics-ch01-l05', 'python-basics-ch01-l05', 'reference-only'],
+          ['python-basics-ch02-l01', 'python-basics-ch02-l01', 'reference-only'],
+        ] as const)
+      : []),
+  ] as const;
+  const evidenceRows = qualification.content.movementLearnerAcceptance;
+  if (
+    evidenceRows.length !== expectedCarries.length ||
+    new Set(evidenceRows.map((row) => row.courseId + '/' + row.fromLessonId + '/' + row.toLessonId))
+      .size !== expectedCarries.length
+  )
+    throw Error('Python predecessor fixed learner acceptance coverage differs');
+  for (const [fromLessonId, toLessonId, kind] of expectedCarries) {
     const evidence = qualification.content.movementLearnerAcceptance.find(
       (row) =>
         row.courseId === 'python-basics' &&

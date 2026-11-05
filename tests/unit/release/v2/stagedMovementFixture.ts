@@ -83,7 +83,7 @@ function pythonFirst(joint: Joint): StageFixture {
 }
 
 /** stage APIを呼ばず、手で導いた前段planを既存Schemaへ通す。fixture準備のTypeErrorをREDとしない。 */
-function pythonHistory(python: StageFixture) {
+export function pythonHistory(python: StageFixture) {
   const template = releaseFixture();
   const prefix = (row: { courseId: string; lessonId: string }) => row.courseId + '/' + row.lessonId;
   const previous = new Map(
@@ -94,6 +94,9 @@ function pythonHistory(python: StageFixture) {
   const rechecks = new Set(python.inputs.declaration.body.recheckLessons);
   const exact = 'python-basics/python-basics-ch01-l13';
   const copy = 'python-basics/python-basics-ch01-l12';
+  const references = python.inputs.declaration.body.pythonReferenceUpdates
+    ? ['python-basics/python-basics-ch01-l05', 'python-basics/python-basics-ch02-l01']
+    : [];
   const fresh = planRelease(python.inventory);
   const plan = {
     ...fresh,
@@ -104,9 +107,10 @@ function pythonHistory(python: StageFixture) {
     },
     targets: fresh.targets.filter((target) => {
       const lesson = prefix(target);
-      if (target.kind === 'learning-engine') return !previous.has(lesson) || rechecks.has(lesson);
+      if (target.kind === 'learning-engine')
+        return !previous.has(lesson) || rechecks.has(lesson) || references.includes(lesson);
       if (target.kind !== 'content' && target.kind !== 'learning') return true;
-      if (lesson === exact) return false;
+      if (lesson === exact || references.includes(lesson)) return false;
       if (lesson === copy) return target.kind === 'content';
       return rechecks.has(lesson) || previous.get(lesson) !== target.inputDigest;
     }),
@@ -170,30 +174,51 @@ function pythonHistory(python: StageFixture) {
         .filter((target) => target.kind === 'content' && prefix(target) !== copy)
         .map(prefix),
       technicalRechecks: [],
-      movementLearnerAcceptance: python.inputs.learnerOriginals.current.map((row) => {
-        const fromLessonId =
-          row.lessonId === 'python-basics-ch01-l12'
-            ? 'python-basics-ch01-l08'
-            : 'python-basics-ch01-l09';
-        const old = python.inputs.learnerOriginals.previous.find(
-          (old) => old.lessonId === fromLessonId,
-        )!;
-        return {
-          kind: row.lessonId.endsWith('l12') ? 'content-delta' : 'identical-move',
-          courseId: row.courseId,
-          fromLessonId,
-          toLessonId: row.lessonId,
-          sourceCommit: python.baseline.sourceCommit,
-          sourceRecordDigest: python.baseline.sourceRecordDigest,
-          fromLearnerDigest: hashValue(old.projection),
-          candidateContentCommit: candidate.recipe.sourceCommit,
-          toLearnerDigest: hashValue(row.projection),
-          movementDeclarationDigest: python.inputs.declaration.declarationDigest,
-          ...(row.lessonId.endsWith('l12')
-            ? { contentReceiptDigest: hashValue('synthetic-stage-module-review') }
-            : {}),
-        };
-      }),
+      movementLearnerAcceptance: [
+        ...python.inputs.learnerOriginals.current.map((row) => {
+          const fromLessonId =
+            row.lessonId === 'python-basics-ch01-l12'
+              ? 'python-basics-ch01-l08'
+              : 'python-basics-ch01-l09';
+          const old = python.inputs.learnerOriginals.previous.find(
+            (old) => old.lessonId === fromLessonId,
+          )!;
+          return {
+            kind: row.lessonId.endsWith('l12') ? 'content-delta' : 'identical-move',
+            courseId: row.courseId,
+            fromLessonId,
+            toLessonId: row.lessonId,
+            sourceCommit: python.baseline.sourceCommit,
+            sourceRecordDigest: python.baseline.sourceRecordDigest,
+            fromLearnerDigest: hashValue(old.projection),
+            candidateContentCommit: candidate.recipe.sourceCommit,
+            toLearnerDigest: hashValue(row.projection),
+            movementDeclarationDigest: python.inputs.declaration.declarationDigest,
+            ...(row.lessonId.endsWith('l12')
+              ? { contentReceiptDigest: hashValue('synthetic-stage-module-review') }
+              : {}),
+          };
+        }),
+        ...(python.inputs.declaration.body.pythonReferenceUpdates
+          ? python.inputs.pythonReferenceOriginals!.current.map((row) => {
+              const old = python.inputs.pythonReferenceOriginals!.previous.find(
+                (old) => old.lessonId === row.lessonId,
+              )!;
+              return {
+                kind: 'reference-only' as const,
+                courseId: 'python-basics',
+                fromLessonId: row.lessonId,
+                toLessonId: row.lessonId,
+                sourceCommit: python.baseline.sourceCommit,
+                sourceRecordDigest: python.baseline.sourceRecordDigest,
+                fromLearnerDigest: hashValue(old.projection),
+                candidateContentCommit: candidate.recipe.sourceCommit,
+                toLearnerDigest: hashValue(row.projection),
+                movementDeclarationDigest: python.inputs.declaration.declarationDigest,
+              };
+            })
+          : []),
+      ],
     },
     projects: plan.targets
       .filter((target) => target.kind === 'project')

@@ -22,7 +22,7 @@ export const LearnerMovementOriginalsSchema = z
 export type LearnerMovementOriginals = z.infer<typeof LearnerMovementOriginalsSchema>;
 const CarrySchema = z
   .object({
-    kind: z.enum(['identical-move', 'content-delta']),
+    kind: z.enum(['identical-move', 'content-delta', 'reference-only']),
     courseId: IdSchema,
     fromLessonId: IdSchema,
     toLessonId: IdSchema,
@@ -34,7 +34,11 @@ const CarrySchema = z
     movementDeclarationDigest: DigestSchema,
   })
   .strict();
+export const ReferenceOnlyCarrySchema = CarrySchema.extend({
+  kind: z.literal('reference-only'),
+}).strict();
 export const MovementLearnerAcceptanceSchema = z.union([
+  ReferenceOnlyCarrySchema,
   CarrySchema.extend({ kind: z.literal('identical-move') }).strict(),
   CarrySchema.extend({
     kind: z.literal('content-delta'),

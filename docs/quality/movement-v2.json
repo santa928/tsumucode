@@ -3,6 +3,7 @@
     "schemaVersion": 1,
     "migrationId": "python-functions-and-react-project-movement-v1",
     "stage": "python-first",
+    "pythonReferenceUpdates": "list-alias-and-console-references-v1",
     "baseline": {
       "deploymentId": "7522091460",
       "sourceCommit": "16bbf55442a3166193c3e7de07c06d644126968d",
@@ -11,7 +12,7 @@
     },
     "candidateContentCommit": "19cbed7d95cac527d17b58f3522cdf4f05466b92",
     "candidateInventoryDigest": "4ff4ca0a798e66c4a9e230fe90e4cfbdb29f24bae5e10996b8a2e780767997b9",
-    "originalsDigest": "a4f9bb261f83407dd490f5fc87d66847e12a82aa94546d6f56c8e8d710215b9a",
+    "originalsDigest": "25c4b0f9adb8e2fd0bd6fffb722a17509520a6f04c78c016be1cb40a16824ab7",
     "moves": [
       {
         "courseId": "python-basics",
@@ -534,148 +535,148 @@
       "python-basics/python-basics-ch01-l11"
     ]
   },
-  "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+  "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
   "approvals": [
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "solution",
-      "scopeDigest": "1219085949db74dc346cdd95f081d45136132475f9a3005c5a4e252e5a5889b5",
+      "scopeDigest": "534269c95613df92abcbb0cdd224174ffd54465e95b7499add2fd629daa1b072",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "bd9ed39cbb14c62f4c764c4a0604e8710b5022f9a25bda062b6eeba4f4e1442c",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "b5355cbd72aa6cd82c6bc3ca19b5aebe10140be568818522cd30523c03af2eff"
+      "originalDigest": "1670a6832206bb1aaafda25bbe55551a4c1135a590880f50364076970f69fcb3",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "a485432478b416feaba6d49d36eb6471484ae7982ac26df82eb89529c712f5a3"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "direct-return",
-      "scopeDigest": "3e097478cd3b7afc23c36478392187a94f22b1915876a19acc7fc79ff544a76f",
+      "scopeDigest": "9e9da02dfc468b32cc31c70e6b473e06b5c275c6ea05e041157f1d0dff7813f9",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "61191b0bf9891c33061c1acbc31561474a97f298e13c3f8fc5addc8d06bcf6ac",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "0f4f364f956e497edb41cb2dd3e44f8e2ec7327b2a0e3505bc5f03376f687ff9"
+      "originalDigest": "c0b5679c06021afb97e022401a265e7d2a830db6d71e2a9097268859cdf5b510",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "9279bf76ec6b0bc6622378d8f7d9db7d14e4d10cd8c7cb640e8392626ca7e4f1"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "commuted-and-renamed",
-      "scopeDigest": "6fcb8e2cf011440d1119d1f8c3b27a29bc71df0313fe990ae02f1e75cfa0da89",
+      "scopeDigest": "65e6c3de9f0ecfa2b5b6ab5bc47b51adf856ad1fc74aa23db0db6da2d637a0a7",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "0952a9b0ae56551cb9deb21f5fd598cbbce182eae7e00a1039901886ada657d7",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "07af9adcbc548130c69106bd2135883d79244304081e6cd7a94ea5346f4f8558"
+      "originalDigest": "09b777edf0b2c89ce858b38d315c720684f0559a5ada473fac91bbdc221f59e0",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "1e16d18c00228afdb65973214b3dc68e1cc30ac1d7dd020d0207ad5c315cadf7"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "stored-results",
-      "scopeDigest": "4a83747c45f8c8de3261ad58ca0e3b8a077a3d5a92bd6c050ee419e83e9ad48e",
+      "scopeDigest": "f98db48850de5516833d59010fd6a28f93876af7f6cfdf2696fb21b6975464d4",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "e986af9779a537eaf842b48fa69ddd95064cc81618487e3902a91fc88a117b0f",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "281f66e32bd35f53e62c34483842c52e3136bb8396ceb8c3128be49d8ee1bf83"
+      "originalDigest": "42ded3b296acc8da60c7c8d2ed046f57f5b17f5490873134c7b296363ddde899",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "793ac3ee9dad9ca430a015f085b4f71c0867803c1b27405242ed9904782c1e9c"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "starter",
-      "scopeDigest": "72123a3bc209951f585e05831a3e752d23e9eca64d2cca0e356e9fbca350a099",
+      "scopeDigest": "4202b4b9ef3ee2b650adfc5317efe638bf327fb3dca2581e0b23b20eb578b088",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "be53fb3ac5bf05f53c7b4d2681f2b5f6794d25b1fb1be01d209e7c4a474261f0",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "10943cbca2637e106ee3662947b5eaf215d1d8007e36b1444401267e8a8b002d"
+      "originalDigest": "ae37c9d82621474f22f029b5abaac4b5b5e1b4d2c5e5c2574083dd061fcd98d0",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "e5ccf1fd38356ffddeccf9b380012ab3697971fbf2f1917c5c3d6d03693ba196"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "constant-return",
-      "scopeDigest": "e32423f86b5f0031ec065d1294107c87b72d958ff48fcb777b5f3eb4dfdbd582",
+      "scopeDigest": "59a21cb299acce84e1dbf26003e3b5bf8982df38c39a2ad95b74a5d2be47c860",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "bfb13b6d0f27b1b8301adea5fb0c7441e31e13fdb3144b6db1211a1d20347718",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "1417e09f13d0ae06e7cb27863b52cce861cfd6434cadc4464c573499f23aa00a"
+      "originalDigest": "7a3efa38e081718eb7c2f298ac8bafca25c946774a6024c046df63c18a256af5",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "b48c73f7df7bf0fe015b323954cb2a60f24b621caa59c7d198a2bd187ae3ac54"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "no-return",
-      "scopeDigest": "e016868911f512a20c1e5d9b126d8f49d183cd840b473d25d937c3ac6ccbc301",
+      "scopeDigest": "548dbafef286bf0eea5fed241177324cab7c0fad5efee599dcb7b658e18c5b44",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "a09e3bfa21fc7e257270184dff6a60c0f417c052e509e3a2fff5926251ac69e9",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "6e67c42b06f820301330868f60ac6ebbdf02c214b76d7eab62bc8a0a0c6e8fb8"
+      "originalDigest": "12c485a0db95f37a6d64b324989ecfc7736e258f1964415f2606569e722af1e1",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "653fe033e3363325e5cd92a81990d4d643dfc2f4dcf3b6815d0eaa356064e6f4"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "unused-function",
-      "scopeDigest": "5c1a3f4b4a68a3cd0a3de4ac901a8f88ba0828e391cad4d5cb13e52a64df73e7",
+      "scopeDigest": "bc87340ee3b2152e8d1018216218e0dc24c3d7bc7cd4a08bfa18af892277a620",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "0e784a7fb86b77b36fcd9b52a49f14c6efb867db0f1b298a37dd7b9fb498d651",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "80daeab3716c05483104ac9dd32ec236b9a74d0df7c4830fe28622a0c814b54c"
+      "originalDigest": "dde05ad682f68862434cf92906d81cd771b08dedb275fb330ac60b0f606cef84",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "ef397f418f0af1d80595a4a91f010e569dbab384c543dd3b44d9c6fca9273a4c"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "outer-value",
-      "scopeDigest": "c35345641a7aca6d8d559bca6e922284c2c04e95c6a4de2bb343f12df9848101",
+      "scopeDigest": "1a8e8b3f9a08e7cb9471e78d3b21ca9473fe4cf3e0cd6f7ed132c55ef30ec1f9",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "1609dbe53b0803de5a3af4d9823c7683aa1ca652e538f635d3e2121c04399435",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "532fb3a563d890d33eadd2c5c82a74f2279792a0eef42676f69d037fb007b77a"
+      "originalDigest": "a02725c3de10d9503d323d3d36f42f581910b94d7dbc649792017d661fe31db2",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "4a35cce70895c0e57811c61e9c7bba118912c6bc9e09ae289a35831f85330d62"
     },
     {
       "schemaVersion": 1,
       "migrationId": "python-functions-and-react-project-movement-v1",
-      "bodyDigest": "80ce789e657a470430c622e2b8f262539a2a213162fede9fbfa7461b6ab1e800",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
       "oldFixtureId": "reference-error",
-      "scopeDigest": "b517f46c6e30714c227a4bf7db1d02608e3ad0784df2ca83a51be83e12eb8f59",
+      "scopeDigest": "c8b60ca4a4960497000724a5a3a3a12fbe793c1d41d233e9ae936d626a603688",
       "authorId": "codex-issue259-final-body-d47d",
       "reviewerId": "codex-issue259-movement-scope-review",
       "status": "approved",
       "method": "source-review",
-      "originalDigest": "1717452011ffea1c51a34f8a4477decf63cec1c09b144f6729c0d156519c466b",
-      "originalsCheckedBy": "codex-issue259-movement-original-inspection",
-      "receiptDigest": "16306be4433e762d4d38dcdcd474ca0e464b4db1423d4bb34ab3b4def200c740"
+      "originalDigest": "abd5e62a01894893d42c2865b476f2f71f6e701f8bd8602aa116a46f74a6e0b7",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "c7e9b36c5db1fb7fa19ce600886daaf786971c35d519d10265a568d01475986a"
     }
   ],
-  "declarationDigest": "ed6820e902dd4dc0a7e23c9a2202c8556f8bcd1eeedb586a870e3e12378a9a2a"
+  "declarationDigest": "76a4f2b1c429af53f584a6c92c0fdf9d4a529279fc465aa1acdb5338c05686c0"
 }

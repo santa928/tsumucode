@@ -22,7 +22,11 @@ l05の既存IDを維持し、新しい2目標は別IDにする。再利用され
 
 `movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束する。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
 
-既存alias l05とProject ch02-l01の用語初出リンクもlearner投影に含まれる。同IDの一般carryはlearnerDigest完全一致を必要とし、現在の固定movement対象にはこの2教材が含まれない。参照だけの変更であっても、現契約から自動的に受入済みにはできない。
+既存alias l05とProject ch02-l01の用語初出リンクもlearner投影に含まれる。同IDの一般carryはlearnerDigest完全一致を必要とする。Python-firstの`list-alias-and-console-references-v1`だけは、旧Source `16bbf55442a3166193c3e7de07c06d644126968d`と候補Source `19cbed7d95cac527d17b58f3522cdf4f05466b92`の固定2教材に対し、前提と用語初出リンクの実値を別契約で検査する。
+
+aliasの前提はl04からl05-iterate、Listの初出はl05からl05-valuesへ、Projectの前提とExceptionの初出はl09からl13へ変わる。両側の全67file、正式Compilerの全Lesson inventory、参照先の実投影、前提・nextを固定し、本文・fixture・採点・実行・保存情報の変更、原本の欠落・重複・追加を拒否する。learnerDigestからfieldを除外せず、一般の同ID教材や別Sourceへは拡張しない。
+
+この`reference-only`受入は、新persona・新例実行・旧actorの再署名を表さない。固定28fixture移動・旧関数10意図・React後続25fixtureは変更せず、2教材のnavigation・保存と3ブラウザのlearning-engine検証をplanへ残す。Projectと全fixtureの検証義務も維持する。
 
 同内容の履歴bindingでは、旧原本・実観測Sourceと日時・支援・限界を保存し、現Sourceへの対応だけを別原本で独立検査する。元actorによる新しいUI観測・例実行・初見評価・再署名とは扱わない。
 

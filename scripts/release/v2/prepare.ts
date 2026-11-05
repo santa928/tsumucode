@@ -11,6 +11,7 @@ import { learnerMovementOriginals } from './learnerMovement';
 import { stageMoves } from './movementStage';
 import { readPythonMovementPredecessor } from './movementPredecessor';
 import { readMovementBaselineProofs } from './movementBaseline';
+import { capturePythonReferenceOriginals, type PythonReferenceRows } from './pythonReferenceCarry';
 
 /** One sanitized delivery tree owns app input, known-course indexes and every verification suite. */
 export async function prepareRelease(
@@ -36,6 +37,7 @@ export async function prepareRelease(
     const stage = declaration.body.stage ?? 'joint';
     const moves = stageMoves(stage);
     const originals = [];
+    let previousReferences: PythonReferenceRows | undefined;
     const previousLearners: ReturnType<typeof learnerMovementOriginals> = [];
     // 旧原本は変更対象の2Courseだけ読み、現原本はこのCompile結果を使う。
     for (const courseId of ['python-basics', 'react']) {
@@ -43,7 +45,9 @@ export async function prepareRelease(
         path.dirname(sourceRoot),
         previous.sourceCommit,
         courseId,
+        courseId === 'python-basics' && declaration.body.pythonReferenceUpdates !== undefined,
       );
+      if (source.pythonReferenceOriginals) previousReferences = source.pythonReferenceOriginals;
       if (
         hashValue(source.inventory.courses[0]) !==
         hashValue(previous.inventory.courses.find((course) => course.id === courseId))
@@ -62,6 +66,16 @@ export async function prepareRelease(
       previous: previousLearners,
       current: learnerMovementOriginals(compilation.compilations, moves, 'current'),
     };
+    const pythonReferenceOriginals = declaration.body.pythonReferenceUpdates
+      ? {
+          previous: previousReferences,
+          current: await capturePythonReferenceOriginals(
+            path.join(sourceRoot, 'python-basics'),
+            compilation.compilations.find((row) => row.runtime.id === 'python-basics')!,
+            'current',
+          ),
+        }
+      : undefined;
     // 既存宣言は旧payloadのまま厳格検証する。拡張原本全体を宣言へ拘束した場合だけ使用する。
     const boundMovementInputs =
       declaration.body.originalsDigest ===
@@ -69,8 +83,13 @@ export async function prepareRelease(
         previous: legacyMovementInputs.previous,
         current: legacyMovementInputs.current,
         learnerOriginals,
+        ...(pythonReferenceOriginals ? { pythonReferenceOriginals } : {}),
       })
-        ? { ...legacyMovementInputs, learnerOriginals }
+        ? {
+            ...legacyMovementInputs,
+            learnerOriginals,
+            ...(pythonReferenceOriginals ? { pythonReferenceOriginals } : {}),
+          }
         : legacyMovementInputs;
     movementInputs =
       stage === 'react-after-python'

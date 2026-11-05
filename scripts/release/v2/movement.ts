@@ -11,6 +11,11 @@ import { hashBytes, hashValue, repositoryEnvironment } from './identity';
 import { MOVEMENT_ID, MovementStageSchema, stageMoves, stageRechecks } from './movementStage';
 import { verifyPythonMovementPredecessor } from './movementPredecessor';
 import { MovementBaselineProofsSchema, resolveMovementBaseline } from './movementBaseline';
+import {
+  PYTHON_REFERENCE_UPDATE,
+  PythonReferenceOriginalsSchema,
+  verifyPythonReferenceOriginals,
+} from './pythonReferenceCarry';
 export { MOVEMENT_ID, PURE_MOVES } from './movementStage';
 import {
   compareInitialReactCopyContract,
@@ -121,6 +126,7 @@ export const MovementBodySchema = z
     schemaVersion: z.literal(1),
     migrationId: z.literal(MOVEMENT_ID),
     stage: MovementStageSchema.optional(),
+    pythonReferenceUpdates: z.literal(PYTHON_REFERENCE_UPDATE).optional(),
     predecessorDigest: DigestSchema.optional(),
     baseline: BindingSchema,
     candidateContentCommit: CommitSchema,
@@ -152,6 +158,11 @@ export const MovementBodySchema = z
   .strict()
   .superRefine((body, context) => {
     const stage = body.stage ?? 'joint';
+    if (body.pythonReferenceUpdates && stage !== 'python-first')
+      context.addIssue({
+        code: 'custom',
+        message: 'Fixed Python reference updates require python-first stage',
+      });
     const expected = stageMoves(stage).map(([courseId, fromLessonId, toLessonId]) => ({
       courseId,
       fromLessonId,
@@ -235,12 +246,21 @@ export const MovementInputsSchema = z
     previous: OriginalsSchema,
     current: ActiveOriginalsSchema,
     learnerOriginals: LearnerMovementOriginalsSchema.optional(),
+    pythonReferenceOriginals: PythonReferenceOriginalsSchema.optional(),
     predecessor: z.unknown().optional(),
     baselineProofs: MovementBaselineProofsSchema.optional(),
   })
   .strict()
   .superRefine((inputs, context) => {
     const stage = inputs.declaration.body.stage ?? 'joint';
+    if (
+      (inputs.declaration.body.pythonReferenceUpdates !== undefined) !==
+      (inputs.pythonReferenceOriginals !== undefined)
+    )
+      context.addIssue({
+        code: 'custom',
+        message: 'Fixed Python reference marker and originals differ',
+      });
     if ((stage === 'react-after-python') !== (inputs.predecessor !== undefined))
       context.addIssue({
         code: 'custom',
@@ -458,6 +478,9 @@ export function verifyMovementInputs(
       previous: inputs.previous,
       current: inputs.current,
       ...(inputs.learnerOriginals ? { learnerOriginals: inputs.learnerOriginals } : {}),
+      ...(inputs.pythonReferenceOriginals
+        ? { pythonReferenceOriginals: inputs.pythonReferenceOriginals }
+        : {}),
     })
   )
     throw Error('Movement original payload digest differs');
@@ -664,6 +687,16 @@ export function verifyMovementInputs(
     declaration.declarationDigest,
     moves,
   );
+  if (inputs.pythonReferenceOriginals) {
+    for (const [key, carry] of verifyPythonReferenceOriginals(
+      inputs.pythonReferenceOriginals,
+      inventory,
+      baseline,
+      body.candidateContentCommit,
+      declaration.declarationDigest,
+    ))
+      learnerCarries.set(key, carry);
+  }
   if (inputs.learnerOriginals && stage !== 'python-first') {
     const oldInitial = oldOriginals.get('react/react-ch01-l01-e01');
     const currentInitial = currentOriginals.get('react/react-ch01-l01-e01');

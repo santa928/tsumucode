@@ -7,10 +7,16 @@ import { compileCourse } from '../../content/compileCourse';
 import { buildInventory } from './inventory';
 import { CommitSchema, IdSchema } from './schema';
 import { repositoryEnvironment } from './identity';
+import { capturePythonReferenceOriginals } from './pythonReferenceCarry';
 const exec = promisify(execFile);
 /** Read the original Git source, never the mutable candidate or declared content hash alone. */
 /** Git原本を同じCompilerで読み、移動比較に必要なauthoring原本も返す。 */
-export async function readAuthoringAtSource(root: string, input: string, courseInput: string) {
+export async function readAuthoringAtSource(
+  root: string,
+  input: string,
+  courseInput: string,
+  fixedPythonReferences = false,
+) {
   const courseId = IdSchema.parse(courseInput);
   const sourceCommit = CommitSchema.parse(input),
     environment = await repositoryEnvironment(root);
@@ -41,6 +47,15 @@ export async function readAuthoringAtSource(root: string, input: string, courseI
       inventory: buildInventory([result]),
       authoringExercises: result.authoringExercises,
       compilation: result,
+      ...(fixedPythonReferences
+        ? {
+            pythonReferenceOriginals: await capturePythonReferenceOriginals(
+              path.join(temporary, 'content', courseId),
+              result,
+              'previous',
+            ),
+          }
+        : {}),
     };
   } finally {
     await rm(temporary, { recursive: true, force: true });

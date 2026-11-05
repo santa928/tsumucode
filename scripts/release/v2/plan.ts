@@ -60,7 +60,11 @@ export function planRelease(
     for (const lesson of course.lessons) {
       const prefix = course.id + '/' + lesson.id;
       const learnerCarry = movement?.learnerCarries.get(prefix);
-      if (!previous.has(prefix) || movement?.rechecks.has(prefix))
+      if (
+        !previous.has(prefix) ||
+        movement?.rechecks.has(prefix) ||
+        learnerCarry?.kind === 'reference-only'
+      )
         for (const engine of ['chromium', 'firefox', 'webkit'] as const)
           targets.push({
             key: prefix + '/learning-engine/' + engine,
