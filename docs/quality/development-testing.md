@@ -1,5 +1,26 @@
 # 開発中の検証方針
 
+## PRでの全件unit（2026-11-06）
+
+PRのfast jobは`check:ci`でCompile → Lint → 全Unit/Component/Content → 型・Build →
+chunk検査を各1回実行する。公開qualification unitと同じ`lint`・`test:run`および
+既定の`vitest.config.ts`を使い、差分・import依存による選択をPRの必須unitへ適用しない。
+`check`を先に重ねて実行せず、Docker image・依存導入・Buildも既存job内で再利用する。
+Lint/testの失敗は後段へ伝播し、自動retry・除外・閾値緩和は追加しない。
+
+PR #296の関連57ファイル・674件は、fsでworkflowやshellを読む`tests/`直下の2契約を
+選択できず、公開run 42064705503の全件unitで旧期待3件が検出された。
+合成SHAとPR Sourceのtreeは同一であり、SHA差ではなく選択漏れだった。
+独立した`tests/unit/config/prUnitParity.test.ts`でworkflowの呼出し、実shellの失敗伝播、
+公開unitの実command、既定収集に旧契約が含まれることを検査する。
+既存3失敗の期待値修正は別変更とし、その修正を含む統合候補で全件unitの成功を確認する。
+
+PRの上限は30分とする。公開失敗runではLintが約2分34秒、全件testが約9分55秒であり、
+15分の枠へCompile・image準備・Buildを詰め込まない。push/ローカルの`check`は関連testのまま、
+push jobの上限は15分。以下の旧方針の「push/PRの関連test」「8分上限」はこの節で更新する。
+Browser・性能・公開receipt生成はPRへ追加しない。PR成功は正式な資格receiptでも公開実績でもなく、
+公開時には同一候補・同一runの全件unitと全公開gateを引き続き実行する。
+
 ## 同一run成果物の公開入口（2026-11-03）
 
 通常のpush／PRは品質検査だけを行う。公開する場合はActionsの`TsumuCode Pages`を
