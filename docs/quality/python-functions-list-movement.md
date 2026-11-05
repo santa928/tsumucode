@@ -22,6 +22,10 @@ l05の既存IDを維持し、新しい2目標は別IDにする。再利用され
 
 `movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束する。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
 
+既存alias l05とProject ch02-l01の用語初出リンクもlearner投影に含まれる。同IDの一般carryはlearnerDigest完全一致を必要とし、現在の固定movement対象にはこの2教材が含まれない。参照だけの変更であっても、現契約から自動的に受入済みにはできない。
+
+同内容の履歴bindingでは、旧原本・実観測Sourceと日時・支援・限界を保存し、現Sourceへの対応だけを別原本で独立検査する。元actorによる新しいUI観測・例実行・初見評価・再署名とは扱わない。
+
 `movement-baseline-proof-v2.json`は宣言が拘束した実baselineの元proofであり、採取時刻も原本どおり保持する。既存のprivate入力`.release-v2/movement-baseline-proof.json`が無いclean checkoutでは、この固定資料を読む。新しいcaptureの真正性・元proofの宣言hash・時刻以外の全field一致を既存検査で要求する。配信先・Source・inventory・公開bytes等が変われば拒否し、元scopeや承認を自動更新しない。
 
 `release:flow baseline`、`prepare`、`stage-content`が成立しただけでは公開承認・全技術検証の完了にならない。同じ候補の必要な実Pyodide/CPython fixture、保存・Reset・再試行、型・Lint・build・CIと既存の公開gateを満たした後に、統合担当が公開を扱う。
