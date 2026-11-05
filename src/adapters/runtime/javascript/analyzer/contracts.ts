@@ -29,6 +29,8 @@ export interface JavaScriptWorkspaceAnalysisInput {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
+  /** Reactは独自の学習判定を持つため、未消費の汎用教材factだけを保存しない。安全解析は常に行う。 */
+  readonly factCollection?: 'module-boundary';
   readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
@@ -298,6 +300,16 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     legacyKeys.push('teachingGoal');
     workspaceKeys.push('teachingGoal');
     legacyKeys.sort();
+    workspaceKeys.sort();
+  }
+  if ('factCollection' in value) {
+    if (
+      value.factCollection !== 'module-boundary' ||
+      value.sourceType !== 'module' ||
+      !('files' in value)
+    )
+      return false;
+    workspaceKeys.push('factCollection');
     workspaceKeys.sort();
   }
   const legacyShape = JSON.stringify(keys) === JSON.stringify(legacyKeys);

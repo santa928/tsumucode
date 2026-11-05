@@ -532,7 +532,9 @@ async function compileExercise(
   const hasExplicitLearningMetadata =
     source.requiresConcepts !== undefined &&
     source.scaffoldLevel !== undefined &&
-    source.steps !== undefined;
+    (source.steps !== undefined ||
+      // 温度の仕様制作は手順を配らず、instructions全文を常設する明示的なprofile。
+      (source.runtime?.kind === 'react' && source.runtime.profile === 'component-design-v1'));
   if (!hasExplicitLearningMetadata) context.missingExerciseMetadataIds.add(source.id);
   const directory = sourceDirectory(relativePath);
   const instructionsPath = joinSourcePath(directory, source.instructionsSource);

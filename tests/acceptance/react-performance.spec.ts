@@ -13,7 +13,7 @@ import { testServerUrl } from '../e2e/helpers/testBasePath';
 
 const { exercises } = await loadAuthoringCourse('content/react');
 const execFileAsync = promisify(execFile);
-const representatives = ['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch03-l01-e01'];
+const representatives = ['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch04-l01-e01'];
 
 /** 実Controllerの完了Measureを読む。描画開始や前回の採点結果で代用しない。 */
 async function measure(page: Page, button: string, name: string): Promise<number> {
@@ -190,7 +190,7 @@ for (const id of representatives) {
               ?.status;
           })
           .toBe('pass');
-        if (id === 'react-ch03-l01-e01') {
+        if (id === 'react-ch04-l01-e01') {
           // Capstoneは合格時に完成画面へ移るので、保存した同じSolutionを通常経路で開き直す。
           await expect(
             page.getByRole('heading', { level: 1, name: 'ピースがはまりました' }),
