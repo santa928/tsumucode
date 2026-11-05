@@ -4,9 +4,9 @@ import path from 'node:path';
 import { expect, it } from 'vitest';
 import { parse } from 'yaml';
 
-it.each(['push', 'pull_request'])('%s detects changes in the baked Native test import graph', async (event) => {
+it.each(['push', 'pull_request'] as const)('%s detects changes in the baked Native test import graph', async (event) => {
   const workflow = parse(await readFile('.github/workflows/local-runtime.yml', 'utf8')) as {
-    on: Record<string, { paths: string[] }>;
+    on: Record<'push' | 'pull_request', { paths: string[] }>;
   };
   const paths: string[] = workflow.on[event].paths;
   for (const changed of [
