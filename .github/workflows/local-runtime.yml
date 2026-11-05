@@ -535,6 +535,28 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 90
+      - name: Summarize Native failure diagnostics
+        id: native_failure_summary
+        if: always() && failure() && inputs.candidate_artifact_id != '' && hashFiles('.release-v2/native-learning-reports/native-learning-*.json') != ''
+        run: |
+          set -euo pipefail
+          ./scripts/docker-compose.sh run --rm app node --import tsx scripts/release/v2/failureDiagnostics.ts > .release-v2/native-failure-summary.jsonl
+          if [ -s .release-v2/native-failure-summary.jsonl ]; then
+            {
+              printf '\nNative failure diagnostics\n\n```json\n'
+              cat .release-v2/native-failure-summary.jsonl
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Preserve Native failure diagnostics
+        if: always() && inputs.candidate_artifact_id != '' && steps.native_failure_summary.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: diagnostics-boundary-native-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2/checks/native-learning-*-failure-summary.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
       - name: Stop only Native receipt verifier
         if: always() && inputs.candidate_artifact_id != ''
         run: ./scripts/docker-compose.sh down --remove-orphans

@@ -21,6 +21,7 @@ import { observeTestSuite } from './observed';
 import { readNextFixtureCoverage } from './nativeCoverage';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 import { readLighthouseCoverage } from './lighthouse';
+import { safeVerificationFailure, writeFailureDiagnostic } from './failureDiagnostics';
 const exec = promisify(execFile);
 const SnapshotSchema = z
   .object({
@@ -282,19 +283,42 @@ export async function runReleaseSuite(
     throw new Error('Unimplemented fixed suite');
   };
   let actualReport: unknown;
-  const result = await executeSuite(
-    candidate,
-    requirement,
-    context,
-    path.join(root, 'dist'),
-    async () => {
-      const observation = await driver();
-      actualReport = observation.report;
-      return observation;
-    },
-  );
-  await storeSuiteReport(root, result, actualReport);
-  return result;
+  try {
+    const result = await executeSuite(
+      candidate,
+      requirement,
+      context,
+      path.join(root, 'dist'),
+      async () => {
+        const observation = await driver();
+        actualReport = observation.report;
+        return observation;
+      },
+    );
+    await storeSuiteReport(root, result, actualReport);
+    return result;
+  } catch (error) {
+    const manifest = executionPlan.testManifests.find((item) => item.suite === suite);
+    if (manifest && ['chromium', 'firefox', 'webkit'].includes(manifest.project)) {
+      try {
+        await writeFailureDiagnostic(
+          root,
+          suite,
+          path.join(
+            root,
+            suite.startsWith('native-learning-')
+              ? '.release-v2/native-learning-reports/' + suite + '.json'
+              : '.release-v2/checks/' + suite + '.json',
+          ),
+          manifest,
+          candidate.recipe.sourceCommit,
+        );
+      } catch {
+        process.stderr.write('Release failure diagnostics unavailable\n');
+      }
+    }
+    throw safeVerificationFailure(error);
+  }
 }
 function verifyUnitReport(input: unknown) {
   z.object({
