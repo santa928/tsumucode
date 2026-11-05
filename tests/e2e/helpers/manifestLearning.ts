@@ -6,7 +6,8 @@ import {
   type AuthoringExercise,
 } from '../../../scripts/content/compileCourse';
 import { InventorySchema, PlanSchema } from '../../../scripts/release/v2/schema';
-import { editorText, replaceEditorText, readStoredProgress } from './progress';
+import { readStoredProgress } from './progress';
+import { selectAllAndCopyEditorDocument } from './editorDocument';
 import { testBasePath } from './testBasePath';
 import { pythonFixedFixtures } from '../../../src/core/runtime/pythonFixedFixtures.mjs';
 const snapshotFile = '.release-v2/preparation.json';
@@ -27,11 +28,15 @@ async function writeFiles(page: Page, exercise: AuthoringExercise, solution: boo
     const tab = page.getByRole('tab', { name: file.path, exact: true });
     await tab.click();
     await expect(tab).toHaveAttribute('aria-selected', 'true');
-    await expect(
-      page.getByRole('textbox', { name: file.path + ' のコードエディター', exact: true }),
-    ).toHaveAttribute('contenteditable', 'true', { timeout: 15000 });
-    await replaceEditorText(page, file.content);
-    await expect.poll(() => editorText(page)).toBe(file.content);
+    const editor = page.getByRole('textbox', {
+      name: file.path + ' のコードエディター',
+      exact: true,
+    });
+    await expect(editor).toHaveAttribute('contenteditable', 'true', { timeout: 15000 });
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.insertText(file.content);
+    expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
   }
 }
 async function closeFeedback(page: Page) {
@@ -188,9 +193,27 @@ export function declareManifestLearning(native: boolean) {
           );
           const expectSavedFiles = async () => {
             for (const file of files.values()) {
-              await page.getByRole('tab', { name: file.path, exact: true }).click();
-              await expect.poll(() => editorText(page)).toBe(file.content);
+              const tab = page.getByRole('tab', { name: file.path, exact: true });
+              await tab.click();
+              await expect(tab).toHaveAttribute('aria-selected', 'true');
+              const editor = page.getByRole('textbox', {
+                name: file.path + ' のコードエディター',
+                exact: true,
+              });
+              expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
             }
+            // Draftはreadonlyを含むworkspace全filesを保存する。別workspaceの一致は使わない。
+            await expect
+              .poll(
+                async () =>
+                  (await readStoredProgress(page)).drafts.find(
+                    (row) =>
+                      row['courseId'] === course.id && row['workspaceId'] === exercise.workspaceId,
+                  )?.['files'],
+              )
+              .toEqual(
+                Object.fromEntries([...files.values()].map((file) => [file.path, file.content])),
+              );
           };
           await expectSavedFiles();
           await page.reload();
