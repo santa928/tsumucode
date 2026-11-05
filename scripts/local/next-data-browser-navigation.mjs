@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { URL } from 'node:url';
 import { expect } from '@playwright/test';
 
 /** 選択値の更新とPreview文書の到達を分け、前の文書を基準値にしない。 */
