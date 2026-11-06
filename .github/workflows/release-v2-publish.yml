@@ -333,7 +333,23 @@ jobs:
           const tagName='tsumucode-app-'+runId+'-'+record.deploymentId;
           ensure(prepared.plan?.tagName===tagName && prepared.plan.targetCommit===source && ['create-annotated-record','reuse-record'].includes(prepared.plan.action),'Unexpected record action');
           const api=async(relative,body)=>{
-            const response=await fetch('https://api.github.com/repos/'+repository+relative,{method:body===undefined?'GET':'POST',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(body===undefined?{}:{Authorization:'Bearer '+process.env.GH_TOKEN,'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
+            const response=await fetch('https://api.github.com/repos/'+repository+relative,{
+              method:body===undefined?'GET':'POST',
+              redirect:'error',
+              signal:AbortSignal.timeout(15000),
+              headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(body===undefined?{}:{Authorization:'Bearer '+process.env.GH_TOKEN,'Content-Type':'application/json'})},
+              ...(body===undefined?{cache:'no-store'}:{body:JSON.stringify(body)}),
+            });
+            if(relative==='/git/ref/tags/'+tagName || relative==='/git/refs' || relative==='/git/tags'){
+              console.log('Record API observation '+JSON.stringify({
+                method:body===undefined?'GET':'POST',
+                resource:relative,
+                status:response.status,
+                requestId:response.headers.get('x-github-request-id'),
+                cacheControl:response.headers.get('cache-control'),
+                age:response.headers.get('age'),
+              }));
+            }
             ensure(response.body,'Missing record API response');const reader=response.body.getReader(),chunks=[];let size=0;
             try{for(;;){const result=await reader.read();if(result.done)break;size+=result.value.length;if(size>1024*1024){await reader.cancel();throw Error('Oversized record state');}chunks.push(result.value);}}finally{reader.releaseLock();}
             const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
@@ -352,13 +368,24 @@ jobs:
             ensure(hashValue(smoke.actual)===hashValue({repository,deploymentId:record.deploymentId,workflowHeadCommit:source,runId,siteUrl:site,createdAt}),'Smoke belongs to another deployment');
           };
           const stable=value=>({...value,observedAt:null,smokeDigest:null});
-          const existing=async()=>{
+          const existing=async expectedAnnotation=>{
             const reference=await api('/git/ref/tags/'+tagName);if(reference.status===404)return false;
-            ensure(reference.status===200 && reference.body.object?.type==='tag' && /^[a-f0-9]{40}$/.test(reference.body.object.sha),'Immutable record ref conflict');
+            ensure(reference.status===200 && reference.body.ref==='refs/tags/'+tagName && reference.body.object?.type==='tag' && /^[a-f0-9]{40}$/.test(reference.body.object.sha),'Immutable record ref conflict');
+            ensure(expectedAnnotation===undefined || reference.body.object.sha===expectedAnnotation,'Created record ref conflict');
             const tag=await get('/git/tags/'+reference.body.object.sha);
             ensure(tag.tag===tagName && tag.object?.type==='commit' && tag.object.sha===source,'Immutable record target conflict');
             let old;try{old=JSON.parse(tag.message);}catch{throw Error('Immutable record message conflict');}
-            ensure(hashValue(stable(old))===hashValue(stable(record)),'Immutable record evidence conflict');return true;
+            ensure(hashValue(stable(old))===hashValue(stable(record)),'Immutable record evidence conflict');
+            ensure(expectedAnnotation===undefined || hashValue(old)===hashValue(record),'Created record evidence conflict');
+            return true;
+          };
+          const reconcile=async expectedAnnotation=>{
+            // Retry only an absent exact ref after the single write attempt. Conflicts and API errors stop.
+            for(const wait of [0,1000,2000,4000]){
+              if(wait>0)await new Promise(resolve=>setTimeout(resolve,wait));
+              if(await existing(expectedAnnotation))return true;
+            }
+            return false;
           };
           let state='unknown';
           try{
@@ -369,10 +396,12 @@ jobs:
               const annotation=await api('/git/tags',{tag:tagName,message:JSON.stringify(record),object:source,type:'commit'});
               ensure(annotation.status===201 && /^[a-f0-9]{40}$/.test(annotation.body.sha),'Annotated record outcome uncertain; no ref write attempted');
               await actual();
-              // A lost/conflicting ref response is inspected once. No blind repeat POST or force update exists.
+              // A lost/conflicting ref response is reconciled read-only. Never repeat POST or force update.
               try{const result=await api('/git/refs',{ref:'refs/tags/'+tagName,sha:annotation.body.sha});ensure(result.status===201,'Record ref outcome uncertain');}
-              catch{ensure(await existing(),'Record ref outcome uncertain; exact ref is absent');state='recorded';}
-              if(state!=='recorded'){ensure(await existing(),'Record ref unavailable after creation');state='recorded';}
+              catch{console.log('Record ref write outcome uncertain; reconciling exact annotation');}
+              ensure(await reconcile(annotation.body.sha),'Record ref unavailable after bounded read-only reconciliation');
+              await actual();
+              state='recorded';
             }
             await writeFile('record-outcome.json',JSON.stringify({schemaVersion:1,state,tagName}));
             if(process.env.GITHUB_OUTPUT)await writeFile(process.env.GITHUB_OUTPUT,'state='+state+'\ntag_name='+tagName+'\n',{flag:'a'});
