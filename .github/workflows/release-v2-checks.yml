@@ -138,6 +138,7 @@ jobs:
           name: diagnostics-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             .release-v2/checks/${{ matrix.suite }}.json
+            .release-v2/checks/${{ matrix.suite }}-failure-summary.json
             .release-v2/checks/${{ matrix.suite }}-artifacts/**/error-context.md
             .release-v2/checks/${{ matrix.suite }}-artifacts/**/*.png
             .release-v2/checks/${{ matrix.suite }}-artifacts/**/trace.zip
@@ -193,6 +194,7 @@ jobs:
           name: diagnostics-public_boundary-public-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             .release-v2/checks/browser-public.json
+            .release-v2/checks/browser-public-failure-summary.json
             .release-v2/checks/browser-public-artifacts/**/error-context.md
             .release-v2/checks/browser-public-artifacts/**/*.png
             .release-v2/checks/browser-public-artifacts/**/trace.zip
