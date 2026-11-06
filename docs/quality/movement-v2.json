@@ -1,0 +1,682 @@
+{
+  "body": {
+    "schemaVersion": 1,
+    "migrationId": "python-functions-and-react-project-movement-v1",
+    "stage": "python-first",
+    "pythonReferenceUpdates": "list-alias-and-console-references-v1",
+    "baseline": {
+      "deploymentId": "7522091460",
+      "sourceCommit": "16bbf55442a3166193c3e7de07c06d644126968d",
+      "sourceRecordDigest": "6d654ec9b95c7b82db56ec9061f75215ea9f61d20b8a563dd2702319c480c2e7",
+      "inventoryDigest": "a0746d8d5b7a9ab257dcdfb14778ceb908313161f658db06a4ebd3ddcfe85583"
+    },
+    "candidateContentCommit": "19cbed7d95cac527d17b58f3522cdf4f05466b92",
+    "candidateInventoryDigest": "4ff4ca0a798e66c4a9e230fe90e4cfbdb29f24bae5e10996b8a2e780767997b9",
+    "originalsDigest": "25c4b0f9adb8e2fd0bd6fffb722a17509520a6f04c78c016be1cb40a16824ab7",
+    "moves": [
+      {
+        "courseId": "python-basics",
+        "fromLessonId": "python-basics-ch01-l08",
+        "toLessonId": "python-basics-ch01-l12"
+      },
+      {
+        "courseId": "python-basics",
+        "fromLessonId": "python-basics-ch01-l09",
+        "toLessonId": "python-basics-ch01-l13"
+      }
+    ],
+    "references": {
+      "python-basics-ch01-l08-e01": "python-basics-ch01-l12-e01",
+      "python-basics-ch01-l08-e01-step01": "python-basics-ch01-l12-e01-step01",
+      "python-basics-ch01-l08-e01-r01": "python-basics-ch01-l12-e01-r01",
+      "python-basics-ch01-l08-e01-h01": "python-basics-ch01-l12-e01-h01",
+      "python-basics-ch01-l08-s02": "python-basics-ch01-l12-s02",
+      "python-basics-ch01-l08-e01-h02": "python-basics-ch01-l12-e01-h02",
+      "python-basics-ch01-l08-e01-h03": "python-basics-ch01-l12-e01-h03",
+      "python-basics-ch01-l08-s01": "python-basics-ch01-l12-s01",
+      "python-basics-ch01-l09-e01": "python-basics-ch01-l13-e01",
+      "python-basics-ch01-l09-e01-step01": "python-basics-ch01-l13-e01-step01",
+      "python-basics-ch01-l09-e01-r01": "python-basics-ch01-l13-e01-r01",
+      "python-basics-ch01-l09-e01-h01": "python-basics-ch01-l13-e01-h01",
+      "python-basics-ch01-l09-s02": "python-basics-ch01-l13-s02",
+      "python-basics-ch01-l09-e01-h02": "python-basics-ch01-l13-e01-h02",
+      "python-basics-ch01-l09-e01-h03": "python-basics-ch01-l13-e01-h03",
+      "python-basics-ch01-l09-s01": "python-basics-ch01-l13-s01"
+    },
+    "intents": [
+      {
+        "oldFixtureId": "solution",
+        "oldFixtureDigest": "b85b7f41b71a1f4a96f6596824b51ecb216ef429fac88e09b4193437c05f7f1c",
+        "oldExpectedStatus": "pass",
+        "preservedIntent": [
+          "数の和、二組の戻り値8/10、外側left=100不変。補助alternativeが一時変数をreturnする構造を担う。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "solutionは引数leftへ和を再代入。alternativeは関数名・引数順・結果保存が異なる。旧source完全一致ではない。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "solution",
+            "fixtureDigest": "87b5d1c392f0e1d664f9f9a1dd4d609449394afbc33029ed770229544db66bb5",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "c67a156db6ff2cb59335cb493999f485ec5523999fb76dcc054d4dfc41aaa256",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "86c08ea1fe4c2f63099ae7f3d4e70042614287ac5aaaa3cd48e4525401a6963b",
+                "expectedStatus": "pass"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "d9cdf9a374af75535bbd5f852814c870e334c89f52144d1d2b1be5978c1f06fc",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "80d11b55cfee5551fd26cdeca563b54cbadf3dfe06c53c07d7b444de25eda82f",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "c671b7c91167551bc7d78b96fa61981194e7452767ac7017f8a5850ae5d2e915",
+                "expectedStatus": "pass"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "direct-return",
+        "oldFixtureDigest": "8420d72b1c839fea14abeb4c91df922dbe2a22478d2cef63a43be29a544a8e4a",
+        "oldExpectedStatus": "pass",
+        "preservedIntent": [
+          "一行return left+right、二組の直接表示、最後の外側left=100を保持。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "空行追加で6行から8行。profile/factと教材metadataは変わる。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "direct-return-scope",
+            "fixtureDigest": "7e6ef5cc8ae4c2d9c1182aab29ce56bf2f43a9344537a824930847dbde059d5c",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "98cdb4cfba666aff3e1834daa983acd00478ffcf4da94d64be67eb68608a252a",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "1decf04b6fc4bce2a1062050a77d0d66db2c0d0983c07501314113b8eb526f19",
+                "expectedStatus": "pass"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "commuted-and-renamed",
+        "oldFixtureDigest": "7924585ac3e4b5d273525bdc2465fac6ea9d5febcc4fbb92fb660cac0fc6f403",
+        "oldExpectedStatus": "pass",
+        "preservedIntent": [
+          "可換加算、任意の関数/引数名、戻り値保存、scopeを複数の目標へ分割する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "旧外側a・逆順呼出しをそのまま許す互換性は保持しない。現l11は外側leftと固定呼出し列を要求する。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l08",
+            "exerciseId": "python-basics-ch01-l08-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "c7ea78b966a5f17a5168535f86d7614a464ab375dc2b0be1fc4affd8fbc1caab",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "741f549ee2337b1a219eadf2ac8c884a81cf73e8b39d3301788af1ebf90e4ba3",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "22a394e3d35bec091da72fc8d97ab7837a1cec5b95b9ca815a12d84f7758c63b",
+                "expectedStatus": "pass"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l09",
+            "exerciseId": "python-basics-ch01-l09-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "1616f3088898d82794fe96aa4c8ec4734b375e0b301f40437b400f4e7e617c7a",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "20339ea824e62d20c3932525e483360c918141a16c6ea48d9b2d73302f5af84e",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "3235800770e433f1c58115bee88227812223b64ba50e8f7b8e246686832c6fb1",
+                "expectedStatus": "pass"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "d9cdf9a374af75535bbd5f852814c870e334c89f52144d1d2b1be5978c1f06fc",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "80d11b55cfee5551fd26cdeca563b54cbadf3dfe06c53c07d7b444de25eda82f",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "c671b7c91167551bc7d78b96fa61981194e7452767ac7017f8a5850ae5d2e915",
+                "expectedStatus": "pass"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "stored-results",
+        "oldFixtureDigest": "3d10ddc3a252b988611a86ed1d79048923e07f686f7384696b588777498fb9f2",
+        "oldExpectedStatus": "pass",
+        "preservedIntent": [
+          "二組の戻り値を保存し、それぞれ利用する正例を保持する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "l11は名前が異なる。l09は保存結果へ+2する新目標でstdout10/12。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "d9cdf9a374af75535bbd5f852814c870e334c89f52144d1d2b1be5978c1f06fc",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "80d11b55cfee5551fd26cdeca563b54cbadf3dfe06c53c07d7b444de25eda82f",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "c671b7c91167551bc7d78b96fa61981194e7452767ac7017f8a5850ae5d2e915",
+                "expectedStatus": "pass"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l09",
+            "exerciseId": "python-basics-ch01-l09-e01",
+            "caseKind": "authored",
+            "fixtureId": "alternative",
+            "fixtureDigest": "1616f3088898d82794fe96aa4c8ec4734b375e0b301f40437b400f4e7e617c7a",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "20339ea824e62d20c3932525e483360c918141a16c6ea48d9b2d73302f5af84e",
+                "expectedStatus": "pass"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "3235800770e433f1c58115bee88227812223b64ba50e8f7b8e246686832c6fb1",
+                "expectedStatus": "pass"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "starter",
+        "oldFixtureDigest": "a7bc4f373c7fd532596488f43d63945255fa924c05e6d4fdfcd2e6e1ca124bf4",
+        "oldExpectedStatus": "incomplete",
+        "preservedIntent": [
+          "left+leftで第2引数を無視する負例をincompleteとして維持する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "現は表示関数でreturn/scopeを含まない。静的stdout6/8は期待8/10と異なる。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l08",
+            "exerciseId": "python-basics-ch01-l08-e01",
+            "caseKind": "authored",
+            "fixtureId": "misconception",
+            "fixtureDigest": "b36b3796fe301b55acc86dfe26e0f44e528931f38395670a111aae572910983a",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "e0da801df892a1de1f9dc1ffcf8f9a76244a47d7e957dde50cb54e75e99542e1",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "f169d3bf20b2981d3de08e8445df8aeb1f15f6f2102890623e3e9e60d0dc00c4",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "constant-return",
+        "oldFixtureDigest": "89bea615c4bcbc50829d60b00e8f83e1da18047bff1453583aeb8beacf841f8d",
+        "oldExpectedStatus": "incomplete",
+        "preservedIntent": [
+          "return 8の固定値が二組目へ追従しない負例を維持する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "現は戻り値へ+2しstdout10/10、期待10/12。旧未使用和計算・scopeは含まない。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l09",
+            "exerciseId": "python-basics-ch01-l09-e01",
+            "caseKind": "authored",
+            "fixtureId": "misconception",
+            "fixtureDigest": "94c0a6c0824fa13540ebb4aa8bb700dcea4a7675754cda5f5e1b678b5608039c",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "e7e6ff057b8b2568f6ed3c0a686f46f2f2f86fd83d9d48e015228214d621f11d",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "a64b2fc253acc9c931c9623976ed63e544c73c674a34d40c78afe94288eb9e35",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "no-return",
+        "oldFixtureDigest": "8a71740318ccb5fcf87010323f7f6f37a64a50277c7782c84c6625cf20eac02a",
+        "oldExpectedStatus": "incomplete",
+        "preservedIntent": [
+          "返すべきaddがprintだけで数を返さない点を負例として維持する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "表示専用show_sumのNoneは正当な新目標。現misconceptionの静的stdout8/None/8/Noneは期待8/None/8と異なる。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l10",
+            "exerciseId": "python-basics-ch01-l10-e01",
+            "caseKind": "authored",
+            "fixtureId": "misconception",
+            "fixtureDigest": "9bfddf7d99e79ee29cd955d6ec8225707132f2222fe8ad2fd23434cdc0149869",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "5eed3084745d3c1816dd1a4df006508cdc42538289129aa987fe25a42d2b5197",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "bf710c0e45a77a69c001f5e0430ac908b9ec442f41484d0490f9648b680075bc",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "unused-function",
+        "oldFixtureDigest": "99ca1742f0481c9d8e0a5311d2959fab056c6713dfc932429e4a24363829f0ce",
+        "oldExpectedStatus": "incomplete",
+        "preservedIntent": [
+          "正しい定義や期待stdoutだけでpassにしない。unused-second-resultが実呼出しとscope条件を満たしながら二番目の戻り値由来欠落を孤立させる。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "複数witnessを保持する。l11/unused-correct-function単体はleft要件にも違反する複合負例であり、単独で全意図を代表させない。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l07",
+            "exerciseId": "python-basics-ch01-l07-e01",
+            "caseKind": "authored",
+            "fixtureId": "misconception",
+            "fixtureDigest": "78b97191c11335dd6f76deb00b14b5e9498a57929734b0024e16fd998755d4e4",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "9f79552f3b31f0afb68c00331de3cba2f63bf6b66762e52716c2a04eea08874f",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "0b26c150112f94a09fb86d870cf9d161533bf1266e30dd4a0a90abb356fda1f8",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l09",
+            "exerciseId": "python-basics-ch01-l09-e01",
+            "caseKind": "authored",
+            "fixtureId": "unused-correct-function",
+            "fixtureDigest": "3aa27e0d729cd7d4f6fc6ea47b355877b382d7cb88b36f12ec01a93b05ae8dfa",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "4127ffb510ed1885cab07119ac549072587e45af8e835acee761bb7fcf52b26b",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "d69ca994ede49f2fad4f47cbfb0e050035f2a95bd80c33bc6e8a65d6c11772b4",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "unused-correct-function",
+            "fixtureDigest": "9b94cd492826d7df6fcd5da7e6101b5c0732f15415dc1d9652158a2cf2ee0bb0",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "e5498df1da9b3fe29ce833c5814e437d2577be4f58b1c5c7786f1d599173b64f",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "ee190dd0957d9e123e79fed348691e27cb70699ed68dc173ad4f355c7a2a2cff",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          },
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "unused-second-result",
+            "fixtureDigest": "6b95d91a02f3d57ee960c4192866f80055ec9835df2aae17672a4b99a0e0a653",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "76f7f8c76344c1954660600eab47ef11bdac242f9c004937cd9d61d1fd4b9076",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "e832b061d4dd57d4a91ea7cb84ed0ebacc9b8c0a78b542e9d94766e31ba8e1c0",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "outer-value",
+        "oldFixtureDigest": "b65b2a0b84c33aae016f4e450ce3822ccb75159e2bf7a61e5a3d12a79b210ce7",
+        "oldExpectedStatus": "incomplete",
+        "preservedIntent": [
+          "外側100を和へ混ぜ入力の一方を無視する負例。双方の静的stdoutは105/106/100、期待8/10/100と異なる。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "外側名outsideからleft、引数left/rightからfirst/secondへ変わる。現は同名left要件にも違反する複合負例。既存103/106/100記載は算術誤記という旧レビュー所見を維持する。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "misconception",
+            "fixtureDigest": "26c2a8ccad6c72156411248bd38c493f1dfc7af669dd5c4ac7e43ec330f01267",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "0c4087a54a18bdb3e9eb721b19a37a75d09542792b10e3deaaad8bed5d871544",
+                "expectedStatus": "incomplete"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "5f2209c32124b37c4018153416d9c9204a9fa9b28b77d7b494c686e99f29b321",
+                "expectedStatus": "incomplete"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "oldFixtureId": "reference-error",
+        "oldFixtureDigest": "009a1a6d56f22c913c45265290bafef8feabf8293f4a30e2532078c48a68f29f",
+        "oldExpectedStatus": "code-error",
+        "preservedIntent": [
+          "正常な加算呼出し二回で8/10を表示後、未定義missingのNameErrorへ至るcode-error経路を保持する。"
+        ],
+        "explicitGoalOrInputDeltas": [
+          "関数内一時変数returnから直接returnへ、7行目から8行目へ変わる。全文診断・行番号・旧ruleの同一性は主張しない。",
+          "旧Source全域の互換性・新しいengine実測・実人の習得保証は本Source対応審査の対象外。"
+        ],
+        "witnesses": [
+          {
+            "courseId": "python-basics",
+            "lessonId": "python-basics-ch01-l11",
+            "exerciseId": "python-basics-ch01-l11-e01",
+            "caseKind": "authored",
+            "fixtureId": "missing-after-valid-calls",
+            "fixtureDigest": "7080e760e054b6d4cd1aa2b5282b68fce72f3d69315c0e871fd93de5ef28caf0",
+            "modes": [
+              {
+                "mode": "pyodide",
+                "sourceDigest": "a27d049f6d147c13cbe9c455f54e14aa27a05bbe35171a2894899716076b30f5",
+                "expectedStatus": "code-error"
+              },
+              {
+                "mode": "cpython",
+                "sourceDigest": "c80eeebed701884c4bccda1da5fdbf91d38efc3dd1b6be5a548e02aed820b3d9",
+                "expectedStatus": "code-error"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "recheckLessons": [
+      "python-basics/python-basics-ch01-l08",
+      "python-basics/python-basics-ch01-l12",
+      "python-basics/python-basics-ch01-l09",
+      "python-basics/python-basics-ch01-l13",
+      "python-basics/python-basics-ch01-l07",
+      "python-basics/python-basics-ch01-l10",
+      "python-basics/python-basics-ch01-l11"
+    ]
+  },
+  "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+  "approvals": [
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "solution",
+      "scopeDigest": "534269c95613df92abcbb0cdd224174ffd54465e95b7499add2fd629daa1b072",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "1670a6832206bb1aaafda25bbe55551a4c1135a590880f50364076970f69fcb3",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "a485432478b416feaba6d49d36eb6471484ae7982ac26df82eb89529c712f5a3"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "direct-return",
+      "scopeDigest": "9e9da02dfc468b32cc31c70e6b473e06b5c275c6ea05e041157f1d0dff7813f9",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "c0b5679c06021afb97e022401a265e7d2a830db6d71e2a9097268859cdf5b510",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "9279bf76ec6b0bc6622378d8f7d9db7d14e4d10cd8c7cb640e8392626ca7e4f1"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "commuted-and-renamed",
+      "scopeDigest": "65e6c3de9f0ecfa2b5b6ab5bc47b51adf856ad1fc74aa23db0db6da2d637a0a7",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "09b777edf0b2c89ce858b38d315c720684f0559a5ada473fac91bbdc221f59e0",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "1e16d18c00228afdb65973214b3dc68e1cc30ac1d7dd020d0207ad5c315cadf7"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "stored-results",
+      "scopeDigest": "f98db48850de5516833d59010fd6a28f93876af7f6cfdf2696fb21b6975464d4",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "42ded3b296acc8da60c7c8d2ed046f57f5b17f5490873134c7b296363ddde899",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "793ac3ee9dad9ca430a015f085b4f71c0867803c1b27405242ed9904782c1e9c"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "starter",
+      "scopeDigest": "4202b4b9ef3ee2b650adfc5317efe638bf327fb3dca2581e0b23b20eb578b088",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "ae37c9d82621474f22f029b5abaac4b5b5e1b4d2c5e5c2574083dd061fcd98d0",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "e5ccf1fd38356ffddeccf9b380012ab3697971fbf2f1917c5c3d6d03693ba196"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "constant-return",
+      "scopeDigest": "59a21cb299acce84e1dbf26003e3b5bf8982df38c39a2ad95b74a5d2be47c860",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "7a3efa38e081718eb7c2f298ac8bafca25c946774a6024c046df63c18a256af5",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "b48c73f7df7bf0fe015b323954cb2a60f24b621caa59c7d198a2bd187ae3ac54"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "no-return",
+      "scopeDigest": "548dbafef286bf0eea5fed241177324cab7c0fad5efee599dcb7b658e18c5b44",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "12c485a0db95f37a6d64b324989ecfc7736e258f1964415f2606569e722af1e1",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "653fe033e3363325e5cd92a81990d4d643dfc2f4dcf3b6815d0eaa356064e6f4"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "unused-function",
+      "scopeDigest": "bc87340ee3b2152e8d1018216218e0dc24c3d7bc7cd4a08bfa18af892277a620",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "dde05ad682f68862434cf92906d81cd771b08dedb275fb330ac60b0f606cef84",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "ef397f418f0af1d80595a4a91f010e569dbab384c543dd3b44d9c6fca9273a4c"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "outer-value",
+      "scopeDigest": "1a8e8b3f9a08e7cb9471e78d3b21ca9473fe4cf3e0cd6f7ed132c55ef30ec1f9",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "a02725c3de10d9503d323d3d36f42f581910b94d7dbc649792017d661fe31db2",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "4a35cce70895c0e57811c61e9c7bba118912c6bc9e09ae289a35831f85330d62"
+    },
+    {
+      "schemaVersion": 1,
+      "migrationId": "python-functions-and-react-project-movement-v1",
+      "bodyDigest": "55c16e0f4d154aee3975a16a134fcb031fa59dc3640f1e1a175a07c3bc3f4838",
+      "oldFixtureId": "reference-error",
+      "scopeDigest": "c8b60ca4a4960497000724a5a3a3a12fbe793c1d41d233e9ae936d626a603688",
+      "authorId": "codex-issue259-final-body-d47d",
+      "reviewerId": "codex-issue259-movement-scope-review",
+      "status": "approved",
+      "method": "source-review",
+      "originalDigest": "abd5e62a01894893d42c2865b476f2f71f6e701f8bd8602aa116a46f74a6e0b7",
+      "originalsCheckedBy": "codex-issue259-reference-carry-original-inspection",
+      "receiptDigest": "c7e9b36c5db1fb7fa19ce600886daaf786971c35d519d10265a568d01475986a"
+    }
+  ],
+  "declarationDigest": "76a4f2b1c429af53f584a6c92c0fdf9d4a529279fc465aa1acdb5338c05686c0"
+}

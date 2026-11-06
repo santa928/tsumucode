@@ -70,6 +70,15 @@ export const InventorySchema = z
 export type ReleaseInventory = z.infer<typeof InventorySchema>;
 export type CourseInventory = z.infer<typeof CourseInventorySchema>;
 export type LessonInventory = z.infer<typeof LessonInventorySchema>;
+export const BaselineSchema = z
+  .object({
+    deploymentId: z.string().regex(/^[1-9]\d*$/u),
+    sourceCommit: CommitSchema,
+    artifactDigest: DigestSchema,
+    sourceRecordDigest: DigestSchema,
+    inventory: InventorySchema,
+  })
+  .strict();
 export const TargetSchema = z
   .object({
     key: z.string().min(1),
@@ -95,6 +104,7 @@ export const PlanSchema = z
   .object({
     schemaVersion: z.literal(1),
     inventoryDigest: DigestSchema,
+    movementDeclarationDigest: DigestSchema.optional(),
     parent: z
       .object({ deploymentId: z.string().regex(/^[1-9]\d*$/u), sourceRecordDigest: DigestSchema })
       .strict()

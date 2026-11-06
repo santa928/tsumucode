@@ -1,0 +1,239 @@
+id: python-basics-ch01-l05-values-e01
+kind: standard
+workspaceId: python-basics-ch01-l05-values-e01
+countsTowardStandardExerciseTotal: true
+title: Listを作り、先頭を読んで更新する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-list
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l05-values-e01-step01
+    file: main.py
+    target: 'numbersに[3, 5]を代入し、numbers[0]を表示します。'
+    starterAnchor: '# Listを作り、先頭を表示するコードを書きます。'
+    change: 'numbersに[3, 5]を代入し、numbers[0]を表示します。'
+    observe: 'indexは0から始まるので、先頭の3が表示されます。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: python-basics-ch01-l05-values-e01-step02
+    file: main.py
+    target: '同じListのindex 0へ4を代入し、もう一度numbers[0]を表示します。'
+    starterAnchor: '# 同じListの先頭を4へ更新し、もう一度表示します。'
+    change: '同じListのindex 0へ4を代入し、もう一度numbers[0]を表示します。'
+    observe: '先の表示は3、更新後の表示は4です。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-values-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: list-values-update-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l05-values-e01-r01
+    label: Listを自分で作り、index 0の読み取りと更新を実出力で確かめられる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: list-values-updated
+    feedback:
+      target: main.pyとConsole
+      expected: 3、4の2行を表示します。先頭を更新する前と後に、同じListのindex 0を読みます。
+      nextAction: Listを作り、先頭の表示、先頭を4へ更新、再び先頭の表示を順に書いてください。
+    hintId: python-basics-ch01-l05-values-e01-h01
+    relatedSlideId: python-basics-ch01-l05-values-s02
+hints:
+  - id: python-basics-ch01-l05-values-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '[3, 5]は2つの値を並べたListです。先頭の位置は0です。'
+    relatedSlideId: python-basics-ch01-l05-values-s02
+  - id: python-basics-ch01-l05-values-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'numbers = [3, 5]の後にprint(numbers[0])を書きます。更新はnumbers[0] = 4です。'
+    relatedSlideId: python-basics-ch01-l05-values-s02
+  - id: python-basics-ch01-l05-values-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'numbers = [3, 5]、print(numbers[0])、numbers[0] = 4、print(numbers[0])を順に書くと3と4を表示します。'
+    relatedSlideId: python-basics-ch01-l05-values-s02
+relatedSlideIds: [python-basics-ch01-l05-values-s01, python-basics-ch01-l05-values-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: positive-sign-update
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/positive-sign-update.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-initial-list-single
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-initial-list-single.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: wrong-initial-list-second
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-initial-list-second.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: augmented-update
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/augmented-update.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: temporary
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: expression-update
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/expression-update.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-update
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/missing-update.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: unused-list
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-list.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: wrong-index
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-index.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: rebind
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/rebind.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: stale-read
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/stale-read.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-values-e01-r01]
+  - id: index-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/index-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: empty-list
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty-list.py
+        editable: false
+    expectedFeedbackRuleIds: []

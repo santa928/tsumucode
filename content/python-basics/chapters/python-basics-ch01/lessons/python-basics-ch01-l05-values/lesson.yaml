@@ -1,0 +1,14 @@
+id: python-basics-ch01-l05-values
+kind: standard
+title: Listを作り、先頭を読んで更新する
+goal: Listを自分で作り、index 0の読み取りと更新を実出力で確かめられる。
+estimatedMinutes: 8
+prerequisiteLessonIds: [python-basics-ch01-l04]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l05-values-e01/exercise.yaml]
+reflection: numbers[0]の0は、先頭の値そのものですか、それとも位置ですか。更新の前後で表示が変わる行を説明してください。
+glossaryRefs: [python-list]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l05-values-s02
+  requiredExerciseIds: [python-basics-ch01-l05-values-e01]

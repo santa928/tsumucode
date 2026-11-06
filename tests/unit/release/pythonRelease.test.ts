@@ -1,9 +1,8 @@
 // @vitest-environment node
 import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
-import { compileCourse } from '../../../scripts/content/compileCourse';
 import { PythonDistributionManifestSchema } from '../../../scripts/build/pythonDistribution';
-import { verifyPythonSyntheticProgressBundle } from '../../../scripts/release/pythonSyntheticContinuity';
+import { verifyHistoricalSyntheticProgressBundle } from '../../fixtures/release/historicalProgressCourse';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { sha256Text } from '../../../scripts/release/releaseHashes';
 import {
@@ -110,13 +109,12 @@ describe('Python公開の固定配布物と独立照合', () => {
   );
 });
 
-describe('Pythonの教材追加後の保存互換', () => {
-  it('既存5CourseとPythonのSource/成功版/カーソルを実migratorで保持する', async () => {
-    const course = (await compileCourse('content/python-basics')).runtime;
+describe('Python初公開の旧Sourceに固定した保存互換（現教材の受入証拠ではない）', () => {
+  it('旧原本の既存5CourseとPythonのSource/成功版/カーソルを実migratorで保持する', async () => {
     const bundle = JSON.parse(
       await readFile('tests/fixtures/progress/python-previous-release-bundle.json', 'utf8'),
     ) as Record<string, unknown> & { courses: Record<string, unknown> };
-    expect(await verifyPythonSyntheticProgressBundle(course, bundle)).toMatchObject({
+    expect(await verifyHistoricalSyntheticProgressBundle('python-basics', bundle)).toMatchObject({
       migratedCourses: 6,
       resetNotices: 0,
       courseCurrentComplete: false,
@@ -124,6 +122,8 @@ describe('Pythonの教材追加後の保存互換', () => {
     delete bundle.courses.react;
     Reflect.deleteProperty(bundle, 'integrity');
     bundle.integrity = { algorithm: 'SHA-256', digest: sha256Text(canonicalJson(bundle)) };
-    await expect(verifyPythonSyntheticProgressBundle(course, bundle)).rejects.toThrow();
+    await expect(
+      verifyHistoricalSyntheticProgressBundle('python-basics', bundle),
+    ).rejects.toThrow();
   });
 });

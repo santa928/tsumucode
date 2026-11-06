@@ -1,0 +1,141 @@
+id: python-basics-ch01-l10-e01
+kind: standard
+workspaceId: python-basics-ch01-l10-e01
+countsTowardStandardExerciseTotal: true
+title: 'printとreturnの役割を比べる'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-function-print-return
+    minimumLevel: compose
+scaffoldLevel: compose
+steps:
+  - id: python-basics-ch01-l10-e01-step01
+    file: main.py
+    target: '2つの関数の役割と戻り値の表示位置'
+    starterAnchor: 'def show_sum(left, right):'
+    change: '最初に出力の行数と順番を予測してください。表示だけの関数を残し、別に2引数の和を返す関数を自作します。表示だけの関数の戻り値を変数へ受け取って表示し、値を返す関数の戻り値も表示してください。出力は8、None、8の3行です。Noneという文字列を直接表示する方法では違いを確認できません。'
+    observe: 'Consoleは8、None、8です。'
+    requiresConceptIds: [python-function-print-return]
+    validationRuleIds: [python-basics-ch01-l10-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: function-print-return-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l10-e01-r01
+    label: '表示する関数の呼び出し結果と、和を返す関数の戻り値をそれぞれ表示する。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: function-behavior-verified
+    feedback:
+      target: main.pyとConsole
+      expected: '表示する関数の呼び出し結果と、和を返す関数の戻り値をそれぞれ表示する。'
+      nextAction: '表示だけの関数にreturnを足す必要はありません。もう1つの関数はprintを使わず、和をreturnします。'
+    hintId: python-basics-ch01-l10-e01-h01
+    relatedSlideId: python-basics-ch01-l10-s02
+hints:
+  - id: python-basics-ch01-l10-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '最初の`8`は関数の内側、次の`None`は呼び出しの結果を表示したものです。'
+    relatedSlideId: python-basics-ch01-l10-s02
+  - id: python-basics-ch01-l10-e01-h02
+    level: 2
+    title: 処理の流れを確かめる
+    text: '前の課題で書いた、値を呼び出した場所へ返す行を思い出します。'
+    relatedSlideId: python-basics-ch01-l10-s02
+  - id: python-basics-ch01-l10-e01-h03
+    level: 3
+    title: 解答と別解の考え方
+    text: '`8`は`show_sum`の中の表示、`None`は`print(shown)`、最後の`8`は自作した関数の戻り値の表示です。'
+    relatedSlideId: python-basics-ch01-l10-s02
+relatedSlideIds: [python-basics-ch01-l10-s01, python-basics-ch01-l10-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternative.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l10-e01-r01]
+  - id: misconception
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/misconception.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l10-e01-r01]
+  - id: output-only
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/output-only.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l10-e01-r01]
+  - id: reference-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reference-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unused-correct-function
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-correct-function.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l10-e01-r01]

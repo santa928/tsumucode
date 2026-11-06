@@ -134,6 +134,7 @@ export async function captureBaseline(options: CaptureOptions) {
       sourceRoot: path.join(temporary, 'content'),
       outputRoot: output,
       checkOnly: false,
+      historicalSource: true,
     });
     const inventory = buildInventory(compilation.compilations);
     const publicContent = await matchPublicTree(

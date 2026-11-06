@@ -1,3 +1,5 @@
-from lesson_tools import add
-print(add(3, 5))
-print(add(4, 6))
+def show_sum(left, right):
+    print(left + left)
+
+show_sum(3, 5)
+# 次は4と6を渡して呼び出してください。

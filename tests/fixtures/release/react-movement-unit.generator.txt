@@ -1,0 +1,95 @@
+// Root copies this one-off generator into an isolated staging tree at tests/local/.
+// It is never run by CI and never creates publication or learner approval evidence.
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
+import { compileCourse } from '../../scripts/content/compileCourse';
+import { PublicProvenanceManifestSchema } from '../../scripts/content/sourceSchema';
+import { hashBytes, hashValue } from '../../scripts/release/v2/identity';
+import { MovementInputsSchema } from '../../scripts/release/v2/movement';
+import { javascriptLearnerContentSha256 } from '../../scripts/release/javascriptLessonEvaluation';
+import { GlossaryEntrySchema, LessonSchema } from '../../src/core/content/schema';
+
+const FIXED = [
+  { lessonId: 'react-ch01-l01', profile: 'props-card-v1', goal: undefined, fixtures: 5 },
+  { lessonId: 'react-ch03-l01', profile: 'quiz-workshop-v1', goal: 'quiz-card', fixtures: 8 },
+  { lessonId: 'react-ch03-l02', profile: 'quiz-workshop-v1', goal: 'quiz-state', fixtures: 9 },
+  { lessonId: 'react-ch04-l01', profile: 'quiz-capstone-v1', goal: 'quiz-capstone', fixtures: 8 },
+] as const;
+const ManifestSchema = z.object({
+  sourceCommit: z.literal('21dcc855413a56729206b02c5a03701207123699'),
+  files: z.array(z.object({ path: z.string(), bytes: z.number(), sha256: z.string() }).strict()),
+}).strict();
+const [output, manifestFile] = process.argv.slice(2);
+if (!output || !manifestFile || !path.isAbsolute(output))
+  throw Error('Usage: generator.ts ABSOLUTE_OUTPUT_JSON SOURCE_MANIFEST_JSON');
+const manifest = ManifestSchema.parse(JSON.parse(await readFile(manifestFile, 'utf8')) as unknown);
+for (const expected of manifest.files) {
+  const bytes = await readFile(expected.path);
+  if (bytes.length !== expected.bytes || hashBytes(bytes) !== expected.sha256)
+    throw Error('Protected source differs: ' + expected.path);
+}
+const compilation = await compileCourse(path.resolve('content/react'));
+const allLessons = compilation.runtime.phases.flatMap((phase) => phase.chapters)
+  .flatMap((chapter) => chapter.lessons);
+const lessons = FIXED.map((fixed) => {
+  const lesson = allLessons.find((row) => row.id === fixed.lessonId);
+  if (!lesson || lesson.exercises.length !== 1 || lesson.exercises[0]?.id !== fixed.lessonId + '-e01')
+    throw Error('Missing fixed original React goal: ' + fixed.lessonId);
+  return LessonSchema.parse(lesson);
+});
+const originals = MovementInputsSchema.shape.current.parse([{ courseId: 'react',
+  exercises: FIXED.map((fixed) => {
+    const full = compilation.authoringExercises?.find((row) => row.id === fixed.lessonId + '-e01');
+    if (!full || full.runtime?.kind !== 'react' || full.runtime.profile !== fixed.profile ||
+      full.runtime.learningGoal !== fixed.goal || full.fixtures.length !== fixed.fixtures)
+      throw Error('Non-original React goal/profile/fixture count: ' + fixed.lessonId);
+    return full;
+  }),
+}])[0];
+if (!originals || originals.exercises.length !== 4) throw Error('Expected exactly four authored goals');
+const glossaryRefs = new Set(lessons.flatMap((lesson) => lesson.glossaryRefs));
+const glossary = z.array(GlossaryEntrySchema).parse(compilation.runtime.glossary
+  .filter((entry) => glossaryRefs.has(entry.id)));
+if (glossary.length !== glossaryRefs.size) throw Error('Fixed glossary coverage differs');
+const assetRefs = lessons.flatMap((lesson) => [
+  ...lesson.slides.flatMap((slide) => slide.assets),
+  ...lesson.exercises.flatMap((exercise) => exercise.assets),
+]);
+const assetKeys = [...new Set(assetRefs.map((asset) => asset.path.replace(/^generated\/content\//u, '')))];
+if (assetKeys.length !== 4) throw Error('Expected exactly four original visible assets');
+const assets = assetKeys.map((key) => {
+  const bytes = compilation.assets.get(key);
+  if (!bytes) throw Error('Missing original asset bytes: ' + key);
+  return { key, sha256: hashBytes(bytes), base64: Buffer.from(bytes).toString('base64') };
+});
+const provenanceIds = new Set(assetRefs.map((asset) => asset.provenanceId));
+const publicProvenance = PublicProvenanceManifestSchema.parse({ ...compilation.publicProvenance,
+  items: compilation.publicProvenance.items.filter((item) => provenanceIds.has(item.id)),
+});
+if (publicProvenance.items.length !== provenanceIds.size) throw Error('Fixed asset provenance differs');
+const data = { lessons, authoringExercises: originals.exercises, glossary, publicProvenance, assets };
+const value = {
+  schemaVersion: 1,
+  purpose: 'synthetic-unit-protocol-not-publication-approval',
+  provenance: {
+    sourceCommit: manifest.sourceCommit,
+    generatorSha256: hashBytes(await readFile(fileURLToPath(import.meta.url))),
+    sourceManifestDigest: hashValue(manifest),
+    sourceFiles: manifest.files,
+    fixedGoalIds: FIXED.map((row) => row.lessonId),
+    authoredFixtureCounts: FIXED.map((row) => row.fixtures),
+    authoredFixtureCount: originals.exercises.reduce((sum, exercise) => sum + exercise.fixtures.length, 0),
+    movedFixtureCount: 25,
+    assetCount: assets.length,
+    learnerDigests: lessons.map((lesson) => ({ lessonId: lesson.id,
+      sha256: javascriptLearnerContentSha256(lesson, compilation.runtime.glossary, compilation.assets) })),
+    dataDigest: hashValue(data),
+  },
+  data,
+};
+await writeFile(output, JSON.stringify(value, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
+process.stdout.write(JSON.stringify({ output, goals: lessons.length, authoredFixtures: value.provenance.authoredFixtureCount,
+  movedFixtures: 25, assets: assets.length, outputBytes: Buffer.byteLength(JSON.stringify(value, null, 2) + '\n'),
+  dataDigest: value.provenance.dataDigest }) + '\n');

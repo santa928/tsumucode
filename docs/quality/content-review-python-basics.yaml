@@ -55,17 +55,39 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
-  - lessonId: python-basics-ch01-l05
-    authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: dbaae77c03ebf56c2f72e04919ed1fc2e00ccadb1791d958dfbd6f429866d99c
-    accuracy: approved
-    goalExerciseAlignment: approved
+  - lessonId: 'python-basics-ch01-l05-values'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: 'c0d39ab830faaf34c14ba9fb2c52b10478f1191a4ef3c91e455a641b6622f6a2'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
-    decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。他担当が実行した現掲載例の原文・文脈・期待・実測を照合した。Reviewer自身の実行ではない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l05-iterate'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: 'ca1ed6069c3a5cb56b5da1b638630ddae0e1c155a0317b4035df1563216965f4'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。他担当が実行した現掲載例の原文・文脈・期待・実測を照合した。Reviewer自身の実行ではない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l05'
+    authorId: 'tsumucode-python-author'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '96d3ea1931b9442dcb0efddd6f679e24cd387ac639210283b5bdc4d36a277280'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: '前提Lesson参照だけの変更を独立AIが差分レビュー。目標・本文・掲載例・配布コード・Hint・採点は不変。新しい前提はList導入/反復の追加、または旧例外Lessonの移動先へ接続する。同一コード・文脈・入力・期待の旧内容承認とCPython実測だけを再利用し、再実行とはしない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
   - lessonId: python-basics-ch01-l06
     authorId: tsumucode-python-author
     reviewerId: codex-issue147-prepublication-review
@@ -77,53 +99,91 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
-  - lessonId: python-basics-ch01-l07
-    authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: a08366eda8d12439511801e06ec69da7156ad462706a11480c57a6d5a8770de8
-    accuracy: approved
-    goalExerciseAlignment: approved
+  - lessonId: 'python-basics-ch01-l07'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '653367d6fd23e49378fb57dc485efbbdc426b987dbaeca60db53b053fe542f89'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
-    decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
-  - lessonId: python-basics-ch01-l08
-    authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: a0d9abfe05696d367a203cf225734e0ab3b8e5a456fbd53ed9972ab7f2d2dc91
-    accuracy: approved
-    goalExerciseAlignment: approved
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l08'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '4e043127ccfcf16abeed532947ff3a4a40e33106e8662c636fb44af8adcbb9eb'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
-    decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
-  - lessonId: python-basics-ch01-l09
-    authorId: tsumucode-python-author
-    reviewerId: codex-input-boundary-review-fixture-metadata-delta
-    sourceHash: d7b1ff76af95bea183580d394865f53f015c975826d1c326383365dad1571402
-    accuracy: approved
-    goalExerciseAlignment: approved
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l09'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: 'fa3671a437e35a852a5b7990454926ef644966eee2eeb8c008309e534e58202a'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
-    decision: approved
-    notes: >-
-      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
-      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
-      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
-  - lessonId: python-basics-ch02-l01
-    authorId: tsumucode-python-author
-    reviewerId: codex-input-boundary-review-fixture-metadata-delta
-    sourceHash: 33fd804e43128ed76c8aad53b017107361048d46a7694ef739a0dae40376cfb3
-    accuracy: approved
-    goalExerciseAlignment: approved
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l10'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '760b2179e055582f5822046a969a430a0c66581067551b3e470f802ac13015ef'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
-    decision: approved
-    notes: >-
-      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
-      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
-      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l11'
+    authorId: 'root-representative-editor'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '49d209775641a059d8b90e80258a169eccd83f8ca03ca2164a8e0bf532046979'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l12'
+    authorId: 'tsumucode-python-author'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '8a69054206869e043eb871e421e4ba6ca068bd6a5085a870b1abb6bf1d41a53e'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: 'python-basics-ch01-l08からpython-basics-ch01-l12への対応を確認。独立AI内容役がGit原本・実生成の表示projection・画像SHAを照合。ID写像以外は前提説明1文の具体化だけで、目標・本文例・採点期待は不変。対応する旧Lessonの承認と不変の掲載例だけを当時の条件で参照する。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch01-l13'
+    authorId: 'tsumucode-python-author'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '727bb9c33d1a75bfe44c16f3ba3bdae9d5166f29a84fbeeac9a7a010e4714f9c'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: 'python-basics-ch01-l09からpython-basics-ch01-l13への対応を確認。独立AI内容役がGit原本・実生成の表示projection・画像SHAを照合。宣言されたID・asset locatorの写像後、学習表示は完全同一。対応する旧Lessonの承認と不変の掲載例だけを当時の条件で参照する。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+  - lessonId: 'python-basics-ch02-l01'
+    authorId: 'tsumucode-python-author'
+    reviewerId: 'representative-content-f1f8'
+    sourceHash: '194e637f38e2b716fd715c2e59f2c028b0f3b67e952ebe6b5ddc6b6e1b3e0bb9'
+    accuracy: 'approved'
+    goalExerciseAlignment: 'approved'
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: 'approved'
+    notes: '前提Lesson参照だけの変更を独立AIが差分レビュー。目標・本文・掲載例・配布コード・Hint・採点は不変。新しい前提はList導入/反復の追加、または旧例外Lessonの移動先へ接続する。同一コード・文脈・入力・期待の旧内容承認とCPython実測だけを再利用し、再実行とはしない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'

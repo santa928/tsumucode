@@ -93,12 +93,26 @@ async function storedDraft(page: Page, id: string) {
   return (await readStoredProgress(page)).drafts.find((draft) => draft['workspaceId'] === id);
 }
 
-for (const number of [2, 3, 4, 5, 6, 7]) {
-  const lessonId = `python-basics-ch01-l0${String(number)}`;
+for (const suffix of [
+  '02',
+  '03',
+  '04',
+  '05-values',
+  '05-iterate',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+]) {
+  const number = Number.parseInt(suffix, 10);
+  const lessonId = `python-basics-ch01-l${suffix}`;
   const exerciseId = `${lessonId}-e01`;
   const sourceRoot = `content/python-basics/chapters/python-basics-ch01/lessons/${lessonId}/exercises/${exerciseId}`;
   test(
-    `Python l0${String(number)}の正負Fixtureを実入力とASTで確認する`,
+    `Python l${suffix}の正負Fixtureを実入力とASTで確認する`,
     { annotation: { type: 'release-exercise', description: exerciseId } },
     async ({ page }, info) => {
       test.setTimeout(240_000);
@@ -141,7 +155,9 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
             : fixture.expectedStatus;
           await page.getByRole('button', { name: '判定する', exact: true }).click();
           if (expectedStatus === 'system-error') {
-            await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+            const message =
+              fixture.id === 'unsupported-call' ? /採点範囲外/ : /入力行が不足しています/;
+            await expect(page.getByText(message).first()).toBeVisible({
               timeout: 30_000,
             });
             expect(
@@ -237,6 +253,13 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
           })
           .toBe('incomplete');
         await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        await replaceEditorText(page, solution);
+        await page.getByRole('button', { name: '判定する', exact: true }).click();
+        await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+          timeout: 30_000,
+        });
+        await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        expect(await editorText(page)).toBe(solution);
       }
     },
   );
@@ -369,3 +392,66 @@ test('Python Collection・Functionの読書と予測を狭幅・キーボード�
     [],
   );
 });
+
+for (const number of [9, 10]) {
+  // Lesson間はContextを閉じ、前のPyodide実行環境を保持しない。
+  test(`Python l${String(number).padStart(2, '0')}の同名関数再定義と正当な別解を確認する`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
+    const negatives = [
+      'def plus(a, b):\n    return 8\nfirst = plus(3, 5)\nprint(first + 2)\ndef plus(a, b):\n    return 10\nprint(plus(4, 6) + 2)\ndef plus(a, b):\n    return a + b\n',
+      'def plus(a, b):\n    return 8\ndef relay(a, b):\n    return plus(a, b)\nfirst = relay(3, 5)\nprint(first + 2)\ndef plus(a, b):\n    return 10\nprint(relay(4, 6) + 2)\ndef plus(a, b):\n    return a + b\n',
+    ];
+    const lessonId = `python-basics-ch01-l${String(number).padStart(2, '0')}`;
+    const exerciseId = `${lessonId}-e01`;
+    const root = `content/python-basics/chapters/python-basics-ch01/lessons/${lessonId}/exercises/${exerciseId}`;
+    const cases = [
+      ...(number === 9
+        ? negatives.map((source, index) => ({
+            id: `redefined-${String(index)}`,
+            source,
+            status: 'incomplete',
+          }))
+        : []),
+      ...(await Promise.all(
+        (number === 9 ? ['solution', 'alternative'] : ['solution']).map(async (id) => ({
+          id,
+          source: await readFile(`${root}/fixtures/${id}.py`, 'utf8'),
+          status: 'pass',
+        })),
+      )),
+    ];
+    await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`);
+    for (const item of cases) {
+      await test.step(`${lessonId}/${item.id}`, async () => {
+        const grade = page.getByRole('button', { name: '判定する', exact: true });
+        await expect(grade).toBeEnabled({ timeout: 30_000 });
+        await replaceEditorText(page, item.source);
+        await grade.click();
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+        await expect
+          .poll(
+            async () => {
+              const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+                { status: string; checks: { ruleId: string; passed: boolean }[] }[] | undefined;
+              const result = history?.at(-1);
+              return {
+                status: result?.status,
+                failedRules: result?.checks
+                  .filter((check) => !check.passed)
+                  .map((check) => check.ruleId),
+              };
+            },
+            { message: item.id },
+          )
+          .toEqual({
+            status: item.status,
+            failedRules: item.status === 'pass' ? [] : [`${exerciseId}-r01`],
+          });
+        await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        expect(await editorText(page)).toBe(item.source);
+      });
+    }
+  });
+}
