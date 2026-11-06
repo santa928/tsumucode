@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: python-basics
 title: Python入門の学習パス
-description: 値・変数から事前入力、条件分岐、反復を学び、一覧データと関数を使う小制作へ進みます。Browser版で実行中に入力を追加する操作は未対応です。
+description: 値・変数から事前入力、条件分岐、反復を学び、一覧データと関数を使う小制作へ進みます。実行途中の入力は、対応するChrome・Chromiumで一部の練習に使えます。未対応のブラウザでは実行前に入力します。「練習実行」は採点されず、「判定する」で別に採点します。
 publicationStatus: published
 steps:
   - courseId: python-basics
