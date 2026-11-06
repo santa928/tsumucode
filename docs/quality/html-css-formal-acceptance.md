@@ -61,3 +61,35 @@ Profile後日説明は末尾LFを加えると公開記録の原文hash `7246a194
 5. 公開後記録の対象Source、Run、URL、操作・保存結果を固定して#108を完了する。#106/#107/#108と親条件が全て揃った時だけ#7をcloseする。不足があれば両Issueを開いたままにする。
 
 再利用できるのは上表の既存教材受入であり、実公開後の開始・再開・採点・保存の確認はまだ未実施。今回、正式公開やIssue closeは行っていない。
+
+## 追記: 統合準備時点の再照合
+
+2026-11-06、PR #303のhead `8a6f04d3b2d4c21ee1c04849d5e0c2ce59c24c38`を、統合準備の基点main `f9985f9a3e519b05a6991278697845f5ce5d998f`へ別worktreeで競合なく適用した。旧branchと旧成果は変更していない。上記の固定候補・原本照合・公開記録は当時の記録として保持し、最新Sourceへ付け替えない。
+
+- PR #303の[Pages CI 42051835211](https://github.com/santa928/tsumucode/actions/runs/42051835211)はsuccess。head `8a6f04d3`に対するCodexレビューは指摘なし、未解決review threadは0件。これを統合後SourceのCIや正式公開Gate成功へ広げない。
+- 上記で進行中だった[Runtime 42047993357](https://github.com/santa928/tsumucode/actions/runs/42047993357)はsuccessで終端した。代表production UI・保存等の通常検証は成功したが、same-run candidateの取得・Native receipt結合など公開用の条件付きstepはskippedだった。
+- `af211f47`、`9821a4eb`、`f9985f9a`の`content/html-css`はGit tree `6da58d0e9a2fec0b69dabbf5b1cdd6aa1e04e5b0`で一致する。`9821a4eb`から`f9985f9a`は`src`も差分0。通常CIの全件化・静的Artifact検査の修正・Python受入文書の追加は教材再観察を要求する変更ではないが、最終Sourceのrecipe・Artifact・品質結果は別に固定する。
+- deployment APIを再確認し、最新deployment `7522091460`のsuccess、公開URL、Source `16bbf55442a3166193c3e7de07c06d644126968d`を確認した。新しい候補の配信や今回の公開UI操作を意味しない。基点mainのHTML/CSS approval/candidateは引き続きdraftで、ここでは更新していない。
+
+### 今回回収できた原本
+
+旧worktreeと私有handoff、旧32件の照合manifest `f71af14d…`のbytesは、この統合準備では未回収だった。上記の「固定した」は旧担当の実施記録であり、現在もそのmanifestを取得・再検証できるという意味ではない。
+
+別の私有保管先に残る原報告・作品・担当参照等28ファイルを読み取り、別の私有証拠Directoryへコピーした。上表の原報告3件と後日説明＋LFの4 hashは公開記録と一致した。5219のHTML/CSS・画像2件の4 hashは回収時の参照台帳と一致したが、その台帳自体が旧per-file hash未提供と明記しており、旧集約manifestとの一致は未確認。28ファイルの新しい回収manifestのSHA-256は`b211e6b7167fefc32addcb8925edc18618b44dcc6662106cc0fbd3624c4de05c`。28件を旧32件と同じ集合とはせず、旧manifestの復元や新規学習観察へ数えない。正式bindingへ渡す前に、この回収集合と独立レビュー結果を照合し、不足があれば未回収のまま明示する。
+
+### 他の固定候補への影響
+
+本差分は受入文書だけで、共有gate・content原本・schema・movement・他Courseのreceiptを変更しない。並行のPython #300（`d21b1150`）、JavaScript #310（`3c7a42f6`）、表示修正（`d94ac53f`）、PR早期gate（`c3ff770d`）は各担当が所有する。この4候補と基点mainを比較してHTML/CSS教材の差分0を確認したが、そのCIや受入をHTML/CSS正式公開の成功へ流用しない。文書だけの統合でも全Sourceのrecipeは変わるため、固定候補のSHAや既存receiptの入力条件を機械的に書き換えない。最終統合で共有UI/runtimeが変われば、影響する操作の検証を別に確認する。
+
+### 正式公開後に補完する限定確認
+
+全行未実施。既存の`public-operations`は公開inventoryからruntime/capabilityごとに代表を選ぶため、全行がHTML/CSSで実施されるとは限らない。正式runのplan・receiptと実操作を照合し、同じ配信・同じ操作で満たされた分は再利用する。残る操作だけを専用の空Browser状態で補完する。作者のSolutionを使う自動Gateは初見学習の受入と区別する。
+
+| 対象           | 確認と記録                                                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 配信と表示     | Source・run/attempt・candidate/artifact・deployment・URLを固定し、承認Artifactとの一致、HTML/CSSの公開状態とβ/正式版表示を確認する。入口200や画像だけで全配布物一致を代用しない |
+| 入口と開始     | Home→HTML/CSS Path→代表Lessonの解説→演習へ進む。キーボード操作・見出し・操作名・フォーカスを確認し、PC/390pxの代表画像を実見する                                                |
+| 判定と完了保存 | 対象Lesson/Exercise IDを固定し、未達→教材の案内で修正→通常判定→完了保存→reloadを確認する。実行成功・採点合格・保存成功を分ける                                                  |
+| 途中保存と再開 | 編集途中のHTML/CSSを保存→Homeの続きから再開→reloadし、ファイル内容と過去の完了状態を比較する。URL直行や完成後reloadだけをHome再開の証拠にしない                                 |
+
+この補完は公開後の代表操作確認であり、既存の独立受入・全教材観察・実人の理解や学習時間の測定をやり直すものではない。正式公開前の今回はBrowserを起動せず、公開・merge・main変更・Issue closeを行っていない。
