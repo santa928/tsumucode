@@ -222,11 +222,11 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳の保存先は`docs/quality/javascript-agent-learning.yaml`（現treeでは未作成）です。実記録があればrunbookの`release:learning-coverage`手順で確認済み／未確認を区別します。新規・未確認教材だけ3人で一度評価し、確認済み評価・原証拠・本人checkpointは新しいセッションでも引き継ぎます。
 
-作業中とpush/PRの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
+作業中とpushの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`を必須とし、関連testの代わりに全Unit/Component/Contentを実行します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使い、Compile・Lint・Buildは各1回です。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。ローカルの差分基準は`HEAD`、push CIではpush前のSHAです。
 
 Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
-通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+通常Actionsはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run check
