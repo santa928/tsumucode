@@ -226,7 +226,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
-通常Actionsはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件をChromium・1 worker・retry 0で検査します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run check
