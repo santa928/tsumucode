@@ -800,13 +800,16 @@ export async function inspectMovementReplacementOriginal(
 
 /** 固定policyが存在する場合だけ読み、未指定時の既存の厳格な挙動を維持する。 */
 export async function readMovementDeclaration(root: string) {
-  let bytes: string;
-  try {
-    bytes = await readFile(path.join(root, 'docs/quality/movement-v2.json'), 'utf8');
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
-    throw error;
+  let bytes: string | undefined;
+  for (const file of ['docs/quality/movement-eb2-v2.json', 'docs/quality/movement-v2.json']) {
+    try {
+      bytes = await readFile(path.join(root, file), 'utf8');
+      break;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
   }
+  if (bytes === undefined) return undefined;
   if (Buffer.byteLength(bytes) > 4 * 1024 * 1024) throw Error('Movement declaration exceeds limit');
   const declaration = MovementDeclarationSchema.parse(JSON.parse(bytes) as unknown);
   // 審査記録より前の教材原本commitと現HEADのcontent treeを比較する。

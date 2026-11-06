@@ -7,7 +7,11 @@ import path from 'node:path';
 import { ContentReceiptSchema, verifyContent } from '../../../../scripts/release/v2/content';
 import { hashValue } from '../../../../scripts/release/v2/identity';
 import { planRelease } from '../../../../scripts/release/v2/plan';
-import { capturePythonReferenceOriginals } from '../../../../scripts/release/v2/pythonReferenceCarry';
+import {
+  capturePythonReferenceOriginals,
+  verifyPythonReferenceOriginals,
+} from '../../../../scripts/release/v2/pythonReferenceCarry';
+import { readAuthoringAtSource } from '../../../../scripts/release/v2/sourceInventory';
 import {
   verifyMovementInputs,
   consumeVerifiedMovement,
@@ -33,6 +37,31 @@ it('固定2教材の実Git参照差分を保全し、新roleの受入を作ら�
       toLessonId: id,
       sourceCommit: fixture.baseline.sourceCommit,
     });
+});
+
+it('eb2の固定組も実Gitの67原本と投影を照合し、別Sourceへは広げない', async () => {
+  const sourceCommit = 'eb2fe6f8e06409569f173efb2fe6275c46a535cf';
+  const original = await readAuthoringAtSource(process.cwd(), sourceCommit, 'python-basics', true);
+  const originals = {
+    previous: original.pythonReferenceOriginals,
+    current: fixture.inputs.pythonReferenceOriginals.current,
+  };
+  // 認証は合成unit baseline。実配信・新role承認の証拠にはしない。
+  const baseline = { ...fixture.baseline, sourceCommit, inventory: original.inventory };
+  const verify = (input = baseline) =>
+    verifyPythonReferenceOriginals(
+      originals,
+      fixture.inventory,
+      input,
+      '19cbed7d95cac527d17b58f3522cdf4f05466b92',
+      fixture.inputs.declaration.declarationDigest,
+    );
+  expect(originals.previous).toEqual(fixture.inputs.pythonReferenceOriginals.previous);
+  expect([...verify().values()]).toHaveLength(2);
+  expect([...verify().values()].every((carry) => carry.sourceCommit === sourceCommit)).toBe(true);
+  expect(() => verify({ ...baseline, sourceCommit: '9'.repeat(40) })).toThrow(
+    /Fixed Python reference source differs/u,
+  );
 });
 
 it.each([

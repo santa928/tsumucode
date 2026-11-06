@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { BaselineProofSchema, validateCapturedBaseline } from './parent';
 import type { BaselineSchema } from './schema';
 import { hashValue } from './identity';
+import { PYTHON_REFERENCE_EB2_BASE } from './pythonReferenceCarry';
 
 export const MovementBaselineProofsSchema = z
   .object({
@@ -64,7 +65,11 @@ export async function readMovementBaselineProofs(
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     try {
-      bytes = await readFile(path.join(root, 'docs/quality/movement-baseline-proof-v2.json'));
+      const recorded =
+        binding.sourceCommit === PYTHON_REFERENCE_EB2_BASE
+          ? 'docs/quality/movement-eb2-baseline-proof-v2.json'
+          : 'docs/quality/movement-baseline-proof-v2.json';
+      bytes = await readFile(path.join(root, recorded));
     } catch (recordedError) {
       if ((recordedError as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
       throw recordedError;

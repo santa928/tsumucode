@@ -33,3 +33,13 @@ aliasの前提はl04からl05-iterate、Listの初出はl05からl05-valuesへ�
 `movement-baseline-proof-v2.json`は宣言が拘束した実baselineの元proofであり、採取時刻も原本どおり保持する。既存のprivate入力`.release-v2/movement-baseline-proof.json`が無いclean checkoutでは、この固定資料を読む。新しいcaptureの真正性・元proofの宣言hash・時刻以外の全field一致を既存検査で要求する。配信先・Source・inventory・公開bytes等が変われば拒否し、元scopeや承認を自動更新しない。
 
 `release:flow baseline`、`prepare`、`stage-content`が成立しただけでは公開承認・全技術検証の完了にならない。同じ候補の必要な実Pyodide/CPython fixture、保存・Reset・再試行、型・Lint・build・CIと既存の公開gateを満たした後に、統合担当が公開を扱う。
+
+## eb2実配信親への限定binding
+
+`movement-eb2-v2.json`と`movement-eb2-baseline-proof-v2.json`は、実deployment `7593230441`／Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`に対応する追加原本である。元の16bb宣言・proofは元bytesのまま履歴検証用に保持する。新宣言が存在するときはそれを選び、破損や検証失敗を旧宣言へのfallbackで隠さない。
+
+現行captureでeb2のhistorical Compileと467公開教材ファイルを照合し、16bb／eb2／候補19cbedの三者inventoryを比較した。旧親からeb2への変更はPython L02の説明・Hint、Tailwind公開状態、Pathで、旧関数と移動元2教材・reference-onlyの全67原本および投影は一致する。候補に対する保存移行・navigation等の技術差分は維持する。
+
+新しい全previous payloadと親bindingへ10意図の独立source比較を行い、別のinspectorが各原本を確認した新しい承認を宣言へ拘束する。旧10承認のSource・hash・日時を新親へ付け替えたものではなく、新UI観察・engine実行・実人理解・旧actorの再署名を意味しない。既存33 content/role receiptと限定歴史受入の未観察範囲は変更しない。
+
+reference-onlyは16bb→19cbedの歴史契約を保持し、同じ固定67原本・個別inventory・参照・採点等の全検査を満たすeb2→19cbedだけを追加する。任意Sourceへの一般化はしない。元proofと再captureは、各真正hashと`observedAt`以外の全field一致を引き続き要求する。親が再度変われば止め、新Sourceの正式same-run資格・公開後確認は別途必要である。

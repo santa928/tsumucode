@@ -9,6 +9,7 @@ import { ReferenceOnlyCarrySchema } from './learnerMovement';
 
 export const PYTHON_REFERENCE_UPDATE = 'list-alias-and-console-references-v1';
 export const PYTHON_REFERENCE_BASE = '16bbf55442a3166193c3e7de07c06d644126968d';
+export const PYTHON_REFERENCE_EB2_BASE = 'eb2fe6f8e06409569f173efb2fe6275c46a535cf';
 export const PYTHON_REFERENCE_CANDIDATE = '19cbed7d95cac527d17b58f3522cdf4f05466b92';
 const fixed = [
   {
@@ -153,7 +154,8 @@ export function verifyPythonReferenceOriginals(
 ) {
   const originals = PythonReferenceOriginalsSchema.parse(input);
   if (
-    baseline.sourceCommit !== PYTHON_REFERENCE_BASE ||
+    (baseline.sourceCommit !== PYTHON_REFERENCE_BASE &&
+      baseline.sourceCommit !== PYTHON_REFERENCE_EB2_BASE) ||
     candidateContentCommit !== PYTHON_REFERENCE_CANDIDATE
   )
     throw Error('Fixed Python reference source differs');
