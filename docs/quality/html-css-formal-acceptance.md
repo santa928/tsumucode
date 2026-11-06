@@ -1,5 +1,7 @@
 # HTML/CSS 正式受入の照合（#108・#7）
 
+初回照合節は準備時点の原文を保持しています。当時の未回収・未実施・公開前という記述と、後の実施結果は時点を分けて読みます。2026-11-06 16:26 JSTの現v2配信との対応は、末尾の[公開後追補](#v2-post-deploy-2026-11-06)を参照してください。
+
 確認日: 2026-11-06（日本時間）。この文書は受入条件の照合であり、Release Approval、正式公開、公開後操作の成功記録ではありません。
 
 ## 候補と権限
@@ -95,3 +97,25 @@ Profile後日説明は末尾LFを加えると公開記録の原文hash `7246a194
 | 途中保存と再開 | 編集途中のHTML/CSSを保存→Homeの続きから再開→reloadし、ファイル内容と過去の完了状態を比較する。URL直行や完成後reloadだけをHome再開の証拠にしない                                 |
 
 この補完は公開後の代表操作確認であり、既存の独立受入・全教材観察・実人の理解や学習時間の測定をやり直すものではない。正式公開前の今回はBrowserを起動せず、公開・merge・main変更・Issue closeを行っていない。
+
+<a id="v2-post-deploy-2026-11-06"></a>
+
+## 追記: 現v2配信と公開後確認（2026-11-06 16:26 JST）
+
+これは配信済みSourceへの照合追補であり、この文書を含む新しいcommitの配信・承認記録ではない。上の初回照合・未完表と各観察の旧Sourceは変更しない。[観察記録](novice-observation.md)と[Checklist](release-checklist.md)の最新導線は、この表と同じ現v2実体を参照する。
+
+| 対応                  | 確認した実体と範囲                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 既存教材受入          | #106/#107の5 Checkpoint・Guided5工程・5219 Capstoneと操作復帰は、当時のSource・独立照合・限定再観察の範囲で再利用。AI/CUA・実人部分観察・撤回/未達/後日補足の区別を保持。HTML/CSS教材全体のGit tree一致を確認したのは、5219 Source `af211f47`→`9821a4eb`→現配信`eb2fe6f8`の範囲で、値は`6da58d0e9a2fec0b69dabbf5b1cdd6aa1e04e5b0`                                                                                                    |
+| 原本照合              | `f71af14d99f91519b83818efaa607a2d8cb7cb72f2c58ffef39dd8f6f1d23983`の7,030 bytesを同一に再構成。32エントリは28原本＋4重複で、全参照先を照合。旧実ファイルの発見・新しい学習観察ではなく、旧handoff実ファイルと、それ以前の別集約manifestは未回収                                                                                                                                                                                      |
+| 配信Source/実体       | Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`、source tree `4f1343b855ca451a38d9f08509065e1f80afb846`。[run 42154759825](https://github.com/santa928/tsumucode/actions/runs/42154759825)、build/qualification attempt1、公開report attempt2、deployment `7593230441`、[公開URL](https://santa928.github.io/tsumucode/)                                                                                                           |
+| v2 candidate/artifact | candidateDigest `304d43b7d86b8a28d05be7ca9f9cb56e2192c2283f6097ce8da3ca7668e9c4ed`、artifactDigest `d6185d990afb389ff7cf7e2564ff93a53e5521e514e1ade0a61fd29ea893ad39`、Artifact `13474665254`。既存receiptと同一で、新文書commitへ付け替えない                                                                                                                                                                                       |
+| qualification/content | `qualified`、content `approved`。HTML51 Lessonは`carriedLessons`で、新規HTML receiptは0件。現在のcontent資格の継承であり、旧手動義務の新規承認や実人受入を自動的に意味しない                                                                                                                                                                                                                                                         |
+| 公開成功receipt       | `public-report-42154759825-2`（Artifact `13481819583`）のpublic-smokeは588ファイルpassed、public-operationsは18 target passed。candidate/artifact/actualが一致。HTML ch00-l01のHomeからの開始・読書再開、ch00-l01-e01の未達→合格とreload保存、JSON移送を確認。公開操作planDigest `9186bee37527305218028a064d4a7c8811bd883e85c33318cfb88182fc9d0602`、reportDigest `c30a2ef97cfa2b4e7e1944f50b0b9749e2f9d62e622ffaf7b95223ce88fc3a8c` |
+| tagと失敗の区別       | `tsumucode-app-42154759825-7593230441`のannotated tag object `77c7a56aa3c4c54144fe44ecccd31775623aaf32`が実在し、target/messageはrecord planと完全一致、埋込recordは`verified`。一方、record jobとrun全体の結論はfailureのまま。実tag照合をjob成功へ読み替えず、再作成・公開再実行もしない                                                                                                                                           |
+| 不足操作の補完        | 16:25:51–16:26:02 JSTにChromium1件、1CPU/1536MiB/worker1/retry0で成功（全体9.820秒、fail/skip/flaky/retry0）。実UIで非合格draft2fileを保存→Homeの続きから→同じ演習→reloadでfile byte一致、空履歴・空passing snapshot・未完了状態を保持。採点・DB注入・JSON移送を繰り返していない                                                                                                                                                     |
+| 実配信/表示の確認     | 16:25:30/16:26:59 JSTにSource/deployment/status/tagの前後一致を確認。PC1280/390pxのHomeと再開後の4画像を実見し、サイトのβ表示と保存済み表示を確認。HTML/CSSの`published`とサイトのβ表示は別の事実で、正式badgeへ切替済みとはしない                                                                                                                                                                                                   |
+
+公開後の対象操作は既存18操作と補完1件で確認できた。補完1件を新しい正式receiptや過去合格履歴の全復帰、初見受入・実人の理解へ広げない。#153は同じHome再開証拠、#154は同じHome画像を必要範囲で共用できる。原本・画像・個人pathは私有保管のままで、再観察や全Browser再試験を追加しない。
+
+**残るのは、Rootが既存の教材受入・原本照合・現v2公開実体・公開後結果を結合し、HTML/CSSの手動義務を含む全条件の最終受入判断と記録統合を行うこと。** 本追補はその判断を代行せず、#108/#7は現時点でopenを維持する。旧v1 approval/historyのdraft・旧hashは保持する。β表示の変更、タグ再作成、公開run再実行を新しい条件として追加しない。

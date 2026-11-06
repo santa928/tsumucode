@@ -48,6 +48,8 @@
 
 ## 現在のRelease阻害項目
 
+2026-11-06 16:26 JST追補: 次の3項目は公開前照合時点の残条件です。現v2のcandidate/qualification・588ファイル/18公開操作・制作途中のHome再開1件・実在tagの対応は[最新の配信照合](html-css-formal-acceptance.md#v2-post-deploy-2026-11-06)へ追記しました。操作証拠の不足は限定範囲で解消していますが、Rootの最終受入判断と記録統合は残ります。HTML51件のcarryを手動義務の新規承認へ変えず、record job/runのfailureとβ表示を保持します。冒頭の旧v1 draft/binding値を現在のSourceへ付け替えず、この追補だけで#108/#7をcloseしません。
+
 1. #106/#107の受入済み原報告・成果物・担当参照と現候補の独立照合を固定する。旧集約manifest未回収と回収済み本文を区別する。受入済み教材を一律再観察せず、5219と固定候補のHTML/CSS教材差分0を利用する。
 2. 固定Sourceの独立レビュー・必要CI・正式公開Gateを確認し、共有UI/runtimeの変更を古い教材観察だけで検証済みにしない。
 3. 統合担当が現行公開契約でSource/tree/distと全手動記録hash、approval/candidateを結合する。本Checklistの更新だけで承認済みにはしない。
