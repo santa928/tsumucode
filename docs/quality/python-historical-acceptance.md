@@ -13,6 +13,17 @@
 
 私有原本の本文やコピーは公開sidecar・テストfixtureに入れない。CIは独立検査済み宣言digestと公開Gitを用いて再照合する。原本検査を行う従来の私有readerも残す。裸宣言やpure helperの結果だけでは共有gateを通せない。
 
+通常の`test:run`と正式unitは、認証済みsidecarから公開readerを実行し、独立Git metadata・旧inventory・現原稿・台帳・撤回を再照合する。私有原本を条件にしたskipは収集しない。原本のSHA256照合を含む従来の2ケースは`tests/local/python-practice-historical-originals.test.ts`に保持し、専用の`test:historical-originals`で明示実行する。専用suiteは環境変数・原本がなければ失敗する。公開unitの成功を、私有原本を今回再照合した証拠にはしない。正式unitのpending/todo/失敗0条件、固定原本hash、認証receipt、資格要件は変更しない。
+
+私有原本の再検査は、許可された原本ディレクトリをホスト側の`PYTHON_PRACTICE_HISTORICAL_ORIGINALS`へ設定し、read-onlyでDockerへ渡して行う。ディレクトリには`historical-proposal-v2.json`と`independent-audit.json`の固定原本が必要で、原本の取得・複製・公開をこのコマンドは行わない。
+
+```sh
+./scripts/docker-compose.sh run --rm --no-deps \
+  --volume "$PYTHON_PRACTICE_HISTORICAL_ORIGINALS:/private-originals:ro" \
+  -e PYTHON_PRACTICE_HISTORICAL_ORIGINALS=/private-originals \
+  app npm run test:historical-originals
+```
+
 ## 適用条件と保持する範囲
 
 限定AI3担当は、初見・応答回復が各Courseの初回演習、小画面・Keyboardが各Projectの読書・戻る操作等を扱った。実践のLesson対応は原Course構造からの対応という限界も保持する。「18:49以降」は回復担当だけの親報告であり、他2担当の時刻と正確な日時は未確認である。

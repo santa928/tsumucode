@@ -143,6 +143,59 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
     }
   });
 
+  it.each(['missing-exercises', 'empty-rehashed', 'forged-fixture'])(
+    '実践の%s候補を現Sourceの代わりに受け付けない',
+    async (kind) => {
+      const input = baselineInventory();
+      const lesson = input.courses.find((course) => course.id === 'python-practice')!.lessons[0]!;
+      if (kind === 'forged-fixture') {
+        lesson.exercises[0]!.fixtures[0]!.sourceDigest = '0'.repeat(64);
+      } else {
+        lesson.exercises = [];
+      }
+      if (kind !== 'missing-exercises') lesson.exerciseDigest = hashValue(lesson.exercises);
+      await expect(readVerifiedPythonHistoricalAcceptances(root, input)).rejects.toThrow(
+        /current source/,
+      );
+    },
+  );
+
+  it('実践の実fixture改変で古いinventoryも更新済inventoryの古い台帳も拒否', async () => {
+    const input = baselineInventory();
+    const file = path.join(
+      root,
+      'content/python-practice/chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/hardcoded.py',
+    );
+    const original = await readFile(file, 'utf8');
+    try {
+      await writeFile(file, original + '\n# historical reader regression fixture\n');
+      await expect(readVerifiedPythonHistoricalAcceptances(root, input)).rejects.toThrow(
+        /current source/,
+      );
+      const updated = await inventory(['python-practice']);
+      expect(updated.courses[0]!.lessons[0]!.exerciseDigest).not.toBe(
+        input.courses.find((course) => course.id === 'python-practice')!.lessons[0]!.exerciseDigest,
+      );
+      await expect(readVerifiedPythonHistoricalAcceptances(root, updated)).rejects.toThrow(/古い/);
+    } finally {
+      await writeFile(file, original);
+    }
+  });
+
+  it('実践の現台帳の古いsourceHashを歴史認証で覆さない', async () => {
+    const input = baselineInventory();
+    const file = path.join(root, 'docs/quality/content-review-python-practice.yaml');
+    const original = await readFile(file, 'utf8');
+    const sourceHash = /sourceHash: ([a-f0-9]{64})/u.exec(original)?.[1];
+    expect(sourceHash).toBeDefined();
+    try {
+      await writeFile(file, original.replace(sourceHash!, 'a'.repeat(64)));
+      await expect(readVerifiedPythonHistoricalAcceptances(root, input)).rejects.toThrow(/古い/);
+    } finally {
+      await writeFile(file, original);
+    }
+  });
+
   it('認証sidecar欠落で通常のcontent requirementへ戻し、改変は拒否する', async () => {
     const file = path.join(root, PYTHON_HISTORICAL_PATH);
     const original = await readFile(file, 'utf8');
