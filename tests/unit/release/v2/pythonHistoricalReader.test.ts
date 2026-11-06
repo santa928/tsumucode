@@ -17,12 +17,17 @@ import { gitFixtureEnvironment } from './gitFixture';
 
 const exec = promisify(execFile);
 let root: string;
+let unchangedContentInventory: ReturnType<typeof buildInventory>;
 const courseIds = ['python-practice', 'python-oop'];
 const policyPath = 'docs/quality/content-v2-receipts.json';
 async function inventory(ids = courseIds) {
   return buildInventory(
     await Promise.all(ids.map((id) => compileCourse(path.join(root, 'content', id)))),
   );
+}
+/** 本文不変caseの入力fixtureだけ共有し、実readerの現Source/Git再照合は省略しない。 */
+function baselineInventory() {
+  return structuredClone(unchangedContentInventory);
 }
 beforeAll(async () => {
   root = await mkdtemp(path.join(os.tmpdir(), 'python-historical-public-'));
@@ -52,6 +57,7 @@ beforeAll(async () => {
     ...courseIds.map((id) => 'docs/quality/content-review-' + id + '.yaml'),
   ])
     await cp(file, path.join(root, file));
+  unchangedContentInventory = await inventory();
 }, 20000);
 afterAll(async () => {
   await rm(root, { recursive: true, force: true });
@@ -59,7 +65,7 @@ afterAll(async () => {
 
 describe('私有原本を持ち込まないPython歴史受入reader', () => {
   it('公開Gitと現Sourceを再照合し、stageと同じcontent gateへ14件を渡す', async () => {
-    const input = await inventory();
+    const input = baselineInventory();
     const rows = await readVerifiedPythonHistoricalAcceptances(root, input);
     expect(rows).toHaveLength(2);
     const result = verifyContent(input, [], undefined, [], rows);
@@ -75,7 +81,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
   });
 
   it.each(courseIds)('%s の古いinventoryを再hashしても実原稿との不一致を拒否', async (id) => {
-    const input = await inventory();
+    const input = baselineInventory();
     const course = input.courses.find((course) => course.id === id)!;
     course.lessons[0]!.exercises[0]!.fixtures.pop();
     course.lessons[0]!.exerciseDigest = hashValue(course.lessons[0]!.exercises);
@@ -90,7 +96,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
     try {
       await writeFile(file, original.replace('decision: approved', 'decision: rejected'));
       await expect(
-        readVerifiedPythonHistoricalAcceptances(root, await inventory()),
+        readVerifiedPythonHistoricalAcceptances(root, baselineInventory()),
       ).rejects.toThrow();
     } finally {
       await writeFile(file, original);
@@ -111,7 +117,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
       });
       await writeFile(file, JSON.stringify(policy));
       await expect(
-        readVerifiedPythonHistoricalAcceptances(root, await inventory()),
+        readVerifiedPythonHistoricalAcceptances(root, baselineInventory()),
       ).rejects.toThrow(/withdrawal/);
     } finally {
       await writeFile(file, original);
@@ -142,7 +148,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
     const original = await readFile(file, 'utf8');
     try {
       await rm(file);
-      const input = await inventory();
+      const input = baselineInventory();
       expect(await readVerifiedPythonHistoricalAcceptances(root, input)).toEqual([]);
       expect(() => verifyContent(input, [])).toThrow(/Missing content/);
       await writeFile(file, original.replace('/root/historical_inspection', 'forged-inspector'));
@@ -158,7 +164,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
     try {
       await rm(file);
       await expect(
-        readVerifiedPythonHistoricalAcceptances(root, await inventory()),
+        readVerifiedPythonHistoricalAcceptances(root, baselineInventory()),
       ).rejects.toThrow();
     } finally {
       await writeFile(file, original);
@@ -166,7 +172,7 @@ describe('私有原本を持ち込まないPython歴史受入reader', () => {
   });
 
   it('draftの既存Courseには公開や歴史承認を追加しない', async () => {
-    const draft = await inventory();
+    const draft = baselineInventory();
     for (const course of draft.courses) course.publicationStatus = 'draft';
     expect(await readVerifiedPythonHistoricalAcceptances(root, draft)).toEqual([]);
     expect(verifyContent(draft, [])).toMatchObject({
