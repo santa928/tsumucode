@@ -58,6 +58,7 @@ interface RendererKeyFacts {
   readonly stable: boolean;
 }
 type ReadingValue = boolean | { readonly [property: string]: ReadingValue };
+type ReadingKey = boolean | 'unrelated';
 interface SourceBinding {
   readonly node: ts.Declaration;
   readonly fields: readonly string[];
@@ -365,14 +366,26 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
   const renderedBooks = new WeakMap<object, readonly ReadingValue[]>();
   const booksIn = (value: ReadingValue): readonly ReadingValue[] =>
     typeof value === 'object' ? (renderedBooks.get(value) ?? []) : [];
-  const renderedKeys = new WeakMap<object, readonly boolean[]>();
-  const keysIn = (value: ReadingValue): readonly boolean[] =>
+  const renderedKeys = new WeakMap<object, readonly ReadingKey[]>();
+  const keysIn = (value: ReadingValue): readonly ReadingKey[] =>
     typeof value === 'object' ? (renderedKeys.get(value) ?? []) : [];
-  const tree = (books: readonly ReadingValue[], keys: readonly boolean[] = []): ReadingValue => {
-    const node = {};
+  const tree = (
+    books: readonly ReadingValue[],
+    keys: readonly ReadingKey[] = [],
+    node: { readonly [property: string]: ReadingValue } = {},
+  ): ReadingValue => {
     renderedBooks.set(node, books);
     renderedKeys.set(node, keys);
     return node;
+  };
+  const mergeRenderings = (
+    first: ReadingValue,
+    second: ReadingValue,
+    selected: ReadingValue,
+  ): ReadingValue => {
+    const books = [...booksIn(first), ...booksIn(second)];
+    const keys = [...keysIn(first), ...keysIn(second)];
+    return books.length || keys.length ? tree(books, keys) : selected;
   };
   type Values = Map<ts.Declaration, ReadingValue>;
   const pick = (value: ReadingValue, fields: readonly string[]): ReadingValue => {
@@ -413,9 +426,7 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
       if (ts.isReturnStatement(node)) {
         if (node.expression) {
           const next = value(node.expression, values);
-          const books = [...booksIn(returned), ...booksIn(next)];
-          const keys = [...keysIn(returned), ...keysIn(next)];
-          returned = books.length || keys.length ? tree(books, keys) : next || returned;
+          returned = returned ? mergeRenderings(returned, next, next || returned) : next;
         }
         return;
       }
@@ -459,10 +470,12 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
     }
     if (ts.isPropertyAccessExpression(node))
       return pick(value(node.expression, values), [node.name.text]);
-    if (ts.isArrayLiteralExpression(node))
-      return Object.fromEntries(
-        node.elements.map((element, index) => [String(index), value(element, values)]),
-      );
+    if (ts.isArrayLiteralExpression(node)) {
+      const items = node.elements.map((element) => value(element, values));
+      const array = Object.fromEntries(items.map((item, index) => [String(index), item]));
+      const books = items.flatMap(booksIn);
+      return books.length ? tree(books, items.flatMap(keysIn), array) : array;
+    }
     if (ts.isObjectLiteralExpression(node)) {
       const fields: Record<string, ReadingValue> = {};
       let copiedState = false;
@@ -488,9 +501,12 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
           const callback = mapRenderer(node.arguments[0], node);
           const mapped = callback ? run(callback, [receiver], values) : false;
           const keys = callback ? rendererKeys(callback, keyFacts) : undefined;
+          const books = booksIn(mapped);
+          const nestedKeys = keysIn(mapped);
+          // 別の一覧は描画結果として保持するが、書籍Keyの成否には数えない。
           return keys?.renders
-            ? tree(booksIn(mapped), [...keysIn(mapped), keys.stable])
-            : booksIn(mapped).length || keysIn(mapped).length
+            ? tree(books, [...nestedKeys, books.length ? keys.stable : 'unrelated'])
+            : books.length || nestedKeys.length
               ? mapped
               : receiver;
         }
@@ -510,13 +526,11 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
       if (condition === false) return value(node.whenFalse, values);
       const first = value(node.whenTrue, values);
       const second = value(node.whenFalse, values);
-      const books = [...booksIn(first), ...booksIn(second)];
-      const keys = [...keysIn(first), ...keysIn(second)];
-      return books.length || keys.length
-        ? tree(books, keys)
-        : first === true || second === true
-          ? true
-          : first || second;
+      return mergeRenderings(
+        first,
+        second,
+        first === true || second === true ? true : first || second,
+      );
     }
     if (ts.isBinaryExpression(node)) {
       const left = value(node.left, values);
@@ -571,7 +585,7 @@ function readingUsage(sources: ReadonlyMap<string, ts.SourceFile>): ReadingListF
   return {
     definesBookComponent: books.length > 0,
     ownsReadingState: state,
-    usesStableBookKeys: keys.length > 0 && keys.every(Boolean),
+    usesStableBookKeys: keys.includes(true) && !keys.includes(false),
   };
 }
 

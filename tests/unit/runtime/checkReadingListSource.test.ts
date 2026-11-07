@@ -6,11 +6,33 @@ import { analyzeReadingList } from '../../../src/adapters/runtime/react/checkRea
 function keyFact(body: string, before = ''): boolean {
   const result = analyzeReadingList({
     'BookCard.tsx': 'export function BookCard() { return <li>本</li>; }',
-    'components.tsx': `${before}\nexport function App() { ${body} }`,
+    'components.tsx': `import { BookCard } from './BookCard';\n${before}\nexport function App() { ${body} }`,
   });
   expect(result.diagnostics).toEqual([]);
   return result.facts.usesStableBookKeys;
 }
+
+it('書籍とは別のボタン一覧をmapで描画するMakerの別解を認める', async () => {
+  const starter =
+    'content/react/chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter';
+  const [card, app] = await Promise.all([
+    readFile(starter + '/BookCard.tsx', 'utf8'),
+    readFile('tests/fixtures/react-reading-filter-maker.tsx.txt', 'utf8'),
+  ]);
+  const checked = analyzeReadingList({ 'BookCard.tsx': card, 'components.tsx': app });
+  expect(checked.diagnostics).toEqual([]);
+  expect(checked.facts).toEqual({
+    definesBookComponent: true,
+    ownsReadingState: true,
+    usesStableBookKeys: true,
+  });
+  expect(
+    analyzeReadingList({
+      'BookCard.tsx': card,
+      'components.tsx': app.replace('key={book.id}', 'key="same-book"'),
+    }).facts.usesStableBookKeys,
+  ).toBe(false);
+});
 
 describe('読書リストの項目IDとKey', () => {
   it.each([
@@ -185,6 +207,38 @@ describe('読書リストの部品と親Stateの使用経路', () => {
     ).toBe(false);
   });
 
+  it('書籍を配列で返す部品の添字Keyを、別の安定Keyで覆えない', () => {
+    expect(
+      facts(
+        `${imports} export function App() {
+          const [books] = useState(initialBooks);
+          function Row({ book, onToggle }: BookCardProps) {
+            return [<BookCard key={book.id} book={book} onToggle={onToggle} />];
+          }
+          const toggle = () => undefined;
+          return <ul>
+            {books.map((book, index) => <Row key={index} book={book} onToggle={toggle} />)}
+            {books.length === 1000 && books.map((book) =>
+              <BookCard key={book.id} book={book} onToggle={toggle} />)}
+          </ul>;
+        }`,
+      ).usesStableBookKeys,
+    ).toBe(false);
+  });
+
+  it('書籍を単独で描画するときは、別の一覧のKeyで合格させない', () => {
+    expect(
+      facts(
+        `${imports} export function App() {
+          return <section>
+            {filters.map((item) => <button key={item.id}>{item.label}</button>)}
+            <BookCard book={fixedBook} onToggle={() => undefined} />
+          </section>;
+        }`,
+      ).usesStableBookKeys,
+    ).toBe(false);
+  });
+
   it.each([
     `if (false) { ${list} }`,
     `if (true) return <p>本の一覧</p>; ${list}`,
@@ -219,6 +273,88 @@ describe('読書リストの部品と親Stateの使用経路', () => {
         `${imports} export function App() { const [unused] = useState(initialBooks); const books = initialBooks; ${list} }`,
       ).ownsReadingState,
     ).toBe(false);
+  });
+
+  it.each([
+    [
+      '入れ子のmap',
+      'const placeholders = triggers.map(() => initialBooks.map((book) => <span key={book.id}>{book.title}</span>));',
+    ],
+    [
+      '条件式',
+      'const placeholders = show ? initialBooks.map((book) => <span key={book.id}>{book.title}</span>) : triggers;',
+    ],
+    [
+      '複数のreturn',
+      `function prepare(input: readonly number[]) {
+        if (show) return initialBooks.map((book) => <span key={book.id}>{book.title}</span>);
+        return input;
+      }
+      const placeholders = prepare(triggers);`,
+    ],
+    [
+      '複数のreturn後の分割代入',
+      `function prepare(input: readonly number[]) {
+        if (show) return initialBooks.map((book) => <span key={book.id}>{book.title}</span>);
+        return [input] as const;
+      }
+      const [placeholders] = prepare(triggers);`,
+    ],
+  ])('%sで本を描画しない一覧を固定の本のState由来として扱わない', (_shape, setup) => {
+    expect(
+      facts(
+        `${imports} export function App() {
+          const [triggers] = useState([1, 2, 3]);
+          ${setup}
+          const books = Array.isArray(placeholders) ? placeholders.map(() => fixedBook) : [];
+          ${list}
+        }`,
+      ).ownsReadingState,
+    ).toBe(false);
+  });
+
+  it.each([
+    ['条件式', 'const selection = visible.length === 0 ? <></> : visible;'],
+    [
+      '複数のreturn',
+      `function select() {
+        if (visible.length === 0) return <></>;
+        return visible;
+      }
+      const selection = select();`,
+    ],
+  ])('%sで0件表示とState由来の配列を切り替える別解を認める', (_shape, setup) => {
+    expect(
+      facts(
+        `${imports} export function App() {
+          const [books] = useState(initialBooks);
+          const visible = books.filter((book) => !book.read);
+          ${setup}
+          return <ul>{Array.isArray(selection) ? selection.map((book) =>
+            <BookCard key={book.id} book={book} onToggle={() => undefined} />
+          ) : selection}</ul>;
+        }`,
+      ),
+    ).toEqual({ definesBookComponent: true, ownsReadingState: true, usesStableBookKeys: true });
+  });
+
+  it('一覧を返す補助関数から分割代入してもStateと表示を区別する', () => {
+    expect(
+      facts(
+        `${imports} export function App() {
+          const [books] = useState(initialBooks);
+          const visible = books.filter((book) => !book.read);
+          const filters = [{ id: 'all', label: 'すべて' }];
+          function prepare(input: readonly Book[]) {
+            return [input, filters.map((item) => <button key={item.id}>{item.label}</button>)] as const;
+          }
+          const [rows, controls] = prepare(visible);
+          return <><div>{controls}</div><ul>{rows.map((book) =>
+            <BookCard key={book.id} book={book} onToggle={() => undefined} />
+          )}</ul></>;
+        }`,
+      ),
+    ).toEqual({ definesBookComponent: true, ownsReadingState: true, usesStableBookKeys: true });
   });
 
   it.each([
