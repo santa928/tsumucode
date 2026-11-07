@@ -1,0 +1,575 @@
+id: react-ch01-l06-compose-e01
+kind: standard
+workspaceId: react-ch01-l06-compose-e01
+countsTowardStandardExerciseTotal: true
+title: '入力・検証・送信を自分で組み立てる'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: 'react-controlled-input'
+    minimumLevel: 'compose'
+  - conceptId: 'react-form-submit'
+    minimumLevel: 'compose'
+  - conceptId: 'react-derived-state'
+    minimumLevel: 'compose'
+scaffoldLevel: 'compose'
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: controlled-form-v1
+  learningGoal: controlled-form
+steps:
+  - id: compose-state-view
+    file: components.tsx
+    target: 'components.tsxのApp。処理は未実装です。画面の枠だけなので、Stateと操作を書いてから型と動作を確認します。開始時の診断は未実装を知らせています。型と起動処理は配布済みで、編集はcomponents.tsxだけです。'
+    change: '1つのFormStateをnameは空文字列、attemptedはfalseで始めます。inputのvalueと文字数を同じStateから表示します。nameの前後の空白を除いて空なら不足と判定し、案内は入力中なら「入力中」、送信後は不足なら「名前を入力してください」、それ以外なら「送信を受け付けました」と計算します。案内と不足かどうかを別Stateへ保存しません。'
+    observe: 'inputのaria-invalidは、送信済みで名前が不足するときだけtrue、それ以外はfalseにします。これは入力の誤りを読み上げ機能へ伝える属性です。配布したlabel・各id・案内の文言を保ちます。1つのStateと入力・送信・やり直しの3つのhandlerは、同じApp内に置きます。変数名は別名でも構いません。この課題はこの部品内の経路を組み立てる範囲です。'
+    starterAnchor: 'export function App'
+    requiresConceptIds:
+      - react-controlled-input
+      - react-form-submit
+      - react-derived-state
+    validationRuleIds:
+      - react-ch01-l06-compose-e01-r01
+      - react-ch01-l06-compose-e01-r02
+      - react-ch01-l06-compose-e01-r03
+      - react-ch01-l06-compose-e01-r04
+  - id: compose-handlers
+    file: components.tsx
+    target: 'Appのchange・submit・やり直しと、それらをつなぐJSX。InputChangeEventとFormSubmitEventはimport済みです。'
+    change: 'changeではその場のcurrentTarget.valueを読み、nameを更新してattemptedをfalseに戻します。文字列だけを次のStateへ渡します。submitでは既定の送信を取り消し、名前を保ってattemptedをtrueにします。やり直しはnameとattemptedを初期値へ戻します。入力・送信・やり直しの操作へ各処理をつなぎます。'
+    observe: '空値を送信すると不足の案内とaria-invalid=trueになります。空白3つを入力すると文字数3と「入力中」に戻り、送信すると不足になります。Adaを入力すると文字数3、送信後は受け付けた案内になります。TypeScriptへ変えると文字数10と「入力中」に戻り、再送信できます。最後にやり直すと入力は空、文字数0、「入力中」、aria-invalid=falseに戻ります。'
+    starterAnchor: 'export function App'
+    requiresConceptIds:
+      - react-controlled-input
+      - react-form-submit
+      - react-derived-state
+    validationRuleIds:
+      - react-ch01-l06-compose-e01-r01
+      - react-ch01-l06-compose-e01-r02
+      - react-ch01-l06-compose-e01-r03
+      - react-ch01-l06-compose-e01-r04
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l06-compose-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 名前のForm
+    feedback:
+      target: components.tsxとPreview
+      expected: 名前のForm
+      nextAction: 空値/空白でエラー、入力で案内、送信で結果、やり直しで初期化する
+    hintId: react-ch01-l06-compose-e01-h02
+    relatedSlideId: react-ch01-l06-compose-s01
+  - id: react-ch01-l06-compose-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    feedback:
+      target: components.tsxとPreview
+      expected: '0'
+      nextAction: 空値/空白でエラー、入力で案内、送信で結果、やり直しで初期化する
+    hintId: react-ch01-l06-compose-e01-h02
+    relatedSlideId: react-ch01-l06-compose-s01
+  - id: react-ch01-l06-compose-e01-r03
+    label: 初期の案内
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#message'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 入力中
+    feedback:
+      target: components.tsxとPreview
+      expected: 入力中
+      nextAction: 空値/空白でエラー、入力で案内、送信で結果、やり直しで初期化する
+    hintId: react-ch01-l06-compose-e01-h02
+    relatedSlideId: react-ch01-l06-compose-s01
+  - id: react-ch01-l06-compose-e01-r04
+    label: 同Stateから入力と表示を導き、送信を取り消す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: controlled-form
+    feedback:
+      target: components.tsx
+      expected: 入力値と送信操作の事実を1つのStateに持ち、表示を導出して送信を明示的に取り消せる。
+      nextAction: 空値/空白でエラー、入力で案内、送信で結果、やり直しで初期化する
+    hintId: react-ch01-l06-compose-e01-h02
+    relatedSlideId: react-ch01-l06-compose-s01
+interactionScenarios:
+  - id: form-input-submit-reset-compose
+    label: 1つのStateから入力・検証表示を導く
+    actions:
+      - id: empty-submit
+        kind: click
+        selector: '#submit'
+      - id: spaces
+        kind: fill
+        selector: '#name'
+        value: '   '
+      - id: spaces-submit
+        kind: click
+        selector: '#submit'
+      - id: short-name
+        kind: fill
+        selector: '#name'
+        value: Ada
+      - id: valid-submit
+        kind: click
+        selector: '#submit'
+      - id: long-name
+        kind: fill
+        selector: '#name'
+        value: TypeScript
+      - id: resubmit
+        kind: click
+        selector: '#submit'
+      - id: reset
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-empty-submit
+        afterActionId: empty-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 名前を入力してください
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'true'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-spaces
+        afterActionId: spaces
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-spaces-submit
+        afterActionId: spaces-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 名前を入力してください
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'true'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-short-name
+        afterActionId: short-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-valid-submit
+        afterActionId: valid-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 送信を受け付けました
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-long-name
+        afterActionId: long-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-resubmit
+        afterActionId: resubmit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 送信を受け付けました
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+hints:
+  - id: 'react-ch01-l06-compose-e01-h01'
+    level: 1
+    title: 'まず持つ事実を決める'
+    text: 'Appの先頭にStateを置きます。持つ事実はnameとattemptedです。文字数、不足かどうか、案内はそのStateから計算できます。'
+    relatedSlideId: 'react-ch01-l06-compose-s01'
+  - id: 'react-ch01-l06-compose-e01-h02'
+    level: 2
+    title: '操作ごとの次の値を考える'
+    text: 'changeでは入力文字列をその場で読み、attemptedをfalseに戻します。submitはEventの既定動作を取り消してattemptedをtrueにし、やり直しは初期値へ戻します。'
+    relatedSlideId: 'react-ch01-l06-compose-s01'
+  - id: 'react-ch01-l06-compose-e01-h03'
+    level: 3
+    title: '表示と連続操作を照合する'
+    text: '入力のvalue・onChange、formのonSubmit、やり直しのonClickへ処理をつなぎます。name.trim().lengthが0かで不足を判定し、attemptedと組み合わせて案内とaria-invalidを導きます。'
+    relatedSlideId: 'react-ch01-l06-compose-s01'
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/starter.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/solution.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alternative.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: stale-input
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l06-compose-e01-r04
+      - interaction:form-input-submit-reset-compose:after-empty-submit:input
+      - interaction:form-input-submit-reset-compose:after-spaces:input
+      - interaction:form-input-submit-reset-compose:after-spaces-submit:input
+      - interaction:form-input-submit-reset-compose:after-long-name:input
+      - interaction:form-input-submit-reset-compose:after-resubmit:input
+      - interaction:form-input-submit-reset-compose:after-reset:input
+      - interaction:form-input-submit-reset-compose:after-short-name:invalid
+      - interaction:form-input-submit-reset-compose:after-short-name:message
+      - interaction:form-input-submit-reset-compose:after-valid-submit:invalid
+      - interaction:form-input-submit-reset-compose:after-valid-submit:message
+    files:
+      - path: components.tsx
+        source: fixtures/stale-input.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-message
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l06-compose-e01-r04
+      - interaction:form-input-submit-reset-compose:after-empty-submit:message
+      - interaction:form-input-submit-reset-compose:after-spaces-submit:message
+      - interaction:form-input-submit-reset-compose:after-valid-submit:message
+      - interaction:form-input-submit-reset-compose:after-resubmit:message
+    files:
+      - path: components.tsx
+        source: fixtures/fixed-message.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: duplicate-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/duplicate-state.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: event-in-updater
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/event-in-updater.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: event-error
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: components.tsx
+        source: fixtures/event-error.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - 'react-ch01-l06-compose-s01'
+assets: []

@@ -1,0 +1,583 @@
+id: react-ch01-l11-compose-e01
+kind: standard
+workspaceId: react-ch01-l11-compose-e01
+countsTowardStandardExerciseTotal: true
+title: '購読の開始・解除・依存値を自分で組み立てる'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: 'react-effect-external-sync'
+    minimumLevel: 'compose'
+  - conceptId: 'react-effect-cleanup'
+    minimumLevel: 'compose'
+scaffoldLevel: 'compose'
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: effect-sync-v1
+  learningGoal: external-sync
+steps:
+  - id: compose-effect-lifecycle
+    file: components.tsx
+    target: 'components.tsxのSourcePanel。処理は未実装です。StateとEffectを書いてから型と動作を確認します。開始時の診断は未実装を知らせています。型・起動・切替ボタン・外部入力・subscribeは配布済みで、編集はcomponents.tsxだけです。'
+    change: '空文字列で始まるStateを1つ、その次にEffectを1つ書きます。setupでsubscribeへPropsのtargetとStateのsetterを渡します。subscribeは現在値をすぐsetterへ渡し、その後の入力も通知します。返された同じ解除関数をcleanupとして返し、setup中には呼びません。依存配列は[target]にします。'
+    observe: '対象変更では前のcleanupから次のsetupへ進み、表示終了でもcleanupします。Stateと解除関数の変数名は別名でも構いません。値はid="observed"へ、文字数はid="length"へStateから直接表示します。文字数を別StateやEffectで保存しません。'
+    starterAnchor: 'export function SourcePanel'
+    requiresConceptIds:
+      - react-effect-external-sync
+      - react-effect-cleanup
+    validationRuleIds:
+      - react-ch01-l11-compose-e01-r01
+      - react-ch01-l11-compose-e01-r02
+      - react-ch01-l11-compose-e01-r03
+  - id: compose-lifecycle-check
+    file: components.tsx
+    target: 'プレビューの外部入力A/B・対象切替・表示切替と、購読中/入力通知の数。ここで扱うのはDOM入力の購読です。'
+    change: 'Bへ異なる値を用意してからBへ切り替えます。旧Aへ入力し、次に非表示にしてBへ入力し、最後に再表示します。先に各操作後の表示値と購読数を予測してください。'
+    observe: '切替直後は新しい入力通知を待たずBの現在値が表示され、購読中は1です。旧Aへの入力で表示や入力通知数は変わりません。非表示中は購読中0で、Bへ入力しても入力通知数が増えません。再表示後はBの現在値とその文字数を表示し、購読中は1へ戻ります。通信応答の競合はこの課題の対象外です。'
+    starterAnchor: 'export function SourcePanel'
+    requiresConceptIds:
+      - react-effect-external-sync
+      - react-effect-cleanup
+    validationRuleIds:
+      - react-ch01-l11-compose-e01-r01
+      - react-ch01-l11-compose-e01-r02
+      - react-ch01-l11-compose-e01-r03
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: starter/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: solution/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+validationRules:
+  - id: react-ch01-l11-compose-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 外部入力の同期
+    feedback:
+      target: components.tsxとPreview
+      expected: 外部入力の同期
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-compose-e01-h02
+    relatedSlideId: react-ch01-l11-compose-s01
+  - id: react-ch01-l11-compose-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '3'
+    feedback:
+      target: components.tsxとPreview
+      expected: '3'
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-compose-e01-h02
+    relatedSlideId: react-ch01-l11-compose-s01
+  - id: react-ch01-l11-compose-e01-r03
+    label: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除し、文字数をStateから直接計算する。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: external-sync
+    feedback:
+      target: components.tsxとPreview
+      expected: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除し、文字数をStateから直接計算する。
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-compose-e01-h02
+    relatedSlideId: react-ch01-l11-compose-s01
+interactionScenarios:
+  - id: effect-subscription-lifecycle-compose
+    label: 対象の現在値を同期し、古い購読をcleanupする
+    actions:
+      - id: initial
+        kind: focus
+        selector: '#source-a'
+      - id: first-a
+        kind: fill
+        selector: '#source-a'
+        value: Aの通知
+      - id: prepare-b
+        kind: fill
+        selector: '#source-b'
+        value: Bの現在値
+      - id: target-b
+        kind: click
+        selector: '#target-b'
+      - id: late-a
+        kind: fill
+        selector: '#source-a'
+        value: 旧Aの通知
+      - id: current-b
+        kind: fill
+        selector: '#source-b'
+        value: Bの通知
+      - id: unmount
+        kind: click
+        selector: '#toggle'
+      - id: hidden-b
+        kind: fill
+        selector: '#source-b'
+        value: 非表示中の現在値
+      - id: remount
+        kind: click
+        selector: '#toggle'
+    checkpoints:
+      - id: after-initial
+        afterActionId: initial
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '0'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: 初期A
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+      - id: after-first-a
+        afterActionId: first-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Aの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-prepare-b
+        afterActionId: prepare-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Aの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-target-b
+        afterActionId: target-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+      - id: after-late-a
+        afterActionId: late-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+      - id: after-current-b
+        afterActionId: current-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-unmount
+        afterActionId: unmount
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '0'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+      - id: after-hidden-b
+        afterActionId: hidden-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '0'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+      - id: after-remount
+        afterActionId: remount
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: 非表示中の現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '8'
+hints:
+  - id: 'react-ch01-l11-compose-e01-h01'
+    level: 1
+    title: '値を持つ場所と外部同期を分ける'
+    text: 'SourcePanelの先頭に空文字列のStateを置き、次にEffectを置きます。戻り値のJSXは、Stateの値とその文字数を直接表示します。'
+    relatedSlideId: 'react-ch01-l11-compose-s01'
+  - id: 'react-ch01-l11-compose-e01-h02'
+    level: 2
+    title: '1回の購読と解除を対にする'
+    text: 'setupのsubscribe(target, setter)が返した関数を保持します。その関数をEffectから返すと、対象変更や非表示のときに同じ購読を解除できます。'
+    relatedSlideId: 'react-ch01-l11-compose-s01'
+  - id: 'react-ch01-l11-compose-e01-h03'
+    level: 3
+    title: '対象変更の経路を確かめる'
+    text: '依存配列はtargetを追います。cleanupは関数を返すので、setup中に解除を呼びません。Bへ切り替えた直後と、非表示でBを変えてから再表示した値を確かめます。'
+    relatedSlideId: 'react-ch01-l11-compose-s01'
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/starter.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/solution.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alternative.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alias.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: missing-cleanup
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l11-compose-e01-r03
+      - interaction:effect-subscription-lifecycle-compose:after-target-b:active
+      - interaction:effect-subscription-lifecycle-compose:after-late-a:active
+      - interaction:effect-subscription-lifecycle-compose:after-late-a:notifications
+      - interaction:effect-subscription-lifecycle-compose:after-late-a:value
+      - interaction:effect-subscription-lifecycle-compose:after-current-b:active
+      - interaction:effect-subscription-lifecycle-compose:after-current-b:notifications
+      - interaction:effect-subscription-lifecycle-compose:after-unmount:active
+      - interaction:effect-subscription-lifecycle-compose:after-unmount:notifications
+      - interaction:effect-subscription-lifecycle-compose:after-hidden-b:active
+      - interaction:effect-subscription-lifecycle-compose:after-hidden-b:notifications
+      - interaction:effect-subscription-lifecycle-compose:after-remount:active
+      - interaction:effect-subscription-lifecycle-compose:after-remount:notifications
+    files:
+      - path: components.tsx
+        source: fixtures/missing-cleanup.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-length
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l11-compose-e01-r03
+      - interaction:effect-subscription-lifecycle-compose:after-first-a:length
+      - interaction:effect-subscription-lifecycle-compose:after-prepare-b:length
+      - interaction:effect-subscription-lifecycle-compose:after-target-b:length
+      - interaction:effect-subscription-lifecycle-compose:after-late-a:length
+      - interaction:effect-subscription-lifecycle-compose:after-current-b:length
+      - interaction:effect-subscription-lifecycle-compose:after-remount:length
+    files:
+      - path: components.tsx
+        source: fixtures/fixed-length.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: extra-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/extra-state.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/side-effect.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - 'react-ch01-l11-compose-s01'
+assets: []

@@ -42,7 +42,8 @@ describe('TypeScriptの型検査境界', () => {
       expect(fixed.files['score.js']).toContain('return value * 2');
       expect(fixed.files['score.js']).not.toContain(': number');
     }
-  });
+    // 独立した負例・正例の2 Programを含む機能確認。Workerの1要求期限とは別の合計枠。
+  }, 15_000);
 
   it('DOMのnull確認、unknownの絞り込みとgenericを実compilerで検査する', () => {
     const source =

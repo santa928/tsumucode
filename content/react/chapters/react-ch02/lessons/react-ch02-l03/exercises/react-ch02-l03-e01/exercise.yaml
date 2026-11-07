@@ -1,0 +1,1033 @@
+id: react-ch02-l03-e01
+kind: standard
+workspaceId: react-ch02-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 仕様から絞り込みと件数を作る
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-reading-filter
+    minimumLevel: compose
+scaffoldLevel: compose
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: reading-filter-v1
+  learningGoal: reading-filter
+steps:
+  - id: react-ch02-l03-e01-step01
+    file: components.tsx
+    target: components.tsxのApp。動く一覧とBookCardを土台に、追加する値と計算を自分で選びます。
+    starterAnchor: export function App
+    change:
+      「すべて」「未読」「既読」のbutton（idはそれぞれfilter-all/filter-unread/filter-read）で表示を切り替え、選択中だけaria-pressedをtrueにします。表示件数はidがcountの要素へ「2件」、全体の既読件数はidがsummaryの要素へ「既読1件
+      / 全3件」の形で出してください。
+    observe: 初期表示は3件、既読1件です。絞り込んでも元の3冊を残し、本を切り替えると一覧と2つの件数が更新されます。0件から別条件へ戻せること、idがresetの「最初に戻す」で本と表示条件が戻り、その後も切り替えられることを確かめます。
+    requiresConceptIds:
+      - react-reading-filter
+    validationRuleIds:
+      - react-ch02-l03-e01-r01
+      - react-ch02-l03-e01-r02
+      - react-ch02-l03-e01-r03
+      - react-ch02-l03-e01-r04
+files:
+  - path: BookCard.tsx
+    language: react
+    source: starter/BookCard.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: data.ts
+    language: typescript
+    source: starter/data.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+solutionFiles:
+  - path: BookCard.tsx
+    language: react
+    source: solution/BookCard.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: data.ts
+    language: typescript
+    source: solution/data.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+validationRules:
+  - id: react-ch02-l03-e01-r01
+    label: 最初の3冊の題名と読書状態を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    hintId: react-ch02-l03-e01-h01
+    relatedSlideId: react-ch02-l03-s01
+    target:
+      kind: selector
+      selector: '#books'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 最初の3冊の題名と読書状態を表示する
+      nextAction: 本の配列は全3冊のまま持ち、画面に出す配列をそこから選びます。
+  - id: react-ch02-l03-e01-r02
+    label: 現在の本と表示条件から一覧・表示件数・全体の既読件数を計算する。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    hintId: react-ch02-l03-e01-h01
+    relatedSlideId: react-ch02-l03-s01
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: reading-filter
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 現在の本と表示条件から一覧・表示件数・全体の既読件数を計算する。
+      nextAction: 本の配列は全3冊のまま持ち、画面に出す配列をそこから選びます。
+  - id: react-ch02-l03-e01-r03
+    label: 最初は3件を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    hintId: react-ch02-l03-e01-h01
+    relatedSlideId: react-ch02-l03-s01
+    target:
+      kind: selector
+      selector: '#count'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 3件
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 最初は3件を表示する
+      nextAction: 本の配列は全3冊のまま持ち、画面に出す配列をそこから選びます。
+  - id: react-ch02-l03-e01-r04
+    label: 全体の既読は1件である
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    hintId: react-ch02-l03-e01-h01
+    relatedSlideId: react-ch02-l03-s01
+    target:
+      kind: selector
+      selector: '#summary'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 既読1件 / 全3件
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 全体の既読は1件である
+      nextAction: 本の配列は全3冊のまま持ち、画面に出す配列をそこから選びます。
+interactionScenarios:
+  - id: reading-filtering
+    label: 表示条件と読書状態から件数を導く
+    actions:
+      - id: unread
+        kind: click
+        selector: '#filter-unread'
+      - id: finish-stars
+        kind: click
+        selector: '#toggle-stars'
+      - id: finish-forest
+        kind: click
+        selector: '#toggle-forest'
+      - id: read
+        kind: click
+        selector: '#filter-read'
+      - id: reopen-rain
+        kind: click
+        selector: '#toggle-rain'
+      - id: all
+        kind: click
+        selector: '#filter-all'
+      - id: select-before-reset
+        kind: click
+        selector: '#filter-read'
+      - id: reset
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-unread
+        afterActionId: unread
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 2件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読1件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-stars
+        afterActionId: finish-stars
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 森の記録未読読了にする
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 1件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読2件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-forest
+        afterActionId: finish-forest
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: ''
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 0件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読3件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-read
+        afterActionId: read
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする雨の日の本既読未読にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 3件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読3件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reopen-rain
+        afterActionId: reopen-rain
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 2件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読2件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-all
+        afterActionId: all
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする雨の日の本未読読了にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 3件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読2件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-select-before-reset
+        afterActionId: select-before-reset
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 2件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読2件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 3件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読1件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+  - id: reading-empty-read
+    label: 表示条件と読書状態から件数を導く
+    actions:
+      - id: select-before-repeat
+        kind: click
+        selector: '#filter-read'
+      - id: reset-before-repeat
+        kind: click
+        selector: '#reset'
+      - id: read-again
+        kind: click
+        selector: '#filter-read'
+      - id: reopen-last
+        kind: click
+        selector: '#toggle-rain'
+      - id: all-again
+        kind: click
+        selector: '#filter-all'
+    checkpoints:
+      - id: after-select-before-repeat
+        afterActionId: select-before-repeat
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 雨の日の本既読未読にする
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 1件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読1件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset-before-repeat
+        afterActionId: reset-before-repeat
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 3件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読1件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-read-again
+        afterActionId: read-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 雨の日の本既読未読にする
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 1件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読1件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reopen-last
+        afterActionId: reopen-last
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: ''
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 0件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読0件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-all-again
+        afterActionId: all-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+          - id: count
+            kind: selector-text
+            selector: '#count'
+            equals: 3件
+          - id: summary
+            kind: selector-text
+            selector: '#summary'
+            equals: 既読0件 / 全3件
+          - id: filter-all
+            kind: attribute
+            selector: '#filter-all'
+            name: aria-pressed
+            equals: 'true'
+          - id: filter-unread
+            kind: attribute
+            selector: '#filter-unread'
+            name: aria-pressed
+            equals: 'false'
+          - id: filter-read
+            kind: attribute
+            selector: '#filter-read'
+            name: aria-pressed
+            equals: 'false'
+hints:
+  - id: react-ch02-l03-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 本の配列は全3冊のまま持ち、画面に出す配列をそこから選びます。
+    relatedSlideId: react-ch02-l03-s01
+  - id: react-ch02-l03-e01-h02
+    level: 2
+    title: 値と操作の流れを追う
+    text: 表示件数は選んだ配列、既読件数は元の配列から考えます。
+    relatedSlideId: react-ch02-l03-s01
+  - id: react-ch02-l03-e01-h03
+    level: 3
+    title: 小さい例で確かめる
+    text: たとえば[2, 5, 8].filter((value) => value > 4)は[5,
+      8]になり、lengthは2です。本の状態を条件にして、元の配列を保つ使い方を考えましょう。
+    relatedSlideId: react-ch02-l03-s01
+relatedSlideIds:
+  - react-ch02-l03-s01
+  - react-ch02-l03-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/solution/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/solution/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/solution/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/solution/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/solution/types.ts
+        editable: false
+  - id: alternative-helper
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-helper/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-helper/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-helper/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/alternative-helper/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-helper/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-helper/types.ts
+        editable: false
+  - id: starter
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/starter/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/starter/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/starter/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/starter/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/starter/types.ts
+        editable: false
+    expectedDiagnosticCodes:
+      - react-interaction-target
+  - id: fixed-count
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-filtering:after-unread:count
+      - interaction:reading-filtering:after-finish-stars:count
+      - interaction:reading-filtering:after-finish-forest:count
+      - interaction:reading-filtering:after-reopen-rain:count
+      - interaction:reading-filtering:after-select-before-reset:count
+      - interaction:reading-empty-read:after-select-before-repeat:count
+      - interaction:reading-empty-read:after-read-again:count
+      - interaction:reading-empty-read:after-reopen-last:count
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/fixed-count/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/fixed-count/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/fixed-count/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/fixed-count/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/fixed-count/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/fixed-count/types.ts
+        editable: false
+  - id: visible-summary
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-filtering:after-unread:summary
+      - interaction:reading-filtering:after-finish-stars:summary
+      - interaction:reading-filtering:after-finish-forest:summary
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/visible-summary/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/visible-summary/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/visible-summary/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/visible-summary/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/visible-summary/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/visible-summary/types.ts
+        editable: false
+  - id: reset-keeps-filter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-filtering:after-reset:books
+      - interaction:reading-filtering:after-reset:state-stars
+      - interaction:reading-filtering:after-reset:state-forest
+      - interaction:reading-filtering:after-reset:count
+      - interaction:reading-filtering:after-reset:filter-all
+      - interaction:reading-filtering:after-reset:filter-read
+      - interaction:reading-empty-read:after-reset-before-repeat:books
+      - interaction:reading-empty-read:after-reset-before-repeat:state-stars
+      - interaction:reading-empty-read:after-reset-before-repeat:state-forest
+      - interaction:reading-empty-read:after-reset-before-repeat:count
+      - interaction:reading-empty-read:after-reset-before-repeat:filter-all
+      - interaction:reading-empty-read:after-reset-before-repeat:filter-read
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/reset-keeps-filter/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/reset-keeps-filter/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/reset-keeps-filter/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/reset-keeps-filter/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/reset-keeps-filter/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/reset-keeps-filter/types.ts
+        editable: false
+  - id: destructive-filter
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/destructive-filter/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/destructive-filter/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/destructive-filter/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/destructive-filter/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/destructive-filter/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/destructive-filter/types.ts
+        editable: false
+    expectedDiagnosticCodes:
+      - react-interaction-target
+  - id: alternative-empty-branch
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-empty-branch/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-empty-branch/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-empty-branch/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/alternative-empty-branch/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-empty-branch/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-empty-branch/types.ts
+        editable: false
+  - id: reset-blocks-toggle
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-empty-read:after-reopen-last:books
+      - interaction:reading-empty-read:after-reopen-last:count
+      - interaction:reading-empty-read:after-reopen-last:summary
+      - interaction:reading-empty-read:after-all-again:books
+      - interaction:reading-empty-read:after-all-again:state-rain
+      - interaction:reading-empty-read:after-all-again:summary
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/reset-blocks-toggle/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/reset-blocks-toggle/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/reset-blocks-toggle/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/reset-blocks-toggle/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/reset-blocks-toggle/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/reset-blocks-toggle/types.ts
+        editable: false
