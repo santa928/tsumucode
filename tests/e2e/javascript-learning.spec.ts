@@ -127,6 +127,60 @@ test('直接URLでscript.jsを初期選択し、JavaScriptのTokenを色分け�
   expect(tokenPaint.tokens.every(({ color }) => color !== tokenPaint.background)).toBe(true);
 });
 
+test('構文エラーの下書きを再読込すると空のプレビューから復帰する案内を表示する', async ({
+  page,
+}) => {
+  const heading = previewFrame(page).getByRole('heading', { name: 'ここを書き換えます' });
+  const guidance = page.getByRole('status').filter({ hasText: 'まだプレビューを表示できません' });
+  await expect(heading).toBeVisible();
+
+  const syntaxError = "document.querySelector('#message').textContent = 'ここを書き換えます;";
+  await replaceAndSave(page, syntaxError);
+  await expect(page.getByText(/括弧や引用符が閉じているか/u)).toBeVisible();
+  await expect(heading).toBeVisible();
+  await expect(guidance).toHaveCount(0);
+
+  const htmlTab = page.getByRole('tab', { name: 'index.html', exact: true });
+  await htmlTab.click();
+  await expect
+    .poll(async () => {
+      const draft = (await readStoredProgress(page)).drafts.find(
+        (candidate) => candidate['workspaceId'] === JAVASCRIPT_EXERCISE_ID,
+      );
+      return draft?.['selectedFile'];
+    })
+    .toBe('index.html');
+
+  await page.reload();
+  await expect(htmlTab).toHaveAttribute('aria-selected', 'true');
+  await expect(guidance).toBeVisible();
+  await expect(guidance).toContainText('「script.js」を開いて');
+  await expect(guidance).toContainText('「プレビューを更新」を押してください');
+  await expect(heading).toHaveCount(0);
+
+  await page.getByRole('tab', { name: 'script.js', exact: true }).click();
+  await expect.poll(() => editorText(page)).toBe(syntaxError);
+  await expect(page.getByText(/括弧や引用符が閉じているか/u)).toBeVisible();
+  await replaceEditorText(page, JAVASCRIPT_STARTER_SOURCE);
+  await page.getByRole('button', { name: 'プレビューを更新' }).click();
+  await expect(heading).toBeVisible();
+  await expect(guidance).toHaveCount(0);
+});
+
+test('CSS構文エラーの下書きを再読込しても表示済みのプレビューを空とは案内しない', async ({
+  page,
+}) => {
+  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+  await replaceAndSave(page, 'main { color: red; broken');
+  await page.reload();
+
+  await expect(page.getByText(/styles\.cssの.*書き方を確認してください/u).first()).toBeVisible();
+  await expect(
+    previewFrame(page).getByRole('heading', { name: 'ここを書き換えます' }),
+  ).toBeVisible();
+  await expect(page.getByText('まだプレビューを表示できません', { exact: false })).toHaveCount(0);
+});
+
 test('HTMLだけを完成表示へ偽装しても不合格で、正しいJavaScriptだけが合格する', async ({ page }) => {
   await page.getByRole('tab', { name: 'index.html', exact: true }).click();
   const spoofedHtml = `<!doctype html>

@@ -13,7 +13,7 @@ steps:
     target: 3行のconsole.logにある丸括弧の中
     starterAnchor: "console.log('ここを問題1に変える');"
     change: 文字列「問題1」、数値3、真偽値trueへ順に置き換える
-    observe: Consoleに問題1、3、trueが順番どおり表示される
+    observe: 「プレビューを更新」を押し、Consoleタブで問題1、3、trueの順を確認してから、「判定する」で値の種類と出力順を確かめる
     requiresConceptIds: [console-log-values]
     validationRuleIds:
       [

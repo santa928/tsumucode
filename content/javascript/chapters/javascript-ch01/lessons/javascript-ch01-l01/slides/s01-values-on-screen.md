@@ -10,13 +10,13 @@ screenBudget: { maxTextCharacters: 280, maxCodeLines: 2, maxVisuals: 1 }
 assets: []
 ---
 
-JavaScriptは、文字や数などの「値」を使って処理します。画面を変える前に、コードが扱う値をConsoleで観察します。
+JavaScriptは、文字や数などの「値」を使って処理します。コードが出力した値を順に表示する確認場所をコンソール（Console）と呼びます。画面を変える前に、ここで値を観察します。
 
 ```js
 console.log('問題1');
 ```
 
-Consoleは、コードの結果を上から順に表示する確認場所です。まずは値の種類を見分けます。
+このコードは「問題1」をConsoleへ表示します。まずは値の種類を見分けます。
 
 :::practice
 prompt: コードが扱っている値を探します。
