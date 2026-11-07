@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { BaselineSchema } from './content';
-import { BuildIdentitySchema, CommitSchema, DigestSchema } from './schema';
+import { BaselineSchema, BuildIdentitySchema, CommitSchema, DigestSchema } from './schema';
 import { hashValue } from './identity';
 const DecimalId = z.string().regex(/^[1-9]\d*$/u);
 export const BaselineProofSchema = z

@@ -248,7 +248,11 @@ jobs:
           docker exec -i "$controller" node --input-type=module < scripts/local/python-practice-acceptance.mjs
           docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=prepare "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
           docker kill --signal KILL "$controller"
-          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml start controller
+          state=$(docker inspect --format '{{.State.Status}} {{.State.ExitCode}} {{.State.OOMKilled}}' "$controller")
+          echo "abnormal-controller-stop: $state"
+          test "$state" = 'exited 137 false'
+          # Composeは一覧が古くrunningを返すとstartを省略する。同じIDを直接起動する。
+          docker start "$controller"
           docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=verify "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
           mkdir -p test-results
@@ -452,7 +456,11 @@ jobs:
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           docker exec -i -e TSUMUCODE_RESTART_PHASE=prepare -e TSUMUCODE_RESTART_MODE=abnormal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
           docker kill --signal KILL "$controller"
-          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml start controller
+          state=$(docker inspect --format '{{.State.Status}} {{.State.ExitCode}} {{.State.OOMKilled}}' "$controller")
+          echo "abnormal-controller-stop: $state"
+          test "$state" = 'exited 137 false'
+          # Composeは一覧が古くrunningを返すとstartを省略する。同じIDを直接起動する。
+          docker start "$controller"
           docker exec -i -e TSUMUCODE_RESTART_PHASE=verify -e TSUMUCODE_RESTART_MODE=abnormal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
       - name: Verify output failure and preparation shutdown at HTTP boundary
         run: >-
@@ -472,9 +480,10 @@ jobs:
       - name: Show bounded Source apply failure diagnostics
         if: failure()
         run: |
-          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -a -q controller)
           if [ -n "$controller" ]; then
-            docker logs "$controller" 2>&1 | grep -E '^Next (Source apply failure|grade (deadline|slow|timing|failure)) ' || true
+            docker inspect --format '{{json .State}}' "$controller" || true
+            docker logs --timestamps --tail 80 "$controller" 2>&1 || true
           fi
           for service in controller web; do
             container=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q "$service")

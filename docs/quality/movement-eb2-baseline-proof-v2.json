@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "repository": "santa928/tsumucode",
+  "deploymentId": "7593230441",
+  "sourceCommit": "eb2fe6f8e06409569f173efb2fe6275c46a535cf",
+  "workflowHeadCommit": "eb2fe6f8e06409569f173efb2fe6275c46a535cf",
+  "runId": "42154759825",
+  "tag": "refs/tags/tsumucode-app-42154759825-7593230441",
+  "tagDigest": "7d8deb3232687d04c3a5de556c9de52e3f48f7288eb38fa06f940fe79a38a5c9",
+  "artifactDigest": "d6185d990afb389ff7cf7e2564ff93a53e5521e514e1ade0a61fd29ea893ad39",
+  "artifactDigestFormat": "canonical-dist-v1",
+  "projection": "authoring",
+  "inventoryDigest": "995b25690035fc01b5fab5d45f38ee052baeef27019e616e69c6902ad1613227",
+  "publicContentDigest": "978e2811ce207f115e09ef8646a4b7a5bcefda39985b8604e95a9521cac35f6c",
+  "publicFiles": 467,
+  "observedAt": "2026-11-06T10:06:42.736Z"
+}

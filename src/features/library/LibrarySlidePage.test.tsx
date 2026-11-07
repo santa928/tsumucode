@@ -131,7 +131,10 @@ describe('LibrarySlidePage', () => {
     expect(screen.getByRole('textbox', { name: '読書位置のURL' })).toBeVisible();
     await userEvent.click(disclosure);
     await userEvent.click(screen.getByRole('link', { name: '次のスライドへ' }));
-    expect(await screen.findByRole('heading', { level: 1, name: 'Aのまとめ' })).toHaveFocus();
+    // 本文の描画だけでなく、遷移後の見出しへFocusが移るまで待つ。
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1, name: 'Aのまとめ' })).toHaveFocus();
+    });
   });
 
   it('進捗UIとExerciseを置かず、Lesson境界を越える前後導線とLibrary内Drawerを表示する', async () => {
@@ -191,7 +194,9 @@ describe('LibrarySlidePage', () => {
     await waitFor(() => {
       expect(router.state.location.pathname).toMatch(/\/lesson-b\/slides\/slide-b-1$/u);
     });
-    expect(await screen.findByRole('heading', { level: 1, name: 'Bのはじめ' })).toHaveFocus();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1, name: 'Bのはじめ' })).toHaveFocus();
+    });
 
     const input = document.createElement('input');
     document.body.append(input);

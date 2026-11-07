@@ -1,0 +1,28 @@
+[
+  {
+    "schemaVersion": 1,
+    "migrationId": "python-practice-historical-2026-11-06",
+    "courseId": "python-practice",
+    "sourceCommit": "6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931",
+    "candidateReaderCommit": "75c42b98d0d75675b7a8a1703b2cc56393180ccb",
+    "declarationDigest": "af0ecb948a55d00f552c23459d4a85f549486ceb188b2072a3709ef8fc0fc703",
+    "inspectorId": "/root/historical_inspection",
+    "inspectedAt": "2026-11-05T16:32:16.961835Z",
+    "inspectionSession": "01a1ac89-3650-7b22-8efa-5b34f539c2c6",
+    "scope": "bounded-historical-course-acceptance-not-role-receipts",
+    "receiptDigest": "e5d27e6fe7567dae5c80fdcfee2d49541915c016eb849414d9b1c6af79abc4a5"
+  },
+  {
+    "schemaVersion": 1,
+    "migrationId": "python-oop-historical-2026-11-06",
+    "courseId": "python-oop",
+    "sourceCommit": "6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931",
+    "candidateReaderCommit": "1b7739927e5dd4a8f9d93ffc94a6def66738bfbc",
+    "declarationDigest": "2742fea850683eecbc8b03ebc5bc0c8a97ee7a128af477aabda3ef53643d485a",
+    "inspectorId": "/root/historical_inspection",
+    "inspectedAt": "2026-11-05T16:32:16.961835Z",
+    "inspectionSession": "01a1ac89-3650-7b22-8efa-5b34f539c2c6",
+    "scope": "bounded-historical-course-acceptance-not-role-receipts",
+    "receiptDigest": "e09ad4ac955ed971c73a294f28f86766923548ab54f1f9e8c70aac6326a37c2b"
+  }
+]

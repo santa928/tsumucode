@@ -124,6 +124,8 @@ jobs:
       TSUMUCODE_DOCKER_TARGET: development
     permissions:
       contents: read
+    outputs:
+      preview_artifact_id: ${{ steps.static_preview.outputs['artifact-id'] }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -143,6 +145,7 @@ jobs:
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
+        id: static_preview
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: static-preview-${{ needs.resolve.outputs.checkout_sha }}
@@ -161,6 +164,51 @@ jobs:
         run: |
           echo "::warning::教材レビューの確認が必要です。動作検証とは別の結果で、公開前には必須です。Content review statusのログを確認してください。"
           echo "教材レビュー: 要確認。通常CIの成功は教材承認を意味しません。公開前のcheck:releaseは未承認・hash不一致で停止します。" >> "$GITHUB_STEP_SUMMARY"
+
+  pr_visual:
+    if: github.event_name == 'pull_request'
+    needs: [resolve, fast]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ needs.resolve.outputs.checkout_sha }}
+          persist-credentials: false
+      - name: Build the existing browser image
+        run: docker build --target app --tag tsumucode-pr-visual .
+      - name: Download the same-run static preview
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ needs.fast.outputs.preview_artifact_id }}
+          path: .
+      - name: Verify preview checkout identity
+        run: git rev-parse HEAD 'HEAD^{tree}' | cmp - static-preview-identity.txt
+      - name: Verify Course map and Slide library at three widths
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-pr-visual node --import tsx scripts/ci/prVisual.ts
+      - name: Preserve bounded visual diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: pr-visual-${{ needs.resolve.outputs.checkout_sha }}
+          path: |
+            test-results/pr-visual-list.json
+            test-results/pr-visual-summary.json
+            test-results/pr-visual-artifacts/**/error-context.md
+            test-results/pr-visual-artifacts/**/*.png
+            test-results/pr-visual-artifacts/**/trace.zip
+          if-no-files-found: warn
+          retention-days: 7
 
   # Both read-only admission and explicit publication freeze one candidate in this run.
   build:
