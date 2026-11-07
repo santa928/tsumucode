@@ -4,16 +4,16 @@ verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
   - lessonId: javascript-ch00-l01
-    authorId: codex-issue261-javascript-clarity-author
+    authorId: codex-issue261-ch00-followup-author
     reviewerId: /root/review_js_clarity
-    sourceHash: b326604082ebfecbedd9c03926a88f461399c7a5aa3e30e7094d644c821d247c
+    sourceHash: 3ffa01faa2b31d1384017128289546118283fc072b0f34da395e8ef27b4d10bc
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 'Issue #261の表示側原本に対する新規独立差分レビュー。8fb5837cから工程票observeだけを更新し、実表示経路・Goal・課題本文・実UI名・2採点ルールの整合を再照合して承認。掲載7コードブロックと他36ファイルは同byte、exercise.yamlもobserve以外は不変。examplesExecutedは旧実行記録の限定再利用で、新規実行・初心者3役の再観察ではない。Browser未確認。旧原本と新hashの根拠はissue-261-javascript-content-review.mdの追記に保持。Release bindingはdraft。'
+    notes: 'Issue #261の固定Source 86444cd5262dd751a3229bfbed017080378d017b を独立内容レビュー。s02でdocumentを初出時に定義し、s03でquerySelectorとHTMLの目印との関係を明示。Goal・課題・Hintは現行と整合。掲載例3件の入力と期待出力は一致したため、Source 3c7a42f6e0dded25da0723522073cd3634058cb7 の実行原本を再利用。修正Sourceでの掲載例再実行は未実施。公開bindingはdraft。'
   - lessonId: javascript-ch01-l01
     authorId: codex-issue261-javascript-clarity-author
     reviewerId: /root/review_js_clarity
