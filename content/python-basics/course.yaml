@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-basics
 title: Python 値と変数の第一歩
-description: 値と変数から事前入力・条件分岐・反復・Collection・Function・Module・例外と小制作へ進み、実Pythonの出力を確かめる155分の入門教材。
+description: 値や変数、入力、条件で処理を分ける方法、繰り返しを学びます。複数の値の扱い、関数と別ファイルの読み込み、エラーへの対応を組み合わせ、小さいプログラムを作って実Pythonの出力を確かめます。
 audience: プログラミングが初めての方
-estimatedMinutes: 155
-revision: 2026-10-12.1
+estimatedMinutes: 227
+revision: 2026-11-03.1
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -23,12 +23,12 @@ prerequisites: []
 publicationStatus: published
 expectedTotals:
   chapters: 2
-  lessons: 10
-  conceptSlides: 19
-  standardExercises: 9
+  lessons: 16
+  conceptSlides: 31
+  standardExercises: 15
   guidedProjectLessons: 1
   capstoneLessons: 0
-  estimatedMinutes: 155
+  estimatedMinutes: 227
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-10.1
@@ -42,6 +42,27 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-11.3
     toRevision: 2026-10-12.1
+    steps: []
+  - fromRevision: 2026-10-12.1
+    toRevision: 2026-10-27.1
+    steps: []
+  - fromRevision: 2026-10-27.1
+    toRevision: 2026-10-28.2
+    steps:
+      - action: intentionally-reset
+        entity: lesson
+        id: python-basics-ch01-l07
+        reason: 旧複合関数から呼び出し専用の新目標へ変わるため、旧達成と元下書きを隔離保存します。
+      - action: intentionally-reset
+        entity: lesson
+        id: python-basics-ch01-l08
+        reason: 旧Moduleから引数専用の新目標へ変わるため、旧達成と元下書きを隔離保存します。
+      - action: intentionally-reset
+        entity: lesson
+        id: python-basics-ch01-l09
+        reason: 旧例外処理から戻り値専用の新目標へ変わるため、旧達成と元下書きを隔離保存します。
+  - fromRevision: 2026-10-28.2
+    toRevision: 2026-11-03.1
     steps: []
 phases:
   - id: python-basics-p01

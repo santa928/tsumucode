@@ -306,7 +306,9 @@ const LIBRARY_SCREENS: readonly VisualScreen[] = [
         }),
       ).toBeVisible();
       await expect(
-        page.getByText('進捗を変えずに、すべてのスライドを自由に読めます'),
+        page.getByText(
+          '演習の合否と下書きを変えずに、すべてのスライドを自由に読めます。読書の続き位置は、この端末・このサイトに別に保存します。',
+        ),
       ).toBeVisible();
       await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
     },

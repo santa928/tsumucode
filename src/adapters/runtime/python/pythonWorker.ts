@@ -100,9 +100,11 @@ export function initializePythonWorker(
         | 'inputEchoed'
         | 'ageBoundaryBranched'
         | 'rangeIterated'
+        | 'listValuesUpdated'
+        | 'listIteratedSummed'
         | 'listReferenceSummed'
         | 'dictValuesSummed'
-        | 'functionReturnScoped'
+        | 'functionBehaviorVerified'
         | 'moduleImported'
         | 'exceptionHandled'
         | 'projectSummed'
@@ -391,9 +393,11 @@ install
           inputEchoed: parsed.inputEchoed === true,
           ageBoundaryBranched: parsed.ageBoundaryBranched === true,
           rangeIterated: parsed.rangeIterated === true,
+          listValuesUpdated: parsed.listValuesUpdated === true,
+          listIteratedSummed: parsed.listIteratedSummed === true,
           listReferenceSummed: parsed.listReferenceSummed === true,
           dictValuesSummed: parsed.dictValuesSummed === true,
-          functionReturnScoped: parsed.functionReturnScoped === true,
+          functionBehaviorVerified: parsed.functionBehaviorVerified === true,
           moduleImported: parsed.moduleImported === true,
           exceptionHandled: parsed.exceptionHandled === true,
           projectSummed: parsed.projectSummed === true,

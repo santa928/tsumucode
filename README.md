@@ -226,7 +226,17 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
-通常Actionsはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件をChromium・1 worker・retry 0で検査します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+
+正式qualificationの候補Browser 4 suiteは`playwright.qualification.config.ts`で初回からtraceを記録し、失敗分だけを既存のsuite別診断Artifactへ7日間保存します。`--retries=0`、失敗exit、Chromium全件とFirefox/WebKitの対象範囲は維持します。DOM・通信・連続画像・source・添付はtraceへ収集せず、操作時刻・待機・エラーを診断します。成功時にも記録負荷は生じますが、成功traceは保存しません。`on-first-retry`はretry 0では記録自体がなく、初回失敗の診断に使えません（[Playwright trace仕様](https://playwright.dev/docs/api/class-testoptions#test-options-trace)）。
+
+このtraceは秘密値の自動除去ではなく、操作引数・戻り値・Console・標準出力／標準エラー・ページのエラー文を含み得ます。`sources: false`でも、Editorへ渡す教材本文や`evaluate`の関数本文は操作引数として残る場合があります。対象はfreshなBrowser contextと固定教材・合成入力を使う候補suiteだけです。実利用者の進捗・下書き・認証・秘密値を入力せず、学習データ移行、Native、公開後操作、性能計測にはこの設定を拡大しません。診断は資格receiptや公開Artifactへ含めず、既存の許可された診断保存先でだけ扱います。強制終了やrunner喪失ではtraceを回収できない場合があります。
+
+2026-11-07に固定Playwright 1.61.1で次を確認しました。
+
+- Browserを起動しないfocused 38件、変更箇所Lint・型検査・整形が成功。設定継承、対象suite、記録と保存の境界に対する独立レビューは修正必須の指摘なし。
+- Chromium／Firefox／WebKitで合成ページの成功・assert失敗・timeoutを旧新設定で比較し、18件すべてが期待した状態になった。旧設定のtraceは0、新設定は成功分を破棄し、失敗6件だけ各4,341〜4,575 bytesを保存した。DOM・通信ヘッダー／本文・Cookie・添付の合成マーカーは含まれず、Console・標準出力／標準エラー・待機箇所は残った。
+- 旧新configの一覧1,881件（Chromium 1,761／Firefox 60／WebKit 60）でID・期待状態・注釈が一致。合成ページの時間は各1標本で実行順の影響があるため、記録負荷の純増量やp95の証拠にはしない。最初のFirefox起動はコンテナsandbox権限エラーで失敗しており、既存の成功済み起動条件へ揃えた後の有効な測定と区別する。これらは正式qualificationや製品操作全件の成功を代替しない。
 
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run check

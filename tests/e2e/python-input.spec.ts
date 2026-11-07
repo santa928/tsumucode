@@ -2,6 +2,7 @@ import { attachPythonFixtureCoverage } from './helpers/pythonFixtureCoverage';
 import { observeLocalConsole } from './helpers/localConsoleDiagnostics';
 import { testBasePath } from './helpers/testBasePath';
 import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { parse } from 'yaml';
@@ -93,153 +94,190 @@ async function storedDraft(page: Page, id: string) {
   return (await readStoredProgress(page)).drafts.find((draft) => draft['workspaceId'] === id);
 }
 
-for (const number of [2, 3, 4, 5, 6, 7]) {
-  const lessonId = `python-basics-ch01-l0${String(number)}`;
+for (const suffix of [
+  '02',
+  '03',
+  '04',
+  '05-values',
+  '05-iterate',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+]) {
+  const number = Number.parseInt(suffix, 10);
+  const lessonId = `python-basics-ch01-l${suffix}`;
   const exerciseId = `${lessonId}-e01`;
   const sourceRoot = `content/python-basics/chapters/python-basics-ch01/lessons/${lessonId}/exercises/${exerciseId}`;
-  test(
-    `Python l0${String(number)}の正負Fixtureを実入力とASTで確認する`,
-    { annotation: { type: 'release-exercise', description: exerciseId } },
-    async ({ page }, info) => {
-      test.setTimeout(240_000);
-      const exercise = parse(await readFile(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
-        fixtures: {
-          id: string;
-          expectedStatus: string;
-          expectedLocalStatus?: string;
-          expectedFeedbackRuleIds: string[];
-          inputLines: string[];
-          files: { source: string }[];
-        }[];
-      };
-      await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`);
-      await expect(page.locator('.cm-content')).toBeVisible();
-      const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
-      for (const fixture of exercise.fixtures) {
-        await test.step(fixture.id, async () => {
-          // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
-          await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
-            timeout: 30_000,
-          });
-          const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
-          await replaceEditorText(page, source);
-          if (number === 2 || number === 3)
-            await page
-              .getByLabel('実行前の入力（1行につきinput 1回）')
-              .fill(fixture.inputLines.join('\n'));
-          const previous = (await storedDraft(page, exerciseId))?.['validationHistory'];
-          // Localの採点入力は固定。空の事前入力によるValueErrorはPreviewで引き続き確認する。
-          if (local && number === 3 && fixture.id === 'empty') {
-            await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
-            await expect(
-              page.getByRole('region', { name: 'Console出力', exact: true }),
-            ).toContainText('ValueError', { timeout: 30_000 });
-            expect((await storedDraft(page, exerciseId))?.['validationHistory']).toEqual(previous);
-          }
-          const expectedStatus = local
-            ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
-            : fixture.expectedStatus;
-          await page.getByRole('button', { name: '判定する', exact: true }).click();
-          if (expectedStatus === 'system-error') {
-            await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+  const exercise = parse(readFileSync(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
+    fixtures: {
+      id: string;
+      expectedStatus: string;
+      expectedLocalStatus?: string;
+      expectedFeedbackRuleIds: string[];
+      inputLines: string[];
+      files: { source: string }[];
+    }[];
+  };
+  // 9件以上の課題は、Python初期化と最終batchの再判定を240秒に収めるために分ける。
+  const batchSize = exercise.fixtures.length >= 9 ? 6 : exercise.fixtures.length;
+  for (let offset = 0; offset < exercise.fixtures.length; offset += batchSize) {
+    const fixtures = exercise.fixtures.slice(offset, offset + batchSize);
+    const batchLabel =
+      batchSize < exercise.fixtures.length
+        ? `（Fixture ${String(offset + 1)}〜${String(offset + fixtures.length)}）`
+        : '';
+    test(
+      `Python l${suffix}の正負Fixtureを実入力とASTで確認する${batchLabel}`,
+      { annotation: { type: 'release-exercise', description: exerciseId } },
+      async ({ page }, info) => {
+        test.setTimeout(240_000);
+        await page.goto(
+          `${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`,
+        );
+        await expect(page.locator('.cm-content')).toBeVisible();
+        const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
+        for (const fixture of fixtures) {
+          await test.step(fixture.id, async () => {
+            // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
+            await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
               timeout: 30_000,
             });
+            const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
+            await replaceEditorText(page, source);
+            if (number === 2 || number === 3)
+              await page
+                .getByLabel('実行前の入力（1行につきinput 1回）')
+                .fill(fixture.inputLines.join('\n'));
+            const previous = (await storedDraft(page, exerciseId))?.['validationHistory'];
+            // Localの採点入力は固定。空の事前入力によるValueErrorはPreviewで引き続き確認する。
+            if (local && number === 3 && fixture.id === 'empty') {
+              await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+              await expect(
+                page.getByRole('region', { name: 'Console出力', exact: true }),
+              ).toContainText('ValueError', { timeout: 30_000 });
+              expect((await storedDraft(page, exerciseId))?.['validationHistory']).toEqual(
+                previous,
+              );
+            }
+            const expectedStatus = local
+              ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
+              : fixture.expectedStatus;
+            await page.getByRole('button', { name: '判定する', exact: true }).click();
+            if (expectedStatus === 'system-error') {
+              const message =
+                fixture.id === 'unsupported-call' ? /採点範囲外/ : /入力行が不足しています/;
+              await expect(page.getByText(message).first()).toBeVisible({
+                timeout: 30_000,
+              });
+              expect(
+                (await storedDraft(page, exerciseId))?.['validationHistory'],
+                fixture.id,
+              ).toEqual(previous);
+              expect(await editorText(page)).toBe(source);
+              await expect(page.getByRole('dialog')).toHaveCount(0);
+              await attachPythonFixtureCoverage(info, {
+                exerciseId,
+                fixtureId: fixture.id,
+                mode: local ? 'cpython' : 'pyodide',
+                files: { 'main.py': source },
+                ...(!local ? { inputLines: fixture.inputLines } : {}),
+                actualStatus: 'system-error',
+              });
+              return;
+            }
+            await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+            await expect
+              .poll(
+                async () => {
+                  const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+                    { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
+                  return history?.at(-1);
+                },
+                { message: fixture.id },
+              )
+              .toMatchObject({ status: expectedStatus });
+            const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as {
+              checks: { passed: boolean; ruleId: string }[];
+            }[];
             expect(
-              (await storedDraft(page, exerciseId))?.['validationHistory'],
+              history
+                .at(-1)
+                ?.checks.filter((check) => !check.passed)
+                .map((check) => check.ruleId),
               fixture.id,
-            ).toEqual(previous);
-            expect(await editorText(page)).toBe(source);
-            await expect(page.getByRole('dialog')).toHaveCount(0);
+            ).toEqual(fixture.expectedFeedbackRuleIds);
+            await page.getByRole('button', { name: '閉じる', exact: true }).click();
+            if (number >= 5 && fixture.id === 'empty') {
+              await expect(
+                page
+                  .getByRole('region', { name: 'Console出力', exact: true })
+                  .getByText('0', { exact: true }),
+              ).toBeVisible();
+            }
+            if (number >= 5 && fixture.expectedStatus === 'code-error') {
+              expect(await editorText(page)).toBe(source);
+            }
             await attachPythonFixtureCoverage(info, {
               exerciseId,
               fixtureId: fixture.id,
               mode: local ? 'cpython' : 'pyodide',
               files: { 'main.py': source },
               ...(!local ? { inputLines: fixture.inputLines } : {}),
-              actualStatus: 'system-error',
+              actualStatus: expectedStatus as 'pass' | 'incomplete' | 'code-error' | 'system-error',
             });
-            return;
-          }
+          });
+        }
+        // 最終batchでは同じworkspaceの保存・reload・reset・再判定まで続けて確認する。
+        if (number >= 5 && offset + fixtures.length === exercise.fixtures.length) {
+          const solution = await readFile(`${sourceRoot}/solution/main.py`, 'utf8');
+          await replaceEditorText(page, solution);
+          await page.getByRole('button', { name: '判定する', exact: true }).click();
+          await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+            timeout: 30_000,
+          });
+          await page.getByRole('button', { name: '閉じる', exact: true }).click();
+          expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+          await page.screenshot({
+            path: info.outputPath(`python-l0${String(number)}-exercise.png`),
+            fullPage: true,
+          });
+          await page.reload();
+          await expect.poll(() => editorText(page)).toBe(solution);
+          await expect(page.getByRole('button', { name: '最初に戻す', exact: true })).toBeEnabled({
+            timeout: 30_000,
+          });
+          await page.getByRole('button', { name: '最初に戻す', exact: true }).click();
+          await page
+            .getByRole('dialog', { name: '最初のコードに戻しますか？' })
+            .getByRole('button', { name: '最初のコードに戻す', exact: true })
+            .click();
+          const starter = await readFile(`${sourceRoot}/starter/main.py`, 'utf8');
+          await expect.poll(() => editorText(page)).toBe(starter);
+          await page.getByRole('button', { name: '判定する', exact: true }).click();
           await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
           await expect
-            .poll(
-              async () => {
-                const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
-                  { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
-                return history?.at(-1);
-              },
-              { message: fixture.id },
-            )
-            .toMatchObject({ status: expectedStatus });
-          const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as {
-            checks: { passed: boolean; ruleId: string }[];
-          }[];
-          expect(
-            history
-              .at(-1)
-              ?.checks.filter((check) => !check.passed)
-              .map((check) => check.ruleId),
-            fixture.id,
-          ).toEqual(fixture.expectedFeedbackRuleIds);
+            .poll(async () => {
+              const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+                { status: string }[] | undefined;
+              return history?.at(-1)?.status;
+            })
+            .toBe('incomplete');
           await page.getByRole('button', { name: '閉じる', exact: true }).click();
-          if (number >= 5 && fixture.id === 'empty') {
-            await expect(
-              page
-                .getByRole('region', { name: 'Console出力', exact: true })
-                .getByText('0', { exact: true }),
-            ).toBeVisible();
-          }
-          if (number >= 5 && fixture.expectedStatus === 'code-error') {
-            expect(await editorText(page)).toBe(source);
-          }
-          await attachPythonFixtureCoverage(info, {
-            exerciseId,
-            fixtureId: fixture.id,
-            mode: local ? 'cpython' : 'pyodide',
-            files: { 'main.py': source },
-            ...(!local ? { inputLines: fixture.inputLines } : {}),
-            actualStatus: expectedStatus as 'pass' | 'incomplete' | 'code-error' | 'system-error',
+          await replaceEditorText(page, solution);
+          await page.getByRole('button', { name: '判定する', exact: true }).click();
+          await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+            timeout: 30_000,
           });
-        });
-      }
-      if (number >= 5) {
-        const solution = await readFile(`${sourceRoot}/solution/main.py`, 'utf8');
-        await replaceEditorText(page, solution);
-        await page.getByRole('button', { name: '判定する', exact: true }).click();
-        await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
-          timeout: 30_000,
-        });
-        await page.getByRole('button', { name: '閉じる', exact: true }).click();
-        expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-        await page.screenshot({
-          path: info.outputPath(`python-l0${String(number)}-exercise.png`),
-          fullPage: true,
-        });
-        await page.reload();
-        await expect.poll(() => editorText(page)).toBe(solution);
-        await expect(page.getByRole('button', { name: '最初に戻す', exact: true })).toBeEnabled({
-          timeout: 30_000,
-        });
-        await page.getByRole('button', { name: '最初に戻す', exact: true }).click();
-        await page
-          .getByRole('dialog', { name: '最初のコードに戻しますか？' })
-          .getByRole('button', { name: '最初のコードに戻す', exact: true })
-          .click();
-        const starter = await readFile(`${sourceRoot}/starter/main.py`, 'utf8');
-        await expect.poll(() => editorText(page)).toBe(starter);
-        await page.getByRole('button', { name: '判定する', exact: true }).click();
-        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-        await expect
-          .poll(async () => {
-            const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
-              { status: string }[] | undefined;
-            return history?.at(-1)?.status;
-          })
-          .toBe('incomplete');
-        await page.getByRole('button', { name: '閉じる', exact: true }).click();
-      }
-    },
-  );
+          await page.getByRole('button', { name: '閉じる', exact: true }).click();
+          expect(await editorText(page)).toBe(solution);
+        }
+      },
+    );
+  }
 }
 
 test('事前入力の上限・非保存・実行中止・出力上限から復帰する', async ({ page }, info) => {
@@ -369,3 +407,66 @@ test('Python Collection・Functionの読書と予測を狭幅・キーボード�
     [],
   );
 });
+
+for (const number of [9, 10]) {
+  // Lesson間はContextを閉じ、前のPyodide実行環境を保持しない。
+  test(`Python l${String(number).padStart(2, '0')}の同名関数再定義と正当な別解を確認する`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
+    const negatives = [
+      'def plus(a, b):\n    return 8\nfirst = plus(3, 5)\nprint(first + 2)\ndef plus(a, b):\n    return 10\nprint(plus(4, 6) + 2)\ndef plus(a, b):\n    return a + b\n',
+      'def plus(a, b):\n    return 8\ndef relay(a, b):\n    return plus(a, b)\nfirst = relay(3, 5)\nprint(first + 2)\ndef plus(a, b):\n    return 10\nprint(relay(4, 6) + 2)\ndef plus(a, b):\n    return a + b\n',
+    ];
+    const lessonId = `python-basics-ch01-l${String(number).padStart(2, '0')}`;
+    const exerciseId = `${lessonId}-e01`;
+    const root = `content/python-basics/chapters/python-basics-ch01/lessons/${lessonId}/exercises/${exerciseId}`;
+    const cases = [
+      ...(number === 9
+        ? negatives.map((source, index) => ({
+            id: `redefined-${String(index)}`,
+            source,
+            status: 'incomplete',
+          }))
+        : []),
+      ...(await Promise.all(
+        (number === 9 ? ['solution', 'alternative'] : ['solution']).map(async (id) => ({
+          id,
+          source: await readFile(`${root}/fixtures/${id}.py`, 'utf8'),
+          status: 'pass',
+        })),
+      )),
+    ];
+    await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`);
+    for (const item of cases) {
+      await test.step(`${lessonId}/${item.id}`, async () => {
+        const grade = page.getByRole('button', { name: '判定する', exact: true });
+        await expect(grade).toBeEnabled({ timeout: 30_000 });
+        await replaceEditorText(page, item.source);
+        await grade.click();
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+        await expect
+          .poll(
+            async () => {
+              const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+                { status: string; checks: { ruleId: string; passed: boolean }[] }[] | undefined;
+              const result = history?.at(-1);
+              return {
+                status: result?.status,
+                failedRules: result?.checks
+                  .filter((check) => !check.passed)
+                  .map((check) => check.ruleId),
+              };
+            },
+            { message: item.id },
+          )
+          .toEqual({
+            status: item.status,
+            failedRules: item.status === 'pass' ? [] : [`${exerciseId}-r01`],
+          });
+        await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        expect(await editorText(page)).toBe(item.source);
+      });
+    }
+  });
+}

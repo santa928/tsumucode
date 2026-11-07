@@ -192,7 +192,7 @@ export function testCommand(suite: string, list: boolean): string[] {
         ? 'playwright.performance.config.ts'
         : suite === 'browser-public'
           ? 'playwright.config.ts'
-          : 'playwright.authoring.config.ts';
+          : 'playwright.qualification.config.ts';
   return [
     'test',
     '--config=' + config,

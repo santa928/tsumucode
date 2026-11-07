@@ -1,0 +1,14 @@
+id: python-basics-ch01-l05-iterate
+kind: standard
+title: Listの各要素をforで合計する
+goal: Listから受け取る各要素を、0から始めた合計へ繰り返し足せる。
+estimatedMinutes: 10
+prerequisiteLessonIds: [python-basics-ch01-l05-values]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l05-iterate-e01/exercise.yaml]
+reflection: forの中のtotal = total + itemは、1回目と2回目に何を足しますか。Listが空ならtotalが0のままになる理由も説明してください。
+glossaryRefs: [python-list]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l05-iterate-s02
+  requiredExerciseIds: [python-basics-ch01-l05-iterate-e01]

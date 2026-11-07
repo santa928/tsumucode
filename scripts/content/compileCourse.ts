@@ -2,6 +2,7 @@
 import { lstat, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { CourseManifestSchema, LessonSchema } from '../../src/core/content/schema';
+import { assertActiveExerciseRuntime } from '../../src/core/content/activeExerciseRuntime';
 import type {
   AssetRef,
   ChapterManifest,
@@ -73,6 +74,11 @@ export interface CompiledCourseArtifacts {
   readonly assets: ReadonlyMap<string, Uint8Array>;
 }
 
+export interface CompileCourseOptions {
+  /** 固定Git原本を一時領域で再構築するrelease reader専用。通常制作では指定しない。 */
+  readonly historicalSource?: true;
+}
+
 interface CompileContext {
   readonly courseId: string;
   readonly courseRoot: string;
@@ -83,6 +89,7 @@ interface CompileContext {
   readonly assets: Map<string, Uint8Array>;
   readonly missingSlideMetadataIds: Set<string>;
   readonly missingExerciseMetadataIds: Set<string>;
+  readonly historicalSource: boolean;
 }
 
 interface CompiledExercise {
@@ -529,6 +536,13 @@ async function compileExercise(
   assertFileRole(relativePath, 'public');
   context.consumedPaths.add(relativePath);
   const source = await readYamlFile(context.courseRoot, relativePath, ExerciseSourceSchema);
+  if (
+    !context.historicalSource ||
+    context.courseId !== 'python-basics' ||
+    source.id !== 'python-basics-ch01-l07-e01'
+  ) {
+    assertActiveExerciseRuntime(source.runtime);
+  }
   const hasExplicitLearningMetadata =
     source.requiresConcepts !== undefined &&
     source.scaffoldLevel !== undefined &&
@@ -710,6 +724,7 @@ export async function loadAuthoringLessonDraft(
     assets: new Map(),
     missingSlideMetadataIds: new Set(),
     missingExerciseMetadataIds: new Set(),
+    historicalSource: false,
   };
   const lesson = await compileLesson('lesson.yaml', context);
   LessonSchema.parse(lesson.runtime);
@@ -839,7 +854,10 @@ function collectMissingMetadataPaths(
 }
 
 /** 1 Courseを副作用なしでAuthoring Packageと公開Artifactへ構築する。 */
-async function buildCourseCompilation(courseRoot: string): Promise<CourseCompilation> {
+async function buildCourseCompilation(
+  courseRoot: string,
+  options: CompileCourseOptions = {},
+): Promise<CourseCompilation> {
   const resolvedCourseRoot = path.resolve(courseRoot);
   const courseFiles = await inspectSafeCourseTree(resolvedCourseRoot);
   const consumedPaths = new Set<string>(['course.yaml']);
@@ -865,6 +883,7 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
     assets: new Map(),
     missingSlideMetadataIds: new Set(),
     missingExerciseMetadataIds: new Set(),
+    historicalSource: options.historicalSource === true,
   };
   for (const documentationSource of source.documentationSources) {
     assertFileRole(documentationSource, 'public');
@@ -972,8 +991,11 @@ export async function loadAuthoringCourse(courseRoot: string): Promise<Authoring
 }
 
 /** 1 Course directoryを副作用なしの検証済み公開Artifactへ変換する。 */
-export async function compileCourse(courseRoot: string): Promise<CompiledCourseArtifacts> {
-  const compilation = await buildCourseCompilation(courseRoot);
+export async function compileCourse(
+  courseRoot: string,
+  options: CompileCourseOptions = {},
+): Promise<CompiledCourseArtifacts> {
+  const compilation = await buildCourseCompilation(courseRoot, options);
   return {
     runtime: compilation.authoring.runtime,
     authoringExercises: compilation.authoring.exercises,

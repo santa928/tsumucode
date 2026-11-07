@@ -25,12 +25,17 @@ const objectProtocolFields = [
   'dunderProtocolsUsed',
 ];
 
-const dataProfiles = new Set([
-  'list-reference-sum-v1',
-  'dict-value-sum-v1',
-  'function-return-scope-v1',
+const dataProfiles = new Set(['list-reference-sum-v1', 'dict-value-sum-v1']);
+const dataFields = ['listReferenceSummed', 'dictValuesSummed'];
+const listIntroductionProfiles = new Set(['list-values-update-v1', 'list-iterate-sum-v1']);
+const listIntroductionFields = ['listValuesUpdated', 'listIteratedSummed'];
+const functionProfiles = new Set([
+  'function-call-v1',
+  'function-arguments-v1',
+  'function-result-v1',
+  'function-print-return-v1',
+  'function-scope-v2',
 ]);
-const dataFields = ['listReferenceSummed', 'dictValuesSummed', 'functionReturnScoped'];
 const iterationProfiles = new Set([
   'list-comprehension-filter-v1',
   'iterator-consumption-v1',
@@ -100,10 +105,16 @@ print(json.dumps(_module_result))
     );
   else if (profile === 'dataclass-test-project-v1') fallback.dataProjectTested = false;
   else if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
+  else if (listIntroductionProfiles.has(profile))
+    Object.assign(
+      fallback,
+      Object.fromEntries(listIntroductionFields.map((field) => [field, false])),
+    );
   else if (iterationProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
   else if (dataProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(dataFields.map((field) => [field, false])));
+  else if (functionProfiles.has(profile)) fallback.functionBehaviorVerified = false;
   else if (profile !== 'values-vars-print-v1')
     Object.assign(fallback, {
       inputEchoed: false,
@@ -180,8 +191,10 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     );
   else if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
   else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
+  else if (listIntroductionProfiles.has(profile)) keys.push(...listIntroductionFields);
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);
   else if (dataProfiles.has(profile)) keys.push(...dataFields);
+  else if (functionProfiles.has(profile)) keys.push('functionBehaviorVerified');
   else if (profile !== 'values-vars-print-v1')
     keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');
   if (
