@@ -19,8 +19,15 @@ import {
 import { pythonReferenceFixture, sealPythonReferenceFixture } from './pythonReferenceFixture';
 
 let fixture: Awaited<ReturnType<typeof pythonReferenceFixture>>;
+let receipts: z.infer<typeof ContentReceiptSchema>[];
 beforeAll(async () => {
   fixture = sealPythonReferenceFixture(await pythonReferenceFixture());
+  const policy = z
+    .object({ receipts: z.array(ContentReceiptSchema) })
+    .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8')));
+  receipts = policy.receipts.filter(({ courseId }) =>
+    fixture.inventory.courses.some(({ id }) => id === courseId),
+  );
 }, 60000);
 
 it('固定2教材の実Git参照差分を保全し、新roleの受入を作らない', () => {
@@ -239,14 +246,11 @@ it('新markerをjointやReact後続へ拡張しない', () => {
   }
 });
 
-it('新rolesを要求せずnavigation/persistenceとfixture/project全件を維持する', async () => {
+it('新rolesを要求せずnavigation/persistenceとfixture/project全件を維持する', () => {
   const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
-  const policy = z
-    .object({ receipts: z.array(ContentReceiptSchema) })
-    .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8')));
   const content = verifyContent(
     fixture.inventory,
-    policy.receipts,
+    receipts,
     fixture.baseline,
     [],
     [],
@@ -284,11 +288,8 @@ it('新rolesを要求せずnavigation/persistenceとfixture/project全件を維�
 
 it.each(['previous', 'current'] as const)(
   '%sのwithdrawalをreference carryで隠さない',
-  async (side) => {
+  (side) => {
     const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
-    const policy = z
-      .object({ receipts: z.array(ContentReceiptSchema) })
-      .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8')));
     const original = fixture.inputs.pythonReferenceOriginals[side][0]!;
     const inventory = side === 'previous' ? fixture.baseline.inventory : fixture.inventory;
     const lesson = inventory.courses
@@ -297,7 +298,7 @@ it.each(['previous', 'current'] as const)(
     expect(() =>
       verifyContent(
         fixture.inventory,
-        policy.receipts,
+        receipts,
         fixture.baseline,
         [
           {
