@@ -35,7 +35,8 @@ beforeAll(async () => {
   histories = [...z.array(z.unknown()).parse(python), tailwind];
   receipts = z
     .object({ receipts: z.array(ContentReceiptSchema) })
-    .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8'))).receipts;
+    .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8')))
+    .receipts.filter(({ courseId }) => fixture.inventory.courses.some(({ id }) => id === courseId));
 }, 60000);
 
 // 実Git/Compiler/固定sidecarを使う契約テスト。baseline認証とmovement承認は合成fixture。

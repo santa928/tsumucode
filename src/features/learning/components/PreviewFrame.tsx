@@ -9,6 +9,7 @@ export interface PreviewFrameProps {
   readonly sandboxMode?: 'scripts' | 'scriptless';
   readonly consoleEnabled?: boolean;
   readonly primaryOutput?: 'preview' | 'console';
+  readonly previewStatus?: string | undefined;
   readonly consoleRecords?: readonly RunnerConsoleRecord[];
   readonly consoleFreshness?: ConsoleFreshness;
   readonly consoleUpdateSequence?: number;
@@ -32,6 +33,7 @@ export function PreviewFrame({
   sandboxMode = 'scripts',
   consoleEnabled = false,
   primaryOutput = 'preview',
+  previewStatus,
   consoleRecords = [],
   consoleFreshness = 'current',
   consoleUpdateSequence,
@@ -281,6 +283,14 @@ export function PreviewFrame({
         hidden={consoleEnabled && activeOutput !== 'preview'}
         className="tc-runtime-preview-panel"
       >
+        {previewStatus !== undefined ? (
+          <p
+            role="status"
+            className={previewStatus === '' ? 'sr-only' : 'mt-4 text-sm font-bold'}
+          >
+            {previewStatus}
+          </p>
+        ) : null}
         <div
           ref={scrollContainerRef}
           data-testid="runtime-preview-scroll"

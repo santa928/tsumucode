@@ -13,7 +13,7 @@ steps:
     target: 右端にある引用符の内側
     starterAnchor: "document.querySelector('#message').textContent = 'ここを書き換えます';"
     change: 文字を「JavaScriptで文字を変えました」へ置き換える
-    observe: Previewの題名が同じ言葉へ変わる
+    observe: 「プレビューを更新」を押し、表示結果（Preview）の題名が「JavaScriptで文字を変えました」になったら、「判定する」で課題の条件を確かめる
     requiresConceptIds: [string-literal-edit]
     validationRuleIds: [javascript-ch00-l01-e01-r01, javascript-ch00-l01-e01-r02]
 files:

@@ -17,6 +17,8 @@ assets: []
 <script src="script.js"></script>
 ```
 
+`document` は、ブラウザーが読み込んだページを指します。この例では、そのページの中から `message` という目印を探します。
+
 ```js {"label":"script.js", "role":"input", "highlightedLines":[1]}
 document.querySelector('#message').textContent = '学習を始めよう';
 ```
