@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { TEST_SUITES } from '../../../../scripts/release/v2/executionPlan';
+import { TEST_SUITES, testCommand } from '../../../../scripts/release/v2/executionPlan';
 const fixture = {
   key: 'topic/lesson/exercise/solution/solution/browser',
   kind: 'fixture',
@@ -46,6 +46,40 @@ function manifests() {
   }));
 }
 describe('workflow execution plan', () => {
+  it.each(TEST_SUITES)(
+    '$suiteはretryなしの固定範囲を実行し、候補Browserだけ初回traceを有効にする',
+    (suite) => {
+      const config =
+        suite.producerJobId === 'browser'
+          ? '--config=playwright.qualification.config.ts'
+          : suite.suite === 'browser-public'
+            ? '--config=playwright.config.ts'
+            : suite.suite === 'browser-performance'
+              ? '--config=playwright.performance.config.ts'
+              : suite.suite === 'native-python'
+                ? '--config=playwright.python-local.config.ts'
+                : '--config=playwright.learning-native.config.ts';
+      expect(testCommand(suite.suite, false)).toEqual([
+        'test',
+        config,
+        ...suite.args,
+        '--grep-invert',
+        '@visual-extended',
+        '--workers=1',
+        '--retries=0',
+      ]);
+      expect(testCommand(suite.suite, true)).toEqual([
+        'test',
+        config,
+        ...suite.args,
+        '--grep-invert',
+        '@visual-extended',
+        '--list',
+        '--reporter=json',
+      ]);
+    },
+  );
+
   it('assigns independent test IDs, fixtures and persistence to fixed same-run producers', async () => {
     const { createExecutionPlan } = await import('../../../../scripts/release/v2/executionPlan');
     const execution = createExecutionPlan(plan, manifests());
