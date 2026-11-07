@@ -122,9 +122,8 @@ for (const suffix of [
       files: { source: string }[];
     }[];
   };
-  // 多数のPython初期化で単一テストの予算を使い切らないよう、対象2課題だけを分ける。
-  const batchSize =
-    suffix === '05-values' || suffix === '05-iterate' ? 6 : exercise.fixtures.length;
+  // 9件以上の課題は、Python初期化と最終batchの再判定を240秒に収めるために分ける。
+  const batchSize = exercise.fixtures.length >= 9 ? 6 : exercise.fixtures.length;
   for (let offset = 0; offset < exercise.fixtures.length; offset += batchSize) {
     const fixtures = exercise.fixtures.slice(offset, offset + batchSize);
     const batchLabel =
