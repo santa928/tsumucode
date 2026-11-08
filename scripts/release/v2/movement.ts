@@ -442,11 +442,11 @@ export function movementIntentScope(body: MovementBody, oldFixtureId: string) {
   });
 }
 
-// eb2のPython移行原本を保持したまま、#310で承認済みのJavaScript教材を同梱する固定後続。
+// eb2のPython移行原本を保持し、再確認済みのJavaScript教材を同梱する固定後続。
 const javascriptContinuation = {
   declarationDigest: '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494',
-  sourceCommit: '637021d43f13064abd4eb0830d0d7cdfa7335eff',
-  inventoryDigest: '8fd703f3db5754e38639f7efd5959c78267d9f0236c03360b8eba65ab83eac26',
+  sourceCommit: 'db9811cd13e9c5e4a52f784aad3e90a0a9fbf3f8',
+  inventoryDigest: 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
 } as const;
 
 function isJavascriptContinuation(
@@ -845,7 +845,7 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
   const git = promisify(execFile);
   const options = { cwd: root, env: await repositoryEnvironment(root), encoding: 'utf8' as const };
   // 審査記録より前の教材原本commitと現HEADのcontent treeを比較する。
-  // 固定後続では#310の全教材treeに加え、同梱した8件を含むreceipt台帳も固定する。
+  // 固定後続では全教材treeに加え、同梱したJavaScriptの8件を含むreceipt台帳も固定する。
   await git('git', ['diff', '--quiet', sourceCommit, 'HEAD', '--', ...sources], options);
   if (continuation) {
     const { stdout } = await git(
