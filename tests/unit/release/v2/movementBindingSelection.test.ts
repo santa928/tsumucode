@@ -27,8 +27,7 @@ async function temporaryRoot() {
   return root;
 }
 
-async function declarationRoot() {
-  const root = await temporaryRoot();
+function gitAt(root: string) {
   const ignored = new Set([
     'GIT_DIR',
     'GIT_WORK_TREE',
@@ -41,8 +40,13 @@ async function declarationRoot() {
   const env = Object.fromEntries(
     Object.entries(process.env).filter(([name]) => !ignored.has(name)),
   );
-  const git = async (...args: string[]) =>
+  return async (...args: string[]) =>
     (await exec('git', args, { cwd: root, env, encoding: 'utf8' })).stdout.trim();
+}
+
+async function declarationRoot() {
+  const root = await temporaryRoot();
+  const git = gitAt(root);
   await git('init', '-b', 'main');
   await git(
     '-c',
@@ -94,6 +98,60 @@ it('新宣言でも存在しないcandidateContentCommitを拒否する', async 
     JSON.stringify(declaration),
   );
   await expect(readMovementDeclaration(root)).rejects.toThrow();
+});
+
+it('eb2の固定後続だけを許し、各教材とreceiptの追加変更を拒否する', async () => {
+  const source = '637021d43f13064abd4eb0830d0d7cdfa7335eff';
+  const digest = '8fd703f3db5754e38639f7efd5959c78267d9f0236c03360b8eba65ab83eac26';
+  const root = await temporaryRoot();
+  const git = gitAt(root);
+  const objects = (
+    await exec('git', ['rev-parse', '--path-format=absolute', '--git-path', 'objects'])
+  ).stdout.trim();
+  await git('init', '-b', 'main');
+  await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  const declarationPath = 'docs/quality/movement-eb2-v2.json';
+  const original = await readFile(declarationPath, 'utf8');
+  await git('update-ref', 'HEAD', source);
+  await git('read-tree', '--reset', '-u', source);
+  expect(await readMovementDeclaration(root, digest)).toEqual(JSON.parse(original));
+  await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+
+  const receipts = 'docs/quality/content-v2-receipts.json';
+  await writeFile(path.join(root, receipts), '{}');
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow(/dirty content or receipts/u);
+  await git('update-index', '--assume-unchanged', receipts);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow(/receipt bytes differ/u);
+  await git('update-index', '--no-assume-unchanged', receipts);
+  await git('checkout', '--', receipts);
+
+  const changePath = path.join(root, 'changed');
+  await writeFile(changePath, 'unapproved change');
+  const changedBlob = await git('hash-object', '-w', changePath);
+  const courses = (await git('ls-tree', '-d', '--name-only', source + ':content')).split('\n');
+  for (const changedPath of [
+    ...courses.map((id) => 'content/' + id + '/unexpected.md'),
+    receipts,
+  ]) {
+    await git('read-tree', source);
+    await git('update-index', '--add', '--cacheinfo', `100644,${changedBlob},${changedPath}`);
+    const tree = await git('write-tree');
+    const changed = await git(
+      '-c',
+      'user.name=Unit Fixture',
+      '-c',
+      'user.email=unit@example.invalid',
+      'commit-tree',
+      tree,
+      '-p',
+      source,
+      '-m',
+      'unapproved change',
+    );
+    await git('update-ref', 'HEAD', changed);
+    await expect(readMovementDeclaration(root, digest), changedPath).rejects.toThrow();
+  }
+  expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(original);
 });
 
 it('eb2 bindingに対応する元proofだけを選び、再captureは時刻だけの差を許す', async () => {

@@ -72,7 +72,7 @@ async function snapshotMovement(
   snapshot: z.infer<typeof PreparationSchema>,
   baseline: unknown,
 ) {
-  const declaration = await readMovementDeclaration(root);
+  const declaration = await readMovementDeclaration(root, hashValue(snapshot.inventory));
   if (hashValue(declaration ?? null) !== hashValue(snapshot.movementInputs?.declaration ?? null))
     throw Error('Movement snapshot differs from source policy');
   return snapshot.movementInputs === undefined
