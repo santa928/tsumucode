@@ -78,7 +78,7 @@ export async function loadExecutionBundle(root: string) {
     candidate: await readJson(path.join(root, '.release-v2/candidate.json')),
     capturedBaseline: await readJson(path.join(root, '.release-v2/baseline.json')),
   });
-  const declaration = await readMovementDeclaration(root);
+  const declaration = await readMovementDeclaration(root, hashValue(bundle.snapshot.inventory));
   if (
     hashValue(declaration ?? null) !==
     hashValue(bundle.snapshot.movementInputs?.declaration ?? null)

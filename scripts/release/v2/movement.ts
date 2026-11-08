@@ -354,6 +354,7 @@ const verified = new WeakMap<
   object,
   {
     inputs: MovementInputs;
+    candidateInventoryDigest: string;
     resolved: Set<string>;
     rechecks: Set<string>;
     learnerCarries: ReturnType<typeof verifyLearnerMovement>;
@@ -441,6 +442,23 @@ export function movementIntentScope(body: MovementBody, oldFixtureId: string) {
   });
 }
 
+// eb2のPython移行原本を保持したまま、#310で承認済みのJavaScript教材を同梱する固定後続。
+const javascriptContinuation = {
+  declarationDigest: '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494',
+  sourceCommit: '637021d43f13064abd4eb0830d0d7cdfa7335eff',
+  inventoryDigest: '8fd703f3db5754e38639f7efd5959c78267d9f0236c03360b8eba65ab83eac26',
+} as const;
+
+function isJavascriptContinuation(
+  declaration: MovementInputs['declaration'],
+  inventoryDigest?: string,
+) {
+  return (
+    declaration.declarationDigest === javascriptContinuation.declarationDigest &&
+    inventoryDigest === javascriptContinuation.inventoryDigest
+  );
+}
+
 /** 認証済みbaselineを受け取り、原本保全と個別承認が揃った場合だけ内部検証結果を返す。
  * 承認の真正性は実原本を照合した独立検査者と版管理policyの信頼境界に属し、自己hashで代替しない。 */
 export function verifyMovementInputs(
@@ -459,6 +477,7 @@ export function verifyMovementInputs(
   );
   const stage = body.stage ?? 'joint';
   const moves = stageMoves(stage);
+  const candidateInventoryDigest = hashValue(inventory);
   if (
     hashValue(body.baseline) !==
       hashValue({
@@ -467,7 +486,8 @@ export function verifyMovementInputs(
         sourceRecordDigest: baseline.sourceRecordDigest,
         inventoryDigest: hashValue(baseline.inventory),
       }) ||
-    body.candidateInventoryDigest !== hashValue(inventory)
+    (body.candidateInventoryDigest !== candidateInventoryDigest &&
+      !isJavascriptContinuation(declaration, candidateInventoryDigest))
   )
     throw Error('Movement baseline or candidate differs');
   if (body.candidateContentCommit === baseline.sourceCommit)
@@ -705,6 +725,7 @@ export function verifyMovementInputs(
   }
   verified.set(result, {
     inputs,
+    candidateInventoryDigest,
     resolved,
     rechecks: new Set(body.recheckLessons),
     learnerCarries,
@@ -725,8 +746,11 @@ export function consumeVerifiedMovement(
   const saved = verified.get(input)!;
   // 検証済みobjectでも別の親・候補への流用を認めない。
   const result = verifyMovementInputs(saved.inputs, inventory, baselineInput);
+  const current = verified.get(result)!;
+  if (saved.candidateInventoryDigest !== current.candidateInventoryDigest)
+    throw Error('Movement baseline or candidate differs');
   return {
-    ...verified.get(result)!,
+    ...current,
     declarationDigest: result.declarationDigest,
     candidateContentCommit: saved.inputs.declaration.body.candidateContentCommit,
   };
@@ -799,7 +823,7 @@ export async function inspectMovementReplacementOriginal(
 }
 
 /** 固定policyが存在する場合だけ読み、未指定時の既存の厳格な挙動を維持する。 */
-export async function readMovementDeclaration(root: string) {
+export async function readMovementDeclaration(root: string, inventoryDigest?: string) {
   let bytes: string | undefined;
   for (const file of ['docs/quality/movement-eb2-v2.json', 'docs/quality/movement-v2.json']) {
     try {
@@ -812,15 +836,30 @@ export async function readMovementDeclaration(root: string) {
   if (bytes === undefined) return undefined;
   if (Buffer.byteLength(bytes) > 4 * 1024 * 1024) throw Error('Movement declaration exceeds limit');
   const declaration = MovementDeclarationSchema.parse(JSON.parse(bytes) as unknown);
+  const continuation = isJavascriptContinuation(declaration, inventoryDigest);
+  const sourceCommit = continuation
+    ? javascriptContinuation.sourceCommit
+    : declaration.body.candidateContentCommit;
+  const receiptPath = 'docs/quality/content-v2-receipts.json';
+  const sources = continuation ? ['content', receiptPath] : ['content'];
+  const git = promisify(execFile);
+  const options = { cwd: root, env: await repositoryEnvironment(root), encoding: 'utf8' as const };
   // 審査記録より前の教材原本commitと現HEADのcontent treeを比較する。
-  // 宣言が自身を含む最終commit hashを持つ循環は作らない。
-  await promisify(execFile)(
-    'git',
-    ['diff', '--quiet', declaration.body.candidateContentCommit, 'HEAD', '--', 'content'],
-    {
-      cwd: root,
-      env: await repositoryEnvironment(root),
-    },
-  );
+  // 固定後続では#310の全教材treeに加え、同梱した8件を含むreceipt台帳も固定する。
+  await git('git', ['diff', '--quiet', sourceCommit, 'HEAD', '--', ...sources], options);
+  if (continuation) {
+    const { stdout } = await git(
+      'git',
+      ['status', '--porcelain', '--untracked-files=all', '--', ...sources],
+      options,
+    );
+    if (stdout) throw Error('Movement continuation has dirty content or receipts');
+    const { stdout: receiptBlob } = await git('git', ['show', `${sourceCommit}:${receiptPath}`], {
+      ...options,
+      encoding: 'buffer',
+    });
+    if (!receiptBlob.equals(await readFile(path.join(root, receiptPath))))
+      throw Error('Movement continuation receipt bytes differ');
+  }
   return declaration;
 }
