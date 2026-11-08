@@ -11,16 +11,16 @@ import { resolveReleaseCourseContract } from './releaseCourseContracts';
 import { getJavascriptLessonEvaluationCoverage } from './javascriptQualityRecords';
 
 /** 初学者が読む/操作する教材だけを固定する。採点内部・Runtime・配信予算は技術Gateで検証する。 */
-function learnerContentSha256(
+export function javascriptLearnerContentProjection(
   lesson: Lesson,
   glossary: CourseManifest['glossary'],
   assets: ReadonlyMap<string, Uint8Array>,
-  includeRequired: boolean,
-): string {
+  includeRequired = true,
+) {
   const { completion, nextLessonId, prerequisiteLessonIds, ...learnerLesson } = lesson;
   void nextLessonId;
   void prerequisiteLessonIds;
-  const visible = {
+  return {
     ...learnerLesson,
     ...(lesson.kind === 'standard'
       ? {}
@@ -75,7 +75,19 @@ function learnerContentSha256(
       return { path: asset.path, sha256: createHash('sha256').update(bytes).digest('hex') };
     }),
   };
-  return createHash('sha256').update(canonicalJson(visible)).digest('hex');
+}
+
+function learnerContentSha256(
+  lesson: Lesson,
+  glossary: CourseManifest['glossary'],
+  assets: ReadonlyMap<string, Uint8Array>,
+  includeRequired: boolean,
+): string {
+  return createHash('sha256')
+    .update(
+      canonicalJson(javascriptLearnerContentProjection(lesson, glossary, assets, includeRequired)),
+    )
+    .digest('hex');
 }
 
 /** 必須/任意の可視区分とfeedbackの必須判定を含む現行教材projection。 */

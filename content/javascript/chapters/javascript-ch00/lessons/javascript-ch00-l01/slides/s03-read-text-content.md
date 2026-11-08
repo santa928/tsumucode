@@ -21,8 +21,8 @@ document.querySelector('#message').textContent = 'ここを書き換えます';
 ここを書き換えます
 ```
 
-- querySelectorは指定した目印で要素を探す処理。'#message'がHTMLのid="message"に対応する。
-- textContentはその場所の文字。=の右側にある文字へ置き換える。
+- document が指すページの中から、指定した目印に合う要素を querySelector で探します。'#message' はHTMLの id="message" に対応します。
+- その要素の文字を読み書きする名前がtextContent。=の右側にある文字へ置き換える。
 - 引用符は文字の範囲を囲む記号。引用符そのものはページへ表示されない。
 
 :::practice

@@ -81,6 +81,37 @@ async function fixedContext(exerciseId = 'python-basics-ch01-l02-e01'): Promise<
   };
 }
 
+it.each(['values', 'iterate'])('Listの%s課題は実出力と対象factの両方を要求する', async (suffix) => {
+  const context = await fixedContext(`python-basics-ch01-l05-${suffix}-e01`);
+  for (const engine of ['cpython', 'browser-python'] as const) {
+    const observed = {
+      ...context,
+      execution: {
+        ...context.execution!,
+        backend: engine === 'cpython' ? ('local' as const) : ('browser' as const),
+        engine,
+      },
+    };
+    const validator = new PythonLessonValidator(engine);
+    expect((await validator.validate(observed)).status).toBe('pass');
+    for (const id of [`python.${PYTHON_LESSONS[context.exerciseId]!.facts[0]!}`, 'python.stdout']) {
+      expect(
+        (
+          await validator.validate({
+            ...observed,
+            execution: {
+              ...observed.execution,
+              evidence: observed.execution.evidence.map((item) =>
+                item.id === id ? { ...item, value: id === 'python.stdout' ? '0\n' : false } : item,
+              ),
+            },
+          })
+        ).status,
+      ).toBe('incomplete');
+    }
+  }
+});
+
 it('固定suiteを全件満たす場合だけLocal採点を合格にする', async () => {
   const context = await fixedContext();
   expect((await new PythonLessonValidator('cpython').validate(context)).status).toBe('pass');
@@ -184,7 +215,7 @@ it.each(['missing', 'practice', 'partial', 'identity', 'case-id'])(
 );
 
 it('helperだけの編集でも古い固定採点のhashを失効させる', async () => {
-  const context = await fixedContext('python-basics-ch01-l08-e01');
+  const context = await fixedContext('python-basics-ch01-l12-e01');
   expect((await new PythonLessonValidator('cpython').validate(context)).status).toBe('pass');
   const changed = {
     ...context,
@@ -226,7 +257,7 @@ it.each(['browser-python', 'cpython'] as const)(
       learnerMessage: `ValueError: '${input}'`,
     } as const;
     const context: ValidationContext = {
-      exerciseId: 'python-basics-ch01-l09-e01',
+      exerciseId: 'python-basics-ch01-l13-e01',
       files: { 'main.py': '', 'lesson_tools.py': '' },
       rules: [],
       snapshots: {},

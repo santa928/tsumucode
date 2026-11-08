@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "purpose": "historical-initial-publication-progress-only",
+  "sourceCommit": "f629fc6113fe398ad6cd74d16e2a2c0ca95872ff",
+  "compilerSourceSha256": "fb5176f09d4e302b0b709b886d7e69a6aa77277dd1dbf9a212ebbcf308f0de2e",
+  "courses": {
+    "python-basics": {
+      "revision": "2026-10-12.1",
+      "sourceContentSha256": "e13fb607b9a3e5ab005a11a5c140f05d9c81a77dd8834b8ccff1898ff75c3d66",
+      "runtimeSha256": "9ea93dd54161a6a1f43a0dc0823c88c974f5eb3c7874d27067cabd19607797c4",
+      "compressedSha256": "5fb2863cf543647282ac717317730c29657f3da83788e88d15572447983bda08"
+    },
+    "react": {
+      "revision": "2026-10-07.7",
+      "sourceContentSha256": "75d859cf6a51bb3aef28d532b8be962649741b5f33b991c12886e2824617320c",
+      "runtimeSha256": "7f3de986c0004cc926865e8cc0c3bac179144e6cd34f49e812a2932ef0d9150a",
+      "compressedSha256": "7d4f310bb8b43df482313fda1a72a32967c84e12f42f1be9a1dd47c732f864d2"
+    }
+  }
+}

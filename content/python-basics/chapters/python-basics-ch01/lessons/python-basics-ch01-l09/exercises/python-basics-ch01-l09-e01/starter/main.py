@@ -1,8 +1,4 @@
-from lesson_tools import parse_number
-text = input()
-number = parse_number(text)
-try:
-    print(number)
-except ValueError:
-    print("整数を入力してください")
-print("終了")
+# 2つの値を足して返す関数を、ここに書きます。
+
+# 最初の戻り値を変数へ受け取り、2を足して表示します。
+# 次の戻り値にも2を足して表示します。

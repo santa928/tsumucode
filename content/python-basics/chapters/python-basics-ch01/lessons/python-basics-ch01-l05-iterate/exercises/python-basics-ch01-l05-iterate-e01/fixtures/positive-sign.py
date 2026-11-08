@@ -1,0 +1,5 @@
+numbers = [+1, 3, 5]
+total = 0
+for item in numbers:
+    total = total + item
+print(total)

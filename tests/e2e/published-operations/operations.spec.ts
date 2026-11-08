@@ -311,11 +311,13 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
               );
             const grade = async (pass: boolean) => {
               if (exercise.runtime?.kind === 'python') {
+                const profile = exercise.runtime.profile;
+                if (profile === 'function-return-scope-v1') {
+                  throw new Error('Retired Python exercise profile: function-return-scope-v1');
+                }
                 const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
                 if (await input.isVisible())
-                  await input.fill(
-                    (pythonFixedFixtures(exercise.runtime.profile)[0]?.inputLines ?? []).join('\n'),
-                  );
+                  await input.fill((pythonFixedFixtures(profile)[0]?.inputLines ?? []).join('\n'));
               }
               const count = z
                 .array(z.unknown())
