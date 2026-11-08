@@ -87,6 +87,13 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
       'Next grade deadline',
       JSON.stringify({
         enginePhase: 'container-wait',
+        engineElapsedMs: 10000,
+        waitElapsedMs: 10000,
+        waitCompleted: false,
+        logs: 'marker',
+        graderState: 'unknown',
+        graderExitCode: 'unknown',
+        graderOOMKilled: 'unknown',
         phase: 'form-document-changed',
         elapsedMs: 8250,
         responses: [
@@ -122,6 +129,81 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
   ]);
   diagnostic.mockRestore();
 });
+
+for (const [logs, graderState, graderExitCode, resultRead] of [
+  ['no-marker', 'running', 'unknown', false],
+  ['unavailable', 'exited', 0, false],
+  ['invalid', 'created', 'unknown', false],
+  ['no-marker', 'exited', 0, true],
+]) {
+  test(`期限時のgrader状態 ${graderState}、工程ログ ${logs}、結果取得中=${resultRead} を区別する`, async () => {
+    vi.useFakeTimers();
+    const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+    engine.removeContainer.mockResolvedValue(undefined);
+    engine.docker.mockImplementation(async (_method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/start'))
+        return new Promise((resolve) =>
+          globalThis.setTimeout(resolve, graderState === 'created' ? 10001 : 200),
+        );
+      if (path.endsWith('/wait'))
+        return new Promise((resolve) => {
+          if (resultRead) globalThis.setTimeout(() => resolve({ StatusCode: 0 }), 2000);
+        });
+      if (path.includes('/logs?stdout=1'))
+        return new Promise((resolve) =>
+          globalThis.setTimeout(() => resolve(Buffer.alloc(0)), 7801),
+        );
+      if (path.includes('/logs?stdout=0')) {
+        if (logs === 'unavailable') throw new Error('private-log-error');
+        if (logs === 'invalid') return Buffer.from('private-invalid-frame');
+        return frame(2, 'private-source\n');
+      }
+      if (path.endsWith('/json'))
+        return {
+          State: {
+            Status: graderState,
+            Running: graderState === 'running',
+            ExitCode: 0,
+            OOMKilled: false,
+            Error: 'private-state',
+          },
+        };
+    });
+    const grading = gradeProject({
+      owner: 'tsumucode-learning-test',
+      image: 'tsumucode-learning-test-grader:local',
+      source: { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' },
+      runId: '00000000-0000-4000-8000-000000000001',
+      socket: { dev: 1, ino: 2 },
+    });
+    const rejected = assert.rejects(grading, { status: 503 });
+    await vi.advanceTimersByTimeAsync(9999);
+    assert.equal(engine.removeContainer.mock.calls.length, 0);
+    await vi.advanceTimersByTimeAsync(2);
+    await rejected;
+    assert.deepEqual(JSON.parse(diagnostic.mock.calls[0][1]), {
+      enginePhase: resultRead
+        ? 'result-read'
+        : graderState === 'created'
+          ? 'container-start'
+          : 'container-wait',
+      engineElapsedMs: 10000,
+      waitElapsedMs: resultRead ? 2000 : graderState === 'created' ? null : 9800,
+      waitCompleted: resultRead,
+      logs,
+      graderState,
+      graderExitCode,
+      graderOOMKilled: false,
+      phase: 'unknown',
+      elapsedMs: null,
+    });
+    assert.equal(JSON.stringify(diagnostic.mock.calls).includes('private'), false);
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+    diagnostic.mockRestore();
+  });
+}
 
 for (const [reported, expected] of [
   ['http-deadline', 'http-deadline'],
@@ -160,7 +242,7 @@ for (const [reported, expected] of [
       [
         'Next grade failure',
         JSON.stringify({
-          enginePhase: 'container-wait',
+          enginePhase: 'failure-diagnostics',
           phase: 'observations',
           reason: expected === '未確認' ? 'unknown' : expected,
           waitExitCode: 1,
