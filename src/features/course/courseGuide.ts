@@ -11,6 +11,12 @@ const guides: Readonly<Record<string, CourseGuide>> = {
     practice: '説明と小さい修正から始め、手順付きの制作、仕様に沿う制作へ進みます。',
     outside: 'ページの動きを作るJavaScriptや、サーバーへの公開手順は扱いません。',
   },
+  tailwind: {
+    before: 'HTMLでクラス名（class）を付け、CSSで余白を付けたり横に並べたりする基本を使います。',
+    practice:
+      'CSSの指定を短いクラス名（ユーティリティ）に置き換える練習から始めます。操作や画面の幅で見た目を切り替え、最後は手順に沿って2枚の読書カードの見た目を揃えます。',
+    outside: 'JavaScriptで画面の処理を書くことや、作ったサイトの公開手順は扱いません。',
+  },
   javascript: {
     before: 'HTMLとCSSで、文章・見た目・入力欄を作る基礎を使います。',
     practice: '結果を予想し、小さい修正から、複数の処理をつなぐクイズ制作へ進みます。',
