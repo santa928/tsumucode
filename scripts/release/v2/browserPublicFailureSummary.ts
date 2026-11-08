@@ -35,7 +35,7 @@ const specSchema = z.object({
   ]),
 });
 const metadataSchema = z.object({
-  testManifests: z.array(z.object({ suite: z.string() }).passthrough()),
+  testManifests: z.array(z.looseObject({ suite: z.string() })),
 });
 
 interface Location {
