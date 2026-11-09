@@ -49,3 +49,5 @@ reference-onlyは16bb→19cbedの歴史契約を保持し、同じ固定67原本
 eb2向け宣言の原本と承認を保持し、固定後続の全`content` tree・`content-v2-receipts.json` と現Compilerの全inventory digestが一致する場合に限り、JavaScriptの2教材を同じ候補に含める。旧宣言の候補commitとinventory digestは元の移行審査範囲を表す。候補全体の教材判定は通常の`stage-content`と正式資格検証で行い、教材や台帳が固定後続からさらに変われば比較で停止する。
 
 正式資格の画像比較で判明した生表示を解消するため、`javascript-ch00-l01` のs02・s03で説明文のバッククォートだけを除去した。固定後続は修正と対象Lessonの独立内容確認・3役の画面観測に対応するreceipt 4件を含む。`javascript-ch01-l01` の4件は従来の値を使う。差し替え前の台帳は #310の統合Source `637021d4` に保存されている。固定後続と各receiptのSourceを後続checkoutから参照できるよう、統合時はこれらのコミットを履歴に保持する。 [正式run 42451350967](https://github.com/santa928/tsumucode/actions/runs/42451350967)
+
+#327で更新したTailwindのコース説明1行を資格対象に含め、固定後続の参照先を `c01e02c8` に更新した。旧固定点 `db9811cd` と比較し、説明1行以外の教材とreceipt台帳が一致することを確認した。全inventory digestとeb2移行宣言は従来の値を使う。 [PR #327](https://github.com/santa928/tsumucode/pull/327)

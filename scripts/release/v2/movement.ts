@@ -445,7 +445,7 @@ export function movementIntentScope(body: MovementBody, oldFixtureId: string) {
 // eb2のPython移行原本を保持し、再確認済みのJavaScript教材を同梱する固定後続。
 const javascriptContinuation = {
   declarationDigest: '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494',
-  sourceCommit: 'db9811cd13e9c5e4a52f784aad3e90a0a9fbf3f8',
+  sourceCommit: 'c01e02c8de2ee4914a94992a30657be8e6bb223d',
   inventoryDigest: 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
 } as const;
 
