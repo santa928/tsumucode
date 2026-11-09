@@ -40,7 +40,8 @@ describe('same-run migration qualification graph', () => {
     ]);
     expect(workflow.jobs.browser!.strategy?.['max-parallel']).toBe(4);
     expect(workflow.jobs.browser!.strategy?.['fail-fast']).toBe(false);
-    expect(workflow.jobs.browser!.needs).toBe('boundary');
+    expect(workflow.jobs.browser!.needs).toBeUndefined();
+    expect(workflow.jobs.boundary!.needs).toBeUndefined();
     expect(workflow.jobs.boundary!.uses).toBe('./.github/workflows/local-runtime.yml');
     expect(workflow.jobs.boundary!.permissions).toEqual({ contents: 'read' });
     expect(workflow.jobs.aggregate!.if).toContain('always()');
