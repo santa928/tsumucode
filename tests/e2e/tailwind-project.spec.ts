@@ -7,6 +7,7 @@ import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { testBasePath, testServerUrl } from './helpers/testBasePath';
 import { replaceEditorText, readStoredProgress } from './helpers/progress';
 import { expectSlideScrollReachable } from './helpers/slideScroll';
+import { preserveFailureWithDiagnostics } from './helpers/resetFailureDiagnostics';
 import type * as RunnerModule from '../../src/adapters/runtime/tailwind/TailwindRunnerAdapter';
 import type * as ValidatorModule from '../../src/core/validation/validatorRuleEngine';
 
@@ -269,7 +270,55 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
       return draft?.['files'];
     })
     .toEqual(starter);
-  await expect(grade).toBeEnabled();
+  await preserveFailureWithDiagnostics(
+    async () => {
+      await expect(grade).toBeEnabled();
+    },
+    async () => {
+      const observe = async (check: () => Promise<boolean>): Promise<boolean | null> => {
+        try {
+          return await check();
+        } catch {
+          return null;
+        }
+      };
+      const [gradeDisabled, previewRetryShown, resetPreviewFailed, previewUpdates] =
+        await Promise.all([
+          observe(async () => await grade.isDisabled()),
+          observe(
+            async () =>
+              await page
+                .getByRole('button', { name: 'プレビューを再準備', exact: true })
+                .isVisible(),
+          ),
+          observe(
+            async () =>
+              await page
+                .getByText('最初のコードに戻しました。プレビューだけ更新できませんでした。', {
+                  exact: true,
+                })
+                .isVisible(),
+          ),
+          page.evaluate(() =>
+            performance
+              .getEntriesByName('tsumucode:preview-update', 'measure')
+              .slice(-3)
+              .map((entry) => ({
+                startMs: Number.isFinite(entry.startTime) ? Math.round(entry.startTime) : null,
+                durationMs: Number.isFinite(entry.duration) ? Math.round(entry.duration) : null,
+              })),
+          ),
+        ]);
+      return { gradeDisabled, previewRetryShown, resetPreviewFailed, previewUpdates };
+    },
+    (evidence) => {
+      info.attachments.push({
+        name: 'reset-preview-diagnostic',
+        body: Buffer.from(JSON.stringify(evidence)),
+        contentType: 'application/json',
+      });
+    },
+  );
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
