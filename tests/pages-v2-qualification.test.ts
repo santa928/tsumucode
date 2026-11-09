@@ -5,6 +5,7 @@ import { parse } from 'yaml';
 type Job = {
   needs?: string | string[];
   uses?: string;
+  with?: Record<string, unknown>;
   strategy?: { ['max-parallel']?: number; ['fail-fast']?: boolean; matrix?: { suite?: string[] } };
   steps?: { uses?: string; with?: Record<string, unknown>; run?: string; name?: string }[];
   permissions?: Record<string, string>;
@@ -17,6 +18,29 @@ function read(file: string) {
   };
 }
 describe('same-run migration qualification graph', () => {
+  it('buildの固定成果物を各並列producerが同じrunから取得する', () => {
+    const caller = read('.github/workflows/pages.yml');
+    const qualification = caller.jobs.qualification!;
+    expect(qualification.needs).toBe('build');
+    expect(qualification.uses).toBe('./.github/workflows/release-v2-checks.yml');
+    expect(qualification.with).toEqual({
+      candidate_artifact_id: '${{ needs.build.outputs.candidate_artifact_id }}',
+      metadata_artifact_id: '${{ needs.build.outputs.metadata_artifact_id }}',
+    });
+    const checks = read('.github/workflows/release-v2-checks.yml');
+    expect(checks.jobs.boundary!.with).toEqual({
+      candidate_artifact_id: '${{ inputs.candidate_artifact_id }}',
+      metadata_artifact_id: '${{ inputs.metadata_artifact_id }}',
+    });
+    const native = read('.github/workflows/local-runtime.yml');
+    for (const job of [checks.jobs.unit!, checks.jobs.browser!, native.jobs.boundary!]) {
+      const downloads = job.steps!.filter((step) => step.uses?.includes('download-artifact'));
+      expect(downloads.map((step) => step.with)).toEqual([
+        { 'artifact-ids': '${{ inputs.candidate_artifact_id }}', path: 'dist' },
+        { 'artifact-ids': '${{ inputs.metadata_artifact_id }}', path: '.release-v2' },
+      ]);
+    }
+  });
   it('downloads only caller-produced same-run artifact IDs and keeps four required browser suites isolated', () => {
     const workflow = read('.github/workflows/release-v2-checks.yml');
     expect(workflow.on).toHaveProperty('workflow_call');
