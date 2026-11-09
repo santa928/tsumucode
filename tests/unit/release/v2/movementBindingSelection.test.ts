@@ -101,7 +101,7 @@ it('新宣言でも存在しないcandidateContentCommitを拒否する', async 
 });
 
 it('eb2の固定後続だけを許し、各教材とreceiptの追加変更を拒否する', async () => {
-  const source = 'db9811cd13e9c5e4a52f784aad3e90a0a9fbf3f8';
+  const source = 'c01e02c8de2ee4914a94992a30657be8e6bb223d';
   const digest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
   const previousDigest = '8fd703f3db5754e38639f7efd5959c78267d9f0236c03360b8eba65ab83eac26';
   const root = await temporaryRoot();
