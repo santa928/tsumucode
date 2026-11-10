@@ -148,6 +148,10 @@ it.each([
   'ref',
   'symlink',
   'excluded-directory',
+  'missing-preparation',
+  'malformed-preparation',
+  'oversized-preparation',
+  'altered-plan',
 ])('stops %s mismatch at the actual fixed publisher boundary', async (kind) => {
   const row = await setup();
   if (kind === 'main') row.states['/git/ref/heads/main'] = { object: { sha: '0'.repeat(40) } };
@@ -164,6 +168,13 @@ it.each([
   if (kind === 'candidate-id') row.environment.CANDIDATE_ARTIFACT_ID = '999';
   if (kind === 'run') row.environment.GITHUB_RUN_ID = '999';
   if (kind === 'ref') row.environment.GITHUB_REF = 'refs/heads/feature';
+  const preparation = path.join(row.root, '.release-v2/preparation.json');
+  if (kind === 'missing-preparation') await rm(preparation);
+  if (kind === 'malformed-preparation') await writeFile(preparation, '{');
+  if (kind === 'oversized-preparation')
+    await writeFile(preparation, ' '.repeat(4 * 1024 * 1024 + 1));
+  if (kind === 'altered-plan')
+    await writeFile(preparation, JSON.stringify({ ...row.bundle.snapshot, plan: {} }));
   if (kind === 'symlink') await symlink('../package.json', path.join(row.root, 'dist/link.json'));
   if (kind === 'excluded-directory') {
     await mkdir(path.join(row.root, 'dist/.git'));

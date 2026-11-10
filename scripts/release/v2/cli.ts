@@ -8,7 +8,7 @@ import { compileContent } from '../../content/compile';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 import { buildInventory } from './inventory';
 import { hashValue, ArtifactManifestSchema } from './identity';
-import { writeProtocolJson } from './json';
+import { writePreparationJson, writeProtocolJson } from './json';
 import { readLegacyEvidence } from './legacy';
 import { planRelease } from './plan';
 import { compareLegacy } from './shadow';
@@ -323,7 +323,8 @@ export async function runCli(
     }
   }
   if (result === undefined) throw new Error('Unimplemented release command');
-  await writeProtocolJson(output, result);
+  if (command === 'prepare') await writePreparationJson(output, result);
+  else await writeProtocolJson(output, result);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   runCli(process.argv.slice(2)).catch((error: unknown) => {
