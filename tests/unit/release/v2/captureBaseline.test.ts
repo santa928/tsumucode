@@ -4,15 +4,22 @@ import { promisify } from 'node:util';
 import { mkdtemp, mkdir, cp, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { compileContent } from '../../../../scripts/content/compile';
 const exec = promisify(execFile),
   roots: string[] = [];
 afterEach(async () => {
+  vi.restoreAllMocks();
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('live baseline capture protocol', () => {
-  it.each(['legacy', 'app'] as const)(
+  it.each([
+    'legacy',
+    'app',
+    'app-recovery',
+    'app-recovery-bad-status',
+    'app-recovery-bad-bytes',
+  ] as const)(
     'reconstructs %s original source and checks public bytes instead of trusting current candidate flags',
     async (format) => {
       const { captureBaseline } = await import('../../../../scripts/release/v2/captureBaseline');
@@ -76,7 +83,7 @@ describe('live baseline capture protocol', () => {
         outputRoot: output,
         checkOnly: false,
       });
-      if (format === 'app') {
+      if (format.startsWith('app')) {
         await git('tag', '-d', 'tsumucode-release-fixture');
         const { compileCourse } = await import('../../../../scripts/content/compileCourse');
         const { buildInventory } = await import('../../../../scripts/release/v2/inventory');
@@ -138,22 +145,51 @@ describe('live baseline capture protocol', () => {
           'publicationStatus: draft',
         ),
       );
-      const result = await captureBaseline({
-        root,
-        repository: 'owner/site',
-        siteUrl: 'https://owner.github.io/site/',
-        readJson: async (url) =>
-          url.endsWith('/statuses')
-            ? [
-                {
-                  state: 'success',
-                  environment_url: 'https://owner.github.io/site/',
-                  log_url: 'https://github.com/owner/site/actions/runs/101/job/201',
-                },
-              ]
-            : [{ id: 501, sha: head, ref: 'main', environment: 'github-pages' }],
-        readPublicFile: async (relative) => readFile(path.join(output, relative)),
-      });
+      // 固定失敗の原本照合は別テストで実施し、ここでは取得後の親照合への接続を確かめる。
+      const recovery = format.startsWith('app-recovery');
+      const module = await import('../../../../scripts/release/v2/predeployFailure');
+      const recovered = recovery
+        ? vi.spyOn(module, 'recoverKnownPredeployParent').mockResolvedValue({
+            id: 501,
+            sha: head,
+            ref: 'main',
+            environment: 'github-pages',
+          })
+        : undefined;
+      const capture = () =>
+        captureBaseline({
+          root,
+          repository: 'owner/site',
+          siteUrl: 'https://owner.github.io/site/',
+          readJson: async (url) =>
+            url.endsWith('/statuses')
+              ? [
+                  {
+                    state: format === 'app-recovery-bad-status' ? 'failure' : 'success',
+                    environment_url: 'https://owner.github.io/site/',
+                    log_url: 'https://github.com/owner/site/actions/runs/101/job/201',
+                  },
+                ]
+              : [
+                  {
+                    id: recovery ? 7675216444 : 501,
+                    sha: head,
+                    ref: 'main',
+                    environment: 'github-pages',
+                  },
+                ],
+          readPublicFile: async (relative) =>
+            format === 'app-recovery-bad-bytes'
+              ? Buffer.from('altered public bytes')
+              : readFile(path.join(output, relative)),
+        });
+      if (format === 'app-recovery-bad-status' || format === 'app-recovery-bad-bytes') {
+        await expect(capture()).rejects.toThrow();
+        expect(recovered).toHaveBeenCalledOnce();
+        return;
+      }
+      const result = await capture();
+      if (recovery) expect(recovered).toHaveBeenCalledOnce();
       expect(result.baseline.sourceCommit).toBe(source);
       expect(result.proof.workflowHeadCommit).toBe(head);
       expect(result.baseline.inventory.courses[0]!.publicationStatus).toBe('published');

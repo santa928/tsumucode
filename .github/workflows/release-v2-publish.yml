@@ -141,18 +141,38 @@ jobs:
             return JSON.parse(new TextDecoder().decode(bytes));
           };
           ensure((await api('/git/ref/heads/main')).object?.sha===source,'Main changed while awaiting publication');
-          const deployments=await api('/deployments?environment=github-pages&per_page=2');
-          ensure(Array.isArray(deployments) && deployments.length>0 && deployments.length<=2,'Missing deployment history');
+          // 既知の配信前失敗1件のみ、固定workflow・run・job・全status原本で再確認する。
+          const verifyKnownPredeployFailure=async deployment=>{
+            const failedId=7675216444, failedRun=42758114561, failedJob=129670621435;
+            const failedSource='9d00cd6dfd12f096c87d486175acdcd6d9795c67';
+            const failedLog='https://github.com/santa928/tsumucode/actions/runs/42758114561/job/129670621435';
+            ensure(repository==='santa928/tsumucode' && deployment?.id===failedId && deployment.sha===failedSource && deployment.ref==='main' && deployment.environment==='github-pages','Unexpected pre-deploy failure');
+            ensure(baseline.proof.deploymentId==='7593230441' && baseline.proof.workflowHeadCommit==='eb2fe6f8e06409569f173efb2fe6275c46a535cf' && baseline.proof.runId==='42154759825','Unexpected pre-deploy parent');
+            const history=await api('/deployments/7675216444/statuses?per_page=100');
+            const expectedHistory=[[21828353186,'failure'],[21828345728,'in_progress'],[21828344399,'queued'],[21828344164,'queued'],[21828342972,'waiting']];
+            ensure(Array.isArray(history) && history.length===expectedHistory.length && history.every((row,i)=>row.id===expectedHistory[i][0] && row.state===expectedHistory[i][1] && row.log_url===failedLog && row.environment_url===''),'Pre-deploy status history differs');
+            const runMatches=row=>row?.id===failedRun && row.run_attempt===1 && row.workflow_id===315500203 && row.path==='.github/workflows/pages.yml' && row.head_sha===failedSource && row.event==='workflow_dispatch' && row.head_branch==='main' && row.status==='completed' && row.conclusion==='failure';
+            ensure(runMatches(await api('/actions/runs/42758114561')) && runMatches(await api('/actions/runs/42758114561/attempts/1')),'Pre-deploy run differs');
+            const priorJob=await api('/actions/jobs/129670621435');
+            const steps=[['Set up job','success'],['Download exact same-run public bytes','success'],['Download exact same-run build metadata','success'],['Download pinned same-run aggregate qualification','success'],['Recheck fixed bytes and actual parent after Environment','failure'],['Package the same verified files for Pages','skipped'],['Deploy the same verified files','skipped'],['Complete job','success']];
+            ensure(priorJob?.id===failedJob && priorJob.run_id===failedRun && priorJob.run_attempt===1 && priorJob.head_sha===failedSource && priorJob.name==='publish / deploy' && priorJob.status==='completed' && priorJob.conclusion==='failure' && Array.isArray(priorJob.steps) && priorJob.steps.length===steps.length && priorJob.steps.every((step,i)=>step.number===i+1 && step.name===steps[i][0] && step.status==='completed' && step.conclusion===steps[i][1]),'Pre-deploy job differs');
+            for(const [file,expected] of [['pages.yml','e26a0e10dab9c29325a372569809691feb3084c39c7d1892ef39d15d12b4aa00'],['release-v2-publish.yml','b0e7d952930b3ca64dd4677140bd98f96b5b5d71333d9c60b690b52abf207365']]) {
+              const original=await api('/contents/.github/workflows/'+file+'?ref='+failedSource);
+              ensure(original?.encoding==='base64' && typeof original.content==='string' && original.content.length<=100000,'Missing pre-deploy workflow');
+              const encoded=original.content.replace(/\s/gu,''), bytes=Buffer.from(encoded,'base64');
+              ensure(bytes.toString('base64')===encoded && digest(bytes)===expected,'Pre-deploy workflow bytes differ');
+            }
+          };
+          const deployments=await api('/deployments?environment=github-pages&per_page=3');
+          ensure(Array.isArray(deployments) && deployments.length>0 && deployments.length<=3,'Missing deployment history');
           const site='https://'+repository.split('/')[0]+'.github.io'+base;
-          let actual=deployments[0];
-          if(String(actual?.id)!==baseline.proof.deploymentId) {
-            // Environmentへの入場で、配信前に今回run自身の未完了deploymentが生成される。
+          const verifyOwnDeployment=async own=>{
             ensure(
-              /^[1-9]\d*$/.test(String(actual?.id)) && actual.sha===source &&
-              actual.ref==='main' && actual.environment==='github-pages',
+              /^[1-9]\d*$/.test(String(own?.id)) && own.sha===source &&
+              own.ref==='main' && own.environment==='github-pages',
               'Unexpected deployment before the published parent'
             );
-            const ownStatuses = await api('/deployments/'+actual.id+'/statuses');
+            const ownStatuses = await api('/deployments/'+own.id+'/statuses');
             const ownStatus = ownStatuses[0];
             const ownLog = new URL(ownStatus?.log_url??'https://invalid.invalid/');
             const ownRunPath = '/'+repository+'/actions/runs/'+runId;
@@ -168,14 +188,40 @@ jobs:
               !ownLog.search && !ownLog.hash && ownPathMatches,
               'Unverified current Environment deployment'
             );
+          };
+          let actual=deployments[0], nextIndex=1, recoveredFailure, ownDeployment;
+          if(String(actual?.id)!==baseline.proof.deploymentId && actual?.id!==7675216444) {
+            // Environmentへの入場で、配信前に今回run自身の未完了deploymentが生成される。
+            ownDeployment=actual;
+            await verifyOwnDeployment(ownDeployment);
             // 自己deployment1件だけを除外し、他runの介在は親不一致として停止する。
             actual = deployments[1];
+            nextIndex = 2;
+          }
+          if(actual?.id===7675216444) {
+            recoveredFailure=actual;
+            await verifyKnownPredeployFailure(actual);
+            actual=deployments[nextIndex];
           }
           ensure(actual && String(actual.id)===baseline.proof.deploymentId && actual.sha===baseline.proof.workflowHeadCommit && actual.ref==='main' && actual.environment==='github-pages','Actual deployed parent changed');
-          const statuses=await api('/deployments/'+actual.id+'/statuses');
-          const log=new URL(statuses[0]?.log_url??'https://invalid.invalid/');
-          const prefix='/'+repository+'/actions/runs/'+baseline.proof.runId+'/job/';
-          ensure(statuses[0]?.state==='success' && statuses[0].environment_url===site && log.origin==='https://github.com' && log.pathname.startsWith(prefix) && /^[1-9]\d*$/.test(log.pathname.slice(prefix.length)),'Actual deployed parent is unverified');
+          const verifyParentStatus=async()=>{
+            const statuses=await api('/deployments/'+actual.id+'/statuses');
+            const log=new URL(statuses[0]?.log_url??'https://invalid.invalid/');
+            const prefix='/'+repository+'/actions/runs/'+baseline.proof.runId+'/job/';
+            ensure(statuses[0]?.state==='success' && statuses[0].environment_url===site && log.origin==='https://github.com' && log.pathname.startsWith(prefix) && /^[1-9]\d*$/.test(log.pathname.slice(prefix.length)),'Actual deployed parent is unverified');
+          };
+          await verifyParentStatus();
+          if(recoveredFailure) {
+            // 複数APIの照合中に履歴や親が変わった場合は配信せず停止する。
+            await verifyKnownPredeployFailure(recoveredFailure);
+            await verifyParentStatus();
+            if(ownDeployment) await verifyOwnDeployment(ownDeployment);
+            ensure((await api('/git/ref/heads/main')).object?.sha===source,'Main changed during parent recovery');
+            ensure(Date.parse(qualification.technical.expiresAt)>Date.now(),'Qualification expired during parent recovery');
+            const recent=await api('/deployments?environment=github-pages&per_page=3');
+            const checkedCount=nextIndex+1;
+            ensure(Array.isArray(recent) && recent.length>=checkedCount && recent.length<=3 && deployments.length>=checkedCount && recent.slice(0,checkedCount).every((row,i)=>row.id===deployments[i].id && row.sha===deployments[i].sha && row.ref===deployments[i].ref && row.environment===deployments[i].environment),'Deployment history changed during recovery');
+          }
           console.log('Qualified bytes and actual parent confirmed after the protected Environment. No Source code executed.');
           JS
       - name: Package the same verified files for Pages

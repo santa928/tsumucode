@@ -12,6 +12,7 @@ import { BuildIdentitySchema, CommitSchema } from './schema';
 import { buildInventory } from './inventory';
 import { hashBytes, hashValue, repositoryEnvironment } from './identity';
 import { AppRecordSchema, parseAppBinding } from './appRecord';
+import { PREDEPLOY_FAILURE_ID, recoverKnownPredeployParent } from './predeployFailure';
 
 const exec = promisify(execFile);
 export interface CaptureOptions {
@@ -59,12 +60,17 @@ export async function captureBaseline(options: CaptureOptions) {
     .array(z.unknown())
     .min(1)
     .parse(await readJson(api + '/deployments?environment=github-pages&per_page=1'));
-  const first = z.object({ id: z.number().int().positive() }).parse(deployments[0]);
+  const latest = z.object({ id: z.number().int().positive() }).parse(deployments[0]);
+  const first =
+    latest.id === PREDEPLOY_FAILURE_ID
+      ? await recoverKnownPredeployParent(repository, deployments[0], readJson)
+      : deployments[0];
+  const firstId = z.object({ id: z.number().int().positive() }).parse(first).id;
   const statuses = z
     .array(z.unknown())
     .min(1)
-    .parse(await readJson(api + '/deployments/' + String(first.id) + '/statuses'));
-  const actual = parseActualDeployment(deployments[0], statuses[0], repository, options.siteUrl);
+    .parse(await readJson(api + '/deployments/' + String(firstId) + '/statuses'));
+  const actual = parseActualDeployment(first, statuses[0], repository, options.siteUrl);
   const gitEnvironment = await repositoryEnvironment(options.root);
   const git = async (...args: string[]) =>
     (
