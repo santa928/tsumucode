@@ -7,18 +7,31 @@ import { SuiteRequirementSchema } from './verify';
 import { hashValue } from './identity';
 import { parseTestList, TestSuiteManifestSchema, type TestSuiteManifest } from './testManifest';
 const exec = promisify(execFile);
+// 固定候補の実績で所要時間の大きいファイル群。残りの全テストは第2群が担当する。
+const CHROMIUM_FIRST_GROUP =
+  '(manifest-fixtures|typescript-compiler-worker|python-input|typescript-quiz-project-grading|python-module)\\.spec\\.ts';
+
+/** 別取得した全Chromiumテスト一覧に対し、欠落・重複・余分を拒否する。 */
+export function assertChromiumCoverage(
+  full: readonly string[],
+  shards: readonly (readonly string[])[],
+): void {
+  const combined = shards.flat().sort();
+  if (JSON.stringify([...full].sort()) !== JSON.stringify(combined))
+    throw new Error('Chromium shard union omits source tests');
+}
 export const TEST_SUITES = [
   {
     suite: 'browser-chromium-1',
     producerJobId: 'browser',
     project: 'chromium',
-    args: ['--project=chromium', '--shard=1/2'],
+    args: ['--project=chromium', '--grep', CHROMIUM_FIRST_GROUP],
   },
   {
     suite: 'browser-chromium-2',
     producerJobId: 'browser',
     project: 'chromium',
-    args: ['--project=chromium', '--shard=2/2'],
+    args: ['--project=chromium'],
   },
   {
     suite: 'browser-firefox',
@@ -198,7 +211,9 @@ export function testCommand(suite: string, list: boolean): string[] {
     '--config=' + config,
     ...definition.args,
     '--grep-invert',
-    '@visual-extended',
+    suite === 'browser-chromium-2'
+      ? '@visual-extended|' + CHROMIUM_FIRST_GROUP
+      : '@visual-extended',
     ...(list ? ['--list', '--reporter=json'] : ['--workers=1', '--retries=0']),
   ];
 }
@@ -256,11 +271,12 @@ export async function collectExecutionPlan(
     'browser',
     'chromium',
   );
-  const combined = manifests
+  const shards = manifests
     .filter(({ suite }) => suite === 'browser-chromium-1' || suite === 'browser-chromium-2')
-    .flatMap(({ tests }) => tests.map(({ key }) => key))
-    .sort();
-  if (JSON.stringify(full.tests.map(({ key }) => key).sort()) !== JSON.stringify(combined))
-    throw new Error('Chromium shard union omits source tests');
+    .map(({ tests }) => tests.map(({ key }) => key));
+  assertChromiumCoverage(
+    full.tests.map(({ key }) => key),
+    shards,
+  );
   return createExecutionPlan(planInput, manifests, publicContentDigest);
 }

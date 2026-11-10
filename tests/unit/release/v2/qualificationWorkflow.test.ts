@@ -38,8 +38,9 @@ it('isolated browser jobs run concurrently while every frozen suite remains mand
     .toContain('run-suite --suite "$SUITE"');
   expect(browser.steps.find((step) => step.name === 'Preserve passed receipts and bounded reports')?.with?.name)
     .toBe('receipts-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}');
-  // matrix全件が完了してから下流の必須検査へ進む。
-  expect(browser.needs).toBe('boundary');
+  // 前段の固定候補を受け取り、unit・boundary・browserは並列に開始できる。
+  expect(browser.needs).toBeUndefined();
+  expect(workflow.jobs.boundary!.needs).toBeUndefined();
   expect(workflow.jobs.public_boundary!.needs).toBe('browser');
   expect(workflow.jobs.performance!.needs).toBe('public_boundary');
 });

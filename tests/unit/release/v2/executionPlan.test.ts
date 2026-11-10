@@ -1,6 +1,10 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { TEST_SUITES, testCommand } from '../../../../scripts/release/v2/executionPlan';
+import {
+  TEST_SUITES,
+  assertChromiumCoverage,
+  testCommand,
+} from '../../../../scripts/release/v2/executionPlan';
 const fixture = {
   key: 'topic/lesson/exercise/solution/solution/browser',
   kind: 'fixture',
@@ -46,6 +50,24 @@ function manifests() {
   }));
 }
 describe('workflow execution plan', () => {
+  it('新しいテストを含む一覧と2群の全件一致を検証する', () => {
+    const all = ['existing-a', 'existing-b', 'new-file/case'];
+    expect(() => {
+      assertChromiumCoverage(all, [['existing-a'], ['existing-b', 'new-file/case']]);
+    }).not.toThrow();
+    expect(() => {
+      assertChromiumCoverage(all, [['existing-a'], ['existing-b']]);
+    }).toThrow();
+    expect(() => {
+      assertChromiumCoverage(all, [
+        ['existing-a', 'new-file/case'],
+        ['existing-b', 'new-file/case'],
+      ]);
+    }).toThrow();
+    expect(() => {
+      assertChromiumCoverage(all, [['existing-a'], ['existing-b', 'new-file/case', 'unexpected']]);
+    }).toThrow();
+  });
   it.each(TEST_SUITES)(
     '$suiteはretryなしの固定範囲を実行し、候補Browserだけ初回traceを有効にする',
     (suite) => {
@@ -64,7 +86,9 @@ describe('workflow execution plan', () => {
         config,
         ...suite.args,
         '--grep-invert',
-        '@visual-extended',
+        suite.suite === 'browser-chromium-2'
+          ? expect.stringContaining('@visual-extended|')
+          : '@visual-extended',
         '--workers=1',
         '--retries=0',
       ]);
@@ -73,7 +97,9 @@ describe('workflow execution plan', () => {
         config,
         ...suite.args,
         '--grep-invert',
-        '@visual-extended',
+        suite.suite === 'browser-chromium-2'
+          ? expect.stringContaining('@visual-extended|')
+          : '@visual-extended',
         '--list',
         '--reporter=json',
       ]);

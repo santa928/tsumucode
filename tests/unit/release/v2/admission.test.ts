@@ -140,6 +140,16 @@ describe('final same-run admission', () => {
     expect(result.status).toBe('qualified');
     expect(result.content).toMatchObject({ status: 'maintenance', newlyApprovedLessons: [] });
   });
+  it.each(
+    (['unit', 'boundary', 'browser', 'public_boundary', 'performance'] as const).flatMap((job) =>
+      (['failure', 'cancelled', 'skipped'] as const).map((status) => ({ job, status })),
+    ),
+  )('rejects admission when mandatory $job has status $status', async ({ job, status }) => {
+    const { qualifyRelease } = await import('../../../../scripts/release/v2/admission');
+    const input = setup();
+    input.context.jobs[job] = status;
+    expect(() => qualifyRelease(input)).toThrow(/job did not pass/i);
+  });
   it.each([
     'main-moved',
     'parent-moved',
