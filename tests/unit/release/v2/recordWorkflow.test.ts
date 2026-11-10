@@ -371,6 +371,23 @@ it.each(['pin', 'extra'])('rejects altered %s data before writes', async (kind) 
   await expect(row.run()).rejects.toThrow();
   expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
 });
+it.each(['missing', 'malformed', 'oversized', 'inventory'])(
+  '%s preparation stops before record writes',
+  async (kind) => {
+    const row = await setup();
+    const file = path.join(row.root, '.release-v2/preparation.json');
+    if (kind === 'missing') await rm(file);
+    if (kind === 'malformed') await writeFile(file, '{');
+    if (kind === 'oversized') await writeFile(file, ' '.repeat(4 * 1024 * 1024 + 1));
+    if (kind === 'inventory') {
+      const snapshot = JSON.parse(await readFile(file, 'utf8')) as Record<string, unknown>;
+      snapshot.inventory = {};
+      await writeFile(file, JSON.stringify(snapshot));
+    }
+    await expect(row.run()).rejects.toThrow();
+    expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
+  },
+);
 it('runs actual public Browser operations in the existing browser-equipped Docker target', async () => {
   const value = await workflow();
   const target = value.jobs.report.env['TSUMUCODE_DOCKER_TARGET'];
