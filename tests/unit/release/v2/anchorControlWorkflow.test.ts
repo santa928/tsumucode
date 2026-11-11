@@ -34,6 +34,7 @@ it('runs control checks on matching PR and main changes without publication perm
       'tests/unit/release/v2/anchorCheckoutInput.test.py',
       'tests/unit/release/v2/anchorDirectOutput.test.py',
       'tests/unit/release/v2/anchorMetadataGuard.test.py',
+      'tests/unit/release/v2/anchorRunningJob.test.py',
       'tests/unit/release/v2/anchorControlWorkflow.test.ts',
     ]),
   );
@@ -53,9 +54,12 @@ it('requires Python tests and pinned-image Docker controls without suppressing f
   expect(unit.run?.trim()).toBe(
     [
       'set -eu',
-      ...['anchorCheckoutInput', 'anchorMetadataGuard', 'anchorDirectOutput'].map(
-        (name) => `python3 -I tests/unit/release/v2/${name}.test.py`,
-      ),
+      ...[
+        'anchorCheckoutInput',
+        'anchorMetadataGuard',
+        'anchorDirectOutput',
+        'anchorRunningJob',
+      ].map((name) => `python3 -I tests/unit/release/v2/${name}.test.py`),
     ].join('\n'),
   );
   const docker = checks.steps.find(
