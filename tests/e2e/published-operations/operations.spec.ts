@@ -118,12 +118,18 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
             .getByRole('link')
             .last();
           await expect(toc).toBeVisible();
+          const selectedHref = await toc.getAttribute('href');
+          expect(selectedHref).toBeTruthy();
+          const slide = new URLSearchParams(
+            new URL(selectedHref!, page.url()).hash.split('?')[1],
+          ).get('slide');
+          expect(slide).toBeTruthy();
+          const selectedUrl = new URL(selectedHref!, page.url()).href;
           await toc.click();
           const share = page.getByRole('textbox', { name: '読書位置のURL', exact: true });
-          await expect(share).toHaveValue(/slide=/u);
-          const value = await share.inputValue(),
-            slide = new URLSearchParams(new URL(value, page.url()).hash.split('?')[1]).get('slide');
-          expect(slide).toBeTruthy();
+          await expect
+            .poll(async () => new URL(await share.inputValue(), page.url()).href)
+            .toBe(selectedUrl);
           const saved = () =>
             page.evaluate(
               ({ courseId, lessonId }) => {
@@ -137,6 +143,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
               { courseId: target.courseId!, lessonId: target.lessonId! },
             );
           await expect.poll(saved).toBe(slide);
+          await expect(page.locator('[data-reading-section="' + slide! + '"]')).toBeInViewport();
           const home = page.getByRole('banner').getByRole('link', { name: '教材を選ぶ' });
           await home.focus();
           await home.press('Enter');
@@ -144,6 +151,12 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
             page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
           ).toBeVisible();
           await page.reload();
+          const baseFontSize = await page.evaluate(() =>
+            Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+          );
+          await page.evaluate(() => {
+            document.documentElement.style.fontSize = '200%';
+          });
           await page.getByRole('link', { name: '解説を読む', exact: true }).click();
           const resume = page.locator(
             'a[href*="/library/' +
@@ -153,8 +166,17 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
               '/read?slide="]',
           );
           await expect(resume).toHaveCount(1);
+          await expect(resume).toHaveAttribute('href', selectedHref!);
           await resume.click();
           await expect(page.locator('[data-reading-section="' + slide! + '"]')).toBeInViewport();
+          await expect.poll(saved).toBe(slide);
+          await expect
+            .poll(() =>
+              page.evaluate(() =>
+                Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+              ),
+            )
+            .toBe(baseFontSize * 2);
           expect(
             await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
           ).toBe(true);
@@ -311,11 +333,13 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
               );
             const grade = async (pass: boolean) => {
               if (exercise.runtime?.kind === 'python') {
+                const profile = exercise.runtime.profile;
+                if (profile === 'function-return-scope-v1') {
+                  throw new Error('Retired Python exercise profile: function-return-scope-v1');
+                }
                 const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
                 if (await input.isVisible())
-                  await input.fill(
-                    (pythonFixedFixtures(exercise.runtime.profile)[0]?.inputLines ?? []).join('\n'),
-                  );
+                  await input.fill((pythonFixedFixtures(profile)[0]?.inputLines ?? []).join('\n'));
               }
               const count = z
                 .array(z.unknown())

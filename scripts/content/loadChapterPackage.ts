@@ -1,5 +1,6 @@
 import path from 'node:path';
 import type { SlideBlock } from '../../src/core/content/types';
+import { assertActiveExerciseRuntime } from '../../src/core/content/activeExerciseRuntime';
 import { readBinaryFile, readUtf8File, readYamlFile } from './io';
 import { parseSlideMarkdown } from './markdown';
 import {
@@ -169,6 +170,7 @@ export async function loadChapterPackage(chapterSourcePath: string): Promise<Loa
 
     for (const exerciseSource of lesson.exerciseSources) {
       const exercise = await readYamlFile(lessonDir, exerciseSource, ExerciseSourceSchema);
+      assertActiveExerciseRuntime(exercise.runtime);
       const exerciseDir = ownerDirectory(lessonDir, exerciseSource);
       await assertExerciseFiles(exerciseDir, exercise);
       lessonExercises.push(exercise);

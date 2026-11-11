@@ -313,7 +313,7 @@ document.querySelector('#message').textContent = 'JavaScriptで文字を変え�
     Reflect.set(window, '__tcConsoleLongTaskProbe', { durations, observer });
   });
 
-  const updateStatus = page.locator('.tc-runtime-output-card [role="status"]');
+  const updateStatus = page.getByRole('status', { name: 'Consoleの更新', exact: true });
   for (let index = 0; index < 20; index += 1) {
     const previousStatus = await updateStatus.textContent();
     await update.click();

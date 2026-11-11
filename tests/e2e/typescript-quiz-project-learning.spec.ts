@@ -9,6 +9,7 @@ import {
   waitForStoredDraftContent,
 } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
+import { auditGuardedPreview } from './helpers/guardedFrameAxe';
 const workspaceId = 'typescript-quiz-guided';
 function route(suffix: string): string {
   const lesson = `typescript-ch06-l${suffix}`;
@@ -172,7 +173,29 @@ test('3工程の原文とChecklistを積み上げ、型/実行失敗から戻り
     jsRecords.drafts,
   );
   evidence['reset'] = reset;
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await waitForDraftSaved(page);
+  const accessibility = await auditGuardedPreview(page);
+  for (const batch of accessibility.batches) expect(batch.result.violations).toEqual([]);
+  evidence['accessibility'] = {
+    version: accessibility.version,
+    enabledRules: accessibility.enabledRules,
+    batches: accessibility.batches.map(({ rules, result }) => ({
+      rules,
+      passes: result.passes.map((rule) => rule.id),
+      inapplicable: result.inapplicable.map((rule) => rule.id),
+      incomplete: result.incomplete.map((rule) => ({
+        id: rule.id,
+        nodes: rule.nodes.map((node) => ({
+          target: node.target,
+          failureSummary: node.failureSummary,
+          checks: [...node.any, ...node.all, ...node.none].map(({ id, message }) => ({
+            id,
+            message,
+          })),
+        })),
+      })),
+    })),
+  };
   await writeFile(
     testInfo.outputPath('typescript-quiz-workspace.json'),
     JSON.stringify(evidence, null, 2),

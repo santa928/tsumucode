@@ -435,6 +435,18 @@ function EditableSession({
   const consoleRecords = currentPythonOutput ?? state.runtimeOutput?.console ?? [];
   const consoleFreshness =
     currentPythonOutput === undefined ? (state.runtimeOutput?.freshness ?? 'current') : 'current';
+  // JavaScript解析時の構文エラーはiframeを描画せず、同じ画面にあれば前の表示を保つ。
+  const previewSyntaxError =
+    state.previewRevision === state.executionRevision && state.runtimeOutput === undefined
+      ? state.diagnostics.find(({ code }) => code === 'javascript-analyzer-syntax')
+      : undefined;
+  const previewErrorFile = previewSyntaxError?.file;
+  const previewErrorTarget =
+    previewErrorFile === undefined ? 'エディターで' : `「${previewErrorFile}」を開いて`;
+  const previewStatus =
+    previewSyntaxError === undefined
+      ? ''
+      : `コードにエラーがあるため、まだプレビューを表示できません。${previewErrorTarget}案内を確認し、直したら「プレビューを更新」を押してください。`;
   // 実行失敗の案内はその実行結果だけに結び付け、自動再描画での復帰後に残さない。
   // 保存・Resetなど別操作の失敗は従来のoperationErrorとして保持する。
   const displayedOperationError =
@@ -1358,6 +1370,7 @@ function EditableSession({
                     onExpandedChange={setPreviewExpanded}
                     consoleEnabled={exercise.runtime !== undefined}
                     primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
+                    previewStatus={exercise.runtime?.kind === 'javascript' ? previewStatus : undefined}
                     consoleRecords={state.runtimeOutput?.console ?? []}
                     consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
                     {...(state.runtimeOutput === undefined

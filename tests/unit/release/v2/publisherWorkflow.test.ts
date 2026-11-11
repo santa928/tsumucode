@@ -8,6 +8,7 @@ import { afterEach, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { releaseFixture } from './releaseFixture';
 import { hashArtifact, hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
+import { evidence as failureEvidence, prefix as failurePrefix } from './predeployFailureFixture';
 const exec = promisify(execFile),
   roots: string[] = [];
 afterEach(async () => {
@@ -31,7 +32,7 @@ async function workflow() {
     };
   };
 }
-async function setup() {
+async function setup(recovery = false) {
   const root = await mkdtemp(path.join(os.tmpdir(), 'fixed-publisher-'));
   roots.push(root);
   await mkdir(path.join(root, '.release-v2'));
@@ -40,6 +41,26 @@ async function setup() {
   await writeFile(path.join(root, 'dist/.nojekyll'), '');
   await writeFile(path.join(root, 'dist/index.html'), 'same qualified bytes');
   const bundle = releaseFixture();
+  const repository = recovery ? 'santa928/tsumucode' : 'owner/site';
+  const site = recovery ? 'https://santa928.github.io/tsumucode/' : 'https://owner.github.io/site/';
+  if (recovery) {
+    bundle.candidate.repository = repository;
+    bundle.candidate.recipe.basePath = '/tsumucode/';
+    bundle.capturedBaseline.proof.repository = repository;
+    bundle.capturedBaseline.proof.deploymentId = '7593230441';
+    bundle.capturedBaseline.proof.workflowHeadCommit = 'eb2fe6f8e06409569f173efb2fe6275c46a535cf';
+    bundle.capturedBaseline.proof.runId = '42154759825';
+    bundle.capturedBaseline.baseline.deploymentId = '7593230441';
+    bundle.capturedBaseline.baseline.sourceRecordDigest = hashValue(bundle.capturedBaseline.proof);
+    bundle.snapshot.plan.parent = {
+      deploymentId: '7593230441',
+      sourceRecordDigest: bundle.capturedBaseline.baseline.sourceRecordDigest,
+    };
+    bundle.candidate.planDigest = hashValue({
+      plan: bundle.snapshot.plan,
+      executionPlan: bundle.executionPlan,
+    });
+  }
   bundle.candidate.artifactDigest = (await hashArtifact(path.join(root, 'dist'))).digest;
   const qualification = {
     schemaVersion: 1,
@@ -67,23 +88,28 @@ async function setup() {
     '/git/ref/heads/main': { object: { sha: bundle.candidate.recipe.sourceCommit } },
     '/deployments?environment=github-pages&per_page=1': [
       {
-        id: 501,
+        id: recovery ? 7593230441 : 501,
         sha: bundle.capturedBaseline.proof.workflowHeadCommit,
         ref: 'main',
         environment: 'github-pages',
       },
     ],
-    '/deployments/501/statuses': [
+    ['/deployments/' + (recovery ? '7593230441' : '501') + '/statuses']: [
       {
         state: 'success',
-        environment_url: 'https://owner.github.io/site/',
-        log_url: 'https://github.com/owner/site/actions/runs/500/job/201',
+        environment_url: site,
+        log_url:
+          'https://github.com/' +
+          repository +
+          '/actions/runs/' +
+          (recovery ? '42154759825' : '500') +
+          '/job/201',
       },
     ],
   };
   const environment = {
     ...process.env,
-    GITHUB_REPOSITORY: 'owner/site',
+    GITHUB_REPOSITORY: repository,
     GITHUB_SHA: bundle.candidate.recipe.sourceCommit,
     GITHUB_RUN_ID: '101',
     GITHUB_RUN_ATTEMPT: '1',
@@ -97,6 +123,7 @@ async function setup() {
   const setDeployments = (values: unknown[]) => {
     states['/deployments?environment=github-pages&per_page=1'] = values.slice(0, 1);
     states['/deployments?environment=github-pages&per_page=2'] = values.slice(0, 2);
+    states['/deployments?environment=github-pages&per_page=3'] = values.slice(0, 3);
   };
   setDeployments(states['/deployments?environment=github-pages&per_page=1'] as unknown[]);
   // No package manager or candidate script may execute inside the privileged publisher.
@@ -110,7 +137,7 @@ async function setup() {
     )!.run!;
     const body = source.slice(source.indexOf("<<'JS'\n") + 7, source.lastIndexOf('\nJS'));
     expect(body).not.toMatch(/from ['"](?!node:)|child_process|\bexec\(|\bspawn\(/u);
-    const mock = `const states=${JSON.stringify(states)}; globalThis.fetch=async(url,options)=>{if(options.headers.Authorization)throw Error('Unexpected authentication');const prefix='https://api.github.com/repos/owner/site';if(!url.startsWith(prefix)||!(url.slice(prefix.length) in states))throw Error('Unexpected real network request');return new Response(JSON.stringify(states[url.slice(prefix.length)]),{status:200});};\n`;
+    const mock = `const states=${JSON.stringify(states)}; globalThis.fetch=async(url,options)=>{if(options.headers.Authorization)throw Error('Unexpected authentication');const prefix='https://api.github.com/repos/'+${JSON.stringify(environment.GITHUB_REPOSITORY)};if(!url.startsWith(prefix)||!(url.slice(prefix.length) in states))throw Error('Unexpected real network request');const value=states[url.slice(prefix.length)];const response=Array.isArray(value)&&Array.isArray(value[0])?value.shift():value&&Array.isArray(value.__sequence)?value.__sequence.shift():value;return new Response(JSON.stringify(response),{status:200});};\n`;
     const file = path.join(root, 'fixed-workflow.mjs');
     await writeFile(file, mock + body);
     return exec(process.execPath, [file], { cwd: root, env: environment, timeout: 10000 });
@@ -148,6 +175,10 @@ it.each([
   'ref',
   'symlink',
   'excluded-directory',
+  'missing-preparation',
+  'malformed-preparation',
+  'oversized-preparation',
+  'altered-plan',
 ])('stops %s mismatch at the actual fixed publisher boundary', async (kind) => {
   const row = await setup();
   if (kind === 'main') row.states['/git/ref/heads/main'] = { object: { sha: '0'.repeat(40) } };
@@ -164,6 +195,13 @@ it.each([
   if (kind === 'candidate-id') row.environment.CANDIDATE_ARTIFACT_ID = '999';
   if (kind === 'run') row.environment.GITHUB_RUN_ID = '999';
   if (kind === 'ref') row.environment.GITHUB_REF = 'refs/heads/feature';
+  const preparation = path.join(row.root, '.release-v2/preparation.json');
+  if (kind === 'missing-preparation') await rm(preparation);
+  if (kind === 'malformed-preparation') await writeFile(preparation, '{');
+  if (kind === 'oversized-preparation')
+    await writeFile(preparation, ' '.repeat(4 * 1024 * 1024 + 1));
+  if (kind === 'altered-plan')
+    await writeFile(preparation, JSON.stringify({ ...row.bundle.snapshot, plan: {} }));
   if (kind === 'symlink') await symlink('../package.json', path.join(row.root, 'dist/link.json'));
   if (kind === 'excluded-directory') {
     await mkdir(path.join(row.root, 'dist/.git'));
@@ -190,6 +228,107 @@ async function ownEnvironment() {
   row.setDeployments([self, parent]);
   return { ...row, self, status, parent };
 }
+
+async function recoveryEnvironment() {
+  const row = await setup(true);
+  const evidence = await failureEvidence();
+  for (const [url, value] of Object.entries(evidence.responses))
+    row.states[url.slice(failurePrefix.length)] = value;
+  const parent = (
+    row.states['/deployments?environment=github-pages&per_page=1'] as unknown[]
+  )[0] as { id: number; sha: string; ref: string; environment: string };
+  const self = {
+    id: 601,
+    sha: row.environment.GITHUB_SHA,
+    ref: 'main',
+    environment: 'github-pages',
+  };
+  const status = {
+    state: 'in_progress',
+    environment_url: '',
+    log_url: 'https://github.com/santa928/tsumucode/actions/runs/101/job/602',
+  };
+  row.states['/deployments/601/statuses'] = [status];
+  row.setDeployments([self, evidence.deployment, parent]);
+  return { ...row, self, status, parent, evidence };
+}
+
+it('rechecks the exact pre-deploy failure and the real parent at the protected publisher', async () => {
+  const row = await recoveryEnvironment();
+  await expect(row.run()).resolves.toBeDefined();
+});
+
+it.each([
+  'new-deployment',
+  'changed-failure-status',
+  'changed-parent-status',
+  'changed-main',
+  'changed-self-status',
+])('rejects %s after initial recovery evidence was fetched', async (kind) => {
+  const row = await recoveryEnvironment();
+  if (kind === 'new-deployment') {
+    row.states['/deployments?environment=github-pages&per_page=3'] = [
+      [row.self, row.evidence.deployment, row.parent],
+      [{ id: 700 }, row.self, row.evidence.deployment],
+    ];
+  }
+  if (kind === 'changed-failure-status') {
+    row.states['/deployments/7675216444/statuses?per_page=100'] = [
+      row.evidence.statuses,
+      [{ ...row.evidence.statuses[0]!, state: 'success' }, ...row.evidence.statuses],
+    ];
+  }
+  if (kind === 'changed-parent-status') {
+    row.states['/deployments/7593230441/statuses'] = [
+      row.states['/deployments/7593230441/statuses'],
+      [{ state: 'failure' }],
+    ];
+  }
+  if (kind === 'changed-main') {
+    row.states['/git/ref/heads/main'] = {
+      __sequence: [
+        { object: { sha: row.environment.GITHUB_SHA } },
+        { object: { sha: '0'.repeat(40) } },
+      ],
+    };
+  }
+  if (kind === 'changed-self-status') {
+    row.states['/deployments/601/statuses'] = [[row.status], [{ ...row.status, state: 'success' }]];
+  }
+  await expect(row.run()).rejects.toThrow();
+});
+
+it.each([
+  'other-failure',
+  'intervening',
+  'missing-parent',
+  'parent-sha',
+  'parent-failed',
+  'status-history',
+  'run-retried',
+  'workflow-bytes',
+  'deploy-executed',
+  'foreign-self',
+  'missing-evidence',
+])('rejects %s during protected recovery', async (kind) => {
+  const row = await recoveryEnvironment();
+  if (kind === 'other-failure') row.evidence.deployment.id++;
+  if (kind === 'intervening')
+    row.setDeployments([row.self, { id: 700 }, row.evidence.deployment, row.parent]);
+  if (kind === 'missing-parent') row.setDeployments([row.self, row.evidence.deployment]);
+  if (kind === 'parent-sha') row.parent.sha = '0'.repeat(40);
+  if (kind === 'parent-failed')
+    row.states['/deployments/7593230441/statuses'] = [{ state: 'failure' }];
+  if (kind === 'status-history') row.evidence.statuses.push({ ...row.evidence.statuses[0]! });
+  if (kind === 'run-retried') row.evidence.run.run_attempt++;
+  if (kind === 'workflow-bytes')
+    row.evidence.pages.content = Buffer.from('changed').toString('base64');
+  if (kind === 'deploy-executed') row.evidence.job.steps[6]!.conclusion = 'success';
+  if (kind === 'foreign-self')
+    row.status.log_url = 'https://github.com/santa928/tsumucode/actions/runs/999/job/602';
+  if (kind === 'missing-evidence') delete row.states['/actions/jobs/129670621435'];
+  await expect(row.run()).rejects.toThrow();
+});
 
 it.each(['job', 'run'])(
   'recognizes this Environment deployment by its exact %s URL before checking the parent',

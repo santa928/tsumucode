@@ -26,6 +26,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:historical-originals": "vitest run --config tests/local/vitest.historical-originals.config.ts",
     "test:changed": "tsx scripts/testChanged.ts",
     "test:e2e": "playwright test --grep-invert @visual-extended",
     "test:visual:extended": "playwright test visual-regression.spec.ts --project=chromium --grep @visual-extended",

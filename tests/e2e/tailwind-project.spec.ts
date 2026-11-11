@@ -214,13 +214,32 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
   const update = page.getByRole('button', { name: 'プレビューを更新', exact: true });
   await update.click();
   await expect(grade).toBeEnabled();
+  const previewFrame = page.locator('[data-testid="runtime-preview-frame"] iframe');
   const preview = page.frameLocator('[data-testid="runtime-preview-frame"] iframe');
+  const viewportSelect = page.getByRole('combobox', { name: 'プレビューの画面幅', exact: true });
   for (const viewport of project.previewViewports) {
-    await page
-      .getByRole('combobox', { name: 'プレビューの画面幅', exact: true })
-      .selectOption(viewport.id, { timeout: 10_000 });
+    const previousSrcdoc = await previewFrame.getAttribute('srcdoc');
+    if ((await viewportSelect.inputValue()) === viewport.id) {
+      await update.click();
+    } else {
+      await viewportSelect.selectOption(viewport.id, { timeout: 10_000 });
+    }
+    // 旧画面のまま幅だけ変わった状態を成功としない。
+    await expect.poll(() => previewFrame.getAttribute('srcdoc')).not.toBe(previousSrcdoc);
+    await expect(grade).toBeEnabled();
+    await expect(page.getByRole('alert')).toHaveCount(0);
     await expect
-      .poll(() => preview.locator('html').evaluate(() => window.innerWidth))
+      .poll(async () => {
+        try {
+          return await preview.locator('html').evaluate(() => window.innerWidth);
+        } catch (error: unknown) {
+          // 再描画の瞬間だけ評価コンテキストが破棄される場合は次の poll で確認する。
+          if (error instanceof Error && error.message.includes('Execution context was destroyed')) {
+            return null;
+          }
+          throw error;
+        }
+      })
       .toBe(viewport.width);
     await expect(preview.locator('#cards')).toHaveCSS(
       'flex-direction',
