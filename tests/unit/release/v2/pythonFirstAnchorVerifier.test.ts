@@ -14,6 +14,7 @@ vi.mock('../../../../scripts/release/v2/pythonFirstAnchorIdentity', () => ({
 import { verifyPythonFirstAnchor } from '../../../../scripts/release/v2/pythonFirstAnchorVerifier';
 import { hashValue } from '../../../../scripts/release/v2/identity';
 import { releaseFixture } from './releaseFixture';
+import { gitFixtureEnvironment } from './gitFixture';
 import { z } from 'zod';
 const tag = readFileSync('tests/fixtures/release-v2/b930-public-tag.object');
 const proof = {
@@ -36,8 +37,21 @@ const proof = {
 it('rejects failed API, different live parent, changed tag ref and changed declaration (mock capture/API)', async () => {
   const root = mkdtempSync(path.join(os.tmpdir(), 'anchor-verifier-'));
   try {
-    execFileSync('git', ['init', '-q', root]);
-    execFileSync('git', ['hash-object', '-t', 'tag', '-w', '--stdin'], { cwd: root, input: tag });
+    execFileSync('git', ['init', '-q', root], { env: gitFixtureEnvironment() });
+    const oid = execFileSync('git', ['hash-object', '-t', 'tag', '-w', '--stdin'], {
+      cwd: root,
+      input: tag,
+      env: gitFixtureEnvironment(),
+      encoding: 'utf8',
+    }).trim();
+    expect(oid).toBe('fa87f692442cb3876b07ef33e583e29b438dae31');
+    expect(
+      execFileSync('git', ['cat-file', '-t', oid], {
+        cwd: root,
+        env: gitFixtureEnvironment(),
+        encoding: 'utf8',
+      }).trim(),
+    ).toBe('tag');
     mkdirSync(path.join(root, 'docs/quality'), { recursive: true });
     const declaration = readFileSync('docs/quality/movement-eb2-v2.json');
     const declarationFile = path.join(root, 'docs/quality/movement-eb2-v2.json');
