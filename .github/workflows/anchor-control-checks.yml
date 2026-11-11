@@ -1,0 +1,47 @@
+name: Anchor control checks
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/anchor-control-checks.yml'
+      - 'scripts/release/v2/anchor-control/**'
+      - 'tests/unit/release/v2/anchorCheckoutInput.test.py'
+      - 'tests/unit/release/v2/anchorDirectOutput.test.py'
+      - 'tests/unit/release/v2/anchorMetadataGuard.test.py'
+      - 'tests/unit/release/v2/anchorControlWorkflow.test.ts'
+      - 'tests/local/anchorCheckoutNonDestructive.test.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/anchor-control-checks.yml'
+      - 'scripts/release/v2/anchor-control/**'
+      - 'tests/unit/release/v2/anchorCheckoutInput.test.py'
+      - 'tests/unit/release/v2/anchorDirectOutput.test.py'
+      - 'tests/unit/release/v2/anchorMetadataGuard.test.py'
+      - 'tests/unit/release/v2/anchorControlWorkflow.test.ts'
+      - 'tests/local/anchorCheckoutNonDestructive.test.py'
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Run standard-library control tests
+        run: |
+          set -eu
+          python3 -I tests/unit/release/v2/anchorCheckoutInput.test.py
+          python3 -I tests/unit/release/v2/anchorMetadataGuard.test.py
+          python3 -I tests/unit/release/v2/anchorDirectOutput.test.py
+      - name: Run isolated non-destructive Docker controls
+        env:
+          ANCHOR_TEST_IMAGE: node@sha256:4e9cb555d708e0829c9d93e5eeae9dfab0617b832ca436a690680e0fca735ef5
+        run: |
+          set -eu
+          docker pull "$ANCHOR_TEST_IMAGE"
+          python3 -I tests/local/anchorCheckoutNonDestructive.test.py
