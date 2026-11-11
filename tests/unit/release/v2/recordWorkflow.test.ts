@@ -121,7 +121,8 @@ async function setup(mode = 'create') {
     GITHUB_REPOSITORY: 'owner/site',
     GITHUB_SHA: candidate.recipe.sourceCommit,
     GITHUB_RUN_ID: candidate.runId,
-    GITHUB_RUN_ATTEMPT: '1',
+    GITHUB_RUN_ATTEMPT:
+      mode === 'history-first-skipped' ? '2' : mode.startsWith('history-') ? '3' : '1',
     GITHUB_EVENT_NAME: 'workflow_dispatch',
     GITHUB_REF: 'refs/heads/main',
     CANDIDATE_ARTIFACT_ID: candidate.artifactId,
@@ -138,8 +139,8 @@ async function setup(mode = 'create') {
     expect(code).not.toMatch(/from ['"](?!node:)|child_process|\bexec\(|\bspawn\(/u);
     const mock = `import {writeFileSync} from 'node:fs';
       { const calls=[],record=${JSON.stringify(record)},mode=${JSON.stringify(mode)};
-      let exists=mode==='reuse'||mode==='reuse-observation'||mode==='late-reuse'||mode==='conflict',reads=0;
-      let refAttempted=false,refReads=0;
+      let exists=mode==='reuse'||mode==='reuse-observation'||mode==='late-reuse'||mode==='conflict'||mode==='history-write-exact'||mode==='history-write-mismatch',reads=0;
+      let refAttempted=false,refReads=0,runReads=0,priorRefReads=0;
       globalThis.setTimeout=(callback,delay)=>{
         calls.push({relative:'wait',method:'WAIT',delay});
         callback();
@@ -154,16 +155,37 @@ async function setup(mode = 'create') {
           age:'1',
         }});
         if(method==='GET'&&options.headers.Authorization)throw Error('Unexpected read authentication');
+        if(relative==='/actions/runs/101'){
+          runReads++;
+          const moved=mode==='history-run-moved'||mode==='history-run-changed'&&runReads>2||mode==='history-run-changed-after-tag'&&runReads>3||mode==='history-run-changed-after-ref'&&runReads>4;
+          return reply({id:101,run_attempt:moved?4:mode==='history-first-skipped'?2:mode.startsWith('history-')?3:1,head_sha:record.workflowHeadCommit,head_branch:'main',event:'workflow_dispatch',status:'in_progress'});
+        }
+        if(relative.startsWith('/actions/runs/101/attempts/') && relative.endsWith('/jobs?per_page=100')){
+          const previous=Number(relative.split('/')[5]);
+          if(mode==='history-unavailable'&&previous===2)return reply({},503);
+          if(mode==='history-forbidden'&&previous===2)return reply({},403);
+          if(mode==='history-rate-limited'&&previous===2)return reply({},429);
+          if(mode==='history-timeout'&&previous===2)throw new DOMException('Synthetic timeout','TimeoutError');
+          const skipped=previous===1||['history-skipped','history-run-changed','history-run-changed-after-tag','history-run-changed-after-ref'].includes(mode);
+          const job={id:300+previous,run_id:101,run_attempt:previous,head_sha:mode==='history-wrong-source'&&previous===2?'0'.repeat(40):record.workflowHeadCommit,name:mode==='history-missing'&&previous===2?'another job':'publish / record',status:mode==='history-running'&&previous===2?'in_progress':'completed',conclusion:mode==='history-unknown'&&previous===2?null:skipped?'skipped':'failure',steps:skipped||mode==='history-incomplete-steps'?[]:[{number:4,name:'Record verified deployment without checkout or Source execution',status:'completed',conclusion:'failure'}]};
+          const jobs=mode==='history-duplicate'&&previous===2?[job,job]:mode==='history-multiple-records'&&previous===2?[job,{...job,id:job.id+50}]:[job];
+          return reply({total_count:mode==='history-too-many'&&previous===2?101:mode==='history-truncated'&&previous===2?2:jobs.length,jobs});
+        }
         if(relative==='/deployments?environment=github-pages&per_page=1'){
           reads++;
-          const moved=mode==='moved'&&reads>1 || mode==='moved-after-reconcile'&&reads>2;
+          const moved=mode==='moved'&&reads>2 || mode==='moved-after-reconcile'&&reads>3;
           return reply([{id:moved?999:501,sha:record.workflowHeadCommit,ref:'main',environment:'github-pages',created_at:mode==='missing-clock'?undefined:mode==='forged-clock'?new Date(Date.parse(record.observedAt)-45000).toISOString():mode==='expired-at-deployment'?new Date(Date.parse(record.observedAt)-20000).toISOString():${JSON.stringify(actual.createdAt)}}]);
         }
         if(relative==='/deployments/501/statuses')return reply([{state:'success',environment_url:record.siteUrl,log_url:'https://github.com/owner/site/actions/runs/101/job/201'}]);
         if(relative.startsWith('/git/ref/tags/')){
+          if(mode==='history-visible-after-delay' && !refAttempted){
+            priorRefReads++;
+            if(priorRefReads<=7)return reply({},404);
+            exists=true;
+          }
           if(refAttempted){
             refReads++;
-            const invisibleReads=mode==='delayed-last-read'?3:2;
+            const invisibleReads=mode==='delayed-after-observed-window'?7:mode==='delayed-last-read'?3:2;
             if(mode==='never-readable' || mode.startsWith('delayed-')&&refReads<=invisibleReads)return reply({},404);
             if(mode==='ref-forbidden')return reply({},403);
             if(mode==='ref-rate-limited')return reply({},429);
@@ -181,7 +203,7 @@ async function setup(mode = 'create') {
         if(relative.startsWith('/git/tags/')&&method==='GET'){
           if(mode==='tag-unavailable')return reply({},404);
           const old={...record};
-          if(mode==='reuse-observation'){
+          if(mode==='reuse-observation'||mode==='history-write-mismatch'){
             old.observedAt=new Date(Date.parse(record.observedAt)-1000).toISOString();
             old.smokeDigest='1'.repeat(64);
           }
@@ -195,12 +217,18 @@ async function setup(mode = 'create') {
           });
         }
         if(method==='POST'&&options.headers.Authorization!=='Bearer synthetic-write-token')throw Error('Missing synthetic writer');
-        if(relative==='/git/tags'&&method==='POST'){if(mode==='uncertain-object')throw Error('synthetic uncertain annotation');return reply({sha:'9'.repeat(40)},201);}
+        if(relative==='/git/tags'&&method==='POST'){
+          if(mode==='uncertain-object')throw Error('synthetic uncertain annotation');
+          return reply({sha:'9'.repeat(40),tag:mode==='annotation-wrong-name'?'other':'tsumucode-app-101-501',message:mode==='annotation-wrong-message'?'{}':JSON.stringify(record),object:{type:mode==='annotation-wrong-type'?'tree':'commit',sha:mode==='annotation-wrong-source'?'0'.repeat(40):record.workflowHeadCommit}},201);
+        }
         if(relative==='/git/refs'&&method==='POST'){
           refAttempted=true;
           if(mode==='uncertain-absent')throw Error('synthetic unknown ref');exists=true;
           if(mode==='uncertain-created'||mode==='delayed-lost-response')throw Error('synthetic lost ref response');
-          return reply({ref:'refs/tags/tsumucode-app-101-501'},201);
+          if(mode==='ref-response-invalid-json')return new Response('{',{status:201});
+          if(mode==='ref-response-empty')return new Response(null,{status:201});
+          if(mode==='ref-response-oversized')return new Response('x'.repeat(1024*1024+1),{status:201});
+          return reply({ref:mode==='ref-response-wrong-name'?'refs/tags/other':'refs/tags/tsumucode-app-101-501',object:{type:mode==='ref-response-wrong-type'?'commit':'tag',sha:(mode==='ref-response-wrong-sha'?'8':'9').repeat(40)}},201);
         }
         throw Error('Unexpected API action');
       }; }
@@ -228,6 +256,7 @@ it.each([
   'delayed-created',
   'delayed-lost-response',
   'delayed-last-read',
+  'delayed-after-observed-window',
 ])('records %s idempotently without executing Source or moving a ref', async (mode) => {
   const row = await setup(mode);
   await row.run();
@@ -242,12 +271,122 @@ it.each([
   if (mode.startsWith('delayed-')) {
     const calls = await row.calls();
     expect(calls.filter((call) => call.relative.startsWith('/git/ref/tags/'))).toHaveLength(
-      mode === 'delayed-last-read' ? 5 : 4,
+      mode === 'delayed-after-observed-window' ? 9 : mode === 'delayed-last-read' ? 5 : 4,
     );
     expect(calls.filter((call) => call.method === 'WAIT').map((call) => call.delay)).toEqual(
-      mode === 'delayed-last-read' ? [1000, 2000, 4000] : [1000, 2000],
+      mode === 'delayed-after-observed-window'
+        ? [1000, 2000, 4000, 8000, 16000, 30000, 60000]
+        : mode === 'delayed-last-read'
+          ? [1000, 2000, 4000]
+          : [1000, 2000],
     );
   }
+});
+it.each(['history-first-skipped', 'history-skipped'])(
+  'allows a first write after prior record jobs were explicitly skipped: %s',
+  async (mode) => {
+    const row = await setup(mode);
+    await row.run();
+    expect(
+      (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+    ).toEqual(['/git/tags', '/git/refs']);
+  },
+);
+it.each([
+  'history-write-invisible',
+  'history-unavailable',
+  'history-forbidden',
+  'history-rate-limited',
+  'history-timeout',
+  'history-missing',
+  'history-truncated',
+  'history-too-many',
+  'history-duplicate',
+  'history-multiple-records',
+  'history-running',
+  'history-unknown',
+  'history-incomplete-steps',
+  'history-wrong-source',
+  'history-run-moved',
+  'history-run-changed',
+])(
+  'never writes again when earlier record work is possible or history is unavailable: %s',
+  async (mode) => {
+    const row = await setup(mode);
+    await expect(row.run()).rejects.toThrow();
+    expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
+  },
+);
+it('does not create the ref if the run changes after annotation creation', async () => {
+  const row = await setup('history-run-changed-after-tag');
+  await expect(row.run()).rejects.toThrow();
+  expect(
+    (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+  ).toEqual(['/git/tags']);
+});
+it('does not report success if the attempt changes after ref creation', async () => {
+  const row = await setup('history-run-changed-after-ref');
+  await expect(row.run()).rejects.toThrow();
+  expect(
+    (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+  ).toEqual(['/git/tags', '/git/refs']);
+  expect(
+    JSON.parse(await readFile(path.join(row.root, 'record-outcome.json'), 'utf8')),
+  ).toMatchObject({ state: 'unknown' });
+});
+it('read-only reconciles an exact previous record without writing again', async () => {
+  const row = await setup('history-write-exact');
+  await row.run();
+  expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
+});
+it('read-only reconciles the exact previous record when it appears after the observed window', async () => {
+  const row = await setup('history-visible-after-delay');
+  await row.run();
+  const calls = await row.calls();
+  expect(calls.filter((call) => call.method === 'POST')).toEqual([]);
+  expect(calls.filter((call) => call.method === 'WAIT').map((call) => call.delay)).toEqual([
+    1000, 2000, 4000, 8000, 16000, 30000, 60000,
+  ]);
+});
+it('does not substitute a different observation while reconciling an earlier write', async () => {
+  const row = await setup('history-write-mismatch');
+  await expect(row.run()).rejects.toThrow();
+  expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
+});
+it.each([
+  'annotation-wrong-name',
+  'annotation-wrong-message',
+  'annotation-wrong-type',
+  'annotation-wrong-source',
+])('does not write a ref when the tag creation response differs: %s', async (mode) => {
+  const row = await setup(mode);
+  await expect(row.run()).rejects.toThrow();
+  expect(
+    (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+  ).toEqual(['/git/tags']);
+  expect(
+    JSON.parse(await readFile(path.join(row.root, 'record-outcome.json'), 'utf8')),
+  ).toMatchObject({ state: 'unknown' });
+});
+it.each([
+  'ref-response-wrong-name',
+  'ref-response-wrong-type',
+  'ref-response-wrong-sha',
+  'ref-response-invalid-json',
+  'ref-response-empty',
+  'ref-response-oversized',
+])('does not report success when the ref creation response differs: %s', async (mode) => {
+  const row = await setup(mode);
+  await expect(row.run()).rejects.toThrow();
+  expect(
+    (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+  ).toEqual(['/git/tags', '/git/refs']);
+  expect(
+    (await row.calls()).filter((call) => call.relative.startsWith('/git/ref/tags/')),
+  ).toHaveLength(1);
+  expect(
+    JSON.parse(await readFile(path.join(row.root, 'record-outcome.json'), 'utf8')),
+  ).toMatchObject({ state: 'unknown' });
 });
 it.each([
   'conflict',
@@ -304,12 +443,16 @@ it.each([
       '/git/refs',
     ]);
     const absent = ['never-readable', 'uncertain-absent'].includes(mode);
-    const expectedReads = absent ? 5 : mode.startsWith('delayed-') ? 4 : 2;
+    const expectedReads = absent ? 9 : mode.startsWith('delayed-') ? 4 : 2;
     expect(calls.filter((call) => call.relative.startsWith('/git/ref/tags/'))).toHaveLength(
       expectedReads,
     );
     expect(calls.filter((call) => call.method === 'WAIT').map((call) => call.delay)).toEqual(
-      absent ? [1000, 2000, 4000] : mode.startsWith('delayed-') ? [1000, 2000] : [],
+      absent
+        ? [1000, 2000, 4000, 8000, 16000, 30000, 60000]
+        : mode.startsWith('delayed-')
+          ? [1000, 2000]
+          : [],
     );
     expect(JSON.parse(await readFile(path.join(row.root, 'record-outcome.json'), 'utf8'))).toEqual({
       schemaVersion: 1,
