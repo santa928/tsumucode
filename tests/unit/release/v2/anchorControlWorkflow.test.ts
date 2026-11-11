@@ -43,6 +43,7 @@ it('runs control checks on matching PR and main changes without publication perm
 
 it('requires Python tests and pinned-image Docker controls without suppressing failure', () => {
   const { checks } = workflow.jobs;
+  if (!checks) throw Error('anchor control checks job is missing');
   expect(checks['runs-on']).toBe('ubuntu-24.04');
   expect(checks.if).toBeUndefined();
   expect(checks['continue-on-error']).toBeUndefined();
