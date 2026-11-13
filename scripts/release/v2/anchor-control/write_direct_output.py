@@ -20,7 +20,7 @@ def main(args):
     evidence_path, expected_hash, output_path = args
     if not all(os.path.isabs(p) for p in (evidence_path, output_path)):
         raise ValueError("absolute paths required")
-    fd = os.open(evidence_path, os.O_RDONLY | os.O_NOFOLLOW)
+    fd = os.open(evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         before = os.fstat(fd)
         if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or not 0 < before.st_size <= LIMIT:
@@ -40,7 +40,7 @@ def main(args):
         os.close(fd)
     payload = ("evidenceBase64=" + base64.b64encode(data).decode("ascii") +
                "\nevidenceSha256=" + expected_hash + "\n").encode("ascii")
-    out = os.open(output_path, os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW)
+    out = os.open(output_path, os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         st = os.fstat(out)
         if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:

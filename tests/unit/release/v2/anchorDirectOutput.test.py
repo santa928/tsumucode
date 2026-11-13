@@ -56,6 +56,22 @@ class DirectOutput(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(target.read_bytes(), b'')
 
+    def test_fifo_evidence_and_output_are_rejected_without_blocking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            evidence, output, fifo = root / 'evidence', root / 'out', root / 'fifo'
+            evidence.write_bytes(b'abc')
+            output.touch()
+            os.mkfifo(fifo)
+            digest = hashlib.sha256(b'abc').hexdigest()
+            for source, destination in ((fifo, output), (evidence, fifo)):
+                with self.subTest(source=source.name, destination=destination.name):
+                    result = subprocess.run(['/usr/bin/python3', '-I', str(SCRIPT), str(source),
+                                             digest, str(destination)], capture_output=True,
+                                            check=False, timeout=2)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertEqual(output.read_bytes(), b'')
+
 
 if __name__ == '__main__':
     unittest.main()
