@@ -1,11 +1,13 @@
 import { execFile } from 'node:child_process';
 import { realpath } from 'node:fs/promises';
 import { promisify } from 'node:util';
+import { types } from 'node:util';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { z } from 'zod';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { hashBytes, hashValue } from './identity';
+import { readBoundedRegularFile } from './boundedFile';
 import {
   assertSafeAnchorEnvironment,
   assertVisibleAnchorIndex,
@@ -14,15 +16,36 @@ import {
 import { assertAnchorTrackedTree } from './anchorTrackedTree';
 import { validateCapturedBaseline } from './parent';
 import type { verifyPythonFirstAnchor } from './pythonFirstAnchorVerifier';
+import type { inspectPythonFirstHistory } from './pythonFirstHistory';
 import { CommitSchema } from './schema';
 
 const exec = promisify(execFile);
 // Experimental pin only: the corresponding PR must pass CI and review before integration.
-const verifierCommit = '28edb392dccfaecd14c5b5b03470198abd8ec421';
+const verifierCommit = 'd50f304376d50dbfbdefb90636040b14abef7f98';
 const anchorDeclaration = '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494';
 const anchorSource = 'b9306eb3414e69a2068603cfdbf2706ebe4e9284';
 const anchorTagDigest = '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b';
 const decimalId = z.string().regex(/^[1-9]\d{0,15}$/u);
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
+const bufferDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer');
+const lengthDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength');
+const offsetDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset');
+
+function snapshotHistoricalBytes(input: unknown): Buffer {
+  try {
+    if (!types.isUint8Array(input) || !bufferDescriptor?.get || !lengthDescriptor?.get || !offsetDescriptor?.get)
+      throw Error('Invalid bytes');
+    const prototype: unknown = Object.getPrototypeOf(input);
+    if (prototype !== Uint8Array.prototype && prototype !== Buffer.prototype) throw Error('Invalid bytes');
+    const backing: unknown = bufferDescriptor.get.call(input);
+    const length: unknown = lengthDescriptor.get.call(input), offset: unknown = offsetDescriptor.get.call(input);
+    if (!types.isArrayBuffer(backing) || typeof length !== 'number' || !length || length > 16*1024*1024 || typeof offset !== 'number')
+      throw Error('Invalid bytes');
+    return Buffer.from(new Uint8Array(backing, offset, length));
+  } catch {
+    throw Error('Invalid historical anchor bytes');
+  }
+}
 
 /** These are claims until an independently trusted workflow binds them to GitHub's own context. */
 const RunContext = z
@@ -81,8 +104,13 @@ export async function producePythonFirstAnchor(
   candidatePath: string,
   verifierPath: string,
   contextInput: unknown,
+  originalCapturedInput: Uint8Array,
+  historyInput: Uint8Array,
 ) {
   assertSafeAnchorEnvironment(process.env);
+  // Keep the original inputs unchanged and private; copy before the first await.
+  const originalCapturedBytes = snapshotHistoricalBytes(originalCapturedInput);
+  const historyBytes = snapshotHistoricalBytes(historyInput);
   const context = RunContext.parse(contextInput);
   if (!path.isAbsolute(candidatePath) || !path.isAbsolute(verifierPath))
     throw Error('Anchor checkouts must be absolute');
@@ -118,11 +146,33 @@ export async function producePythonFirstAnchor(
     captured.proof.tagDigest !== anchorTagDigest
   )
     throw Error('Anchor baseline identity differs');
+  let originalCaptured;
+  try {
+    originalCaptured = validateCapturedBaseline(
+      JSON.parse(new TextDecoder('utf-8', { fatal:true }).decode(originalCapturedBytes)) as unknown,
+    );
+  } catch {
+    throw Error('Invalid historical anchor capture');
+  }
+  if (
+    hashValue({ ...originalCaptured.proof, observedAt:null }) !== hashValue({ ...captured.proof, observedAt:null }) ||
+    Date.parse(originalCaptured.proof.observedAt) > Date.parse(captured.proof.observedAt)
+  )
+    throw Error('Historical and fresh parent identities differ');
+  const tag = await readBoundedRegularFile(path.join(verifier,'tests/fixtures/release-v2/b930-public-tag.object'),16*1024);
+  const historyUrl = pathToFileURL(path.join(verifier,'scripts/release/v2/pythonFirstHistory.ts'));
+  const historyVerifier = (await import(/* @vite-ignore */ historyUrl.href)) as {
+    inspectPythonFirstHistory: typeof inspectPythonFirstHistory;
+  };
+  const inspection = historyVerifier.inspectPythonFirstHistory(originalCapturedBytes,tag,historyBytes) as { authorized: unknown };
+  if (inspection.authorized !== false)
+    throw Error('Invalid historical inspection result');
   if (
     (await cleanHead(verifier, true)) !== verifierCommit ||
     (await cleanHead(candidate, false)) !== context.source
   )
     throw Error('Anchor checkout changed during observation');
+  await assertAnchorTrackedTree(verifier, verifierCommit);
   const evidenceBytes = Buffer.from(
     canonicalJson({
       schemaVersion: 1,
