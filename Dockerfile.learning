@@ -132,6 +132,7 @@ COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
 COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
 COPY tests/e2e/python-oop.spec.ts ./tests/e2e/python-oop.spec.ts
+COPY tests/e2e/python-published-fixtures.spec.ts ./tests/e2e/python-published-fixtures.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
 COPY tests/e2e/helpers/pythonFixtureCoverage.ts ./tests/e2e/helpers/pythonFixtureCoverage.ts
 COPY tests/e2e/helpers/localConsoleDiagnostics.ts ./tests/e2e/helpers/localConsoleDiagnostics.ts

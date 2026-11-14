@@ -48,10 +48,20 @@ on:
       - tests/e2e/python-context.spec.ts
       - tests/e2e/python-data-project.spec.ts
       - tests/e2e/python-oop.spec.ts
+      - tests/e2e/python-published-fixtures.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
+      - scripts/content/compileCourse.ts
+      - scripts/content/conceptMastery.ts
+      - scripts/content/exerciseTrace.ts
+      - scripts/content/io.ts
+      - scripts/content/markdown.ts
+      - scripts/content/screenBudget.ts
       - src/core/content/schema.ts
+      - src/core/content/**
+      - src/core/persistence/canonicalJson.ts
+      - src/shared/lib/resolvePublicAsset.ts
       - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
@@ -116,10 +126,20 @@ on:
       - tests/e2e/python-context.spec.ts
       - tests/e2e/python-data-project.spec.ts
       - tests/e2e/python-oop.spec.ts
+      - tests/e2e/python-published-fixtures.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
+      - scripts/content/compileCourse.ts
+      - scripts/content/conceptMastery.ts
+      - scripts/content/exerciseTrace.ts
+      - scripts/content/io.ts
+      - scripts/content/markdown.ts
+      - scripts/content/screenBudget.ts
       - src/core/content/schema.ts
+      - src/core/content/**
+      - src/core/persistence/canonicalJson.ts
+      - src/shared/lib/resolvePublicAsset.ts
       - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
