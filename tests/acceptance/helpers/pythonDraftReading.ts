@@ -26,15 +26,25 @@ export async function definePythonDraftReadingTests(courseRoot: string): Promise
         narrow ? { width: 390, height: 844 } : { width: 1280, height: 900 },
       );
 
-      // 受入用の直接URLは草稿を開けるが、公開一覧へ追加されたこととは区別する。
+      // 公開済み実践Courseの掲載と、直接URLで開ける草稿の非掲載を区別する。
       for (const route of ['#/', '#/paths/python-basics']) {
         await page.goto(`${testBasePath()}${route}`);
         await expect(page.getByRole('main')).toBeVisible();
         if (route === '#/paths/python-basics')
           await expect(
-            page.getByRole('heading', { name: 'Python入門の学習パス', exact: true }),
+            page.getByRole('heading', { name: 'Python基礎と実践の学習パス', exact: true }),
           ).toBeVisible();
-        await expect(page.getByRole('link', { name: course.title })).toHaveCount(0);
+        if (course.id === 'python-practice' && course.publicationStatus === 'published') {
+          await expect(page.getByRole('heading', { name: course.title, exact: true })).toBeVisible();
+          const courseLink = page.getByRole('link', { name: course.title }).first();
+          await expect(courseLink).toBeVisible();
+          await expect(courseLink).toHaveAttribute('href', /#\/courses\/python-practice(?:\/|$)/u);
+        } else {
+          await expect(page.getByRole('heading', { name: course.title, exact: true })).toHaveCount(
+            0,
+          );
+          await expect(page.getByRole('link', { name: course.title })).toHaveCount(0);
+        }
       }
       for (const { lessonId, slide } of slides) {
         const slideId = slide.id;
