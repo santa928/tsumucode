@@ -75,7 +75,7 @@ describe('unconnected direct-needs diagnostic', () => {
     for (const change of mutations) {
       const altered = structuredClone(workflow);
       change(altered);
-      expect(() => assertTopology(altered)).toThrow();
+      expect(() => { assertTopology(altered); }).toThrow();
     }
   });
   it('accepts the expected structured output', () => {
