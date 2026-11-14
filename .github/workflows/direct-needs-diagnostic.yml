@@ -1,0 +1,71 @@
+name: Direct needs diagnostic
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/direct-needs-diagnostic.yml
+      - tests/unit/workflows/directNeedsDiagnosticWorkflow.test.ts
+
+permissions: {}
+
+jobs:
+  producer:
+    if: ${{ github.repository == 'santa928/tsumucode' && ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/direct-needs-probe') || (github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'codex/direct-needs-probe' && github.event.pull_request.head.repo.full_name == github.repository)) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    outputs:
+      run_id: ${{ steps.emit.outputs.run_id }}
+      attempt: ${{ steps.emit.outputs.attempt }}
+      source: ${{ steps.emit.outputs.source }}
+      nonce: ${{ steps.emit.outputs.nonce }}
+    steps:
+      - id: emit
+        shell: bash
+        run: |
+          node <<'NODE'
+          const { appendFileSync } = require('node:fs');
+          const { randomBytes } = require('node:crypto');
+          const e = process.env;
+          if (!/^[1-9]\d{0,15}$/.test(e.GITHUB_RUN_ID ?? '') ||
+              !/^[1-9]\d{0,3}$/.test(e.GITHUB_RUN_ATTEMPT ?? '') ||
+              !/^[a-f0-9]{40}$/.test(e.GITHUB_SHA ?? '') || !e.GITHUB_OUTPUT) {
+            throw Error('Invalid producer context');
+          }
+          appendFileSync(e.GITHUB_OUTPUT, `run_id=${e.GITHUB_RUN_ID}\nattempt=${e.GITHUB_RUN_ATTEMPT}\nsource=${e.GITHUB_SHA}\nnonce=${randomBytes(16).toString('hex')}\n`);
+          NODE
+  consumer:
+    needs: [producer]
+    if: ${{ needs.producer.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Validate direct producer output
+        shell: bash
+        env:
+          DIRECT_NEEDS_JSON: ${{ toJSON(needs.producer) }}
+        run: |
+          node <<'NODE'
+          const e = process.env;
+          const fail = () => { throw Error('Direct-needs diagnostic rejected'); };
+          const keys = (value, expected) => value && typeof value === 'object' &&
+            !Array.isArray(value) && Object.keys(value).sort().join(',') === expected.slice().sort().join(',');
+          const dispatch = e.GITHUB_EVENT_NAME === 'workflow_dispatch' &&
+            e.GITHUB_REF === 'refs/heads/codex/direct-needs-probe';
+          const pullRequest = e.GITHUB_EVENT_NAME === 'pull_request' &&
+            /^refs\/pull\/[1-9]\d*\/merge$/.test(e.GITHUB_REF ?? '') &&
+            e.GITHUB_BASE_REF === 'main' && e.GITHUB_HEAD_REF === 'codex/direct-needs-probe';
+          if (e.GITHUB_REPOSITORY !== 'santa928/tsumucode' || !(dispatch || pullRequest) ||
+              e.GITHUB_WORKFLOW_REF !== `santa928/tsumucode/.github/workflows/direct-needs-diagnostic.yml@${e.GITHUB_REF}` ||
+              !/^[a-f0-9]{40}$/.test(e.GITHUB_SHA ?? '') || e.GITHUB_WORKFLOW_SHA !== e.GITHUB_SHA ||
+              !/^[1-9]\d{0,15}$/.test(e.GITHUB_RUN_ID ?? '') ||
+              !/^[1-9]\d{0,3}$/.test(e.GITHUB_RUN_ATTEMPT ?? '') ||
+              !e.DIRECT_NEEDS_JSON || Buffer.byteLength(e.DIRECT_NEEDS_JSON) > 4096) fail();
+          let needs;
+          try { needs = JSON.parse(e.DIRECT_NEEDS_JSON); } catch { fail(); }
+          if (!keys(needs, ['result', 'outputs']) || needs.result !== 'success' ||
+              !keys(needs.outputs, ['run_id', 'attempt', 'source', 'nonce']) ||
+              needs.outputs.run_id !== e.GITHUB_RUN_ID || needs.outputs.attempt !== e.GITHUB_RUN_ATTEMPT ||
+              needs.outputs.source !== e.GITHUB_SHA || !/^[a-f0-9]{32}$/.test(needs.outputs.nonce ?? '')) fail();
+          console.log('Direct-needs diagnostic passed');
+          NODE
