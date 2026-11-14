@@ -5,7 +5,6 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
-import { compileCourse } from '../../../scripts/content/compileCourse';
 import {
   resolveReleaseCourseContract,
   isReleaseMetadataPath,
@@ -18,7 +17,7 @@ import {
   createReactInputManifest,
   compareReactLearningInputs,
 } from '../../../scripts/release/reactInputHashes';
-import { verifyReactSyntheticProgressBundle } from '../../../scripts/release/reactSyntheticContinuity';
+import { verifyHistoricalSyntheticProgressBundle } from '../../fixtures/release/historicalProgressCourse';
 import {
   resolveBetaTarget,
   verifyBetaSitePublication,
@@ -230,15 +229,16 @@ describe('React専用公開境界', () => {
     );
     expect(() => createReactInputManifest(commit, input.files)).toThrow('required');
   });
-  it('合成Bundleを実移行へ通して全教材・14Workspace・履歴・Snapshotを保持する', async () => {
-    const course = (await compileCourse('content/react')).runtime;
+  it('初公開の旧Sourceで全15教材・14Workspace・履歴・Snapshotを保持する（現教材の受入証拠ではない）', async () => {
     const bundle: unknown = JSON.parse(
       await readFile('tests/fixtures/progress/react-previous-release-bundle.json', 'utf8'),
     );
-    expect((await verifyReactSyntheticProgressBundle(course, bundle)).resetNotices).toBe(0);
+    expect((await verifyHistoricalSyntheticProgressBundle('react', bundle)).resetNotices).toBe(0);
     const tampered = structuredClone(bundle) as { integrity: { digest: string } };
     tampered.integrity.digest = '0'.repeat(64);
-    await expect(verifyReactSyntheticProgressBundle(course, tampered)).rejects.toThrow('hash');
+    await expect(verifyHistoricalSyntheticProgressBundle('react', tampered)).rejects.toThrow(
+      'hash',
+    );
   });
   it('React選択と全site betaの両方で公開承認迂回を拒否する', async () => {
     expect(() => resolveBetaTarget(commit, commit, commit, 'react')).toThrow('beta');

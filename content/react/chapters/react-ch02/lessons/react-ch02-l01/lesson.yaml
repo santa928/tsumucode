@@ -1,48 +1,24 @@
-id: react-ch02-l01
-kind: guided-project
-title: 型付きの問題をComponentへ渡す
-goal: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
-estimatedMinutes: 40
+id: 'react-ch02-l01'
+kind: 'standard'
+title: '本1冊の表示と操作を作る'
+goal: '受け取った本を表示し、操作した本のIDを親へ渡す部品を作る。'
+estimatedMinutes: 20
 prerequisiteLessonIds:
-  - react-ch01-l05
-  - react-ch01-l07
+  - 'react-ch01-l05'
+  - 'react-ch01-l07'
 slideSources:
-  - slides/s01.md
-  - slides/s02.md
-  - slides/s03.md
+  - 'slides/s01.md'
+  - 'slides/s02.md'
 exerciseSources:
-  - exercises/react-ch02-l01-e01/exercise.yaml
-reflection: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+  - 'exercises/react-ch02-l01-e01/exercise.yaml'
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を振り返りましょう。'
 glossaryRefs:
-  - quiz-workspace
-  - props
-  - state
-  - key
-project:
-  id: react-quiz-guided
-  briefSource: brief.md
-  guideSources:
-    - guide.md
-  checklist:
-    - id: react-ch02-l01-source
-      label: 今回の元Sourceと型
-      required: true
-      ruleIds:
-        - react-ch02-l01-e01-r01
-        - react-ch02-l01-e01-r02
-        - react-ch02-l01-e01-r03
-    - id: react-ch02-l01-behavior
-      label: 実操作と保存への接続
-      required: true
-      ruleIds:
-        - interaction:quiz-card-callback:initial
-        - interaction:quiz-card-callback:name
-        - interaction:quiz-card-callback:selected
+  - 'props'
+  - 'state'
+  - 'key'
 completion:
-  kind: guided-project
-  requiredChecklistItemIds:
-    - react-ch02-l01-source
-    - react-ch02-l01-behavior
+  kind: 'standard'
+  finalSlideId: 'react-ch02-l01-s02'
   requiredExerciseIds:
-    - react-ch02-l01-e01
-nextLessonId: react-ch02-l02
+    - 'react-ch02-l01-e01'
+nextLessonId: 'react-ch02-l02'

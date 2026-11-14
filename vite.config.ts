@@ -1,5 +1,6 @@
 /** 任意のBASE_PATHを前提に、React／Tailwind／alias設定を副作用なくexportする。 */
 import { reactPreviewSourcePlugin } from './scripts/build/reactPreviewSourcePlugin.ts';
+import { reactTypeCheckSeedPlugin } from './scripts/build/reactTypeCheckSeedPlugin.ts';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
@@ -21,7 +22,8 @@ export default defineConfig(({ mode, command, isPreview }) => {
       command === 'serve' && mode !== 'test' && !isPreview && env.TSUMUCODE_RELEASE_V2 === '1'
         ? 'dist'
         : 'public',
-    plugins: [react(), tailwindcss(), reactPreviewSourcePlugin()],
+    plugins: [react(), tailwindcss(), reactPreviewSourcePlugin(), reactTypeCheckSeedPlugin()],
+    worker: { plugins: () => [reactTypeCheckSeedPlugin()] },
     test: { maxWorkers: 2 },
     build: {
       cssCodeSplit: false,

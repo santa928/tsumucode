@@ -1217,6 +1217,7 @@ export async function analyzeConsoleSourceFacts(
 /** Sourceを解析・制限・instrumentし、失敗を診断へ変換する。 */
 async function analyzeLegacyJavaScriptSource(
   request: JavaScriptLegacyAnalysisRequest,
+  moduleBoundaryOnly = false,
 ): Promise<JavaScriptLegacyAnalysisResult> {
   if (
     request.teachingGoal !== undefined &&
@@ -1279,7 +1280,8 @@ async function analyzeLegacyJavaScriptSource(
       nodes,
       request.file,
       request.teachingGoal,
-      request.capabilityProfile === 'project' && request.teachingGoal === undefined,
+      moduleBoundaryOnly ||
+        (request.capabilityProfile === 'project' && request.teachingGoal === undefined),
     );
     return {
       status: 'success',
@@ -1376,16 +1378,19 @@ async function analyzeJavaScriptWorkspace(
   const modules: JavaScriptWorkspaceAnalysisSuccess['modules'][number][] = [];
   const facts: JavaScriptSourceFact[] = [];
   for (const module of graph.modules) {
-    const analysis = await analyzeLegacyJavaScriptSource({
-      requestId: request.requestId,
-      exerciseSessionId: request.exerciseSessionId,
-      executionRevision: request.executionRevision,
-      file: module.file,
-      source: module.source,
-      sourceType: 'module',
-      capabilityProfile: request.capabilityProfile,
-      guardIdentifier: request.guardIdentifier,
-    });
+    const analysis = await analyzeLegacyJavaScriptSource(
+      {
+        requestId: request.requestId,
+        exerciseSessionId: request.exerciseSessionId,
+        executionRevision: request.executionRevision,
+        file: module.file,
+        source: module.source,
+        sourceType: 'module',
+        capabilityProfile: request.capabilityProfile,
+        guardIdentifier: request.guardIdentifier,
+      },
+      request.factCollection === 'module-boundary',
+    );
     if (analysis.status === 'failure') {
       return { ...analysis, file: request.entryFile };
     }

@@ -311,7 +311,7 @@ acceptance:
     );
   });
 
-  it('reads all six ledgers with 16 current Python source hashes while retaining draft and unbound release states', async () => {
+  it('reads all six ledgers with current React and Python source hashes while retaining draft and unbound release states', async () => {
     const { readLegacyEvidence } = await import('../../../../scripts/release/v2/legacy');
     const results = await readLegacyEvidence(process.cwd(), [
       'html-css',
@@ -322,7 +322,7 @@ acceptance:
       'python-basics',
     ]);
     expect(results.map(({ contentLessons }) => contentLessons.length)).toEqual([
-      51, 52, 15, 15, 9, 16,
+      51, 52, 15, 21, 9, 16,
     ]);
     for (const result of results) {
       expect(result.missingRecordPaths).toEqual([]);

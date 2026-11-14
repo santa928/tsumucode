@@ -2,11 +2,13 @@ import {
   nextContractForExercise,
   nextTemplate,
 } from '../../../scripts/local/next-project-protocol.mjs';
+import { acceptsReactReadingScenarios } from './reactReadingInteractions';
 import { acceptsReactQuizScenarios } from './reactQuizInteractions';
 import { acceptsReactHookScenarios } from './reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from './reactFormInteractions';
 import { acceptsReactStateScenarios } from './reactStateInteractions';
+import { acceptsReactTemperatureScenarios } from './reactTemperatureInteractions';
 import {
   TypeScriptQuizProjectContracts,
   acceptsTypeScriptQuizProjectRuntime,
@@ -325,9 +327,13 @@ export const ReactExerciseRuntimeSchema = z
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
     profile: z.enum([
+      'reading-card-v1',
+      'reading-state-v1',
+      'reading-filter-v1',
       'props-card-v1',
       'static-components-v1',
       'interactive-state-v1',
+      'component-design-v1',
       'controlled-form-v1',
       'reducer-form-v1',
       'context-sharing-v1',
@@ -339,10 +345,14 @@ export const ReactExerciseRuntimeSchema = z
     ]),
     learningGoal: z
       .enum([
+        'reading-card',
+        'reading-state',
+        'reading-filter',
         'reuse',
         'composition',
         'counter',
         'immutable-list',
+        'temperature-panel',
         'controlled-form',
         'shared-state',
         'reducer-form',
@@ -359,27 +369,35 @@ export const ReactExerciseRuntimeSchema = z
   .strict()
   .refine(
     (runtime) =>
-      runtime.profile === 'quiz-workshop-v1'
-        ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
-        : runtime.profile === 'quiz-capstone-v1'
-          ? runtime.learningGoal === 'quiz-capstone'
-          : runtime.profile === 'static-components-v1'
-            ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
-            : runtime.profile === 'interactive-state-v1'
-              ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
-              : runtime.profile === 'controlled-form-v1'
-                ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-                : runtime.profile === 'reducer-form-v1'
-                  ? runtime.learningGoal === 'reducer-form'
-                  : runtime.profile === 'context-sharing-v1'
-                    ? runtime.learningGoal === 'context-sharing'
-                    : runtime.profile === 'ref-focus-v1'
-                      ? runtime.learningGoal === 'ref-focus'
-                      : runtime.profile === 'effect-sync-v1'
-                        ? runtime.learningGoal === 'external-sync'
-                        : runtime.profile === 'custom-source-hook-v1'
-                          ? runtime.learningGoal === 'source-hook'
-                          : runtime.learningGoal === undefined,
+      runtime.profile === 'reading-card-v1'
+        ? runtime.learningGoal === 'reading-card'
+        : runtime.profile === 'reading-state-v1'
+          ? runtime.learningGoal === 'reading-state'
+          : runtime.profile === 'reading-filter-v1'
+            ? runtime.learningGoal === 'reading-filter'
+            : runtime.profile === 'quiz-workshop-v1'
+              ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
+              : runtime.profile === 'quiz-capstone-v1'
+                ? runtime.learningGoal === 'quiz-capstone'
+                : runtime.profile === 'static-components-v1'
+                  ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+                  : runtime.profile === 'interactive-state-v1'
+                    ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+                    : runtime.profile === 'component-design-v1'
+                      ? runtime.learningGoal === 'temperature-panel'
+                      : runtime.profile === 'controlled-form-v1'
+                        ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
+                        : runtime.profile === 'reducer-form-v1'
+                          ? runtime.learningGoal === 'reducer-form'
+                          : runtime.profile === 'context-sharing-v1'
+                            ? runtime.learningGoal === 'context-sharing'
+                            : runtime.profile === 'ref-focus-v1'
+                              ? runtime.learningGoal === 'ref-focus'
+                              : runtime.profile === 'effect-sync-v1'
+                                ? runtime.learningGoal === 'external-sync'
+                                : runtime.profile === 'custom-source-hook-v1'
+                                  ? runtime.learningGoal === 'source-hook'
+                                  : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -1252,6 +1270,7 @@ export const ReactLearningRuleDefinitionSchema = z
           'components.tsx',
           'reducer.ts',
           'sourceHook.ts',
+          'BookCard.tsx',
           'QuestionCard.tsx',
           'quizState.ts',
         ]),
@@ -1261,10 +1280,14 @@ export const ReactLearningRuleDefinitionSchema = z
       .object({
         kind: z.literal('react-learning'),
         goal: z.enum([
+          'reading-card',
+          'reading-state',
+          'reading-filter',
           'reuse',
           'composition',
           'counter',
           'immutable-list',
+          'temperature-panel',
           'controlled-form',
           'shared-state',
           'reducer-form',
@@ -1284,15 +1307,17 @@ export const ReactLearningRuleDefinitionSchema = z
   .refine(
     (rule) =>
       rule.target.file ===
-      (rule.assertion.goal === 'quiz-card'
-        ? 'QuestionCard.tsx'
-        : ['quiz-state', 'quiz-capstone'].includes(rule.assertion.goal)
-          ? 'quizState.ts'
-          : rule.assertion.goal === 'reducer-form'
-            ? 'reducer.ts'
-            : rule.assertion.goal === 'source-hook'
-              ? 'sourceHook.ts'
-              : 'components.tsx'),
+      (rule.assertion.goal === 'reading-card'
+        ? 'BookCard.tsx'
+        : rule.assertion.goal === 'quiz-card'
+          ? 'QuestionCard.tsx'
+          : ['quiz-state', 'quiz-capstone'].includes(rule.assertion.goal)
+            ? 'quizState.ts'
+            : rule.assertion.goal === 'reducer-form'
+              ? 'reducer.ts'
+              : rule.assertion.goal === 'source-hook'
+                ? 'sourceHook.ts'
+                : 'components.tsx'),
     '学習目標と編集責務のFileを一致させてください',
   );
 
@@ -1654,6 +1679,19 @@ export const ExerciseSchema = z
     }
     if (
       exercise.runtime?.kind === 'react' &&
+      ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(
+        exercise.runtime.profile,
+      ) &&
+      !acceptsReactReadingScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: '読書リスト教材には個別更新・再操作・0件・resetの全Scenarioが必要です',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
       ['quiz-workshop-v1', 'quiz-capstone-v1'].includes(exercise.runtime.profile) &&
       !acceptsReactQuizScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
     ) {
@@ -1668,7 +1706,11 @@ export const ExerciseSchema = z
       ['ref-focus-v1', 'effect-sync-v1', 'custom-source-hook-v1'].includes(
         exercise.runtime.profile,
       ) &&
-      !acceptsReactHookScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+      !acceptsReactHookScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+        exercise.id,
+      )
     ) {
       context.addIssue({
         code: 'custom',
@@ -1693,7 +1735,11 @@ export const ExerciseSchema = z
     if (
       exercise.runtime?.kind === 'react' &&
       exercise.runtime.profile === 'controlled-form-v1' &&
-      !acceptsReactFormScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+      !acceptsReactFormScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+        exercise.id,
+      )
     ) {
       context.addIssue({
         code: 'custom',
@@ -1710,6 +1756,20 @@ export const ExerciseSchema = z
         code: 'custom',
         path: ['interactionScenarios'],
         message: 'State教材には指定の複数更新・配列操作Scenarioが必要です',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      exercise.runtime.profile === 'component-design-v1' &&
+      !acceptsReactTemperatureScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: '温度課題には両表示の同期・Reset後の再操作を含む全Scenarioが必要です',
       });
     }
     if (
