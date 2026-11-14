@@ -8,6 +8,7 @@ on:
       - 'tests/unit/release/v2/anchorCheckoutInput.test.py'
       - 'tests/unit/release/v2/anchorDirectOutput.test.py'
       - 'tests/unit/release/v2/anchorMetadataGuard.test.py'
+      - 'tests/unit/release/v2/anchorRunningJob.test.py'
       - 'tests/unit/release/v2/anchorControlWorkflow.test.ts'
       - 'tests/local/anchorCheckoutNonDestructive.test.py'
   push:
@@ -18,6 +19,7 @@ on:
       - 'tests/unit/release/v2/anchorCheckoutInput.test.py'
       - 'tests/unit/release/v2/anchorDirectOutput.test.py'
       - 'tests/unit/release/v2/anchorMetadataGuard.test.py'
+      - 'tests/unit/release/v2/anchorRunningJob.test.py'
       - 'tests/unit/release/v2/anchorControlWorkflow.test.ts'
       - 'tests/local/anchorCheckoutNonDestructive.test.py'
 
@@ -38,6 +40,7 @@ jobs:
           python3 -I tests/unit/release/v2/anchorCheckoutInput.test.py
           python3 -I tests/unit/release/v2/anchorMetadataGuard.test.py
           python3 -I tests/unit/release/v2/anchorDirectOutput.test.py
+          python3 -I tests/unit/release/v2/anchorRunningJob.test.py
       - name: Run isolated non-destructive Docker controls
         env:
           ANCHOR_TEST_IMAGE: node@sha256:4e9cb555d708e0829c9d93e5eeae9dfab0617b832ca436a690680e0fca735ef5
