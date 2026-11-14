@@ -110,7 +110,8 @@ describe('release v2 command boundary', () => {
     const publishedWithoutLegacyRecords = report.inventory.courses
       .filter(
         (course) =>
-          course.publicationStatus === 'published' && coursesWithoutLegacyRecords.includes(course.id),
+          course.publicationStatus === 'published' &&
+          coursesWithoutLegacyRecords.includes(course.id),
       )
       .map((course) => course.id);
     expect(

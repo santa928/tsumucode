@@ -35,7 +35,9 @@ export async function definePythonDraftReadingTests(courseRoot: string): Promise
             page.getByRole('heading', { name: 'Python基礎と実践の学習パス', exact: true }),
           ).toBeVisible();
         if (course.publicationStatus === 'published') {
-          await expect(page.getByRole('heading', { name: course.title, exact: true })).toBeVisible();
+          await expect(
+            page.getByRole('heading', { name: course.title, exact: true }),
+          ).toBeVisible();
           const courseLink = page.getByRole('link', { name: course.title }).first();
           await expect(courseLink).toBeVisible();
           await expect(courseLink).toHaveAttribute(
