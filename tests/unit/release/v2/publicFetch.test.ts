@@ -394,7 +394,9 @@ it('keeps the 15 second response deadline during body consumption without retry'
     const signal = options?.signal as AbortSignal;
     const body = new ReadableStream<Uint8Array>({
       start(controller) {
-        signal.addEventListener('abort', () => controller.error(signal.reason), { once: true });
+        signal.addEventListener('abort', () => {
+          controller.error(signal.reason);
+        }, { once: true });
       },
     });
     return new Response(body);
