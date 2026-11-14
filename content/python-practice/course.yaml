@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: python-practice
 title: Pythonの反復とデータ処理
-description: 反復・Resource終了処理から、型注釈・dataclass・値検証・Testを結ぶデータProjectへ進む95分の草稿Course。
+description: 反復・Resource終了処理から、型注釈・dataclass・値検証・Testを結ぶデータProjectへ進む95分のCourse。
 audience: Python基礎のList・for・Function・例外を学んだ方
 estimatedMinutes: 95
 revision: 2026-10-14.1
@@ -14,7 +14,7 @@ supportedDevices:
   exercise: desktop
   study: [desktop, tablet, mobile]
 prerequisites: [python-basics]
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 3
   lessons: 5
