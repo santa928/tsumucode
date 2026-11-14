@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { expect, it } from 'vitest';
+import vm from 'node:vm';
 import { canonicalJson } from '../../../../src/core/persistence/canonicalJson';
 import { hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
 import {
@@ -26,6 +27,44 @@ const test = (value: unknown) => {
   const bytes = Buffer.from(canonicalJson(value));
   return { bytes, sha256: hashBytes(bytes) };
 };
+it('rejects foreign shared evidence backing', () => {
+  const anchor = test({ ...common, mode: 'anchor' });
+  const expected = { repository: common.repository, runId: common.runId, attempt: common.attempt,
+    source: common.source, producerJobId: common.producerJobId, verifierCommit: common.verifierCommit,
+    mode: 'anchor', sha256: anchor.sha256 };
+  const shared = vm.runInNewContext(`new SharedArrayBuffer(${String(anchor.bytes.length)})`) as SharedArrayBuffer;
+  const wrapped = new Uint8Array(shared);
+  wrapped.set(anchor.bytes);
+  expect(() => matchSameRunLineageEvidence(wrapped, expected)).toThrow('Invalid lineage evidence bytes');
+  const normal = vm.runInNewContext(`new ArrayBuffer(${String(anchor.bytes.length)})`) as ArrayBuffer;
+  const normalView = new Uint8Array(normal);
+  normalView.set(anchor.bytes);
+  expect(matchSameRunLineageEvidence(normalView, expected).mode).toBe('anchor');
+});
+it('hides hostile evidence getter errors', () => {
+  class Hostile extends Uint8Array {
+    get buffer(): ArrayBuffer { throw Error('synthetic-secret-getter'); }
+  }
+  expect(() => matchSameRunLineageEvidence(new Hostile(2), {})).toThrow('Invalid lineage evidence bytes');
+});
+
+it('rejects foreign shared signed bytes', () => {
+  const subject = Buffer.from('subject'), bundle = Buffer.from('bundle');
+  const signed = { ...common, mode: 'signed', parentDeploymentId: '202',
+    subjectSha256: hashBytes(subject), bundleSha256: hashBytes(bundle) };
+  const shared = vm.runInNewContext(`new SharedArrayBuffer(${String(subject.length)})`) as SharedArrayBuffer;
+  const wrapped = new Uint8Array(shared);
+  wrapped.set(subject);
+  expect(() => matchLineageEvidenceFiles(signed, { subject: wrapped, bundle })).toThrow('Invalid lineage file bytes');
+});
+it('hides hostile signed byte getter errors', () => {
+  const signed = { ...common, mode: 'signed', parentDeploymentId: '202',
+    subjectSha256: hashBytes(Buffer.from('subject')), bundleSha256: hashBytes(Buffer.from('bundle')) };
+  class Hostile extends Uint8Array {
+    get buffer(): ArrayBuffer { throw Error('synthetic-secret-getter'); }
+  }
+  expect(() => matchLineageEvidenceFiles(signed, { subject: new Hostile(2), bundle: Buffer.from('bundle') })).toThrow('Invalid lineage file bytes');
+});
 it('matches bounded canonical evidence to independently supplied same-run context (shape only)', () => {
   const anchor = test({ ...common, mode: 'anchor' }),
     expected = {
