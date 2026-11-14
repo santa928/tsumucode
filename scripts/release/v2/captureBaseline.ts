@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { setTimeout as pause } from 'node:timers/promises';
+import { setImmediate as yieldToEventLoop, setTimeout as pause } from 'node:timers/promises';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -29,9 +29,8 @@ function baselineAbortError(signal: AbortSignal): Error {
   return reason instanceof Error ? reason : new Error('Public baseline request aborted');
 }
 
-/** Do not begin another attempt while the previous response is still cancelling. */
-async function cancelBeforeDeadline(body: ReadableStream<Uint8Array>, signal: AbortSignal) {
-  const cancellation = body.cancel();
+/** Bound even operations that do not react to the fetch signal themselves. */
+async function beforeDeadline<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
   let onAbort: (() => void) | undefined;
   const deadline = new Promise<never>((_resolve, reject) => {
     onAbort = () => {
@@ -41,9 +40,10 @@ async function cancelBeforeDeadline(body: ReadableStream<Uint8Array>, signal: Ab
     else signal.addEventListener('abort', onAbort, { once: true });
   });
   try {
-    // Promise.race observes late cancellation rejections after a deadline failure too.
-    await Promise.race([cancellation, deadline]);
+    // Promise.race observes late operation rejections after a deadline failure too.
+    const value = await Promise.race([operation, deadline]);
     if (signal.aborted) throw baselineAbortError(signal);
+    return value;
   } finally {
     if (onAbort) signal.removeEventListener('abort', onAbort);
   }
@@ -53,16 +53,40 @@ async function cancelBeforeDeadline(body: ReadableStream<Uint8Array>, signal: Ab
 export async function fetchBytes(url: string): Promise<Uint8Array> {
   for (let attempt = 1; attempt <= 3; attempt++) {
     const signal = AbortSignal.timeout(15000);
-    const response = await fetch(url, {
+    const pendingResponse = fetch(url, {
       redirect: 'error',
       signal,
       headers: { 'Cache-Control': 'no-cache' },
     });
+    let response: Response;
+    try {
+      response = await beforeDeadline(pendingResponse, signal);
+    } catch (error) {
+      // A non-cooperative fetch might deliver a response after the caller has timed out.
+      // Best-effort cancellation does not delay or replace the original failure.
+      void pendingResponse.then(
+        (late) => {
+          try {
+            void late.body?.cancel().catch(() => {});
+          } catch {
+            // Cleanup must not replace the original failure.
+          }
+        },
+        () => {},
+      );
+      throw error;
+    }
     if (!response.ok) {
       if ([502, 503, 504].includes(response.status) && attempt < 3) {
-        if (response.body) await cancelBeforeDeadline(response.body, signal);
+        if (response.body) await beforeDeadline(response.body.cancel(), signal);
         await pause(attempt * 100);
         continue;
+      }
+      // Dispose of unused error bodies without delaying or hiding the status failure.
+      try {
+        void response.body?.cancel().catch(() => {});
+      } catch {
+        // A broken body must not replace the status error.
       }
       throw new Error('Public baseline request failed: ' + String(response.status));
     }
@@ -71,9 +95,10 @@ export async function fetchBytes(url: string): Promise<Uint8Array> {
     const limit = 16 * 1024 * 1024;
     let buffer = new Uint8Array(0);
     let size = 0;
+    let readsSinceYield = 0;
     let completed = false;
     try {
-      let chunk = await reader.read();
+      let chunk = await beforeDeadline(reader.read(), signal);
       while (!chunk.done) {
         const { value } = chunk;
         const nextSize = size + value.byteLength;
@@ -87,7 +112,13 @@ export async function fetchBytes(url: string): Promise<Uint8Array> {
         }
         buffer.set(value, size);
         size = nextSize;
-        chunk = await reader.read();
+        readsSinceYield++;
+        if (readsSinceYield === 256) {
+          readsSinceYield = 0;
+          // Immediate small or empty reads must not starve the deadline timer.
+          await beforeDeadline(yieldToEventLoop(), signal);
+        }
+        chunk = await beforeDeadline(reader.read(), signal);
       }
       completed = true;
       return buffer.byteLength === size ? buffer : buffer.slice(0, size);

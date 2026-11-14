@@ -405,3 +405,299 @@ it('keeps the 15 second response deadline during body consumption without retry'
   expect(timeoutMock).toHaveBeenCalledWith(15_000);
   expect(fetchMock).toHaveBeenCalledOnce();
 });
+
+it('times out an uncooperative fetch and cancels a late response without retrying', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  const timeoutMock = vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));
+  let resolveFetch: ((response: Response) => void) | undefined;
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(
+    new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    }),
+  );
+  await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+  expect(timeoutMock).toHaveBeenCalledWith(15_000);
+  expect(fetchMock).toHaveBeenCalledOnce();
+  const cancelled = vi.fn();
+  const body = new ReadableStream<Uint8Array>({ cancel: cancelled });
+  expect(resolveFetch).toBeDefined();
+  resolveFetch!(new Response(body));
+  await new Promise<void>((resolve) => setTimeout(resolve, 0));
+  expect(cancelled).toHaveBeenCalledOnce();
+  expect(fetchMock).toHaveBeenCalledOnce();
+});
+
+it('observes late fetch rejection after timeout without emitting unhandled rejection', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));
+  let rejectFetch: ((reason: Error) => void) | undefined;
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(
+    new Promise<Response>((_resolve, reject) => {
+      rejectFetch = reject;
+    }),
+  );
+  const unhandled = vi.fn();
+  process.on('unhandledRejection', unhandled);
+  try {
+    await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(rejectFetch).toBeDefined();
+    rejectFetch!(new Error('late fetch failure'));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    expect(unhandled).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  } finally {
+    process.off('unhandledRejection', unhandled);
+  }
+});
+
+it('observes a late response cleanup rejection without hiding the timeout', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));
+  let resolveFetch: ((response: Response) => void) | undefined;
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(
+    new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    }),
+  );
+  const unhandled = vi.fn();
+  process.on('unhandledRejection', unhandled);
+  try {
+    await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+    const cancelled = vi.fn(() => Promise.reject(new Error('late cleanup failure')));
+    const body = new ReadableStream<Uint8Array>({ cancel: cancelled });
+    expect(resolveFetch).toBeDefined();
+    resolveFetch!(new Response(body));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    expect(cancelled).toHaveBeenCalledOnce();
+    expect(unhandled).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  } finally {
+    process.off('unhandledRejection', unhandled);
+  }
+});
+
+it('does not wait for cancellation after an uncooperative body times out', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  const timeoutMock = vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));
+  const cancelled = vi.fn(() => new Promise<void>(() => {}));
+  const body = new ReadableStream<Uint8Array>({
+    pull: () => new Promise<void>(() => {}),
+    cancel: cancelled,
+  });
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(body));
+  await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+  expect(timeoutMock).toHaveBeenCalledWith(15_000);
+  expect(cancelled).toHaveBeenCalledOnce();
+  expect(body.locked).toBe(false);
+  expect(fetchMock).toHaveBeenCalledOnce();
+});
+
+it('observes late read/cancel rejections and releases an uncooperative reader', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));
+  let rejectRead: ((reason: Error) => void) | undefined;
+  const read = vi.fn(
+    () =>
+      new Promise<ReadableStreamReadResult<Uint8Array>>((_resolve, reject) => {
+        rejectRead = reject;
+      }),
+  );
+  const cancel = vi.fn(() => Promise.reject(new Error('late cancel failure')));
+  const releaseLock = vi.fn();
+  const response = {
+    ok: true,
+    body: { getReader: () => ({ read, cancel, releaseLock }) },
+  } as unknown as Response;
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(response);
+  const unhandled = vi.fn();
+  process.on('unhandledRejection', unhandled);
+  try {
+    await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(releaseLock).toHaveBeenCalledOnce();
+    expect(rejectRead).toBeDefined();
+    rejectRead!(new Error('late read failure'));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    expect(unhandled).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  } finally {
+    process.off('unhandledRejection', unhandled);
+  }
+});
+
+it('removes deadline listeners after successful fetch and body reads', async () => {
+  const controller = new AbortController();
+  const added = vi.spyOn(controller.signal, 'addEventListener');
+  const removed = vi.spyOn(controller.signal, 'removeEventListener');
+  vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+  vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(new Uint8Array([1, 2])));
+  expect(await fetchBytes(TEST_URL)).toEqual(new Uint8Array([1, 2]));
+  expect(added.mock.calls.length).toBeGreaterThan(0);
+  expect(removed.mock.calls.length).toBe(added.mock.calls.length);
+});
+
+it('does not retain or overlap deadline listeners across many small reads', async () => {
+  const controller = new AbortController();
+  const added = vi.spyOn(controller.signal, 'addEventListener');
+  const removed = vi.spyOn(controller.signal, 'removeEventListener');
+  vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+  let index = 0;
+  const body = new ReadableStream<Uint8Array>(
+    {
+      pull(stream) {
+        if (index === 1024) {
+          stream.close();
+        } else {
+          stream.enqueue(index++ % 2 === 0 ? new Uint8Array() : new Uint8Array([7]));
+        }
+      },
+    },
+    { highWaterMark: 0 },
+  );
+  vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(body));
+  expect(await fetchBytes(TEST_URL)).toEqual(new Uint8Array(512).fill(7));
+  expect(added.mock.calls.length).toBeGreaterThan(1024);
+  expect(removed.mock.calls.length).toBe(added.mock.calls.length);
+  for (let i = 0; i < added.mock.calls.length; i++) {
+    expect(removed.mock.calls[i]![1]).toBe(added.mock.calls[i]![1]);
+    expect(added.mock.invocationCallOrder[i]).toBeLessThan(removed.mock.invocationCallOrder[i]!);
+    if (i + 1 < added.mock.calls.length)
+      expect(removed.mock.invocationCallOrder[i]).toBeLessThan(
+        added.mock.invocationCallOrder[i + 1]!,
+      );
+  }
+  expect(body.locked).toBe(false);
+});
+
+it('allows the real deadline timer to stop immediately fulfilled empty reads', async () => {
+  const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+  let reads = 0;
+  let readsAtAbort = -1;
+  const timeoutMock = vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => {
+    const signal = nativeTimeout(10);
+    signal.addEventListener(
+      'abort',
+      () => {
+        readsAtAbort = reads;
+      },
+      { once: true },
+    );
+    return signal;
+  });
+  const cancelled = vi.fn();
+  const body = new ReadableStream<Uint8Array>(
+    {
+      pull(stream) {
+        const until = performance.now() + 0.1;
+        while (performance.now() < until) {
+          // Finite synthetic work makes the deadline due before the stream ends.
+        }
+        if (++reads === 4096) stream.close();
+        else stream.enqueue(new Uint8Array());
+      },
+      cancel: cancelled,
+    },
+    { highWaterMark: 0 },
+  );
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(body));
+  await expect(fetchBytes(TEST_URL)).rejects.toMatchObject({ name: 'TimeoutError' });
+  expect(timeoutMock).toHaveBeenCalledWith(15_000);
+  expect(reads).toBeLessThan(4096);
+  expect(readsAtAbort).toBeGreaterThan(0);
+  expect(readsAtAbort % 256).toBe(0);
+  expect(reads).toBe(readsAtAbort);
+  expect(cancelled).toHaveBeenCalledOnce();
+  expect(body.locked).toBe(false);
+  expect(fetchMock).toHaveBeenCalledOnce();
+}, 5000);
+
+it.each(['pending', 'rejected'] as const)(
+  'preserves terminal HTTP status with %s body cancellation and does not retry',
+  async (mode) => {
+    const cancel = vi.fn(() =>
+      mode === 'pending' ? new Promise<void>(() => {}) : Promise.reject(new Error('cancel failed')),
+    );
+    const body = new ReadableStream<Uint8Array>({ cancel });
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(body, { status: 404 }));
+    await expect(fetchBytes(TEST_URL)).rejects.toThrow('Public baseline request failed: 404');
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  },
+);
+
+it('cancels all three transient bodies and preserves the final 503 status', async () => {
+  const cancels = [vi.fn(), vi.fn(), vi.fn()];
+  const fetchMock = vi.spyOn(globalThis, 'fetch');
+  for (const cancel of cancels) {
+    const body = new ReadableStream<Uint8Array>({ cancel });
+    fetchMock.mockResolvedValueOnce(new Response(body, { status: 503 }));
+  }
+  await expect(fetchBytes(TEST_URL)).rejects.toThrow('Public baseline request failed: 503');
+  expect(fetchMock).toHaveBeenCalledTimes(3);
+  for (const cancel of cancels) expect(cancel).toHaveBeenCalledOnce();
+});
+
+it('rejects a fulfilled fetch that synchronously aborts and cancels its late body', async () => {
+  const controller = new AbortController();
+  const reason = new DOMException('deadline', 'TimeoutError');
+  let reasonReads = 0;
+  Object.defineProperty(controller.signal, 'reason', {
+    configurable: true,
+    get() {
+      reasonReads++;
+      return reason;
+    },
+  });
+  vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+  const cancel = vi.fn(() => Promise.resolve());
+  const response = { body: { cancel } } as unknown as Response;
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(() => {
+    controller.abort(reason);
+    return Promise.resolve(response);
+  });
+  await expect(fetchBytes(TEST_URL)).rejects.toBe(reason);
+  await Promise.resolve();
+  expect(reasonReads).toBe(2);
+  expect(cancel).toHaveBeenCalledOnce();
+  expect(fetchMock).toHaveBeenCalledOnce();
+});
+
+it.each(['data', 'done'] as const)(
+  'rejects a fulfilled %s read that synchronously aborts, without using the value',
+  async (kind) => {
+    const controller = new AbortController();
+    const reason = new DOMException('deadline', 'TimeoutError');
+    let reasonReads = 0;
+    Object.defineProperty(controller.signal, 'reason', {
+      configurable: true,
+      get() {
+        reasonReads++;
+        return reason;
+      },
+    });
+    vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+    const read = vi.fn(() => {
+      controller.abort(reason);
+      return Promise.resolve(
+        kind === 'data'
+          ? { done: false, value: new Uint8Array([7]) }
+          : { done: true, value: undefined },
+      );
+    });
+    const cancel = vi.fn(() => Promise.resolve());
+    const releaseLock = vi.fn();
+    const response = {
+      ok: true,
+      body: { getReader: () => ({ read, cancel, releaseLock }) },
+    } as unknown as Response;
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(response);
+    await expect(fetchBytes(TEST_URL)).rejects.toBe(reason);
+    expect(reasonReads).toBe(2);
+    expect(read).toHaveBeenCalledOnce();
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(releaseLock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  },
+);
