@@ -4,6 +4,7 @@ import { verifyMovementInputs } from './movement';
 import { verifyPythonMovementPredecessor } from './movementPredecessor';
 import { validateCapturedBaseline } from './parent';
 import { assertFixedPythonFirstAnchor } from './pythonFirstAnchorIdentity';
+import { parseUniqueHistoryJson } from './uniqueHistoryJson';
 
 const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
 const bufferDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer');
@@ -34,9 +35,9 @@ export function inspectPythonFirstHistory(capturedInput: Uint8Array, tagInput: U
     const tag = snapshot(tagInput, 16 * 1024);
     const historyBytes = snapshot(historyInput, 16 * 1024 * 1024);
     const decode = (value: Uint8Array) => new TextDecoder('utf-8', { fatal: true }).decode(value);
-    const captured = validateCapturedBaseline(JSON.parse(decode(capturedBytes)) as unknown);
+    const captured = validateCapturedBaseline(parseUniqueHistoryJson(decode(capturedBytes)));
     assertFixedPythonFirstAnchor(captured.proof, tag);
-    const history: unknown = JSON.parse(decode(historyBytes));
+    const history = parseUniqueHistoryJson(decode(historyBytes));
     if (!history || typeof history !== 'object' || !('proof' in history) || !('tagObject' in history) ||
         hashValue(history.proof) !== hashValue(captured.proof) || history.tagObject !== decode(tag))
       throw Error('Historical anchor differs');
