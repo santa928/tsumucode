@@ -260,6 +260,99 @@ it('fails on deadline for pending transient cancellation and observes late rejec
   }
 });
 
+it.each([
+  { kind: 'timeout', cancellation: 'pending' },
+  { kind: 'timeout', cancellation: 'fulfilled' },
+  { kind: 'non-error', cancellation: 'pending' },
+  { kind: 'non-error', cancellation: 'fulfilled' },
+] as const)(
+  'handles $kind abort with $cancellation cancellation without retry or leaking the reason',
+  async ({ kind, cancellation }) => {
+    const controller = new AbortController();
+    const secretMarker = 'private non-error abort reason';
+    const reason =
+      kind === 'timeout'
+        ? new DOMException('original deadline', 'TimeoutError')
+        : { marker: secretMarker };
+    const timeoutMock = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+    const body = new ReadableStream<Uint8Array>({
+      cancel() {
+        controller.abort(reason);
+        return cancellation === 'pending' ? new Promise<void>(() => {}) : Promise.resolve();
+      },
+    });
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(body, { status: 503 }));
+    const failure = await fetchBytes(TEST_URL).then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+    if (kind === 'timeout') {
+      expect(failure).toBe(reason);
+      expect(failure).toMatchObject({ name: 'TimeoutError', message: 'original deadline' });
+    } else {
+      expect(failure).toBeInstanceOf(Error);
+      const normalized = failure as Error;
+      expect(normalized.message).toBe('Public baseline request aborted');
+      expect(normalized.cause).toBeUndefined();
+      expect(JSON.stringify({ message: normalized.message, stack: normalized.stack })).not.toContain(
+        secretMarker,
+      );
+    }
+    expect(timeoutMock).toHaveBeenCalledWith(15_000);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(body.locked).toBe(false);
+  },
+);
+
+it.each(['timeout', 'non-error'] as const)(
+  'normalizes %s after the cancellation wins an already-aborted race',
+  async (kind) => {
+    const controller = new AbortController();
+    const secretMarker = 'private race abort reason';
+    const reason =
+      kind === 'timeout'
+        ? new DOMException('original deadline', 'TimeoutError')
+        : { marker: secretMarker };
+    let reasonReads = 0;
+    Object.defineProperty(controller.signal, 'reason', {
+      configurable: true,
+      get() {
+        reasonReads++;
+        return reason;
+      },
+    });
+    vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+    const cancel = vi.fn(() => {
+      controller.abort(reason);
+      return Promise.resolve();
+    });
+    const response = { ok: false, status: 503, body: { cancel } } as unknown as Response;
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(response);
+    const failure = await fetchBytes(TEST_URL).then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+    // First read is deadline rejection; second proves the post-race branch was taken.
+    expect(reasonReads).toBe(2);
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    if (kind === 'timeout') {
+      expect(failure).toBe(reason);
+      expect(failure).toMatchObject({ name: 'TimeoutError', message: 'original deadline' });
+    } else {
+      expect(failure).toBeInstanceOf(Error);
+      const normalized = failure as Error;
+      expect(normalized.message).toBe('Public baseline request aborted');
+      expect(normalized.cause).toBeUndefined();
+      expect(JSON.stringify({ message: normalized.message, stack: normalized.stack })).not.toContain(
+        secretMarker,
+      );
+    }
+  },
+);
+
 it('does not retry when a timed-out cancellation subsequently succeeds', async () => {
   const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
   vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => nativeTimeout(10));

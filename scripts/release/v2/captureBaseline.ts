@@ -23,19 +23,27 @@ export interface CaptureOptions {
   readonly readPublicFile?: (relative: string) => Promise<Uint8Array>;
 }
 
+/** Preserve standard timeout errors without exposing arbitrary non-Error abort reasons. */
+function baselineAbortError(signal: AbortSignal): Error {
+  const reason: unknown = signal.reason;
+  return reason instanceof Error ? reason : new Error('Public baseline request aborted');
+}
+
 /** Do not begin another attempt while the previous response is still cancelling. */
 async function cancelBeforeDeadline(body: ReadableStream<Uint8Array>, signal: AbortSignal) {
   const cancellation = body.cancel();
   let onAbort: (() => void) | undefined;
   const deadline = new Promise<never>((_resolve, reject) => {
-    onAbort = () => reject(signal.reason);
+    onAbort = () => {
+      reject(baselineAbortError(signal));
+    };
     if (signal.aborted) onAbort();
     else signal.addEventListener('abort', onAbort, { once: true });
   });
   try {
     // Promise.race observes late cancellation rejections after a deadline failure too.
     await Promise.race([cancellation, deadline]);
-    if (signal.aborted) throw signal.reason;
+    if (signal.aborted) throw baselineAbortError(signal);
   } finally {
     if (onAbort) signal.removeEventListener('abort', onAbort);
   }
@@ -65,9 +73,9 @@ export async function fetchBytes(url: string): Promise<Uint8Array> {
     let size = 0;
     let completed = false;
     try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      let chunk = await reader.read();
+      while (!chunk.done) {
+        const { value } = chunk;
         const nextSize = size + value.byteLength;
         if (nextSize > limit)
           throw new Error('Public baseline response exceeds its limit');
@@ -79,6 +87,7 @@ export async function fetchBytes(url: string): Promise<Uint8Array> {
         }
         buffer.set(value, size);
         size = nextSize;
+        chunk = await reader.read();
       }
       completed = true;
       return buffer.byteLength === size ? buffer : buffer.slice(0, size);
