@@ -4,6 +4,7 @@ import type * as ChildProcess from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { canonicalJson } from '../../../../src/core/persistence/canonicalJson';
 import { hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
@@ -14,7 +15,8 @@ import { installSafeAnchorTestEnvironment } from './anchorProcessTestEnvironment
 const mocks = vi.hoisted(() => ({
   observe: vi.fn(),
   trackedTree: vi.fn(),
-  verifierHead: '28edb392dccfaecd14c5b5b03470198abd8ec421',
+  inspect: vi.fn(),
+  verifierHead: 'd50f304376d50dbfbdefb90636040b14abef7f98',
   verifierStatus: '',
   verifierFlags: 'H verifier.ts\0',
 }));
@@ -56,19 +58,26 @@ vi.mock('../../../../scripts/release/v2/pythonFirstAnchorVerifier', () => ({
 vi.mock('../../../../scripts/release/v2/anchorTrackedTree', () => ({
   assertAnchorTrackedTree: mocks.trackedTree,
 }));
-import { producePythonFirstAnchor } from '../../../../scripts/release/v2/pythonFirstAnchorProducer';
+vi.mock('../../../../scripts/release/v2/pythonFirstHistory', () => ({
+  inspectPythonFirstHistory: mocks.inspect,
+}));
+import { producePythonFirstAnchor as produceWithHistory } from '../../../../scripts/release/v2/pythonFirstAnchorProducer';
+const producePythonFirstAnchor = (candidate:string,verifier:string,context:unknown) =>
+  produceWithHistory(candidate,verifier,context,Buffer.from(observation().snapshot),Buffer.from('{}'));
 
 const verifier = process.cwd();
 const temporary: string[] = [];
 beforeEach(() => {
   installSafeAnchorTestEnvironment();
   mocks.trackedTree.mockResolvedValue(undefined);
+  mocks.inspect.mockReturnValue({ authorized:false });
 });
 afterEach(() => {
   for (const root of temporary.splice(0)) rmSync(root, { recursive: true, force: true });
   mocks.observe.mockReset();
   mocks.trackedTree.mockReset();
-  mocks.verifierHead = '28edb392dccfaecd14c5b5b03470198abd8ec421';
+  mocks.inspect.mockReset();
+  mocks.verifierHead = 'd50f304376d50dbfbdefb90636040b14abef7f98';
   mocks.verifierStatus = '';
   mocks.verifierFlags = 'H verifier.ts\0';
   vi.unstubAllEnvs();
@@ -150,7 +159,8 @@ it('produces bounded identity evidence without exposing the baseline', async () 
   mocks.observe.mockResolvedValue(observed);
   const output = await producePythonFirstAnchor(root, verifier, context(source));
   expect(mocks.observe).toHaveBeenCalledOnce();
-  expect(mocks.trackedTree).toHaveBeenCalledOnce();
+  expect(mocks.trackedTree).toHaveBeenCalledTimes(2);
+  expect(mocks.inspect).toHaveBeenCalledOnce();
   expect(output).not.toHaveProperty('baselineBytes');
   expect(hashBytes(output.evidenceBytes)).toBe(output.evidenceSha256);
   const evidence = JSON.parse(output.evidenceBytes.toString('utf8')) as Record<string, unknown>;
@@ -161,7 +171,7 @@ it('produces bounded identity evidence without exposing the baseline', async () 
     runId: '101',
     attempt: 1,
     producerJobId: '202',
-    verifierCommit: '28edb392dccfaecd14c5b5b03470198abd8ec421',
+    verifierCommit: 'd50f304376d50dbfbdefb90636040b14abef7f98',
   });
   expect(evidence).not.toHaveProperty('baseline');
   expect(evidence).not.toHaveProperty('baselineSha256');
@@ -188,7 +198,7 @@ it('rejects wrong run context, candidate source, or a dirty checkout before obse
   await expect(producePythonFirstAnchor(root, verifier, context(source))).rejects.toThrow(
     'Verifier commit differs',
   );
-  mocks.verifierHead = '28edb392dccfaecd14c5b5b03470198abd8ec421';
+  mocks.verifierHead = 'd50f304376d50dbfbdefb90636040b14abef7f98';
   mocks.verifierStatus = ' M verifier.ts';
   await expect(producePythonFirstAnchor(root, verifier, context(source))).rejects.toThrow(
     'Anchor checkout is not clean',
@@ -208,6 +218,28 @@ it('rejects wrong run context, candidate source, or a dirty checkout before obse
     'Anchor checkout is not clean',
   );
   expect(mocks.observe).not.toHaveBeenCalled();
+});
+
+it('rejects missing, oversized, shared and forged historical bytes before observation',async()=>{
+  const {root,source}=candidate(),valid=Buffer.from(observation().snapshot),history=Buffer.from('{}');
+  const foreign=new Uint8Array(runInNewContext('new SharedArrayBuffer(2)') as SharedArrayBuffer);
+  for(const input of [Buffer.alloc(0),Buffer.alloc(16*1024*1024+1),foreign,new DataView(new ArrayBuffer(1))])
+    await expect(produceWithHistory(root,verifier,context(source),input as Uint8Array,history)).rejects.toThrow('Invalid historical anchor bytes');
+  await expect(produceWithHistory(root,verifier,context(source),valid,Buffer.alloc(0))).rejects.toThrow('Invalid historical anchor bytes');
+  expect(mocks.observe).not.toHaveBeenCalled();
+});
+
+it('rejects a different fresh parent, an unexpected helper result, and post-observation tree changes',async()=>{
+  const {root,source}=candidate(), original=observation();
+  const changed=JSON.parse(original.snapshot) as {proof:{runId:string},baseline:{sourceRecordDigest:string}};
+  changed.proof.runId='999';changed.baseline.sourceRecordDigest=hashValue(changed.proof);
+  const snapshot=canonicalJson(changed);
+  mocks.observe.mockResolvedValueOnce({...original,snapshot,sha256:hashBytes(Buffer.from(snapshot))});
+  await expect(producePythonFirstAnchor(root,verifier,context(source))).rejects.toThrow('Historical and fresh parent identities differ');
+  mocks.observe.mockResolvedValueOnce(original);mocks.inspect.mockReturnValueOnce({authorized:true});
+  await expect(producePythonFirstAnchor(root,verifier,context(source))).rejects.toThrow('Invalid historical inspection result');
+  mocks.observe.mockResolvedValueOnce(original);mocks.trackedTree.mockResolvedValueOnce(undefined).mockRejectedValueOnce(Error('Tracked bytes changed'));
+  await expect(producePythonFirstAnchor(root,verifier,context(source))).rejects.toThrow('Tracked bytes changed');
 });
 
 it('rejects modified bytes, wrong parent, and checkout changes while observing', async () => {
