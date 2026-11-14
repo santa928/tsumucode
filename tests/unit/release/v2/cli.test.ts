@@ -103,7 +103,10 @@ describe('release v2 command boundary', () => {
     );
     expect(pythonPractice).toHaveLength(1);
     expect(pythonPractice[0]).toMatchObject({ publicationStatus: 'published' });
-    const coursesWithoutLegacyRecords = ['python-practice', 'tailwind'];
+    const pythonOop = report.inventory.courses.filter((course) => course.id === 'python-oop');
+    expect(pythonOop).toHaveLength(1);
+    expect(pythonOop[0]).toMatchObject({ publicationStatus: 'published' });
+    const coursesWithoutLegacyRecords = ['python-practice', 'python-oop', 'tailwind'];
     const publishedWithoutLegacyRecords = report.inventory.courses
       .filter(
         (course) =>

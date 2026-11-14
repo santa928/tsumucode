@@ -26,7 +26,7 @@ export async function definePythonDraftReadingTests(courseRoot: string): Promise
         narrow ? { width: 390, height: 844 } : { width: 1280, height: 900 },
       );
 
-      // 公開済み実践Courseの掲載と、直接URLで開ける草稿の非掲載を区別する。
+      // 公開済みCourseの掲載と、直接URLで開ける草稿の非掲載を区別する。
       for (const route of ['#/', '#/paths/python-basics']) {
         await page.goto(`${testBasePath()}${route}`);
         await expect(page.getByRole('main')).toBeVisible();
@@ -34,11 +34,14 @@ export async function definePythonDraftReadingTests(courseRoot: string): Promise
           await expect(
             page.getByRole('heading', { name: 'Python基礎と実践の学習パス', exact: true }),
           ).toBeVisible();
-        if (course.id === 'python-practice' && course.publicationStatus === 'published') {
+        if (course.publicationStatus === 'published') {
           await expect(page.getByRole('heading', { name: course.title, exact: true })).toBeVisible();
           const courseLink = page.getByRole('link', { name: course.title }).first();
           await expect(courseLink).toBeVisible();
-          await expect(courseLink).toHaveAttribute('href', /#\/courses\/python-practice(?:\/|$)/u);
+          await expect(courseLink).toHaveAttribute(
+            'href',
+            new RegExp(`#/courses/${course.id}(?:/|$)`, 'u'),
+          );
         } else {
           await expect(page.getByRole('heading', { name: course.title, exact: true })).toHaveCount(
             0,
