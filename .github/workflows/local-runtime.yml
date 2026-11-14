@@ -48,10 +48,20 @@ on:
       - tests/e2e/python-context.spec.ts
       - tests/e2e/python-data-project.spec.ts
       - tests/e2e/python-oop.spec.ts
+      - tests/e2e/python-published-fixtures.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
+      - scripts/content/compileCourse.ts
+      - scripts/content/conceptMastery.ts
+      - scripts/content/exerciseTrace.ts
+      - scripts/content/io.ts
+      - scripts/content/markdown.ts
+      - scripts/content/screenBudget.ts
       - src/core/content/schema.ts
+      - src/core/content/**
+      - src/core/persistence/canonicalJson.ts
+      - src/shared/lib/resolvePublicAsset.ts
       - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
@@ -76,6 +86,7 @@ on:
       - tests/unit/release/**
       - tests/e2e/next-static-study.spec.ts
       - .github/workflows/local-runtime.yml
+      - .github/workflows/python-fixtures.yml
       - .github/workflows/pages.yml
   pull_request:
     branches: [main]
@@ -116,10 +127,20 @@ on:
       - tests/e2e/python-context.spec.ts
       - tests/e2e/python-data-project.spec.ts
       - tests/e2e/python-oop.spec.ts
+      - tests/e2e/python-published-fixtures.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
+      - scripts/content/compileCourse.ts
+      - scripts/content/conceptMastery.ts
+      - scripts/content/exerciseTrace.ts
+      - scripts/content/io.ts
+      - scripts/content/markdown.ts
+      - scripts/content/screenBudget.ts
       - src/core/content/schema.ts
+      - src/core/content/**
+      - src/core/persistence/canonicalJson.ts
+      - src/shared/lib/resolvePublicAsset.ts
       - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
@@ -144,6 +165,7 @@ on:
       - tests/unit/release/**
       - tests/e2e/next-static-study.spec.ts
       - .github/workflows/local-runtime.yml
+      - .github/workflows/python-fixtures.yml
       - .github/workflows/pages.yml
 
 permissions:
@@ -246,6 +268,8 @@ jobs:
       - name: Verify bounded Python CI diagnostics
         run: node --test scripts/local/python-ci-diagnostic.node-test.mjs
       - name: Verify fixed CPython execution, constraints and recovery
+        env:
+          TSUMUCODE_RELEASE_CANDIDATE: ${{ inputs.candidate_artifact_id }}
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           docker exec -i "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
@@ -261,7 +285,9 @@ jobs:
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
           mkdir -p test-results
           # capabilityを戻さず同じUID/GIDを使い、親のbind内でPlaywrightが出力先を再作成できるようにする。
-          docker run --rm --init --user "$(id -u):$(id -g)" --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true --mount "type=bind,source=$PWD/test-results,target=/workspace/test-results" "$TSUMUCODE_LOCAL_OWNER-python-browser-checks"
+          python_exclude='python-published-fixtures\.spec\.ts'
+          if [ -n "$TSUMUCODE_RELEASE_CANDIDATE" ]; then python_exclude="@visual-extended|$python_exclude"; fi
+          docker run --rm --init --user "$(id -u):$(id -g)" --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true --mount "type=bind,source=$PWD/test-results,target=/workspace/test-results" "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" node scripts/local/python-browser-acceptance.mjs --grep-invert "$python_exclude"
       - name: Preserve Python Browser evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -554,3 +580,11 @@ jobs:
       - name: Stop only this learning stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down
+
+  # In ordinary PR/main CI, the fixture job runs independently on another runner.
+  # Release qualification calls the same workflow as its own direct dependency.
+  python_fixtures:
+    if: inputs.candidate_artifact_id == ''
+    uses: ./.github/workflows/python-fixtures.yml
+    permissions:
+      contents: read
