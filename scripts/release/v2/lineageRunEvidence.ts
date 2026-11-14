@@ -1,3 +1,4 @@
+import { types } from 'node:util';
 import { z } from 'zod';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { hashBytes, hashValue } from './identity';
@@ -5,6 +6,29 @@ import { validateCapturedBaseline } from './parent';
 import { CommitSchema, DigestSchema } from './schema';
 
 const decimal = z.string().regex(/^[1-9]\d{0,15}$/u);
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
+const bufferDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer');
+const lengthDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength');
+const offsetDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset');
+
+// Byte snapshots only. Trusted origin, private isolation and authorization are separate.
+function snapshotBytes(input: unknown, max: number, message: string): Buffer {
+  try {
+    if (!types.isUint8Array(input) || !bufferDescriptor?.get || !lengthDescriptor?.get || !offsetDescriptor?.get)
+      throw Error(message);
+    const prototype: unknown = Object.getPrototypeOf(input);
+    if (prototype !== Uint8Array.prototype && prototype !== Buffer.prototype) throw Error(message);
+    const backing: unknown = bufferDescriptor.get.call(input);
+    const length: unknown = lengthDescriptor.get.call(input);
+    const offset: unknown = offsetDescriptor.get.call(input);
+    if (!types.isArrayBuffer(backing) ||
+        typeof length !== 'number' || !length || length > max || typeof offset !== 'number')
+      throw Error(message);
+    return Buffer.from(new Uint8Array(backing, offset, length));
+  } catch {
+    throw Error(message);
+  }
+}
 const common = {
   schemaVersion: z.literal(1),
   repository: z.literal('santa928/tsumucode'),
@@ -65,14 +89,7 @@ const Expected = z
 
 /** Structural match only. The workflow must authenticate its producer and reverify the live parent. */
 export function matchSameRunLineageEvidence(input: Uint8Array, expectedInput: unknown) {
-  if (
-    !(input instanceof Uint8Array) ||
-    input.buffer instanceof SharedArrayBuffer ||
-    !input.byteLength ||
-    input.byteLength > 16 * 1024
-  )
-    throw Error('Invalid lineage evidence bytes');
-  const bytes = Buffer.from(input),
+  const bytes = snapshotBytes(input, 16 * 1024, 'Invalid lineage evidence bytes'),
     expected = Expected.parse(expectedInput);
   if (hashBytes(bytes) !== expected.sha256) throw Error('Lineage evidence digest differs');
   const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes),
@@ -96,23 +113,13 @@ export function matchLineageEvidenceFiles(
   files: { subject?: Uint8Array; bundle?: Uint8Array },
 ) {
   const evidence = Evidence.parse(evidenceInput);
-  const snapshot = (input: Uint8Array | undefined, max: number) => {
-    if (
-      !(input instanceof Uint8Array) ||
-      input.buffer instanceof SharedArrayBuffer ||
-      !input.byteLength ||
-      input.byteLength > max
-    )
-      throw Error('Invalid lineage file bytes');
-    return Buffer.from(input);
-  };
   if (evidence.mode === 'anchor') {
     if (files.subject !== undefined || files.bundle !== undefined)
       throw Error('Anchor carries unexpected signed evidence');
     return {};
   }
-  const subject = snapshot(files.subject, 16 * 1024),
-    bundle = snapshot(files.bundle, 4 * 1024 * 1024);
+  const subject = snapshotBytes(files.subject, 16 * 1024, 'Invalid lineage file bytes'),
+    bundle = snapshotBytes(files.bundle, 4 * 1024 * 1024, 'Invalid lineage file bytes');
   if (hashBytes(subject) !== evidence.subjectSha256 || hashBytes(bundle) !== evidence.bundleSha256)
     throw Error('Signed parent bytes differ');
   return { subject, bundle };
