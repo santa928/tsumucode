@@ -3,9 +3,10 @@ import console from 'node:console';
 import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
+import { randomBytes } from 'node:crypto';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { PYTHON_EXERCISE_ID, PYTHON_PROFILE_ID, PYTHON_IMAGE, ORIGIN } from './protocol.mjs';
-import { docker, containerConfig } from './docker-engine.mjs';
+import { docker, containerConfig, preparePythonCiDiagnostic, readPythonCiDiagnostic } from './docker-engine.mjs';
 
 // trusted controller内だけで実行する実Engine診断。管理tokenは出力しない。
 let token;
@@ -60,7 +61,8 @@ assert.equal(capability.status, 200);
 assert.equal(capability.value.engineVersion, '3.14.2');
 assert.equal(capability.value.runtimeProfileId, PYTHON_PROFILE_ID);
 async function start(source) {
-  const runId = `python-acceptance-${Date.now()}-${++sequence}`;
+  const runId = `python-acceptance-${randomBytes(16).toString('hex')}`;
+  sequence += 1;
   const input = {
     apiVersion: 1,
     exerciseId: PYTHON_EXERCISE_ID,
@@ -171,9 +173,26 @@ assert.equal(timeout.status, 'stopped');
 assert.equal(timeout.terminationReason, 'timeout');
 // 巨大な単一確保はallocatorが先に拒否する場合がある。
 // 小分けの領域を保持し、実cgroup上限によるOOM killを観測する。
-const memory = await run(
+const diagnosticsEnabled = process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1';
+const diagnosticPrepared = preparePythonCiDiagnostic({ enabled: diagnosticsEnabled });
+const memoryRunId = await start(
   'blocks = []\nfor index in range(128):\n    blocks.append(bytearray(4 * 1024 * 1024))\n',
 );
+const memory = await finish(memoryRunId);
+assert.equal(memory.engine, 'cpython');
+assert.equal(memory.engineVersion, '3.14.2');
+if (memory.status !== 'stopped' || memory.terminationReason !== 'memory-limit') {
+  const diagnostic = readPythonCiDiagnostic({
+    enabled: diagnosticPrepared,
+    runId: memoryRunId,
+  });
+  if (diagnosticsEnabled) {
+    try {
+      if (diagnostic) console.error('Python CI exit diagnostic', JSON.stringify(diagnostic));
+      else console.error('Python CI exit diagnostic unavailable');
+    } catch { /* 元の検査失敗を維持 */ }
+  }
+}
 assert.equal(
   memory.status,
   'stopped',

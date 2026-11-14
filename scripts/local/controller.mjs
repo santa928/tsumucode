@@ -33,6 +33,7 @@ import {
   docker,
   containerConfig,
   followOutput,
+  capturePythonCiDiagnostic,
   cleanupOwned,
   removeContainer,
 } from './docker-engine.mjs';
@@ -212,6 +213,14 @@ async function executePhase(run, analyze = false) {
         await outputDone;
         exitCode = waited.StatusCode;
         const inspected = await docker('GET', `/containers/${container.Id}/json`);
+        if (
+          process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1' &&
+          run.input.runtimeProfileId === PYTHON_PROFILE_ID &&
+          run.input.exerciseSessionId === 'python-acceptance' &&
+          !analyze && !run.reason && exitCode === 137 && inspected.State.OOMKilled !== true
+        ) {
+          capturePythonCiDiagnostic({ enabled: true, runId: run.input.runId, inspected });
+        }
         if (inspected.State.OOMKilled && run.reason !== 'system-error') run.reason = 'memory-limit';
       }
     }
