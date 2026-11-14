@@ -22,32 +22,116 @@ const declarationDigest = '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5e
 const summaryDigest = '6846fc995075bcc5d19ff3b2ef10bab487aed4c75701d8e3d8f1d2e392f42674';
 
 async function readPublicJson(url: string): Promise<unknown> {
-  const response = await fetch(url, {
-    redirect: 'error',
-    signal: AbortSignal.timeout(15000),
-    headers: { 'Cache-Control': 'no-cache' },
+  const signal = AbortSignal.timeout(15000);
+  let onAbort: (() => void) | undefined;
+  const deadline = new Promise<never>((_resolve, reject) => {
+    onAbort = () => {
+      reject(new Error('Public anchor observation timed out'));
+    };
+    if (signal.aborted) onAbort();
+    else signal.addEventListener('abort', onAbort, { once: true });
   });
-  if (!response.ok || !response.body) throw Error('Public anchor observation unavailable');
-  const reader = response.body.getReader(),
-    chunks: Uint8Array[] = [];
-  let total = 0;
-  try {
+  // The signal can already be aborted before a race can attach its handler.
+  void deadline.catch(() => {});
+  const active: {
+    reader?: ReadableStreamDefaultReader<Uint8Array>;
+    body?: ReadableStream<Uint8Array> | null;
+  } = {};
+  const timedOut = () => {
+    if (signal.aborted) throw Error('Public anchor observation timed out');
+  };
+  const cancel = (stream: { cancel(): Promise<void> }) => {
+    // A rejected or never-settling cancellation cannot replace or delay a failure.
+    try {
+      void stream.cancel().catch(() => {});
+    } catch {
+      /* Preserve the original error. */
+    }
+  };
+  const read = async (): Promise<unknown> => {
+    const response = await fetch(url, {
+      redirect: 'error',
+      signal,
+      headers: { 'Cache-Control': 'no-cache' },
+    });
+    const body = response.body;
+    active.body = body;
+    if (signal.aborted) {
+      if (body) cancel(body);
+      timedOut();
+    }
+    if (!response.ok || !body) throw Error('Public anchor observation unavailable');
+    const reader = body.getReader();
+    active.reader = reader;
+    const limit = 1024 * 1024;
+    let buffer = new Uint8Array(0),
+      total = 0,
+      turns = 0;
     for (;;) {
       const item = await reader.read();
+      timedOut();
       if (item.done) break;
-      total += item.value.byteLength;
-      if (total > 1024 * 1024) throw Error('Public anchor response exceeds limit');
-      chunks.push(item.value);
+      const next = total + item.value.byteLength;
+      if (next > limit) throw Error('Public anchor response exceeds limit');
+      if (next > buffer.byteLength) {
+        const grown = new Uint8Array(Math.min(limit, Math.max(next, buffer.byteLength * 2, 1024)));
+        grown.set(buffer.subarray(0, total));
+        buffer = grown;
+      }
+      buffer.set(item.value, total);
+      total = next;
+      if (++turns % 1024 === 0) {
+        await new Promise<void>((resolve) => {
+          setImmediate(resolve);
+        });
+        timedOut();
+      }
     }
+    timedOut();
+    const value: unknown = JSON.parse(
+      new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, total)),
+    );
+    timedOut();
+    return value;
+  };
+  try {
+    timedOut();
+    const value = await Promise.race([read(), deadline]);
+    timedOut();
+    if (active.reader) {
+      active.reader.releaseLock();
+      delete active.reader;
+    }
+    return value;
   } catch (error) {
-    await reader.cancel().catch(() => undefined);
-    throw error;
+    if (active.reader) {
+      cancel(active.reader);
+      try {
+        active.reader.releaseLock();
+      } catch {
+        /* Preserve the failure. */
+      }
+    } else if (active.body) cancel(active.body);
+    let message = 'Public anchor observation failed';
+    try {
+      if (
+        error instanceof Error &&
+        [
+          'Public anchor observation timed out',
+          'Public anchor observation unavailable',
+          'Public anchor response exceeds limit',
+        ].includes(error.message)
+      )
+        message = error.message;
+    } catch {
+      /* Untrusted error properties must not escape. */
+    }
+    // Do not attach a potentially sensitive network error as a cause.
+    // eslint-disable-next-line preserve-caught-error -- Public failures must not retain raw response errors.
+    throw Error(message);
   } finally {
-    reader.releaseLock();
+    if (onAbort) signal.removeEventListener('abort', onAbort);
   }
-  return JSON.parse(
-    new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)),
-  ) as unknown;
 }
 
 /** Read-only current anchor observation. It never qualifies, signs or publishes a candidate. */
