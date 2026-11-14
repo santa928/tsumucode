@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {
+  constants,
   existsSync,
   mkdtempSync,
   mkdirSync,
@@ -8,8 +9,10 @@ import {
   rmSync,
   statSync,
   symlinkSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
 import type * as FsPromises from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -23,7 +26,11 @@ vi.mock('node:fs/promises', async (importOriginal) => {
     ...original,
     open: async (...args: Parameters<typeof original.open>) => {
       const file = await original.open(...args);
-      if (mocks.failWrites && args[1] !== 0) {
+      if (
+        mocks.failWrites &&
+        typeof args[1] === 'number' &&
+        (args[1] & (constants.O_WRONLY | constants.O_RDWR)) !== 0
+      ) {
         const write = file.writeFile.bind(file);
         vi.spyOn(file, 'writeFile').mockImplementationOnce(async () => {
           await write(Buffer.from('partial'));
@@ -92,6 +99,30 @@ it('rejects malformed, overlarge and symlinked context before observation', asyn
   ).rejects.toThrow();
   expect(mocks.produce).not.toHaveBeenCalled();
 });
+
+it('rejects a FIFO context without blocking or writing evidence', () => {
+  const f = fixture();
+  unlinkSync(f.context);
+  execFileSync('mkfifo', [f.context]);
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      'tsx',
+      'scripts/release/v2/pythonFirstAnchorEntry.ts',
+      f.candidate,
+      f.verifier,
+      f.context,
+      f.output,
+    ],
+    { encoding: 'utf8', timeout: 5000, env: { PATH: process.env.PATH, HOME: f.root } },
+  );
+  expect(result.error).toBeUndefined();
+  expect(result.status).not.toBe(0);
+  expect(result.stdout).toBe('');
+  expect(result.stderr).toContain('Anchor observation failed');
+  expect(existsSync(f.output)).toBe(false);
+}, 10000);
 
 it('does not replace an existing output or write inside a checkout', async () => {
   const f = fixture();

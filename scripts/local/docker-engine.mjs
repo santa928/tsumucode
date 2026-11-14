@@ -1,8 +1,75 @@
 import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
+import { createHash } from 'node:crypto';
+import { constants, writeFileSync, openSync, fstatSync, readSync, closeSync, unlinkSync } from 'node:fs';
 import { LIMITS, NODE_IMAGE } from './protocol.mjs';
 import { pythonCommand } from './python-profile.mjs';
+
+export const PYTHON_CI_DIAGNOSTIC = '/run/tsumucode-ci-diagnostics/python-exit.json';
+const diagnosticHash = (value) => createHash('sha256').update(value).digest('hex');
+const diagnosticNumber = (value) => Number.isSafeInteger(value) && value >= 0 ? value : null;
+const diagnosticBoolean = (value) => typeof value === 'boolean' ? value : null;
+
+/** 古い記録を除去できない場合は、以降の読み取りを許可しない。 */
+export function preparePythonCiDiagnostic({ enabled, path = PYTHON_CI_DIAGNOSTIC, remove = unlinkSync }) {
+  if (enabled !== true) return false;
+  try {
+    remove(path);
+    return true;
+  } catch (error) {
+    return error?.code === 'ENOENT';
+  }
+}
+
+/** CI専用: learnerに共有しない領域へ、検査IDをハッシュ化して固定項目だけ保存する。 */
+export function capturePythonCiDiagnostic({ enabled, path = PYTHON_CI_DIAGNOSTIC, runId, inspected }) {
+  if (enabled !== true) return false;
+  try {
+    if (typeof runId !== 'string' || runId.length > 160 || runId.length === 0) return false;
+    const packet = {
+      version: 1,
+      runHash: diagnosticHash(runId),
+      oom: diagnosticBoolean(inspected?.State?.OOMKilled),
+      exit: diagnosticNumber(inspected?.State?.ExitCode),
+      memory: diagnosticNumber(inspected?.HostConfig?.Memory),
+      swap: diagnosticNumber(inspected?.HostConfig?.MemorySwap),
+      errorPresent: typeof inspected?.State?.Error === 'string' ? inspected.State.Error !== '' : null,
+    };
+    const bytes = Buffer.from(JSON.stringify(packet));
+    if (bytes.length > 512) return false;
+    writeFileSync(path, bytes, { flag: 'wx', mode: 0o600 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** 元の実行と対応しない・破損した記録を診断結果として返さない。 */
+export function readPythonCiDiagnostic({ enabled, path = PYTHON_CI_DIAGNOSTIC, runId }) {
+  if (enabled !== true) return null;
+  let fd;
+  try {
+    if (typeof runId !== 'string' || runId.length > 160 || runId.length === 0) return null;
+    fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const stat = fstatSync(fd);
+    if (!stat.isFile() || stat.size > 512) return null;
+    const bytes = Buffer.alloc(513);
+    const n = readSync(fd, bytes, 0, bytes.length, 0);
+    if (n > 512 || n !== stat.size) return null;
+    const packet = JSON.parse(bytes.subarray(0, n).toString());
+    if (!packet || Object.keys(packet).sort().join(',') !== 'errorPresent,exit,memory,oom,runHash,swap,version' ||
+        packet.version !== 1 || packet.runHash !== diagnosticHash(runId) ||
+        ![true, false, null].includes(packet.oom) || ![true, false, null].includes(packet.errorPresent) ||
+        !['exit', 'memory', 'swap'].every((key) => packet[key] === null || diagnosticNumber(packet[key]) === packet[key])) return null;
+    const { oom, exit, memory, swap, errorPresent } = packet;
+    return { oom, exit, memory, swap, errorPresent };
+  } catch {
+    return null;
+  } finally {
+    if (fd !== undefined) try { closeSync(fd); } catch { /* diagnostics never change execution */ }
+  }
+}
 
 // learnerへ渡す固定bootstrap。ホストのshellやcontrollerでは学習コードを実行しない。
 const BOOTSTRAP = `const fs=require('node:fs');const cp=require('node:child_process');

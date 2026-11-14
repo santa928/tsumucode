@@ -38,7 +38,10 @@ export async function executePythonFirstAnchorEntry(args: string[]): Promise<str
   )
     throw Error('Anchor entry paths overlap');
 
-  const file = await open(contextPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+  const file = await open(
+    contextPath,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
   let context: unknown;
   try {
     const before = await file.stat();

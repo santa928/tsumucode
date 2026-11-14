@@ -1,0 +1,7 @@
+# 固定検査専用。通常の学習環境では読み込まない。
+services:
+  controller:
+    environment:
+      TSUMUCODE_PYTHON_CI_DIAGNOSTICS: '1'
+    tmpfs:
+      - /run/tsumucode-ci-diagnostics:rw,noexec,nosuid,nodev,size=64k,mode=0700

@@ -68,6 +68,7 @@ on:
       - scripts/learn.sh
       - Dockerfile.learning
       - compose.learning.yaml
+      - compose.learning.ci-diagnostic.yaml
       - package.json
       - package-lock.json
       - .dockerignore
@@ -135,6 +136,7 @@ on:
       - scripts/learn.sh
       - Dockerfile.learning
       - compose.learning.yaml
+      - compose.learning.ci-diagnostic.yaml
       - package.json
       - package-lock.json
       - .dockerignore
@@ -230,7 +232,7 @@ jobs:
           docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync("scripts/local/compiled-native-workspaces.json", "utf8"))' > .release-v2/native-catalogs/learning-native.json
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file .release-v2/native-catalogs/learning-native.json --output .release-v2/native-catalogs/learning-native-verified.json
       - name: Start isolated learning stack
-        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml -f compose.learning.ci-diagnostic.yaml up --no-build -d web controller preview
       - name: Verify real Browser HTTP, HMR and Preview boundary
         run: |
           docker build --file Dockerfile.learning --target browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-browser-checks" .
@@ -241,6 +243,8 @@ jobs:
           docker exec -i "$controller" node --input-type=module < scripts/local/project-grade-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/resident-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/acceptance.mjs
+      - name: Verify bounded Python CI diagnostics
+        run: node --test scripts/local/python-ci-diagnostic.node-test.mjs
       - name: Verify fixed CPython execution, constraints and recovery
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

@@ -7,8 +7,26 @@ import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 
 const workflow = parse(readFileSync('.github/workflows/local-runtime.yml', 'utf8')) as {
-  jobs: { boundary: { steps: { name?: string; run?: string }[] } };
+  jobs: {
+    boundary: {
+      steps: { name?: string; run?: string; if?: string; 'continue-on-error'?: boolean | string }[];
+    };
+  };
 };
+it('runs the Python CI diagnostic tests separately before the CPython recovery step', () => {
+  const steps = workflow.jobs.boundary.steps;
+  const diagnostic = steps.findIndex((step) => step.name === 'Verify bounded Python CI diagnostics');
+  const python = steps.findIndex(
+    (step) => step.name === 'Verify fixed CPython execution, constraints and recovery',
+  );
+  expect(diagnostic).toBeGreaterThanOrEqual(0);
+  expect(diagnostic).toBeLessThan(python);
+  expect(steps[diagnostic]?.if).toBeUndefined();
+  expect([undefined, false]).toContain(steps[diagnostic]?.['continue-on-error']);
+  expect(steps[diagnostic]?.run?.trim()).toBe(
+    'node --test scripts/local/python-ci-diagnostic.node-test.mjs',
+  );
+});
 const restartSteps = [
   'Verify abnormal controller restart',
   'Verify fixed CPython execution, constraints and recovery',

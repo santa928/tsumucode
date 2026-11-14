@@ -4,6 +4,25 @@ import path from 'node:path';
 import { expect, it } from 'vitest';
 import { parse } from 'yaml';
 
+it('keeps CI diagnostic overlay changes in both Runtime triggers', async () => {
+  const workflow = parse(await readFile('.github/workflows/local-runtime.yml', 'utf8')) as {
+    on: Record<'push' | 'pull_request', { paths: string[] }>;
+  };
+  const events = ['push', 'pull_request'] as const;
+  const overlay = 'compose.learning.ci-diagnostic.yaml';
+  const missing = (triggers: typeof workflow.on) =>
+    events.filter((event) => !triggers[event].paths.includes(overlay));
+
+  expect(missing(workflow.on)).toEqual([]);
+  for (const removed of events) {
+    const changed = {
+      ...workflow.on,
+      [removed]: { ...workflow.on[removed], paths: workflow.on[removed].paths.filter((item) => item !== overlay) },
+    };
+    expect(missing(changed)).toEqual([removed]);
+  }
+});
+
 it.each(['push', 'pull_request'] as const)('%s detects changes in the baked Native test import graph', async (event) => {
   const workflow = parse(await readFile('.github/workflows/local-runtime.yml', 'utf8')) as {
     on: Record<'push' | 'pull_request', { paths: string[] }>;
