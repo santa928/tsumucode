@@ -1,0 +1,32 @@
+name: Anchor public fixture
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/anchor-public-fixture.yml'
+      - 'scripts/release/v2/anchor-control/verify_checkout_bytes.py'
+      - 'tests/local/anchorCheckoutPublicFixture.test.py'
+      - 'tests/unit/release/v2/anchorCheckoutBytes.test.py'
+
+permissions:
+  contents: read
+
+jobs:
+  fixed-public-fixture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 052cf97e23bbe4adb5e9b5685e1d4af5af3d4aba
+          path: fixed-public-fixture
+          persist-credentials: false
+      - name: Run checkout path and archive boundary tests
+        run: python3 -I tests/unit/release/v2/anchorCheckoutBytes.test.py
+      - name: Compare public checkout and reject corrupted archives
+        env:
+          ANCHOR_PUBLIC_CHECKOUT: ${{ github.workspace }}/fixed-public-fixture
+        run: python3 -I tests/local/anchorCheckoutPublicFixture.test.py
