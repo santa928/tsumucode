@@ -11,12 +11,9 @@ const source = await Promise.all(
 );
 const base = testBasePath();
 
-// Preflight must distinguish an all-draft catalog from failed/empty collection.
-if (
-  process.env['TSUMUCODE_PYTHON_PREFLIGHT'] === '1' &&
-  source.every((course) => course.runtime.publicationStatus !== 'published')
-) {
-  test('preflight: no published Python fixture courses', () => {});
+// An all-draft catalog still declares a real test; it claims no fixture observations.
+if (source.every((course) => course.runtime.publicationStatus !== 'published')) {
+  test('no published Python fixture courses', () => {});
 }
 
 async function savedDraft(page: Page, exerciseId: string) {

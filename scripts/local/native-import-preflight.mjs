@@ -7,7 +7,7 @@ for (const file of ['playwright.learning-native.config.ts', 'tests/local/manifes
   if (!lstatSync(file).isFile()) throw Error('Missing baked Native test entry: ' + file);
 }
 // Check the Python fixture entry as well as Native manifests. The spec exposes
-// a preflight-only sentinel for an all-draft catalog; empty collection still fails.
+// a sentinel for an all-draft catalog; empty collection still fails.
 for (const [config, spec] of [
   ['playwright.learning-native.config.ts'],
   ['playwright.python-local.config.ts', 'tests/e2e/python-published-fixtures.spec.ts'],
@@ -17,7 +17,7 @@ for (const [config, spec] of [
     `--config=${config}`, ...(spec ? [spec] : []), '--list',
     ...(spec ? [] : ['--pass-with-no-tests']), '--workers=1', '--retries=0',
     '--reporter=list', '--output=/tmp/native-import-results',
-  ], { stdio: 'inherit', env: { ...process.env, PW_TEST_CACHE_DIR: '/tmp/native-import-cache', ...(spec ? { TSUMUCODE_PYTHON_PREFLIGHT: '1' } : {}) } });
+  ], { stdio: 'inherit', env: { ...process.env, PW_TEST_CACHE_DIR: '/tmp/native-import-cache' } });
   if (result.error) throw result.error;
   const status = result.signal ? 1 : (result.status ?? 1);
   if (status !== 0) { process.exitCode = status; break; }

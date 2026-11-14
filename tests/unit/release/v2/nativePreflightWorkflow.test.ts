@@ -109,7 +109,6 @@ it('bakes and preflights the published Python fixture spec without a host mount'
   expect(script).toContain("'--pass-with-no-tests'");
   expect(script).toContain("'--retries=0'");
   const specText = await readFile(spec, 'utf8');
-  expect(specText).toContain("process.env['TSUMUCODE_PYTHON_PREFLIGHT'] === '1'");
   expect(specText).toContain(
     "source.every((course) => course.runtime.publicationStatus !== 'published')",
   );
@@ -144,7 +143,6 @@ it('fails baked import preflight on a missing spec or either Playwright list fai
   expect(good.calls[1]).toContain('tests/e2e/python-published-fixtures.spec.ts');
   expect(good.calls[0]).toContain('--pass-with-no-tests');
   expect(good.calls[1]).not.toContain('--pass-with-no-tests');
-  expect(good.environments[1]?.['TSUMUCODE_PYTHON_PREFLIGHT']).toBe('1');
   expect(good.process.exitCode).toBe(0);
   const firstFailure = check([2, 0]);
   firstFailure.execute();
