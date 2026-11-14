@@ -9,6 +9,10 @@ matches a unique running `parent_producer` job to the run, attempt, source and c
 The token belongs only in this short host step and must not enter output, logs, files,
 the producer container or later steps. No Actions write or OIDC permission is needed.
 Anonymous access works for public resources but is limited by the source IP's rate limit.
+Both API reads reject an inherited `SSL_CERT_FILE`, `SSL_CERT_DIR` or `SSLKEYLOGFILE`
+before constructing an opener. The trusted launcher must still sanitize the environment
+before Python starts and supply trusted interpreter and TLS roots; this check is not a
+substitute for process isolation or authentication of the runner.
 
 The 45-second monotonic budget is checked around each read, and each request has a
 15-second socket timeout. This alone cannot strictly interrupt every DNS or blocking OS

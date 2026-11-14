@@ -65,12 +65,18 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError('redirect refused')
 
 
+def reject_tls_overrides():
+    if any(name in os.environ for name in ('SSL_CERT_FILE', 'SSL_CERT_DIR', 'SSLKEYLOGFILE')):
+        raise ValueError('unsafe TLS environment')
+
+
 def fetch_pages(token, run, attempt):
     """Authenticated, fixed-origin attempt-scoped read. Token must never enter producer."""
     if (not re.fullmatch(r'[A-Za-z0-9_]{1,4096}', token) or
             not re.fullmatch(r'[1-9][0-9]{0,15}', run) or
             not re.fullmatch(r'[1-9][0-9]{0,15}', attempt)):
         raise ValueError('invalid request')
+    reject_tls_overrides()
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
     pages = []
     total = None
@@ -117,10 +123,39 @@ def unique_object(pairs):
     return result
 
 
+def fetch_source_tree(token, source):
+    """Read the tree for an exact commit; the caller must bind source to the event."""
+    if not re.fullmatch(r'[A-Za-z0-9_]{1,4096}', token) or not re.fullmatch(r'[a-f0-9]{40}', source):
+        raise ValueError('invalid request')
+    reject_tls_overrides()
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+    request = urllib.request.Request(
+        f'https://api.github.com/repos/{REPO}/git/commits/{source}',
+        headers={'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token,
+                 'User-Agent': 'tsumucode-anchor-job-resolver',
+                 'X-GitHub-Api-Version': '2022-11-28'},
+    )
+    deadline = time.monotonic() + 15
+    with opener.open(request, timeout=15) as response:
+        if response.status != 200:
+            raise ValueError('API request failed')
+        body = response.read(MAX_BYTES + 1)
+    if len(body) > MAX_BYTES or time.monotonic() > deadline:
+        raise ValueError('API response rejected')
+    commit = json.loads(body, object_pairs_hook=unique_object)
+    if (not isinstance(commit, dict) or commit.get('sha') != source or
+            not isinstance(commit.get('tree'), dict)):
+        raise ValueError('commit differs')
+    tree = commit['tree'].get('sha')
+    if not isinstance(tree, str) or not re.fullmatch(r'[a-f0-9]{40}', tree):
+        raise ValueError('invalid tree')
+    return tree
+
+
 def main(args):
     if len(args) != 5 or not os.path.isabs(args[0]):
         raise ValueError('invalid arguments')
-    fd = os.open(args[0], os.O_RDONLY | os.O_NOFOLLOW)
+    fd = os.open(args[0], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         before = os.fstat(fd)
         if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or not 0 < before.st_size <= MAX_BYTES:
@@ -148,15 +183,22 @@ def api_main(args):
         raise ValueError('invalid arguments')
     token = os.environ.get('ANCHOR_ACTIONS_READ_TOKEN', '')
     pages = fetch_pages(token, args[0], args[1])
-    print(resolve(pages, *args))
+    job_id = resolve(pages, *args)
+    tree = fetch_source_tree(token, args[2])
+    print(json.dumps({'producerJobId': job_id, 'sourceTree': tree}, separators=(',', ':')))
+
+
+def entry(args):
+    try:
+        if args and args[0] == '--api':
+            api_main(args[1:])
+        else:
+            main(args)
+    except Exception:
+        print('anchor job resolution failed', file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
-    try:
-        if len(sys.argv) > 1 and sys.argv[1] == '--api':
-            api_main(sys.argv[2:])
-        else:
-            main(sys.argv[1:])
-    except (OSError, ValueError, TypeError, urllib.error.URLError):
-        print('anchor job resolution failed', file=sys.stderr)
-        sys.exit(1)
+    sys.exit(entry(sys.argv[1:]))
