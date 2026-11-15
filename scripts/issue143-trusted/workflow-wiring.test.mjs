@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, writeFile, chmod, mkdir, stat, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, chmod, mkdir, stat, rm, access } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -28,12 +28,19 @@ async function makeMocks(d, { mismatch = false } = {}) {
   const git = join(d, 'git'),
     env = join(d, 'env'),
     mkdirPath = join(d, 'mkdir');
-  const gitScript = `#!/bin/sh\n[ "$0" = ${quote(git)} ] || exit 44\nif [ -n "\${GITHUB_TOKEN:-}\${GH_TOKEN:-}\${IDENTITY_TOKEN:-}\${ACTIONS_RUNTIME_TOKEN:-}\${GIT_ASKPASS:-}\${PRIVATE_MARKER:-}" ]; then exit 41; fi\nif [ "$GIT_CONFIG_NOSYSTEM" != 1 ] || [ "$GIT_CONFIG_GLOBAL" != /dev/null ] || [ "$GIT_TERMINAL_PROMPT" != 0 ]; then exit 42; fi\ncase "$*" in *"credential.helper="*"core.hooksPath=/dev/null"*"http.followRedirects=false"*) ;; *) exit 43;; esac\ncase "$*" in *"rev-parse FETCH_HEAD"*) case "$*" in *"-C observation"*) printf '%s\\n' ${quote((mismatch ? 'f' : 'b').repeat(40))};; *) printf '%s\\n' ${quote('a'.repeat(40))};; esac;; *"rev-parse HEAD^{tree}"*) printf '%s\\n' fb74d1c12f1081b28dad4e45e87ecef19a67e729;; esac\nexit 0\n`;
+  const gitScript = `#!/bin/sh\n[ "$0" = ${quote(git)} ] || exit 44\nif [ -n "\${GITHUB_TOKEN:-}\${GH_TOKEN:-}\${IDENTITY_TOKEN:-}\${ACTIONS_RUNTIME_TOKEN:-}\${GIT_ASKPASS:-}\${PRIVATE_MARKER:-}" ]; then exit 41; fi\nif [ "$GIT_CONFIG_NOSYSTEM" != 1 ] || [ "$GIT_CONFIG_GLOBAL" != /dev/null ] || [ "$GIT_TERMINAL_PROMPT" != 0 ]; then exit 42; fi\ncase "$*" in *"credential.helper="*"core.hooksPath=/dev/null"*"http.followRedirects=false"*) ;; *) exit 43;; esac\nprintf '%s\\n' reached > ${quote(join(d, 'mock-git-reached'))}\ncase "$*" in *"rev-parse FETCH_HEAD"*) printf '%s\\n' reached > ${quote(join(d, 'mock-fetch-head-reached'))}; case "$*" in *"-C observation"*) printf '%s\\n' ${quote((mismatch ? 'f' : 'b').repeat(40))};; *) printf '%s\\n' ${quote('a'.repeat(40))};; esac;; *"rev-parse HEAD^{tree}"*) printf '%s\\n' fb74d1c12f1081b28dad4e45e87ecef19a67e729;; esac\nexit 0\n`;
   const envScript = `#!/bin/sh\n[ "$1" = -i ] || exit 50\n[ "$2" = ${quote('PATH=' + d)} ] || exit 51\n[ "$3" = ${quote('HOME=' + join(d, 'issue143-git-home'))} ] || exit 52\n[ "$4" = GIT_CONFIG_NOSYSTEM=1 ] || exit 53\n[ "$5" = GIT_CONFIG_GLOBAL=/dev/null ] || exit 54\n[ "$6" = GIT_TERMINAL_PROMPT=0 ] || exit 55\n[ "$7" = git ] || exit 56\nshift 7\nexec /usr/bin/env -i ${quote('PATH=' + d)} ${quote('HOME=' + join(d, 'issue143-git-home'))} GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 ${quote(git)} "$@"\n`;
   await writeFile(git, gitScript);
   await writeFile(env, envScript);
   await writeFile(mkdirPath, '#!/bin/sh\nexec /bin/mkdir "$@"\n');
   await Promise.all([chmod(git, 0o700), chmod(env, 0o700), chmod(mkdirPath, 0o700)]);
+  const preflight = join(d, 'mock-preflight');
+  await writeFile(preflight, '#!/bin/sh\nexit 0\n');
+  await chmod(preflight, 0o700);
+  const result = spawnSync(preflight, [], { stdio: 'ignore', timeout: 1000 });
+  assert.equal(result.error, undefined);
+  assert.equal(result.signal, null);
+  assert.equal(result.status, 0);
 }
 function fixtureEnv(d, head = 'b'.repeat(40)) {
   return {
@@ -104,7 +111,11 @@ test('unvalidated raw candidate is rejected before mock git without being printe
       encoding: 'utf8',
       timeout: 5000,
     });
-    assert.notEqual(r.status, 0);
+    assert.equal(r.error, undefined);
+    assert.equal(r.signal, null);
+    assert.equal(r.status, 1);
+    assert.equal(r.stderr, 'Public checkout input rejected\n');
+    await assert.rejects(access(join(d, 'mock-git-reached')), { code: 'ENOENT' });
     assert.equal((r.stdout + r.stderr).includes('PRIVATE_MARKER'), false);
   } finally {
     await rm(d, { recursive: true, force: true });
@@ -131,7 +142,11 @@ test('remote candidate head changing after approval stops mock checkout', async 
       encoding: 'utf8',
       timeout: 5000,
     });
-    assert.notEqual(r.status, 0);
+    assert.equal(r.error, undefined);
+    assert.equal(r.signal, null);
+    assert.equal(r.status, 1);
+    assert.equal(r.stderr, 'Public checkout failed\n');
+    assert.equal(await readFile(join(d, 'mock-fetch-head-reached'), 'utf8'), 'reached\n');
     assert.equal((r.stdout + r.stderr).includes('PRIVATE_MARKER'), false);
   } finally {
     await rm(d, { recursive: true, force: true });
