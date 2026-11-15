@@ -85,6 +85,14 @@ jobs:
       candidate_artifact_id: ${{ inputs.candidate_artifact_id }}
       metadata_artifact_id: ${{ inputs.metadata_artifact_id }}
 
+  python_fixtures:
+    uses: ./.github/workflows/python-fixtures.yml
+    permissions:
+      contents: read
+    with:
+      candidate_artifact_id: ${{ inputs.candidate_artifact_id }}
+      metadata_artifact_id: ${{ inputs.metadata_artifact_id }}
+
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -266,7 +274,7 @@ jobs:
 
   aggregate:
     if: always()
-    needs: [unit, boundary, browser, public_boundary, performance]
+    needs: [unit, boundary, python_fixtures, browser, public_boundary, performance]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     outputs:
