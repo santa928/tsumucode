@@ -53,7 +53,7 @@ jobs:
           node --test observation/tests/observations/issue143/check-report.test.mjs
           node --test observation/tests/observations/issue143/local-diagnostic.test.mjs observation/tests/observations/issue143/local-diagnostic-cli.test.mjs
           node --test observation/tests/observations/issue143/preview-diagnostic.test.mjs observation/tests/observations/issue143/preview-diagnostic-cli.test.mjs
-          node --test observation/tests/observations/issue143/startup-diagnostic.test.mjs observation/tests/observations/issue143/startup-diagnostic-cli.test.mjs observation/tests/observations/issue143/loader-list-check.test.mjs
+          node --test observation/tests/observations/issue143/startup-diagnostic.test.mjs observation/tests/observations/issue143/startup-diagnostic-cli.test.mjs observation/tests/observations/issue143/loader-list-check.test.mjs observation/tests/observations/issue143/controller-image-diagnostic.test.mjs
           node --test observation/tests/observations/issue143/identity-http-diagnostic.test.mjs
           node --test observation/tests/observations/issue143/identity-preflight.test.mjs
           node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
@@ -93,6 +93,10 @@ jobs:
           test "$controller_index" = "$web_index"
           test "$web_index" = 380b46f8bffe0aeebeb19394f0ef2b5c1c23e86004d6965241ed2f6157295698
           echo 'Fixed Source Python index and controller/web hashes match the published candidate'
+          overlay="$GITHUB_WORKSPACE/observation/tests/observations/issue143"
+          if ! docker exec -i "$controller" node --input-type=module - --run-before < "$overlay/controller-image-diagnostic.mjs" 2>/dev/null; then
+            echo 'controller-images unavailable'
+          fi
       - name: Export fresh synthetic Pages data and check Home resume
         shell: bash
         run: |
@@ -132,6 +136,14 @@ jobs:
             node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
             node "$overlay/preview-diagnostic-cli.mjs" "$localdir/local-preview.json" 2>/dev/null || true
             node "$overlay/startup-diagnostic.mjs" "$localdir/private-run.log" 2>/dev/null || true
+            controller=$(cd source && ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller 2>/dev/null) || controller=''
+            if [[ "$controller" =~ ^[0-9a-f]{12,64}$ ]]; then
+              if ! docker exec -i "$controller" node --input-type=module - --run-after < "$overlay/controller-image-diagnostic.mjs" 2>/dev/null; then
+                echo 'controller-images unavailable'
+              fi
+            else
+              echo 'controller-images unavailable'
+            fi
             echo 'Synthetic Local observation failed; private log not uploaded'; exit 1
           fi
           if ! node "$overlay/check-report.mjs" "$localdir/local-report.json" 1; then
