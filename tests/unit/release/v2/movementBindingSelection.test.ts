@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { afterEach, expect, it } from 'vitest';
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -10,7 +10,7 @@ import {
   readMovementDeclaration,
 } from '../../../../scripts/release/v2/movement';
 import { readMovementBaselineProofs } from '../../../../scripts/release/v2/movementBaseline';
-import { hashValue } from '../../../../scripts/release/v2/identity';
+import { hashArtifact, hashValue } from '../../../../scripts/release/v2/identity';
 import { releaseFixture } from './releaseFixture';
 
 const exec = promisify(execFile);
@@ -155,6 +155,123 @@ it('eb2の固定後続だけを許し、各教材とreceiptの追加変更を拒
   }
   expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(original);
 });
+
+it('承認済みPath後続を固定treeでのみ許し、不正な作業状態を拒否する', async () => {
+  const source = '2a0dfa3a196cca736c6c7b6129e0cacb1d263d20';
+  const digest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
+  const root = await temporaryRoot();
+  const git = gitAt(root);
+  const objects = (
+    await exec('git', ['rev-parse', '--path-format=absolute', '--git-path', 'objects'])
+  ).stdout.trim();
+  await git('init', '-b', 'main');
+  await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  await git('update-ref', 'HEAD', source);
+  await git('read-tree', '--reset', '-u', source);
+  const beforeRss = process.memoryUsage.rss();
+  const started = performance.now();
+  const measured = await hashArtifact(path.join(root, 'content'), { rejectEmptyDirectories: true });
+  const elapsedMs = Math.round(performance.now() - started);
+  const afterRss = process.memoryUsage.rss();
+  const peakRss = process.resourceUsage().maxRSS;
+  expect(measured.files).toHaveLength(5018);
+  expect(measured.digest).toBe('72fdaf396094b6ca7f3a993a7656f3305db89a5a40d5855bd4f6693c080b3fe9');
+  process.stdout.write(
+    `movement-closure files=5018 duration-ms=${String(elapsedMs)} process-rss-before-bytes=${String(beforeRss)} process-rss-after-bytes=${String(afterRss)} process-maxrss-kib=${String(peakRss)}\n`,
+  );
+  const expected = MovementDeclarationSchema.parse(
+    JSON.parse(await readFile(path.join(root, 'docs/quality/movement-eb2-v2.json'), 'utf8')),
+  );
+  expect(await readMovementDeclaration(root, digest)).toEqual(expected);
+  await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+  const target = 'content/learning-paths/python-basics.yaml';
+  const original = await readFile(path.join(root, target));
+  await writeFile(path.join(root, target), 'tampered');
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await git('update-index', '--assume-unchanged', target);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await git('update-index', '--no-assume-unchanged', target);
+  await writeFile(path.join(root, target), original);
+  await git('update-index', '--skip-worktree', target);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await git('update-index', '--no-skip-worktree', target);
+  await git('config', 'core.filemode', 'false');
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await git('config', 'core.filemode', 'true');
+  await writeFile(path.join(root, 'content/unapproved-test-file'), 'x');
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await rm(path.join(root, 'content/unapproved-test-file'));
+  const hidden = 'content/learning-paths/unapproved-extra.yaml';
+  const fixedClosure = (await hashArtifact(path.join(root, 'content'))).digest;
+  await writeFile(path.join(root, '.git/info/exclude'), hidden + '\n');
+  await writeFile(path.join(root, hidden), 'schemaVersion: 1\n');
+  expect((await hashArtifact(path.join(root, 'content'))).digest).not.toBe(fixedClosure);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await rm(path.join(root, hidden));
+  await writeFile(path.join(root, '.git/info/exclude'), '');
+  const globalIgnore = path.join(root, '.git/global-excludes');
+  await writeFile(globalIgnore, hidden + '\n');
+  await git('config', 'core.excludesFile', globalIgnore);
+  await writeFile(path.join(root, hidden), 'schemaVersion: 1\n');
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await rm(path.join(root, hidden));
+  await git('config', '--unset', 'core.excludesFile');
+  const caseDirectory = path.join(root, 'content/LEARNING-PATHS');
+  let distinctCaseDirectory = true;
+  try {
+    await mkdir(caseDirectory);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    distinctCaseDirectory = false;
+  }
+  if (process.platform === 'linux') expect(distinctCaseDirectory).toBe(true);
+  if (distinctCaseDirectory) {
+    await git('config', 'core.ignorecase', 'true');
+    await writeFile(path.join(caseDirectory, 'unapproved.yaml'), 'schemaVersion: 1\n');
+    expect(await git('status', '--porcelain', '--untracked-files=all', '--', 'content')).toBe('');
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await rm(caseDirectory, { recursive: true });
+  }
+  const emptyDirectory = path.join(root, 'content/learning-paths/unapproved-empty');
+  await mkdir(emptyDirectory);
+  expect((await hashArtifact(path.join(root, 'content'))).digest).toBe(fixedClosure);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow(/empty directory/u);
+  await rm(emptyDirectory, { recursive: true });
+  await chmod(path.join(root, target), 0o755);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await chmod(path.join(root, target), 0o644);
+  const receipt = 'docs/quality/content-v2-receipts.json';
+  const oldReceipt = await readFile(path.join(root, receipt));
+  await writeFile(path.join(root, receipt), '{}');
+  await git('update-index', '--assume-unchanged', receipt);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await git('update-index', '--no-assume-unchanged', receipt);
+  await writeFile(path.join(root, receipt), oldReceipt);
+  await rm(path.join(root, target));
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+  await writeFile(path.join(root, target), original);
+  await git(
+    'update-index',
+    '--add',
+    '--cacheinfo',
+    '100755,28df52e8940072b3b57cf14f283f848ffebb16b1,' + target,
+  );
+  const changedTree = await git('write-tree');
+  const changedCommit = await git(
+    '-c',
+    'user.name=Unit Fixture',
+    '-c',
+    'user.email=unit@example.invalid',
+    'commit-tree',
+    changedTree,
+    '-p',
+    source,
+    '-m',
+    'unapproved mode change',
+  );
+  await git('update-ref', 'HEAD', changedCommit);
+  await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+}, 60000);
 
 it('eb2 bindingに対応する元proofだけを選び、再captureは時刻だけの差を許す', async () => {
   const root = await temporaryRoot();

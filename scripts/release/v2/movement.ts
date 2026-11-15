@@ -7,7 +7,7 @@ import { ExerciseSchema, ExerciseFileSchema } from '../../../src/core/content/sc
 import { assertActiveExerciseRuntime } from '../../../src/core/content/activeExerciseRuntime';
 import type { AuthoringExercise, CompiledCourseArtifacts } from '../../content/compileCourse';
 import { builtinFixtureDigests, fixtureFiles, fixtureSourceDigest } from './fixtureSource';
-import { hashBytes, hashValue, repositoryEnvironment } from './identity';
+import { hashArtifact, hashBytes, hashValue, repositoryEnvironment } from './identity';
 import { MOVEMENT_ID, MovementStageSchema, stageMoves, stageRechecks } from './movementStage';
 import { verifyPythonMovementPredecessor } from './movementPredecessor';
 import { MovementBaselineProofsSchema, resolveMovementBaseline } from './movementBaseline';
@@ -449,6 +449,15 @@ const javascriptContinuation = {
   inventoryDigest: 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
 } as const;
 
+// Reviewed main content tree differs from the fixed JS continuation only in
+// this one published Python learning-path file. This is not a general path exception.
+const pythonPathContinuation = {
+  contentTree: 'be27201bf16174598242d7603784bbb6b9e88c88',
+  contentClosure: '72fdaf396094b6ca7f3a993a7656f3305db89a5a40d5855bd4f6693c080b3fe9',
+  path: 'content/learning-paths/python-basics.yaml',
+  sha256: '0c260a4ef4cd0359ebd9cda6feaaf36eb55603f601d3b743933b21cfff030e4b',
+} as const;
+
 function isJavascriptContinuation(
   declaration: MovementInputs['declaration'],
   inventoryDigest?: string,
@@ -844,9 +853,25 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
   const sources = continuation ? ['content', receiptPath] : ['content'];
   const git = promisify(execFile);
   const options = { cwd: root, env: await repositoryEnvironment(root), encoding: 'utf8' as const };
+  const contentTree = continuation
+    ? (await git('git', ['rev-parse', 'HEAD:content'], options)).stdout.trim()
+    : '';
+  const pythonPath = continuation && contentTree === pythonPathContinuation.contentTree;
   // 審査記録より前の教材原本commitと現HEADのcontent treeを比較する。
   // 固定後続では全教材treeに加え、同梱したJavaScriptの8件を含むreceipt台帳も固定する。
-  await git('git', ['diff', '--quiet', sourceCommit, 'HEAD', '--', ...sources], options);
+  await git(
+    'git',
+    [
+      'diff',
+      '--quiet',
+      sourceCommit,
+      'HEAD',
+      '--',
+      ...sources,
+      ...(pythonPath ? [':(exclude)' + pythonPathContinuation.path] : []),
+    ],
+    options,
+  );
   if (continuation) {
     const { stdout } = await git(
       'git',
@@ -854,6 +879,38 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
       options,
     );
     if (stdout) throw Error('Movement continuation has dirty content or receipts');
+    if (pythonPath) {
+      const ignored = await git(
+        'git',
+        ['ls-files', '--others', '--ignored', '--exclude-standard', '-z', '--', ...sources],
+        { ...options, maxBuffer: 8 * 1024 * 1024 },
+      );
+      if (ignored.stdout) throw Error('Movement continuation has ignored untracked content');
+      const filemode = await git('git', ['config', '--bool', 'core.filemode'], options);
+      if (filemode.stdout.trim() !== 'true')
+        throw Error('Movement continuation requires file mode checks');
+      const index = await git('git', ['ls-files', '-v', '-z', '--', ...sources], {
+        ...options,
+        maxBuffer: 8 * 1024 * 1024,
+      });
+      const entries = index.stdout.split('\0');
+      if (entries.pop() !== '' || entries.some((entry) => !entry.startsWith('H ')))
+        throw Error('Movement continuation has hidden index entries');
+      if (
+        (await hashArtifact(path.join(root, 'content'), { rejectEmptyDirectories: true }))
+          .digest !== pythonPathContinuation.contentClosure
+      )
+        throw Error('Movement continuation content closure differs');
+      const file = path.join(root, pythonPathContinuation.path);
+      const stat = await lstat(file);
+      if (
+        !stat.isFile() ||
+        stat.isSymbolicLink() ||
+        Boolean(stat.mode & 0o111) ||
+        hashBytes(await readFile(file)) !== pythonPathContinuation.sha256
+      )
+        throw Error('Movement continuation Python path differs');
+    }
     const { stdout: receiptBlob } = await git('git', ['show', `${sourceCommit}:${receiptPath}`], {
       ...options,
       encoding: 'buffer',
