@@ -72,4 +72,19 @@ with tempfile.TemporaryDirectory(prefix="oop-volume-tests-") as tmp:
     assert run("if probe_volume_create; then exit 1; fi", GITHUB_RUN_ID="not-a-run").returncode == 0
     assert run("if probe_volume_create; then exit 1; fi", GITHUB_RUN_ATTEMPT="").returncode == 0
     assert list(state.iterdir()) == [state / "unrelated"]
-    print("volume-ownership=passed; create-cleanup=1; preexisting/race/changed-owner/list-failure/identity=blocked")
+    scratch_root = root / "dependencies"
+    scratch_root.mkdir()
+    command = 'probe_scratch_prepare "$OOP_SCRATCH_ROOT"'
+    assert run(command, OOP_SCRATCH_ROOT=str(scratch_root)).stdout == "scratch=created\n"
+    assert run(command, OOP_SCRATCH_ROOT=str(scratch_root)).stdout == "scratch=preexisting\n"
+    (scratch_root / ".vite-temp" / "not-empty").write_text("fixed")
+    assert run(command, OOP_SCRATCH_ROOT=str(scratch_root)).returncode != 0
+    (scratch_root / ".vite-temp" / "not-empty").unlink()
+    (scratch_root / ".vite-temp").rmdir()
+    (scratch_root / ".vite-temp").symlink_to(root, target_is_directory=True)
+    assert run(command, OOP_SCRATCH_ROOT=str(scratch_root)).returncode != 0
+    (scratch_root / ".vite-temp").unlink()
+    scratch_root.chmod(0o500)
+    assert run(command, OOP_SCRATCH_ROOT=str(scratch_root)).stdout == "scratch=parent-not-writable\n"
+    scratch_root.chmod(0o700)
+    print("volume-ownership=passed; scratch-guard=passed")

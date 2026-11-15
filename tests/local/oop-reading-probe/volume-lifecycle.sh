@@ -57,3 +57,20 @@ probe_volume_verify() {
     return 1
   fi
 }
+
+# Only initialize an empty mountpoint inside this run's owned volume.
+probe_scratch_prepare() {
+  local root="$1" scratch="$1/.vite-temp" contents
+  if [ ! -d "$root" ] || [ -L "$root" ] || [ -L "$scratch" ]; then
+    echo 'scratch=invalid'; return 1
+  fi
+  if [ -e "$scratch" ]; then
+    if [ ! -d "$scratch" ] || ! contents=$(ls -A "$scratch") || [ -n "$contents" ]; then
+      echo 'scratch=invalid'; return 1
+    fi
+    echo 'scratch=preexisting'; return 0
+  fi
+  if [ ! -w "$root" ]; then echo 'scratch=parent-not-writable'; return 1; fi
+  if ! mkdir -m 0755 "$scratch"; then echo 'scratch=create-failed'; return 1; fi
+  echo 'scratch=created'
+}

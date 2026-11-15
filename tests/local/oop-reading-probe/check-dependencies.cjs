@@ -1,6 +1,7 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+const process = require('node:process');
 
 function fingerprint(root) {
   if (!fs.lstatSync(root).isDirectory()) throw Error('Dependency unavailable');

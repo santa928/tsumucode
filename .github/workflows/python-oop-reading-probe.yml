@@ -44,11 +44,12 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 3182461f6206f88b462d729cb9a60822ce411170
-          test "$(git rev-parse HEAD^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
-          test "$(git rev-parse HEAD^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
-          test "$(git rev-parse HEAD^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = 69ddc7894212aa26b227c8e5d8004a93e6fe8ebf
+          test "$(git rev-parse HEAD^^)" = 3182461f6206f88b462d729cb9a60822ce411170
+          test "$(git rev-parse HEAD^^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
+          test "$(git rev-parse HEAD^^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
+          test "$(git rev-parse HEAD^^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dependencies.cjs' \
@@ -59,7 +60,7 @@ jobs:
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts' \
             'tests/local/oop-reading-probe/volume-lifecycle.sh' \
             'tests/local/oop-reading-probe/volume-lifecycle.test.py')
-          test "$(git diff --no-renames --name-only HEAD^^^^^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^^^^^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
@@ -183,6 +184,18 @@ jobs:
             python3 tests/local/oop-reading-probe/check-report.py 1 "$log"
             exit 1
           fi
+          if docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 1 --memory 512m --pids-limit 128 \
+            --cap-drop ALL --security-opt no-new-privileges:true --env HOME=/tmp \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/probe,readonly" \
+            --mount "type=volume,source=$probe_volume_name,target=/workspace/node_modules" \
+            --entrypoint bash oop-reading-probe -ec 'source /probe/volume-lifecycle.sh; probe_scratch_prepare /workspace/node_modules' >"$log" 2>&1; then
+            case "$(cat "$log")" in scratch=preexisting) echo 'scratch=preexisting';; scratch=created) echo 'scratch=created';; *) echo 'scratch=invalid-output'; exit 1;; esac
+          else
+            if grep -Fxq 'scratch=parent-not-writable' "$log"; then echo 'scratch=parent-not-writable'; else echo 'scratch=initialization-failed'; fi
+            exit 1
+          fi
+          if ! probe_volume_verify; then echo 'volume-ownership=unverified'; exit 1; fi
+          : >"$log"
           result=0
           docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
