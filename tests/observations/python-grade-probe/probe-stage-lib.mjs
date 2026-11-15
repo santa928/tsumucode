@@ -13,10 +13,23 @@ const stages = Object.freeze([
   'editor-ready',
   'fixture-set',
   'grade-clicking',
+  'grade-click-returned',
   'grade-accepted',
   'identity-saved',
   'dialog-visible',
   'checks-passed',
+  ...['session', 'capability', 'grade'].flatMap((route) =>
+    [
+      'request',
+      'network-failure',
+      'response-2xx',
+      'response-3xx',
+      'response-4xx',
+      'response-5xx',
+      'response-other',
+    ].map((event) => `api-${route}-${event}`),
+  ),
+  'api-grade-response-202',
 ]);
 export async function writeStage(dir, stage) {
   if (!stages.includes(stage)) return false;

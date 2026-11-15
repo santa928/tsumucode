@@ -46,7 +46,7 @@ jobs:
             const fs = require("node:fs");
             const allowed = new Set([
               ".github/workflows/python-grade-observer-probe.yml",
-              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs", "api-observation.mjs", "api-observation.d.mts", "api-observation.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
             ]);
             const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
             if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
@@ -116,7 +116,13 @@ jobs:
             ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down || true
           fi
           rm -f -- "$RUNNER_TEMP/python-grade-probe/grade-hash.json" "$RUNNER_TEMP/python-grade-probe/browser-private.log" "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/stage-report.txt"
-          for stage in runner-enter bridge-ready playwright-spawned spec-started navigation-complete editor-ready fixture-set grade-clicking grade-accepted identity-saved dialog-visible checks-passed; do
+          for stage in runner-enter bridge-ready playwright-spawned spec-started navigation-complete editor-ready fixture-set grade-clicking grade-click-returned grade-accepted identity-saved dialog-visible checks-passed; do
             rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-$stage"
           done
+          for route in session capability grade; do
+            for event in request network-failure response-2xx response-3xx response-4xx response-5xx response-other; do
+              rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-api-$route-$event"
+            done
+          done
+          rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-api-grade-response-202"
           rmdir -- "$RUNNER_TEMP/python-grade-probe" || true

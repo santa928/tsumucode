@@ -4,6 +4,7 @@ import { localConsoleGradeRunHash } from '../../e2e/helpers/localConsoleDiagnost
 import { readStoredProgress, replaceEditorText } from '../../e2e/helpers/progress';
 import { markProbeStage } from './probe-stage-lib.mjs';
 import { afterGradeLabel, beforeGradeLabel } from './runtime-label.mjs';
+import { observeApi } from './api-observation.mjs';
 
 const exerciseId = 'python-basics-ch01-l02-e01';
 const lessonId = 'python-basics-ch01-l02';
@@ -25,6 +26,7 @@ test('one normal fixed-source hardcoded grade; observation remains unknown when 
   await replaceEditorText(page, await readFile(fixture, 'utf8'));
   await page.getByLabel('実行前の入力（1行につきinput 1回）').fill('Sora');
   markProbeStage('fixture-set');
+  observeApi(page, markProbeStage);
   const accepted = page
     .waitForResponse(
       (response) =>
@@ -46,6 +48,7 @@ test('one normal fixed-source hardcoded grade; observation remains unknown when 
     });
   markProbeStage('grade-clicking');
   await page.getByRole('button', { name: '判定する', exact: true }).click();
+  markProbeStage('grade-click-returned');
   const visible = expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
   await Promise.all([accepted, visible]);
   markProbeStage('dialog-visible');
