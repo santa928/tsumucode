@@ -226,11 +226,13 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   }
   if (process.platform === 'linux') expect(distinctCaseDirectory).toBe(true);
   if (distinctCaseDirectory) {
-    await git('config', 'core.ignorecase', 'true');
-    await writeFile(path.join(caseDirectory, 'unapproved.yaml'), 'schemaVersion: 1\n');
-    expect(await git('status', '--porcelain', '--untracked-files=all', '--', 'content')).toBe('');
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
     await rm(caseDirectory, { recursive: true });
+    await git('config', 'core.ignorecase', 'true');
+    const caseFile = path.join(root, 'content/learning-paths/Python-basics.yaml');
+    await writeFile(caseFile, 'schemaVersion: 1\n');
+    expect(await git('status', '--porcelain', '--untracked-files=all', '--', 'content')).toBe('');
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow(/content closure differs/u);
+    await rm(caseFile);
   }
   const emptyDirectory = path.join(root, 'content/learning-paths/unapproved-empty');
   await mkdir(emptyDirectory);
