@@ -13,7 +13,7 @@ jobs:
       ${{ github.event.pull_request.draft == true &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event.pull_request.head.ref == 'codex/verify-python-historical-8fda' &&
-          github.event.pull_request.base.sha == '8fdaeb61205ba8fad334af16886a725b49c50fde' }}
+          github.event.pull_request.base.sha == '75ec2e5a7df2faa3b566d58d34507e6788faea86' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -28,7 +28,7 @@ jobs:
       - name: Check out the exact fixed candidate
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
-          ref: 8fdaeb61205ba8fad334af16886a725b49c50fde
+          ref: 75ec2e5a7df2faa3b566d58d34507e6788faea86
           path: fixed-candidate
           fetch-depth: 0
           persist-credentials: false
@@ -40,16 +40,17 @@ jobs:
           case "$EXPECTED_HEAD" in *[!0-9a-f]*|'') exit 1;; esac
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 3
+          test "$(git rev-parse HEAD^1)" = f719b2b9ec247d7a9eb216f2940a8d0096032af7
+          test "$(git rev-parse HEAD^2)" = 75ec2e5a7df2faa3b566d58d34507e6788faea86
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-exact-source-probe.yml' \
             'tests/local/python-exact-source-probe/check.ts' \
             'tests/local/python-exact-source-probe/diagnostic.node-test.mjs' \
             'tests/local/python-exact-source-probe/diagnostic.ts')
-          test "$(git diff --no-renames --name-only HEAD^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^2 HEAD)" = "$expected_paths"
           cd fixed-candidate
-          test "$(git rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD)" = 75ec2e5a7df2faa3b566d58d34507e6788faea86
           test -z "$(git status --porcelain --untracked-files=normal)"
           test "$(git rev-parse HEAD:content/python-practice)" = 84e0eec7a4c769d0be1ff8b5ac4de5bde98c5be0
           test "$(git rev-parse HEAD:content/python-oop)" = 0e5051a9e548ceb617e56a7156eb0c82cc54917c
