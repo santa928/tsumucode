@@ -46,7 +46,7 @@ jobs:
             const fs = require("node:fs");
             const allowed = new Set([
               ".github/workflows/python-grade-observer-probe.yml",
-              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
             ]);
             const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
             if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
@@ -82,6 +82,11 @@ jobs:
             --mount "type=bind,src=$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe,dst=/workspace/tests/observations/python-grade-probe,readonly" \
             --mount "type=bind,src=$RUNNER_TEMP/python-grade-probe,dst=/exchange" \
             --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-probe" /workspace/tests/observations/python-grade-probe/run.mjs
+      - name: Print only fixed private-log pattern clues
+        if: ${{ always() && steps.preflight.outputs.safe == 'true' && steps.grade.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          node probe/tests/observations/python-grade-probe/diagnose.mjs "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/browser-private.log"
       - name: Compare only sanitized same-run records
         if: ${{ always() && steps.preflight.outputs.safe == 'true' && steps.grade.outcome != 'skipped' }}
         shell: bash
