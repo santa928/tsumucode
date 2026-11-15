@@ -85,6 +85,8 @@ describe('Draft PRの固定検証', () => {
     expect(identity?.run).toContain('git rev-parse HEAD');
     expect(identity?.run).toContain('git rev-parse HEAD^1');
     expect(identity?.run).toContain('git rev-parse HEAD^2');
+    expect(identity?.run).toContain("git rev-parse 'HEAD^{tree}'");
+    expect(identity?.run).toContain('git rev-parse "${PR_HEAD_SHA}^{tree}"');
     expect(identity?.run).toContain('git merge-base --is-ancestor');
     const node = steps.find((step) => step.name === 'Verify the required Node version');
     expect(node?.run).toContain('24.18.0');
@@ -147,6 +149,19 @@ describe('仮mergeの親照合 shell', () => {
       expect(verify(base, head, head)).not.toBe(0);
       expect(verify('z'.repeat(40), head, merge)).not.toBe(0);
       expect(verify(base.slice(1), head, merge)).not.toBe(0);
+      const otherTree = git('rev-parse', `${base}^{tree}`);
+      const differentTreeMerge = git(
+        'commit-tree',
+        otherTree,
+        '-p',
+        base,
+        '-p',
+        head,
+        '-m',
+        'different tree',
+      );
+      git('checkout', '-q', '--detach', differentTreeMerge);
+      expect(verify(base, head, differentTreeMerge)).not.toBe(0);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
