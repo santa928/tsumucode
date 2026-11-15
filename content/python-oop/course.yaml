@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: python-oop
 title: PythonのClassとobjectの設計
-description: Classとmethod、継承・委譲・Property・dunderとFunction変換・設定付きdecoratorを記録Projectへ結ぶ240分の草稿Course。
+description: Classとmethod、継承・委譲・Property・dunderとFunction変換・設定付きdecoratorを記録Projectへ結ぶ240分のCourse。
 audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
 estimatedMinutes: 240
 revision: 2026-10-14.5
@@ -20,7 +20,7 @@ supportedDevices:
 prerequisites:
   - python-basics
   - python-practice
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 4
   lessons: 9

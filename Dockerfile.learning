@@ -111,6 +111,7 @@ CMD ["node", "next-build-acceptance.mjs"]
 
 # Pythonの通常Lesson検証専用。正負原稿は製品imageへ含めない。
 FROM browser-checks AS python-browser-checks
+COPY package.json ./package.json
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
 COPY --from=dependencies /workspace/node_modules/zod ./node_modules/zod
@@ -132,7 +133,9 @@ COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
 COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
 COPY tests/e2e/python-oop.spec.ts ./tests/e2e/python-oop.spec.ts
+COPY tests/e2e/python-published-fixtures.spec.ts ./tests/e2e/python-published-fixtures.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
+COPY tests/e2e/helpers/pythonPracticePublication.ts ./tests/e2e/helpers/pythonPracticePublication.ts
 COPY tests/e2e/helpers/pythonFixtureCoverage.ts ./tests/e2e/helpers/pythonFixtureCoverage.ts
 COPY tests/e2e/helpers/localConsoleDiagnostics.ts ./tests/e2e/helpers/localConsoleDiagnostics.ts
 COPY playwright.python-local.config.ts ./
