@@ -46,7 +46,7 @@ jobs:
             const fs = require("node:fs");
             const allowed = new Set([
               ".github/workflows/python-grade-observer-probe.yml",
-              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts"].map(x => `tests/observations/python-grade-probe/${x}`),
             ]);
             const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
             if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
@@ -87,6 +87,7 @@ jobs:
         shell: bash
         run: |
           node probe/tests/observations/python-grade-probe/diagnose.mjs "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/browser-private.log"
+          node probe/tests/observations/python-grade-probe/probe-stage.mjs "$RUNNER_TEMP/python-grade-probe"
       - name: Compare only sanitized same-run records
         if: ${{ always() && steps.preflight.outputs.safe == 'true' && steps.grade.outcome != 'skipped' }}
         shell: bash
@@ -107,4 +108,7 @@ jobs:
             ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down || true
           fi
           rm -f -- "$RUNNER_TEMP/python-grade-probe/grade-hash.json" "$RUNNER_TEMP/python-grade-probe/browser-private.log" "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/stage-report.txt"
+          for stage in runner-enter bridge-ready playwright-spawned spec-started navigation-complete editor-ready fixture-set grade-clicking grade-accepted identity-saved dialog-visible checks-passed; do
+            rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-$stage"
+          done
           rmdir -- "$RUNNER_TEMP/python-grade-probe" || true

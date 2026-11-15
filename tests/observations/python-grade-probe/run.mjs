@@ -3,13 +3,16 @@ import console from 'node:console';
 import { spawn } from 'node:child_process';
 import { bridge } from '/workspace/scripts/local/browser-test-bridge.mjs';
 import { createPrivateLog } from './private-log.mjs';
+import { markOnSpawn, markProbeStage } from './probe-stage.mjs';
 
 let server;
 let outcome = 'failed';
 let privateLog;
 try {
+  markProbeStage('runner-enter');
   privateLog = createPrivateLog('/exchange/browser-private.log');
   server = await bridge(4173, 'web');
+  markProbeStage('bridge-ready');
   const child = spawn(
     process.execPath,
     [
@@ -19,6 +22,7 @@ try {
     ],
     { stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, BASE_PATH: '/' } },
   );
+  markOnSpawn(child);
   let logError = false;
   for (const stream of [child.stdout, child.stderr]) {
     stream.on('error', () => {
