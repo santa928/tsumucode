@@ -44,12 +44,13 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 69ddc7894212aa26b227c8e5d8004a93e6fe8ebf
-          test "$(git rev-parse HEAD^^)" = 3182461f6206f88b462d729cb9a60822ce411170
-          test "$(git rev-parse HEAD^^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
-          test "$(git rev-parse HEAD^^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
-          test "$(git rev-parse HEAD^^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = 25272d3ad485a5c96f37ff36c462ab8d95a1bde3
+          test "$(git rev-parse HEAD^^)" = 69ddc7894212aa26b227c8e5d8004a93e6fe8ebf
+          test "$(git rev-parse HEAD^^^)" = 3182461f6206f88b462d729cb9a60822ce411170
+          test "$(git rev-parse HEAD^^^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
+          test "$(git rev-parse HEAD^^^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
+          test "$(git rev-parse HEAD^^^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dependencies.cjs' \
@@ -60,7 +61,7 @@ jobs:
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts' \
             'tests/local/oop-reading-probe/volume-lifecycle.sh' \
             'tests/local/oop-reading-probe/volume-lifecycle.test.py')
-          test "$(git diff --no-renames --name-only HEAD^^^^^^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^^^^^^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
@@ -73,6 +74,14 @@ jobs:
             echo 'fixed-image=passed'
           else
             echo 'fixed-image=failed'
+            exit 1
+          fi
+          if printf '%s\n' 'FROM oop-reading-probe' \
+            'RUN test -d /workspace/node_modules && test ! -L /workspace/node_modules && test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && mkdir -m 0755 /workspace/node_modules/.vite-temp' \
+            | docker build --network none --tag oop-reading-probe-scratch - >"$log" 2>&1; then
+            echo 'scratch-image=passed'
+          else
+            echo 'scratch-image=failed'
             exit 1
           fi
       - name: Verify volume ownership and dependency guards
@@ -141,6 +150,14 @@ jobs:
           fi
           case "$expected" in *[!0-9a-f]*|'') echo 'image-dependencies=invalid'; exit 1;; esac
           test "${#expected}" = 64
+          if ! derived=$(docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 1 --memory 512m --pids-limit 128 \
+            --cap-drop ALL --security-opt no-new-privileges:true --env HOME=/tmp \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/probe,readonly" \
+            --entrypoint node oop-reading-probe-scratch /probe/check-dependencies.cjs capture 2>"$log"); then
+            echo 'scratch-image-dependencies=failed'; exit 1
+          fi
+          if [ "$derived" != "$expected" ]; then echo 'scratch-image-dependencies=mismatch'; exit 1; fi
+          echo 'scratch-image-dependencies=matched'
           probe_volume_create
           for item in fixed probe results; do
             case "$item" in
@@ -172,7 +189,7 @@ jobs:
             --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
             --cap-drop ALL --security-opt no-new-privileges:true \
             --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 --env "OOP_DEPENDENCY_DIGEST=$expected" \
-            "${mounts[@]}" oop-reading-probe sh -ec ':' 2>"$log"); then
+            "${mounts[@]}" oop-reading-probe-scratch sh -ec ':' 2>"$log"); then
             case "$container" in *[!0-9a-f]*|'') exit 1;; esac
             test "${#container}" = 64
             docker rm -v "$container" >/dev/null 2>&1
@@ -187,9 +204,9 @@ jobs:
           if docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 1 --memory 512m --pids-limit 128 \
             --cap-drop ALL --security-opt no-new-privileges:true --env HOME=/tmp \
             --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/probe,readonly" \
-            --mount "type=volume,source=$probe_volume_name,target=/workspace/node_modules" \
-            --entrypoint bash oop-reading-probe -ec 'source /probe/volume-lifecycle.sh; probe_scratch_prepare /workspace/node_modules' >"$log" 2>&1; then
-            case "$(cat "$log")" in scratch=preexisting) echo 'scratch=preexisting';; scratch=created) echo 'scratch=created';; *) echo 'scratch=invalid-output'; exit 1;; esac
+            --mount "type=volume,source=$probe_volume_name,target=/workspace/node_modules,readonly" \
+            --entrypoint bash oop-reading-probe-scratch -ec 'source /probe/volume-lifecycle.sh; probe_scratch_prepare /workspace/node_modules' >"$log" 2>&1; then
+            if [ "$(cat "$log")" = scratch=preexisting ]; then echo 'scratch=preexisting'; else echo 'scratch=invalid-output'; exit 1; fi
           else
             if grep -Fxq 'scratch=parent-not-writable' "$log"; then echo 'scratch=parent-not-writable'; else echo 'scratch=initialization-failed'; fi
             exit 1
@@ -202,7 +219,7 @@ jobs:
             --cap-drop ALL --security-opt no-new-privileges:true \
             --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 --env "OOP_DEPENDENCY_DIGEST=$expected" \
             "${mounts[@]}" \
-            oop-reading-probe sh -ec '
+            oop-reading-probe-scratch sh -ec '
               printf "%s\n" PROBE_STAGE=container-ready;
               test "$(node --version)" = v24.18.0;
               printf "%s\n" PROBE_STAGE=dependencies;
