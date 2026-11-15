@@ -2,12 +2,16 @@ import path from 'node:path';
 import { compileCourse } from '../../../scripts/content/compileCourse';
 import { buildInventory } from '../../../scripts/release/v2/inventory';
 import { readVerifiedPythonHistoricalAcceptances } from '../../../scripts/release/v2/pythonHistoricalAcceptance';
+import { formatFailure, type ProbeStage } from './diagnostic.ts';
 
+let stage: ProbeStage = 'compile';
 async function main(): Promise<void> {
   const root = process.cwd();
   const compiled = await compileCourse(path.join(root, 'content/python-practice'));
+  stage = 'inventory';
   const inventory = buildInventory([compiled]);
   const course = inventory.courses[0];
+  stage = 'candidate';
   if (
     inventory.courses.length !== 1 ||
     course?.id !== 'python-practice' ||
@@ -15,7 +19,9 @@ async function main(): Promise<void> {
     course.lessons.length !== 5
   )
     throw new Error('candidate shape');
+  stage = 'reader';
   const receipts = await readVerifiedPythonHistoricalAcceptances(root, inventory);
+  stage = 'receipt';
   if (
     receipts.length !== 1 ||
     receipts[0]?.courseId !== 'python-practice' ||
@@ -26,7 +32,7 @@ async function main(): Promise<void> {
   process.stdout.write('practice-public-reader=passed; lessons=5; old-reader-commit=unverified\n');
 }
 
-main().catch(() => {
-  process.stderr.write('practice-public-reader=failed\n');
+main().catch((error: unknown) => {
+  process.stderr.write(formatFailure(stage, error));
   process.exitCode = 1;
 });

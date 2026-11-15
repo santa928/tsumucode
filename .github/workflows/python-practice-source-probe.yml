@@ -33,7 +33,9 @@ jobs:
           case "$EXPECTED_HEAD" in *[!0-9a-f]*|'') exit 1;; esac
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-          test "$(git rev-parse HEAD^)" = 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
+          test "$(git rev-parse HEAD^)" = d44904d5043ef9fde8c37bf486e42f58f4fad364
+          test "$(git rev-parse HEAD^^)" = 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20
           test -z "$(git status --porcelain --untracked-files=normal)"
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-practice-source-probe.yml' \
@@ -43,10 +45,12 @@ jobs:
             'tests/e2e/python-release-smoke.spec.ts' \
             'tests/local/python-learning.spec.ts' \
             'tests/local/python-practice-source-probe/check.ts' \
+            'tests/local/python-practice-source-probe/diagnostic.node-test.mjs' \
+            'tests/local/python-practice-source-probe/diagnostic.ts' \
             'tests/unit/release/v2/cli.test.ts')
-          actual_paths=$(git diff --no-renames --name-only HEAD^ HEAD)
+          actual_paths=$(git diff --no-renames --name-only HEAD^^ HEAD)
           if [ "$actual_paths" != "$expected_paths" ]; then echo 'candidate-paths=failed'; exit 1; fi
-          git diff --quiet HEAD^ HEAD -- Dockerfile .dockerignore package.json package-lock.json scripts/release/v2 scripts/content
+          git diff --quiet HEAD^^ HEAD -- Dockerfile .dockerignore package.json package-lock.json scripts/release/v2 scripts/content
           if git config --local --get-regexp '^http\..*\.extraheader$' >/dev/null; then exit 1; fi
           if env -i PATH=/usr/bin:/bin HOME=/tmp GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
             git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false \
@@ -76,4 +80,5 @@ jobs:
           --mount "type=bind,source=${GITHUB_WORKSPACE}/docs,target=/workspace/docs,readonly"
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/python-practice-source-probe,target=/workspace/tests/local/python-practice-source-probe,readonly"
           python-practice-source-probe sh -ec 'test "$(node --version)" = v24.18.0;
+          node --test tests/local/python-practice-source-probe/diagnostic.node-test.mjs;
           node --import tsx tests/local/python-practice-source-probe/check.ts'
