@@ -44,17 +44,22 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
-          test "$(git rev-parse HEAD^^)" = f9e7627742df88f89dd762259023de1d766fafa3
-          test "$(git rev-parse HEAD^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = 3182461f6206f88b462d729cb9a60822ce411170
+          test "$(git rev-parse HEAD^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
+          test "$(git rev-parse HEAD^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
+          test "$(git rev-parse HEAD^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
+            'tests/local/oop-reading-probe/check-dependencies.cjs' \
+            'tests/local/oop-reading-probe/check-dependencies.node-test.cjs' \
             'tests/local/oop-reading-probe/check-dist.py' \
             'tests/local/oop-reading-probe/check-report.py' \
             'tests/local/oop-reading-probe/oop-horizontal.config.ts' \
-            'tests/local/oop-reading-probe/oop-horizontal.spec.ts')
-          test "$(git diff --no-renames --name-only HEAD^^^^ HEAD)" = "$expected_paths"
+            'tests/local/oop-reading-probe/oop-horizontal.spec.ts' \
+            'tests/local/oop-reading-probe/volume-lifecycle.sh' \
+            'tests/local/oop-reading-probe/volume-lifecycle.test.py')
+          test "$(git diff --no-renames --name-only HEAD^^^^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
@@ -67,6 +72,26 @@ jobs:
             echo 'fixed-image=passed'
           else
             echo 'fixed-image=failed'
+            exit 1
+          fi
+      - name: Verify volume ownership and dependency guards
+        run: |
+          set -euo pipefail
+          log=$(mktemp "$RUNNER_TEMP/oop-guard.XXXXXX")
+          trap 'rm -f "$log"' EXIT
+          if ! python3 tests/local/oop-reading-probe/volume-lifecycle.test.py >"$log" 2>&1; then
+            echo 'volume-guard-tests=failed'
+            exit 1
+          fi
+          echo 'volume-guard-tests=passed'
+          if docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 1 --memory 512m --pids-limit 128 \
+            --cap-drop ALL --security-opt no-new-privileges:true --env HOME=/tmp \
+            --tmpfs "/tmp:rw,nosuid,nodev,size=64m,mode=1777,uid=$(id -u),gid=$(id -g)" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/probe,readonly" \
+            --entrypoint node oop-reading-probe --test /probe/check-dependencies.node-test.cjs >"$log" 2>&1; then
+            echo 'dependency-guard-tests=passed'
+          else
+            echo 'dependency-guard-tests=failed'
             exit 1
           fi
       - name: Rebuild and match every existing preview byte
@@ -94,7 +119,28 @@ jobs:
           set -euo pipefail
           mkdir -p fixed-candidate/tests/local/oop-reading-probe fixed-candidate/test-results probe-results
           log=$(mktemp "$RUNNER_TEMP/oop-browser.XXXXXX")
-          trap 'rm -f "$log"' EXIT
+          source tests/local/oop-reading-probe/volume-lifecycle.sh
+          container=''
+          cleanup() {
+            code=$?
+            trap - EXIT
+            if [ -n "$container" ] && ! docker rm -v "$container" >/dev/null 2>&1; then
+              echo 'container-cleanup=failed'; code=1
+            fi
+            if ! probe_volume_cleanup; then code=1; fi
+            rm -f "$log"
+            exit "$code"
+          }
+          trap cleanup EXIT
+          if ! expected=$(docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 1 --memory 512m --pids-limit 128 \
+            --cap-drop ALL --security-opt no-new-privileges:true --env HOME=/tmp \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/probe,readonly" \
+            --entrypoint node oop-reading-probe /probe/check-dependencies.cjs capture 2>"$log"); then
+            echo 'image-dependencies=failed'; exit 1
+          fi
+          case "$expected" in *[!0-9a-f]*|'') echo 'image-dependencies=invalid'; exit 1;; esac
+          test "${#expected}" = 64
+          probe_volume_create
           for item in fixed probe results; do
             case "$item" in
               fixed) source_dir="$GITHUB_WORKSPACE/fixed-candidate" ;;
@@ -119,16 +165,18 @@ jobs:
             --mount "type=bind,source=$GITHUB_WORKSPACE/fixed-candidate,target=/workspace,readonly"
             --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/workspace/tests/local/oop-reading-probe,readonly"
             --mount "type=bind,source=$GITHUB_WORKSPACE/probe-results,target=/workspace/test-results"
-            --mount type=volume,target=/workspace/node_modules,readonly
+            --mount "type=volume,source=$probe_volume_name,target=/workspace/node_modules,readonly"
           )
           if container=$(docker create --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
             --cap-drop ALL --security-opt no-new-privileges:true \
-            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 --env "OOP_DEPENDENCY_DIGEST=$expected" \
             "${mounts[@]}" oop-reading-probe sh -ec ':' 2>"$log"); then
             case "$container" in *[!0-9a-f]*|'') exit 1;; esac
             test "${#container}" = 64
             docker rm -v "$container" >/dev/null 2>&1
+            container=''
+            if ! probe_volume_verify; then echo 'volume-ownership=unverified'; exit 1; fi
             echo 'mount-preflight=passed'
             : >"$log"
           else
@@ -139,11 +187,13 @@ jobs:
           docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
             --cap-drop ALL --security-opt no-new-privileges:true \
-            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 --env "OOP_DEPENDENCY_DIGEST=$expected" \
             "${mounts[@]}" \
             oop-reading-probe sh -ec '
               printf "%s\n" PROBE_STAGE=container-ready;
               test "$(node --version)" = v24.18.0;
+              printf "%s\n" PROBE_STAGE=dependencies;
+              node tests/local/oop-reading-probe/check-dependencies.cjs verify;
               printf "%s\n" PROBE_STAGE=list-reading;
               node node_modules/@playwright/test/cli.js test --config=tests/acceptance/python-oop.config.ts --list;
               printf "%s\n" PROBE_STAGE=list-horizontal;

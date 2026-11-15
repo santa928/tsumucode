@@ -11,6 +11,7 @@ OUTPUT = Path("bounded-oop-reading.json")
 FILES = (("reading", "python-oop-acceptance-summary.json", 2), ("horizontal", "oop-horizontal-summary.json", 1))
 STAGES = (
     "container-ready",
+    "dependencies",
     "list-reading",
     "list-horizontal",
     "server-start",
@@ -48,6 +49,7 @@ def diagnostic(path):
             ("permission", ("permission denied", "eacces", "eperm")),
             ("command-missing", ("command not found", "executable file not found")),
             ("config-import", ("cannot find module", "cannot find package", "err_module_not_found", "syntaxerror")),
+            ("dependencies", ("dependency-check=failed",)),
             ("browser-missing", ("executable doesn't exist", "browser has not been installed")),
             ("no-tests", ("no tests found",)),
             ("server-unavailable", ("server-unavailable", "timed out waiting for the config.webserver")),
