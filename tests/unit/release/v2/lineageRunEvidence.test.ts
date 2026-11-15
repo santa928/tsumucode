@@ -176,6 +176,16 @@ it('does not expose untrusted evidence or parent fields in identity errors', () 
     }
   }
 });
+
+it('preserves the fixed baseline identity error for a valid-shaped inconsistent parent', () => {
+  const captured = releaseFixture().capturedBaseline;
+  const parent = {
+    ...captured,
+    baseline: { ...captured.baseline, sourceRecordDigest: '0'.repeat(64) },
+  };
+  expect(() => matchLineageEvidenceParent({ ...common, mode: 'anchor' }, parent))
+    .toThrow('Captured baseline identity differs from its proof');
+});
 it('matches bounded canonical evidence to independently supplied same-run context (shape only)', () => {
   const anchor = test({ ...common, mode: 'anchor' }),
     expected = {

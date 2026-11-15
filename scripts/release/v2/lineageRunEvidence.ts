@@ -2,7 +2,7 @@ import { types } from 'node:util';
 import { z } from 'zod';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { hashBytes, hashValue } from './identity';
-import { validateCapturedBaseline } from './parent';
+import { CapturedBaselineSchema, validateCapturedBaseline } from './parent';
 import { CommitSchema, DigestSchema } from './schema';
 
 const decimal = z.string().regex(/^[1-9]\d{0,15}$/u);
@@ -161,17 +161,20 @@ export function matchLineageEvidenceFiles(
 /** Compare a fresh v1 parent capture structurally; this does not authenticate its source. */
 export function matchLineageEvidenceParent(evidenceInput: unknown, capturedInput: unknown) {
   let evidence: z.infer<typeof Evidence>;
-  let captured: ReturnType<typeof validateCapturedBaseline>;
+  let parsedParent: z.infer<typeof CapturedBaselineSchema>;
   try {
     evidence = Evidence.parse(evidenceInput);
   } catch {
     throw Error('Invalid lineage evidence');
   }
   try {
-    captured = validateCapturedBaseline(capturedInput);
+    parsedParent = CapturedBaselineSchema.parse(capturedInput);
   } catch {
     throw Error('Invalid lineage parent');
   }
+  // Parse untrusted objects inside the fixed error boundary, then validate the copied schema
+  // output separately so the existing fixed identity-mismatch error remains distinguishable.
+  const captured = validateCapturedBaseline(parsedParent);
   const proof = captured.proof;
   if (
     proof.repository !== evidence.repository ||
