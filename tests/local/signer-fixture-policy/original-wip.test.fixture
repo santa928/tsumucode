@@ -1,0 +1,180 @@
+// @vitest-environment node
+import { readFileSync } from 'node:fs';
+import { expect, it } from 'vitest';
+import { assertSignerTopology } from '../../../../scripts/release/v2/signerTopology';
+
+const signer = 'a'.repeat(40);
+const checks = readFileSync('.github/workflows/release-v2-checks.yml');
+const caller = Buffer.from(`jobs:
+  parent_producer:
+    name: parent_producer
+    if: \${{ false }}
+    needs: [resolve]
+    runs-on: ubuntu-24.04
+    permissions: {contents: read, actions: read}
+    outputs:
+      evidenceBase64: \${{ steps.emit.outputs.evidenceBase64 }}
+      evidenceSha256: \${{ steps.emit.outputs.evidenceSha256 }}
+    steps:
+      - run: exit 1
+      - id: emit
+        if: \${{ success() && steps.observe.outcome == 'success' }}
+        run: exit 1
+  parent_observation:
+    name: parent_observation
+    if: \${{ false }}
+    needs: [resolve, parent_producer, build, qualification]
+    runs-on: ubuntu-24.04
+    permissions: {contents: read, actions: read}
+    steps:
+      - run: exit 1
+  qualification:
+    needs: build
+    uses: ./.github/workflows/release-v2-checks.yml
+    with:
+      candidate_artifact_id: \${{ needs.build.outputs.candidate_artifact_id }}
+      metadata_artifact_id: \${{ needs.build.outputs.metadata_artifact_id }}
+  publish:
+    needs: [build, qualification, parent_observation]
+    if: success() && needs.parent_observation.result == 'success'
+    uses: ./.github/workflows/release-v2-publish.yml
+    with:
+      candidate_artifact_id: \${{ needs.build.outputs.candidate_artifact_id }}
+      metadata_artifact_id: \${{ needs.build.outputs.metadata_artifact_id }}
+      qualification_artifact_id: \${{ needs.qualification.outputs.qualification_artifact_id }}
+      qualification_sha256: \${{ needs.qualification.outputs.qualification_sha256 }}
+  signer:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && needs.publish.outputs.record_state == 'verified' && needs.parent_producer.result == 'success'
+    needs: [build, qualification, publish, parent_producer]
+    uses: santa928/tsumucode/.github/workflows/release-v2-lineage-sign.yml@${signer}
+    with:
+      candidate_artifact_id: \${{ needs.build.outputs.candidate_artifact_id }}
+      metadata_artifact_id: \${{ needs.build.outputs.metadata_artifact_id }}
+      qualification_artifact_id: \${{ needs.qualification.outputs.qualification_artifact_id }}
+      qualification_sha256: \${{ needs.qualification.outputs.qualification_sha256 }}
+      parent_evidence_base64: \${{ needs.parent_producer.outputs.evidenceBase64 }}
+      parent_evidence_sha256: \${{ needs.parent_producer.outputs.evidenceSha256 }}
+      record_tag: \${{ needs.publish.outputs.record_tag }}
+      report_artifact_id: \${{ needs.publish.outputs.report_artifact_id }}
+      record_plan_sha256: \${{ needs.publish.outputs.record_plan_sha256 }}
+      public_smoke_sha256: \${{ needs.publish.outputs.public_smoke_sha256 }}
+      public_operations_sha256: \${{ needs.publish.outputs.public_operations_sha256 }}
+`);
+
+it('recognizes an explicit same-run aggregate-to-signer needs topology without authorizing it', () => {
+  expect(() => { assertSignerTopology(caller, checks, signer); }).not.toThrow();
+});
+it('rejects a caller that has no independent pre-deploy observation dependency', () => {
+  const missing = caller.toString().replace('needs: [build, qualification, parent_observation]', 'needs: [build, qualification]');
+  expect(() => { assertSignerTopology(Buffer.from(missing), checks, signer); }).toThrow();
+});
+it('rejects an observer that does not depend on both build and qualification', () => {
+  const raw = caller.toString();
+  for (const value of ['needs: [resolve, parent_producer, qualification]',
+    'needs: [resolve, parent_producer, build]', 'needs: [resolve, parent_producer]']) {
+    const changed = raw.replace('needs: [resolve, parent_producer, build, qualification]', value);
+    expect(changed).not.toBe(raw);
+    expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+  }
+});
+it('rejects disabled-observer tampering, failure bypass, and substituted success sources', () => {
+  const raw = caller.toString();
+  const variants = [
+    raw.replace('    name: parent_observation\n    if: ${{ false }}', '    name: parent_observation\n    if: ${{ true }}'),
+    raw.replace('    name: parent_observation', '    name: parent_producer'),
+    raw.replace('needs: [resolve, parent_producer, build, qualification]', 'needs: [resolve, build, qualification]'),
+    raw.replace('    name: parent_observation\n', '    name: parent_observation\n    continue-on-error: true\n'),
+    raw.replace(/(  parent_observation:[\s\S]*?      - run:) exit 1/, '$1 true'),
+    raw.replace(/(  parent_observation:[\s\S]*?      - run: exit 1)/, '$1\n        if: false'),
+    raw.replace(/(  parent_observation:[\s\S]*?      - run: exit 1)/, '$1\n        continue-on-error: true'),
+    raw.replace(/(  parent_observation:[\s\S]*?      - run: exit 1)/, '$1\n        shell: echo {0}'),
+    raw.replace('    name: parent_observation\n', '    name: parent_observation\n    defaults:\n      run:\n        shell: echo {0}\n'),
+    raw.replace('    name: parent_observation\n', '    name: parent_observation\n    env: {BASH_ENV: injected}\n'),
+    raw.replace('jobs:\n', 'defaults:\n  run:\n    shell: echo {0}\njobs:\n'),
+    raw.replace('jobs:\n', 'env: {BASH_ENV: injected}\njobs:\n'),
+    raw.replace('    name: parent_observation\n', '    name: parent_observation\n    outputs: {snapshotSha256: forged}\n'),
+    raw.replace("if: success() && needs.parent_observation.result == 'success'", "if: always() && needs.parent_observation.result == 'success'"),
+    raw.replace("needs.parent_observation.result == 'success'", "needs.parent_producer.result == 'success'"),
+    raw.replace("needs.parent_observation.result == 'success'", "needs.parent_observation.result != 'success'"),
+  ];
+  // All variants must actually modify the fixture; a no-op is not a negative test.
+  for (const changed of variants) {
+    expect(changed).not.toBe(raw);
+    expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+  }
+});
+it('rejects a missing, changed or dynamic producer job display name', () => {
+  for (const value of ['', '    name: other\n', '    name: ${{ inputs.name }}\n']) {
+    const changed = caller.toString().replace('    name: parent_producer\n', value);
+    expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+  }
+});
+it('rejects inherited or explicitly mapped caller secrets for the signer', () => {
+  const raw = caller.toString();
+  for (const value of ['    secrets: inherit\n', '    secrets: {extra: "${{ secrets.TEST_ONLY }}"}\n']) {
+    const changed = raw.replace('  signer:\n', '  signer:\n' + value);
+    expect(changed).not.toBe(raw);
+    expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+  }
+});
+it('rejects producer first-step or job settings that could bypass the fail-closed stub', () => {
+  const raw = caller.toString();
+  const variants = [
+    raw.replace(/(  parent_producer:[\s\S]*?      - run: exit 1)/, '$1\n        shell: echo {0}'),
+    raw.replace(/(  parent_producer:[\s\S]*?      - run: exit 1)/, '$1\n        env: {BASH_ENV: injected}'),
+    raw.replace('    name: parent_producer\n', '    name: parent_producer\n    defaults:\n      run:\n        shell: echo {0}\n'),
+    raw.replace('    name: parent_producer\n', '    name: parent_producer\n    env: {BASH_ENV: injected}\n'),
+  ];
+  for (const changed of variants) {
+    expect(changed).not.toBe(raw);
+    expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+  }
+});
+it('rejects substituted artifacts, skipped prerequisites and a modified aggregate producer', () => {
+  const source = caller.toString();
+  const altered = [
+    source.replace('needs.qualification.outputs.qualification_artifact_id', 'inputs.any_artifact'),
+    source.replace('needs: [build, qualification, publish, parent_producer]', 'needs: [build, publish]'),
+    source.replace("needs.publish.outputs.record_state == 'verified'", 'true'),
+  ];
+  for (const value of altered) expect(() => { assertSignerTopology(Buffer.from(value), checks, signer); }).toThrow();
+  const changedChecks = Buffer.from(checks.toString().replace("steps.qualification_artifact.outputs['artifact-id']", 'inputs.any_artifact'));
+  expect(() => { assertSignerTopology(caller, changedChecks, signer); }).toThrow();
+});
+
+it('rejects extra signer inputs, removed or conditional qualification, and a duplicate producer', () => {
+  const extra = caller.toString().replace('record_tag: ${{ needs.publish.outputs.record_tag }}', 'record_tag: ${{ needs.publish.outputs.record_tag }}\n      arbitrary: ${{ inputs.any }}');
+  expect(() => { assertSignerTopology(Buffer.from(extra), checks, signer); }).toThrow();
+  const raw = checks.toString();
+  const variants = [
+    raw.replace('app npm run release:flow -- qualify --output .release-v2/qualification.json', 'true'),
+    raw.replace('      - name: Re-read actual main and deployed parent before admission\n', '      - name: Re-read actual main and deployed parent before admission\n        if: false\n'),
+    raw.replace('      - name: Re-read actual main and deployed parent before admission\n', '      - name: Re-read actual main and deployed parent before admission\n        continue-on-error: true\n'),
+    raw.replace('      - name: Preserve qualified checkpoint\n', '      - id: qualification_artifact\n        run: echo fake\n      - name: Preserve qualified checkpoint\n'),
+  ];
+  for (const changed of variants) expect(() => { assertSignerTopology(caller, Buffer.from(changed), signer); }).toThrow();
+});
+
+it('rejects a digest step that does not hash qualification bytes and another producer with the same artifact name', () => {
+  const raw = checks.toString();
+  const wrongDigest = raw.replace('digest="$(sha256sum .release-v2/qualification.json)"', 'digest="$(sha256sum other.json)"');
+  expect(() => { assertSignerTopology(caller, Buffer.from(wrongDigest), signer); }).toThrow();
+  const duplicateName = raw.replace('      - name: Preserve qualified checkpoint\n', '      - name: Duplicate name\n        uses: attacker/action@deadbeef\n        with:\n          name: qualification-${{ github.run_id }}-${{ github.run_attempt }}\n      - name: Preserve qualified checkpoint\n');
+  expect(() => { assertSignerTopology(caller, Buffer.from(duplicateName), signer); }).toThrow();
+});
+
+it('rejects changed producer permissions, needs, guards, outputs or signer evidence wiring', () => {
+  const raw=caller.toString();
+  const variants=[
+    raw.replace('permissions: {contents: read, actions: read}', 'permissions: {contents: write, actions: read}'),
+    raw.replace('needs: [resolve]', 'needs: [build]'),
+    raw.replace('if: ${{ false }}', 'if: ${{ true }}'),
+    raw.replace('- run: exit 1', '- run: true'),
+    raw.replace("steps.observe.outcome == 'success'", "steps.observe.outcome == 'failure'"),
+    raw.replace('steps.emit.outputs.evidenceBase64', 'inputs.evidence'),
+    raw.replace('needs.parent_producer.outputs.evidenceSha256', 'inputs.digest'),
+    raw.replace("needs.parent_producer.result == 'success'", "needs.parent_producer.result != 'success'"),
+    raw.replace('needs: [build, qualification, publish, parent_producer]', 'needs: [build, qualification, publish]'),
+  ];
+  for (const changed of variants) expect(() => { assertSignerTopology(Buffer.from(changed), checks, signer); }).toThrow();
+});
