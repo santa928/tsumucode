@@ -12,7 +12,10 @@ const text = (id: string, selector: string, equals: string): JavaScriptCheckpoin
 });
 
 /** Refの実focusと、外部DOM購読の切替・cleanup・再mountを全checkpointで要求する。 */
-export function reactHookScenarios(goal: string | undefined): JavaScriptInteractionScenario[] {
+export function reactHookScenarios(
+  goal: string | undefined,
+  exerciseId?: string,
+): JavaScriptInteractionScenario[] {
   if (goal === 'ref-focus') {
     const actions: JavaScriptInteractionAction[] = [
       { id: 'focus', kind: 'click', selector: '#focus' },
@@ -69,7 +72,10 @@ export function reactHookScenarios(goal: string | undefined): JavaScriptInteract
     const notifications = ['0', '1', '1', '1', '1', '2', '2', '2', '2'];
     return [
       {
-        id: 'effect-subscription-lifecycle',
+        id:
+          exerciseId === 'react-ch01-l11-compose-e01'
+            ? 'effect-subscription-lifecycle-compose'
+            : 'effect-subscription-lifecycle',
         label: '対象の現在値を同期し、古い購読をcleanupする',
         actions,
         checkpoints: actions.map((action, index) => ({
@@ -132,6 +138,7 @@ export function reactHookScenarios(goal: string | undefined): JavaScriptInteract
 export function acceptsReactHookScenarios(
   goal: string | undefined,
   scenarios: readonly JavaScriptInteractionScenario[] | undefined,
+  exerciseId?: string,
 ): boolean {
   if (
     !['ref-focus', 'external-sync', 'source-hook'].includes(goal ?? '') ||
@@ -153,7 +160,7 @@ export function acceptsReactHookScenarios(
       ]),
     );
   try {
-    return project(scenarios) === project(reactHookScenarios(goal));
+    return project(scenarios) === project(reactHookScenarios(goal, exerciseId));
   } catch {
     return false;
   }

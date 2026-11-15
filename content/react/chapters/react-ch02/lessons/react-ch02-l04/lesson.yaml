@@ -1,0 +1,22 @@
+id: react-ch02-l04
+kind: standard
+title: 温度表示の部品と値の置き場所を決める
+goal: 別の題材で部品の境界とStateを持つ部品を選び、自作の表示部品と操作をつなぐ。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - react-ch02-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+exerciseSources:
+  - exercises/react-ch02-l04-e01/exercise.yaml
+reflection: 温度を覚える部品と表示を分けた理由、値と操作の渡し方、使ったヒントを説明しましょう。
+glossaryRefs:
+  - props
+  - state
+completion:
+  kind: standard
+  finalSlideId: react-ch02-l04-s02
+  requiredExerciseIds:
+    - react-ch02-l04-e01
+nextLessonId: react-ch03-l01

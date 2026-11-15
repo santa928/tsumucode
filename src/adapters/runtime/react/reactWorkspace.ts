@@ -1,3 +1,4 @@
+import { isReadingWorkspace } from './readingListScaffold';
 import { isQuizWorkspace } from './quizScaffold';
 import { isInteractiveStateWorkspace } from './interactiveStateScaffold';
 import { isPropsWorkspace } from './propsCardScaffold';
@@ -5,12 +6,16 @@ import { isStaticComponentsWorkspace } from './staticComponentsScaffold';
 import { isReducerContextWorkspace } from './reducerContextScaffold';
 import { isControlledFormWorkspace } from './controlledFormScaffold';
 import { isHookWorkspace } from './hookScaffold';
+import { isComponentDesignWorkspace } from './componentDesignScaffold';
 
 /** RuntimeのprofileとImportを含む全Sourceを照合する。未知profileは受理しない。 */
 export function isReactWorkspace(
   files: Readonly<Record<string, string>>,
   profile: unknown,
 ): boolean {
+  if (profile === 'component-design-v1') return isComponentDesignWorkspace(files);
+  if (['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(String(profile)))
+    return isReadingWorkspace(files, String(profile));
   if (profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1')
     return isQuizWorkspace(files, profile);
   if (

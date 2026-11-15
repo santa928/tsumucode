@@ -1,0 +1,22 @@
+id: 'react-ch01-l11-compose'
+kind: 'standard'
+title: '購読の開始・解除・依存値を自分で組み立てる'
+goal: 'StateとEffectを自分で書き、選んだ入力の購読開始・同じ購読の解除・対象変更後の再同期をつなぐ。'
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - 'react-ch01-l11'
+slideSources:
+  - 'slides/s01.md'
+exerciseSources:
+  - 'exercises/react-ch01-l11-compose-e01/exercise.yaml'
+reflection: '自分で決めた部分、予測と違った表示、使ったHintを振り返りましょう。'
+glossaryRefs:
+  - 'effect'
+  - 'effect-dependency'
+  - 'cleanup'
+  - 'mount'
+completion:
+  kind: 'standard'
+  finalSlideId: 'react-ch01-l11-compose-s01'
+  requiredExerciseIds:
+    - 'react-ch01-l11-compose-e01'

@@ -1,12 +1,11 @@
 id: react-ch02-l01-e01
-kind: guided-project
-projectId: react-quiz-guided
-workspaceId: react-quiz-guided
-countsTowardStandardExerciseTotal: false
-title: 型付きの問題をComponentへ渡す
+kind: standard
+workspaceId: react-ch02-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 本1冊の表示と操作を作る
 instructionsSource: instructions.md
 requiresConcepts:
-  - conceptId: react-quiz-components
+  - conceptId: react-reading-card
     minimumLevel: compose
 scaffoldLevel: compose
 runtime:
@@ -15,38 +14,25 @@ runtime:
   sourceType: module
   capabilityProfile: dom
   primaryOutput: preview
-  profile: quiz-workshop-v1
-  learningGoal: quiz-card
+  profile: reading-card-v1
+  learningGoal: reading-card
 steps:
-  - id: compose-current-step
-    file: QuestionCard.tsx
-    target: 型付きの問題をComponentへ渡す
-    starterAnchor: key={index}
-    change: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
-    observe: 名前を入力してCSSを押し、親が同じCSSを受け取ることを確認して保存する
+  - id: react-ch02-l01-e01-step01
+    file: BookCard.tsx
+    target: BookCard.tsxのBookCard。本の型とbook/onToggle、親と初期3冊は用意されています。
+    starterAnchor: export function BookCard
+    change: book.titleと「既読／未読」を表示し、未読のbuttonは「読了にする」、既読なら「未読にする」とします。buttonのidはtoggle-にbook.idをつなぎます。aria-pressedは読み上げ機能にbuttonの選択状態を伝える属性です。この課題では既読ならtrue、未読ならfalseになるbook.readを渡します。押したときだけonToggleへ本のidを渡してください。
+    observe: 「星の地図」を2回押すと元へ戻り、他の本は変わりません。親の「最初に戻す」も確かめます。補助関数や装飾は自由です。
     requiresConceptIds:
-      - react-quiz-components
+      - react-reading-card
     validationRuleIds:
       - react-ch02-l01-e01-r01
       - react-ch02-l01-e01-r02
-      - react-ch02-l01-e01-r03
 files:
-  - path: QuestionCard.tsx
+  - path: BookCard.tsx
     language: react
-    source: starter/QuestionCard.tsx
+    source: starter/BookCard.tsx
     editable: true
-  - path: quizState.ts
-    language: typescript
-    source: starter/quizState.ts
-    editable: true
-  - path: main.tsx
-    language: react
-    source: starter/main.tsx
-    editable: false
-  - path: types.ts
-    language: typescript
-    source: starter/types.ts
-    editable: false
   - path: data.ts
     language: typescript
     source: starter/data.ts
@@ -55,22 +41,18 @@ files:
     language: html
     source: starter/index.html
     editable: false
-solutionFiles:
-  - path: QuestionCard.tsx
-    language: react
-    source: solution/QuestionCard.tsx
-    editable: false
-  - path: quizState.ts
-    language: typescript
-    source: solution/quizState.ts
-    editable: false
   - path: main.tsx
     language: react
-    source: solution/main.tsx
+    source: starter/main.tsx
     editable: false
   - path: types.ts
     language: typescript
-    source: solution/types.ts
+    source: starter/types.ts
+    editable: false
+solutionFiles:
+  - path: BookCard.tsx
+    language: react
+    source: solution/BookCard.tsx
     editable: false
   - path: data.ts
     language: typescript
@@ -80,372 +62,423 @@ solutionFiles:
     language: html
     source: solution/index.html
     editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
 validationRules:
   - id: react-ch02-l01-e01-r01
-    label: クイズの見出し
-    target:
-      kind: selector
-      selector: h1
-    assertion:
-      kind: text
-      operator: equals
-      expected: 練習クイズ
+    label: 最初の3冊の題名と読書状態を表示する
     required: true
     group: all
     viewportMode: all
     viewportIds:
       - desktop-1280
+    hintId: react-ch02-l01-e01-h01
+    relatedSlideId: react-ch02-l01-s01
+    target:
+      kind: selector
+      selector: '#books'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
     feedback:
-      target: QuestionCard.tsx
-      expected: 練習クイズ
-      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
-    hintId: react-ch02-l01-e01-h02
-    relatedSlideId: react-ch02-l01-s02
+      target: BookCard.tsxとプレビュー
+      expected: 最初の3冊の題名と読書状態を表示する
+      nextAction: 見せる値はbookから読み、操作はonToggleへ渡します。
   - id: react-ch02-l01-e01-r02
-    label: 受け取った問題
-    target:
-      kind: selector
-      selector: '#question'
-    assertion:
-      kind: text
-      operator: equals
-      expected: ページの骨組みを作る言語は？
+    label: 受け取った本を表示し、操作した本のIDを親へ渡す部品を作る。
     required: true
     group: all
     viewportMode: all
     viewportIds:
       - desktop-1280
-    feedback:
-      target: QuestionCard.tsx
-      expected: ページの骨組みを作る言語は？
-      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
-    hintId: react-ch02-l01-e01-h02
-    relatedSlideId: react-ch02-l01-s02
-  - id: react-ch02-l01-e01-r03
-    label: 今回の元Sourceと値のつながり
+    hintId: react-ch02-l01-e01-h01
+    relatedSlideId: react-ch02-l01-s01
     target:
       kind: react-learning
-      file: QuestionCard.tsx
+      file: BookCard.tsx
     assertion:
       kind: react-learning
-      goal: quiz-card
-    required: true
-    group: all
-    viewportMode: all
-    viewportIds:
-      - desktop-1280
+      goal: reading-card
     feedback:
-      target: QuestionCard.tsx
-      expected: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
-      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
-    hintId: react-ch02-l01-e01-h02
-    relatedSlideId: react-ch02-l01-s02
+      target: BookCard.tsxとプレビュー
+      expected: 受け取った本を表示し、操作した本のIDを親へ渡す部品を作る。
+      nextAction: 見せる値はbookから読み、操作はonToggleへ渡します。
+interactionScenarios:
+  - id: reading-card-toggles
+    label: 親の読書状態を個別に変更して戻す
+    actions:
+      - id: finish-stars
+        kind: click
+        selector: '#toggle-stars'
+      - id: reopen-stars
+        kind: click
+        selector: '#toggle-stars'
+      - id: reopen-rain
+        kind: click
+        selector: '#toggle-rain'
+      - id: finish-forest
+        kind: click
+        selector: '#toggle-forest'
+      - id: reset
+        kind: click
+        selector: '#reset'
+      - id: finish-forest-again
+        kind: click
+        selector: '#toggle-forest'
+      - id: reset-again
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-finish-stars
+        afterActionId: finish-stars
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-reopen-stars
+        afterActionId: reopen-stars
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-reopen-rain
+        afterActionId: reopen-rain
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-forest
+        afterActionId: finish-forest
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-forest-again
+        afterActionId: finish-forest-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset-again
+        afterActionId: reset-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
 hints:
   - id: react-ch02-l01-e01-h01
     level: 1
-    title: 修正位置を探す
-    text: mapが作るbuttonを探し、表示・Key・Callbackの3箇所を比べます。
-    relatedSlideId: react-ch02-l01-s02
+    title: 最初の手掛かり
+    text: 見せる値はbookから読み、操作はonToggleへ渡します。
+    relatedSlideId: react-ch02-l01-s01
   - id: react-ch02-l01-e01-h02
     level: 2
-    title: Briefと値をつなぐ
-    text: 今回は各問内で選択肢の文字列が一意です。indexでなくその値を目印にし、押した値を親へ渡します。
-    relatedSlideId: react-ch02-l01-s02
+    title: 値と操作の流れを追う
+    text: onClickへ、クリック時に呼ぶ関数を書きます。表示した時点で呼ばないようにします。
+    relatedSlideId: react-ch02-l01-s01
   - id: react-ch02-l01-e01-h03
     level: 3
-    title: 別の対象の局所例
-    text: 別の一覧なら、items.map(item => <button key={item.id} onClick={() =>
-      select(item.id)}>{item.label}</button>)。3つの値の由来を今回へ応用します。
-    relatedSlideId: react-ch02-l01-s02
+    title: 小さい例で確かめる
+    text: 題名は<h2>{book.title}</h2>で表示できます。操作はonClick={() =>
+      onToggle(book.id)}の形です。状態とbuttonの文はbook.readから考えましょう。
+    relatedSlideId: react-ch02-l01-s01
 relatedSlideIds:
   - react-ch02-l01-s01
   - react-ch02-l01-s02
-  - react-ch02-l01-s03
 previewViewports:
   - id: desktop-1280
     width: 1280
     height: 720
 assets: []
-interactionScenarios:
-  - id: quiz-card-callback
-    label: 一覧の選択肢を親へ渡す
-    actions:
-      - id: initial
-        kind: focus
-        selector: '#name'
-      - id: name
-        kind: fill
-        selector: '#name'
-        value: Ada
-      - id: selected
-        kind: click
-        selector: '#CSS'
-    checkpoints:
-      - id: initial
-        afterActionId: initial
-        expectations:
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: ページの骨組みを作る言語は？
-          - id: first
-            kind: selector-text
-            selector: '#HTML'
-            equals: HTML
-          - id: second
-            kind: selector-text
-            selector: '#CSS'
-            equals: CSS
-      - id: name
-        afterActionId: name
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-      - id: selected
-        afterActionId: selected
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: received
-            kind: selector-text
-            selector: '#received'
-            equals: CSS
 fixtures:
-  - id: starter
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch02-l01-e01-r03
-      - interaction:quiz-card-callback:selected:received
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/starter-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/starter-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
-        editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
   - id: solution
     expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: QuestionCard.tsx
+      - path: BookCard.tsx
         language: react
-        source: fixtures/solution-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/solution-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
+        source: fixtures/solution/BookCard.tsx
         editable: false
       - path: data.ts
         language: typescript
-        source: fixtures/data.ts
+        source: fixtures/solution/data.ts
         editable: false
       - path: index.html
         language: html
-        source: fixtures/index.html
+        source: fixtures/solution/index.html
         editable: false
-  - id: alternative
+      - path: main.tsx
+        language: react
+        source: fixtures/solution/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/solution/types.ts
+        editable: false
+  - id: alternative-helper
     expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: QuestionCard.tsx
+      - path: BookCard.tsx
         language: react
-        source: fixtures/alternative-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/alternative-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
+        source: fixtures/alternative-helper/BookCard.tsx
         editable: false
       - path: data.ts
         language: typescript
-        source: fixtures/data.ts
+        source: fixtures/alternative-helper/data.ts
         editable: false
       - path: index.html
         language: html
-        source: fixtures/index.html
-        editable: false
-  - id: alias
-    expectedStatus: pass
-    expectedFeedbackRuleIds: []
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/alias-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/alias-quizState.ts
+        source: fixtures/alternative-helper/index.html
         editable: false
       - path: main.tsx
         language: react
-        source: fixtures/main.tsx
+        source: fixtures/alternative-helper/main.tsx
         editable: false
       - path: types.ts
         language: typescript
-        source: fixtures/types.ts
+        source: fixtures/alternative-helper/types.ts
         editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
-  - id: wrong-key
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch02-l01-e01-r03
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/wrong-key-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/wrong-key-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
-        editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
-  - id: fixed-label
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch02-l01-e01-r03
-      - interaction:quiz-card-callback:initial:first
-      - interaction:quiz-card-callback:initial:second
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/fixed-label-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/fixed-label-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
-        editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
-  - id: wrong-callback
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch02-l01-e01-r03
-      - interaction:quiz-card-callback:selected:received
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/wrong-callback-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/wrong-callback-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
-        editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
-  - id: side-effect
+  - id: starter
     expectedStatus: code-error
     expectedFeedbackRuleIds: []
-    expectedDiagnosticCodes:
-      - react-type-error-0
     files:
-      - path: QuestionCard.tsx
+      - path: BookCard.tsx
         language: react
-        source: fixtures/side-effect-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/side-effect-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
+        source: fixtures/starter/BookCard.tsx
         editable: false
       - path: data.ts
         language: typescript
-        source: fixtures/data.ts
+        source: fixtures/starter/data.ts
         editable: false
       - path: index.html
         language: html
-        source: fixtures/index.html
+        source: fixtures/starter/index.html
         editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/starter/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/starter/types.ts
+        editable: false
+    expectedDiagnosticCodes:
+      - react-interaction-target
+  - id: wrong-id
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-card-toggles:after-reopen-rain:books
+      - interaction:reading-card-toggles:after-reopen-rain:state-stars
+      - interaction:reading-card-toggles:after-reopen-rain:state-rain
+      - interaction:reading-card-toggles:after-finish-forest:books
+      - interaction:reading-card-toggles:after-finish-forest:state-rain
+      - interaction:reading-card-toggles:after-finish-forest:state-forest
+      - interaction:reading-card-toggles:after-finish-forest-again:books
+      - interaction:reading-card-toggles:after-finish-forest-again:state-stars
+      - interaction:reading-card-toggles:after-finish-forest-again:state-forest
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/wrong-id/BookCard.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/wrong-id/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/wrong-id/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/wrong-id/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/wrong-id/types.ts
+        editable: false
+  - id: no-callback
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-card-toggles:after-finish-stars:books
+      - interaction:reading-card-toggles:after-finish-stars:state-stars
+      - interaction:reading-card-toggles:after-reopen-rain:books
+      - interaction:reading-card-toggles:after-reopen-rain:state-rain
+      - interaction:reading-card-toggles:after-finish-forest:books
+      - interaction:reading-card-toggles:after-finish-forest:state-rain
+      - interaction:reading-card-toggles:after-finish-forest:state-forest
+      - interaction:reading-card-toggles:after-finish-forest-again:books
+      - interaction:reading-card-toggles:after-finish-forest-again:state-forest
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/no-callback/BookCard.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/no-callback/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/no-callback/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/no-callback/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/no-callback/types.ts
+        editable: false
+  - id: callback-on-render
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/callback-on-render/BookCard.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/callback-on-render/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/callback-on-render/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/callback-on-render/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/callback-on-render/types.ts
+        editable: false
+    expectedDiagnosticCodes:
+      - react-type-error-2322
