@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 import { expect, it } from 'vitest';
 import { assertFixedPythonFirstAnchor } from '../../../../scripts/release/v2/pythonFirstAnchorIdentity';
 const tag = readFileSync('tests/fixtures/release-v2/b930-public-tag.object');
@@ -45,4 +46,106 @@ it('accepts only the pinned public tag and identity, without authorizing a deplo
   expect(() => {
     assertFixedPythonFirstAnchor(proof, shared);
   }).toThrow();
+});
+
+it('rejects a foreign-realm shared tag while accepting an ordinary foreign backing buffer', () => {
+  const foreignShared: ArrayBuffer = runInNewContext('new SharedArrayBuffer(length)', {
+    length: tag.length,
+  }) as ArrayBuffer;
+  const sharedView = new Uint8Array(foreignShared);
+  sharedView.set(tag);
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, sharedView);
+  }).toThrow('Invalid anchor tag bytes');
+
+  let getterCalled = false;
+  Object.defineProperty(sharedView, 'buffer', {
+    get() {
+      getterCalled = true;
+      return new ArrayBuffer(tag.length);
+    },
+  });
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, sharedView);
+  }).toThrow('Invalid anchor tag bytes');
+  expect(getterCalled).toBe(false);
+
+  const foreignOrdinary: ArrayBuffer = runInNewContext('new ArrayBuffer(length)', {
+    length: tag.length,
+  }) as ArrayBuffer;
+  const ordinaryView = new Uint8Array(foreignOrdinary);
+  ordinaryView.set(tag);
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, ordinaryView);
+  }).not.toThrow();
+});
+
+it('copies only the actual bounded backing bytes without consulting caller hooks', () => {
+  const backing = new Uint8Array(tag.length + 2);
+  backing.set(tag, 1);
+  const ordinary = backing.subarray(1, -1);
+  let valueOfCalled = false;
+  let getterCalled = false;
+  for (const key of ['buffer', 'byteLength', 'byteOffset', Symbol.iterator]) {
+    Object.defineProperty(ordinary, key, {
+      get() {
+        getterCalled = true;
+        throw new Error('synthetic marker');
+      },
+    });
+  }
+  Object.defineProperty(ordinary, 'valueOf', {
+    value() {
+      valueOfCalled = true;
+      return new Uint8Array(new SharedArrayBuffer(tag.length));
+    },
+  });
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, ordinary);
+  }).not.toThrow();
+  expect(valueOfCalled).toBe(false);
+  expect(getterCalled).toBe(false);
+
+  const oversized = new Uint8Array(16 * 1024 + 1);
+  Object.defineProperty(oversized, 'byteLength', { value: 1 });
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, oversized);
+  }).toThrow('Invalid anchor tag bytes');
+
+  expect(() => {
+    assertFixedPythonFirstAnchor(proof, new Proxy(ordinary, {}));
+  }).toThrow('Invalid anchor tag bytes');
+});
+
+it('snapshots tag bytes before proof accessors can change the input', () => {
+  const altered = Uint8Array.from(tag);
+  altered[0] = altered[0]! ^ 1;
+  let alteredGetterCalls = 0;
+  const alteredProof = {
+    ...proof,
+    get repository() {
+      alteredGetterCalls++;
+      altered.set(tag);
+      return proof.repository;
+    },
+  };
+  expect(() => {
+    assertFixedPythonFirstAnchor(alteredProof, altered);
+  }).toThrow('Pinned anchor identity differs');
+  expect(alteredGetterCalls).toBeGreaterThan(0);
+
+  const original = Uint8Array.from(tag);
+  let originalGetterCalls = 0;
+  const originalProof = {
+    ...proof,
+    get repository() {
+      originalGetterCalls++;
+      original[0] = original[0]! ^ 1;
+      return proof.repository;
+    },
+  };
+  expect(() => {
+    assertFixedPythonFirstAnchor(originalProof, original);
+  }).not.toThrow();
+  expect(originalGetterCalls).toBeGreaterThan(0);
 });
