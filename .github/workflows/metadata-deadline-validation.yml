@@ -1,0 +1,57 @@
+name: Metadata deadline draft validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, converted_to_draft]
+
+permissions: {}
+
+jobs:
+  metadata_deadline:
+    # Diagnostic only: never grants release, signature or publication authority.
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/validate-lineage-metadata-deadline' &&
+          github.event.pull_request.base.sha == 'af8b7513a9304ae2fd82f8f43833698e8635b795' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact draft HEAD without persisted credentials
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Check fixed source and build inputs
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          git rev-parse HEAD 'HEAD^{tree}'
+          sha256sum --check <<'SHA256'
+          2d26afccb2fc4d21791c1e176264e9a25a7d1b11308fae5262ac1cbd115b4677  Dockerfile
+          15c380765bbf2e109f96275248e842b7a9649fca7efa633427ee85ab8fd19aa4  package.json
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          71d5e6329eb617384edf8742a64d9f8533ee5f7832d6586ac6c9150eab1967c8  .dockerignore
+          08e1a836dc91e5b25ac312e4631edaea5d66e019bca9f50157486b77d6404828  tests/local/lineage-metadata-deadline/lineageArtifactMetadata.ts
+          a862fb87d9cb083f2e9cceed96f0f02e2fb15e4c5a0e871bc186759f1e34f746  tests/local/lineage-metadata-deadline/deadline.test.mjs
+          SHA256
+      - name: Build fixed Node and locked dependencies
+        env:
+          IMAGE: lineage-metadata-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: docker build --target dependencies --tag "$IMAGE" .
+      - name: Run isolated synthetic deadline checks
+        env:
+          IMAGE: lineage-metadata-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          docker run --rm --network none --read-only --user 65534:65534
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/lineage-metadata-deadline,target=/workspace/tests/local/lineage-metadata-deadline,readonly"
+          "$IMAGE" node --test tests/local/lineage-metadata-deadline/deadline.test.mjs
