@@ -72,7 +72,7 @@ jobs:
             --cap-drop ALL --security-opt no-new-privileges:true \
             --mount "type=bind,src=$PWD/observer/.github/issue261-python-digest,dst=/tool,readonly" \
             --workdir /workspace --entrypoint /workspace/node_modules/.bin/tsx \
-            issue261-digest:45fc /tool/digest-probe.ts 2>"$private/create.err"); then
+            issue261-digest:45fc /tool/digest-probe.mjs 2>"$private/create.err"); then
             echo 'Digest probe container creation failed.' >&2
             exit 1
           fi
@@ -86,6 +86,21 @@ jobs:
           test "$(docker inspect --format '{{range .Mounts}}{{if and (ne .Destination "/tool") (ne .Destination "/tmp")}}unexpected{{end}}{{end}}' "$probe")" = ''
           if ! docker start --attach "$probe" > "$private/stdout" 2> "$private/stderr"; then
             echo 'Digest probe execution failed.' >&2
+            for phase in initial scratch scan-original copy edit scan-candidate compile-original compile-candidate compare-learner review review-original review-candidate review-control cleanup complete; do
+              if grep -Fxq "digest-probe=failed phase=$phase" "$private/stderr"; then
+                echo "digest-phase=$phase" >&2
+              fi
+            done
+            for entry in 'permission:EACCES|EPERM|Permission denied' 'read-only:EROFS|read-only file system' 'missing:ENOENT|no such file or directory' 'module:Cannot find module|ERR_MODULE_NOT_FOUND' 'transform:Transform failed|TransformError|SyntaxError'; do
+              category=${entry%%:*}
+              pattern=${entry#*:}
+              if grep -Eiq "$pattern" "$private/stderr"; then
+                echo "digest-error-marker=$category" >&2
+              fi
+            done
+            if grep -Fq 'scratch-cleanup=failed' "$private/stderr"; then
+              echo 'Digest scratch cleanup incomplete.' >&2
+            fi
             exit 1
           fi
           test "$(docker inspect --format '{{.State.Status}} {{.State.ExitCode}}' "$probe")" = 'exited 0'
