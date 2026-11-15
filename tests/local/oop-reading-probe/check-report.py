@@ -41,6 +41,7 @@ def diagnostic(path):
             ("mount-read-only", ("read-only file system", "readonly file system")),
             ("bind-source-missing", ('invalid mount config for type "bind": bind source path does not exist',)),
             ("bind-config", ('invalid mount config for type "bind"',)),
+            ("volume-readonly-anonymous", ('invalid mount config for type "volume": must not set readonly mode when using anonymous volumes',)),
             ("volume-config", ('invalid mount config for type "volume"',)),
             ("tmpfs-config", ('invalid mount config for type "tmpfs"',)),
             ("mount-invalid", ("invalid mount config", "invalid mount specification")),

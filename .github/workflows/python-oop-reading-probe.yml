@@ -44,16 +44,17 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = f9e7627742df88f89dd762259023de1d766fafa3
-          test "$(git rev-parse HEAD^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
+          test "$(git rev-parse HEAD^^)" = f9e7627742df88f89dd762259023de1d766fafa3
+          test "$(git rev-parse HEAD^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dist.py' \
             'tests/local/oop-reading-probe/check-report.py' \
             'tests/local/oop-reading-probe/oop-horizontal.config.ts' \
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts')
-          test "$(git diff --no-renames --name-only HEAD^^^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^^^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
