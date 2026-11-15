@@ -19,7 +19,7 @@ const diagnosticTimeline = (value) => {
     !['matched', 'unknown'].includes(value.wait) ||
     !['yes', 'no', 'unknown'].includes(value.first) ||
     !['yes', 'no', 'unknown'].includes(value.second) ||
-    !['same', 'changed', 'unknown'].includes(value.change) ||
+    !['same', 'unknown'].includes(value.change) ||
     !['oom', 'die', 'kill'].every(
       (key) =>
         ['seen', 'unknown'].includes(value[key]) &&
@@ -33,7 +33,7 @@ const diagnosticTimeline = (value) => {
       ? 'unknown'
       : value.first === value.second
         ? 'same'
-        : 'changed';
+        : 'unknown';
   if (
     value.change !== change ||
     (value.wait !== 'matched' &&
@@ -130,7 +130,7 @@ export async function observePythonCiExit({
   if (matches(after) && after?.State?.Running === false && after?.State?.ExitCode === waitedCode) {
     flags.second = getFlag(after?.State?.OOMKilled);
     if (flags.first !== 'unknown' && flags.second !== 'unknown')
-      flags.change = flags.first === flags.second ? 'same' : 'changed';
+      flags.change = flags.first === flags.second ? 'same' : 'unknown';
   }
   if (Buffer.isBuffer(events) && events.length <= 32768) {
     try {

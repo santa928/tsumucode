@@ -110,7 +110,7 @@ test('CI timeline rejects absent ownership, forged IDs, mismatched events and am
 });
 
 test('CI timeline record is same-run, finite, and rejects extra or forged fields', () => temp((path) => {
-  const timeline = { wait:'matched', first:'no', second:'yes', change:'changed', oom:'seen', kill:'unknown', die:'seen', oomWhen:'before', killWhen:'unknown', dieWhen:'near' };
+  const timeline = { wait:'matched', first:'no', second:'yes', change:'unknown', oom:'seen', kill:'unknown', die:'seen', oomWhen:'before', killWhen:'unknown', dieWhen:'near' };
   assert.equal(engine.capturePythonCiDiagnostic({ enabled:true, path, runId:'one', inspected:inspect, timeline }), true);
   assert.deepEqual(engine.readPythonCiDiagnostic({ enabled:true, path, runId:'one' }), { oom:false, exit:137, memory:268435456, swap:268435456, errorPresent:true, timeline });
   assert.equal(engine.readPythonCiDiagnostic({ enabled:true, path, runId:'different' }), null);
@@ -125,7 +125,7 @@ test('timeline is bounded, treats contradictory snapshots and malformed event st
   const newer = { ...owned, State: { ...owned.State, OOMKilled:true } };
   const changed = await engine.observePythonCiExit({ enabled:true, id, owner:'owner', inspected:owned, waitedCode:137, since:999, until:1001,
     api:async (_m,path) => path.startsWith('/events?') ? Buffer.from('{invalid PRIVATE_MARKER') : newer });
-  assert.equal(changed.first,'no'); assert.equal(changed.second,'yes'); assert.equal(changed.change,'changed');
+  assert.equal(changed.first,'no'); assert.equal(changed.second,'yes'); assert.equal(changed.change,'unknown');
   assert.equal(changed.oom,'unknown'); assert.doesNotMatch(JSON.stringify(changed),/PRIVATE_MARKER/);
   const mismatch = await engine.observePythonCiExit({ enabled:true, id, owner:'owner', inspected:owned, waitedCode:1, since:999, until:1001, api:async()=>{throw Error('must not call');} });
   assert.deepEqual(mismatch, { wait:'unknown', first:'unknown', second:'unknown', change:'unknown', oom:'unknown', kill:'unknown', die:'unknown', oomWhen:'unknown', killWhen:'unknown', dieWhen:'unknown' });
