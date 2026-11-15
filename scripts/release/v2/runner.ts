@@ -118,7 +118,11 @@ export async function runReleaseSuite(
   if (
     observeNative !==
     (suite === 'native-next' ||
-      TEST_SUITES.some((row) => row.suite === suite && row.producerJobId === 'boundary'))
+      TEST_SUITES.some(
+        (row) =>
+          row.suite === suite &&
+          (row.producerJobId === 'boundary' || row.producerJobId === 'python_fixtures'),
+      ))
   )
     throw new Error('Wrong native execution path');
   const context = {

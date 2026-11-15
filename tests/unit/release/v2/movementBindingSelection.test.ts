@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, beforeEach, expect, it } from 'vitest';
 import { execFile } from 'node:child_process';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
@@ -11,12 +11,32 @@ import {
 } from '../../../../scripts/release/v2/movement';
 import { readMovementBaselineProofs } from '../../../../scripts/release/v2/movementBaseline';
 import { hashArtifact, hashValue } from '../../../../scripts/release/v2/identity';
+import { compileContent } from '../../../../scripts/content/compile';
+import { buildInventory } from '../../../../scripts/release/v2/inventory';
 import { releaseFixture } from './releaseFixture';
 
 const exec = promisify(execFile);
 const eb2 = 'eb2fe6f8e06409569f173efb2fe6275c46a535cf';
 const roots: string[] = [];
+const controlledGitEnvironment = (key: string) =>
+  key.startsWith('GIT_') || ['HOME', 'PATH', 'LC_ALL', 'XDG_CONFIG_HOME'].includes(key);
+let savedGitEnvironment: [string, string | undefined][] = [];
+beforeEach(async () => {
+  savedGitEnvironment = Object.entries(process.env).filter(([key]) =>
+    controlledGitEnvironment(key),
+  );
+  const home = await mkdtemp(path.join(os.tmpdir(), 'movement-binding-git-env-'));
+  roots.push(home);
+  await mkdir(path.join(home, 'empty-git-template'));
+  for (const key of Object.keys(process.env))
+    if (controlledGitEnvironment(key)) delete process.env[key];
+  Object.assign(process.env, isolatedGitEnvironment(home));
+});
 afterEach(async () => {
+  for (const key of Object.keys(process.env))
+    if (controlledGitEnvironment(key)) delete process.env[key];
+  for (const [key, value] of savedGitEnvironment) if (value !== undefined) process.env[key] = value;
+  savedGitEnvironment = [];
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -42,6 +62,33 @@ function gitAt(root: string) {
   );
   return async (...args: string[]) =>
     (await exec('git', args, { cwd: root, env, encoding: 'utf8' })).stdout.trim();
+}
+
+function isolatedGitEnvironment(home: string) {
+  return {
+    PATH: '/usr/bin:/bin',
+    HOME: home,
+    XDG_CONFIG_HOME: path.join(home, 'xdg'),
+    LC_ALL: 'C',
+    GIT_CONFIG_NOSYSTEM: '1',
+    GIT_CONFIG_GLOBAL: '/dev/null',
+    GIT_CONFIG_COUNT: '4',
+    GIT_CONFIG_KEY_0: 'core.hooksPath',
+    GIT_CONFIG_VALUE_0: '/dev/null',
+    GIT_CONFIG_KEY_1: 'core.fsmonitor',
+    GIT_CONFIG_VALUE_1: 'false',
+    GIT_CONFIG_KEY_2: 'init.templateDir',
+    GIT_CONFIG_VALUE_2: path.join(home, 'empty-git-template'),
+    GIT_CONFIG_KEY_3: 'safe.directory',
+    GIT_CONFIG_VALUE_3: process.cwd(),
+    GIT_TERMINAL_PROMPT: '0',
+  };
+}
+
+function isolatedGitAt(root: string, home: string) {
+  const env = isolatedGitEnvironment(home);
+  return async (...args: string[]) =>
+    (await exec('/usr/bin/git', args, { cwd: root, env, encoding: 'utf8' })).stdout.trim();
 }
 
 async function declarationRoot() {
@@ -273,6 +320,124 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   );
   await git('update-ref', 'HEAD', changedCommit);
   await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+}, 60000);
+
+it('実践とOOPを含む固定候補だけを旧移行の後続として読み、追加改変を拒否する', async () => {
+  const source = '796b77d6289997df47b00a73554a0cde95f96642';
+  const digest = 'bf5b4a053e405301728761e1488fbadf600f95a372cd997943734b35e75084dc';
+  const root = await temporaryRoot();
+  const compiled = await compileContent({
+    sourceRoot: path.resolve('content'),
+    outputRoot: path.join(root, 'compiled'),
+    checkOnly: true,
+  });
+  expect(hashValue(buildInventory(compiled.compilations))).toBe(digest);
+  await mkdir(path.join(root, 'empty-git-template'));
+  const git = isolatedGitAt(root, root);
+  const objects = await isolatedGitAt(process.cwd(), root)(
+    'rev-parse',
+    '--path-format=absolute',
+    '--git-path',
+    'objects',
+  );
+  const controlled = controlledGitEnvironment;
+  const originalEnvironment = Object.entries(process.env).filter(([key]) => controlled(key));
+  const trap = path.join(root, 'unapproved-worktree');
+  await mkdir(trap);
+  const hostileTemplate = path.join(root, 'unapproved-template');
+  await mkdir(path.join(hostileTemplate, 'hooks'), { recursive: true });
+  await writeFile(
+    path.join(hostileTemplate, 'hooks/reference-transaction'),
+    '#!/bin/sh\nexit 99\n',
+    {
+      mode: 0o755,
+    },
+  );
+  const globalConfig = path.join(root, 'unapproved-global-config');
+  await writeFile(
+    globalConfig,
+    `[core]\n\tworktree = ${trap}\n[init]\n\ttemplateDir = ${hostileTemplate}\n`,
+  );
+  try {
+    process.env.GIT_CONFIG_GLOBAL = globalConfig;
+    process.env.GIT_CONFIG_COUNT = '1';
+    process.env.GIT_CONFIG_KEY_0 = 'core.worktree';
+    process.env.GIT_CONFIG_VALUE_0 = trap;
+    await git('init', '-b', 'main');
+    expect(await git('rev-parse', '--show-toplevel')).toBe(root);
+    await expect(
+      readFile(path.join(root, '.git/hooks/reference-transaction')),
+    ).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    for (const key of Object.keys(process.env)) if (controlled(key)) delete process.env[key];
+    Object.assign(process.env, isolatedGitEnvironment(root));
+    await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+    await git('update-ref', 'HEAD', source);
+    await git('read-tree', '--reset', '-u', source);
+    const declarationPath = 'docs/quality/movement-eb2-v2.json';
+    const originalDeclaration = await readFile(path.join(root, declarationPath), 'utf8');
+    const closure = await hashArtifact(path.join(root, 'content'), {
+      rejectEmptyDirectories: true,
+    });
+    expect(closure.files).toHaveLength(5018);
+    expect(closure.digest).toBe('f13b1f3636dcdf3db291f911c6af8ad78352c0482462cc4b28ea1ffb52db63f1');
+    const expectAccepted = async () =>
+      expect(await readMovementDeclaration(root, digest)).toEqual(JSON.parse(originalDeclaration));
+    await expectAccepted();
+    await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+
+    for (const target of [
+      'content/learning-paths/python-basics.yaml',
+      'content/python-practice/course.yaml',
+      'content/python-oop/course.yaml',
+      'docs/quality/content-v2-receipts.json',
+      'content/python-basics/course.yaml',
+    ]) {
+      const file = path.join(root, target);
+      const original = await readFile(file);
+      await writeFile(file, 'unapproved change');
+      await expect(readMovementDeclaration(root, digest), target).rejects.toThrow();
+      await git('update-index', '--assume-unchanged', target);
+      await expect(readMovementDeclaration(root, digest), target + ' hidden').rejects.toThrow();
+      await git('update-index', '--no-assume-unchanged', target);
+      await writeFile(file, original);
+      await expectAccepted();
+    }
+    const tracked = 'content/python-basics/course.yaml';
+    const trackedOriginal = await readFile(path.join(root, tracked));
+    await writeFile(path.join(root, tracked), 'unapproved index change');
+    await git('add', '--', tracked);
+    await writeFile(path.join(root, tracked), trackedOriginal);
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await git('reset', '--', tracked);
+    await expectAccepted();
+    const excluded = 'content/learning-paths/unapproved-extra.yaml';
+    await writeFile(path.join(root, '.git/info/exclude'), excluded + '\n');
+    await writeFile(path.join(root, excluded), 'unapproved');
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await rm(path.join(root, excluded));
+    await writeFile(path.join(root, '.git/info/exclude'), '');
+    await expectAccepted();
+    const target = 'content/python-practice/course.yaml';
+    await git('update-index', '--skip-worktree', target);
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await git('update-index', '--no-skip-worktree', target);
+    await expectAccepted();
+    await git('config', 'core.filemode', 'false');
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await git('config', 'core.filemode', 'true');
+    await expectAccepted();
+    await chmod(path.join(root, target), 0o755);
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await chmod(path.join(root, target), 0o644);
+    await expectAccepted();
+    expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(originalDeclaration);
+  } finally {
+    for (const key of Object.keys(process.env)) if (controlled(key)) delete process.env[key];
+    for (const [key, value] of originalEnvironment)
+      if (value !== undefined) process.env[key] = value;
+  }
 }, 60000);
 
 it('eb2 bindingに対応する元proofだけを選び、再captureは時刻だけの差を許す', async () => {
