@@ -1,0 +1,64 @@
+import { fromBuffer, type Entry } from 'yauzl';
+import { crc32 } from 'node:zlib';
+import { hashBytes } from './identity';
+import { readBoundedRegularFile } from './boundedFile';
+
+// Independent runner only; archive digest must come from authenticated GitHub metadata.
+// Dist limits exceed the observed 9.6 MiB largest file and 38.2 MiB total.
+const MiB = 1024 * 1024;
+const LIMITS = { dist:{archive:128*MiB, file:16*MiB, total:128*MiB, count:10000},
+  metadata:{archive:64*MiB, file:4*MiB, total:48*MiB, count:32} } as const;
+export async function readLineageZip(file:string, expectedDigest:string, kind:keyof typeof LIMITS,
+  options?:{allowedDirectories:readonly string[]}) {
+  const limit = LIMITS[kind];
+  if (!/^[a-f0-9]{64}$/u.test(expectedDigest)) throw Error('Invalid archive policy');
+  const archive = await readBoundedRegularFile(file, limit.archive);
+  if (hashBytes(archive) !== expectedDigest) throw Error('Archive digest differs');
+  return new Promise<Map<string, Buffer>>((resolve, reject) => {
+    fromBuffer(archive, {lazyEntries:true, decodeStrings:false, strictFileNames:true, validateEntrySizes:true}, (openError, zip) => {
+      if (openError) { reject(Error('Invalid archive')); return; }
+      const files = new Map<string,Buffer>(); const names = new Set<string>(); const paths = new Map<string,'file'|'directory'>(); const originalPaths = new Map<string,string>();
+      let count = 0, total = 0, settled = false;
+      const timer = setTimeout(() => { fail(); }, 30000);
+      const fail = () => { if (!settled) { settled = true; clearTimeout(timer); zip.close(); reject(Error('Archive rejected')); } };
+      zip.on('error', fail);
+      zip.on('end', () => { if (!settled) { if (!files.size) { fail(); return; } settled = true; clearTimeout(timer); resolve(files); } });
+      zip.on('entry', (entry:Entry) => {
+        const rawName = entry.fileName as unknown;
+        if (!Buffer.isBuffer(rawName) || rawName.some((byte) => byte < 32 || byte === 127) ||
+            (!(entry.generalPurposeBitFlag & 0x800) && rawName.some((byte) => byte >= 128)) ||
+            entry.extraFields.some((field) => field.id === 0x7075)) { fail(); return; }
+        let name:string;
+        try { name = new TextDecoder('utf-8', {fatal:true}).decode(rawName); } catch { fail(); return; }
+        const directory = name.endsWith('/');
+        if (directory && options && !options.allowedDirectories.includes(name.slice(0,-1))) { fail(); return; }
+        const mode = (entry.externalFileAttributes >>> 16) & 0o170000;
+        const components = (directory ? name.slice(0,-1) : name).split('/');
+        if (++count > limit.count || names.has(name) || components.some((part) => !part || part === '.' || part === '..') ||
+            name.includes('\\') || name.startsWith('/') || /^[A-Za-z]:/u.test(name) || name !== name.normalize('NFC') ||
+            (directory && entry.uncompressedSize !== 0) || (mode !== 0 && mode !== (directory ? 0o040000 : 0o100000)) ||
+            !Number.isSafeInteger(entry.uncompressedSize) || entry.uncompressedSize > limit.file ||
+            (total += entry.uncompressedSize) > limit.total) { fail(); return; }
+        names.add(name);
+        const normalized = components.map((part) => part.toLowerCase());
+        for (let index=0; index<normalized.length; index++) {
+          const key = normalized.slice(0,index+1).join('/');
+          const type = index === normalized.length-1 && !directory ? 'file' : 'directory';
+          const original = components.slice(0,index+1).join('/');
+          if (paths.has(key) && (paths.get(key) !== type || originalPaths.get(key) !== original || (index === normalized.length-1 && type === 'file'))) { fail(); return; }
+          paths.set(key,type); originalPaths.set(key,original);
+        }
+        if (directory) { zip.readEntry(); return; }
+        zip.openReadStream(entry, (streamError, stream) => {
+          if (streamError) { fail(); return; }
+          const chunks:Buffer[] = []; let size = 0, done = false;
+          stream.on('data', (chunk:Buffer) => { size += chunk.length; if (size > entry.uncompressedSize || size > limit.file) { stream.destroy(); fail(); } else chunks.push(chunk); });
+          stream.on('error', fail);
+          stream.on('end', () => { done = true; if (!settled) { const bytes = Buffer.concat(chunks); if (size !== entry.uncompressedSize || crc32(bytes) !== entry.crc32) { fail(); return; } files.set(name,bytes); zip.readEntry(); } });
+          stream.on('close', () => { if (!done) fail(); });
+        });
+      });
+      zip.readEntry();
+    });
+  });
+}

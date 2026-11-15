@@ -61,6 +61,12 @@ jobs:
           ba9f1f9348c1b56776841c813e28a58a1747c859ea38c2a21ff8db9e33a6e124  tests/local/qualification-entry-probe/private-predeploy-handoff.fixture
           b0a579d480ab6d74a5639f4642f4eb9971553548fabcdfcd0563f58f7d1f63d1  tests/local/qualification-entry-probe/protected-needs-observation.fixture
           ae3d91ebd7335268201ee68a9adf07468b306c0d84184acdce4ca25f49b93ca0  tests/local/qualification-entry-probe/lineage-run-evidence.fixture
+          383ca597d1833b93800309f023ad2dc37b734cb29b9322507fe451951336a1b0  tests/local/qualification-entry-probe/boundedFile.fixture
+          4881df2fd31ba26815d81dac77000aec8b96ddab2a84811103fc0ce49f686d5b  tests/local/qualification-entry-probe/lineageZip.fixture
+          515bdc6a488b6d74dee750e40063229f62ff917c3ed0cbe269acb6082ef6ff94  tests/local/qualification-entry-probe/lineageArtifacts.fixture
+          5cace8644455e221b809b315d56070db0cc4c16ce715b6032eccd5d5547e4aa1  tests/local/qualification-entry-probe/lineagePredeployZip.fixture
+          d02b330261d660d6306dc93ccc674d017881dedc6c71a421b47618debd85b00d  tests/local/qualification-entry-probe/lineageProtectedOrigin.fixture
+          5f2c77a8ff3d337ce1c66df3c934ce71bb7d7dc365babea5fa3028e240dcf529  tests/local/qualification-entry-probe/predeploy-archive-fixed.test.cjs
           85e8fdb39499031aa3971f44aaac7898078a3b3395d1913a0711747ba77d0fa6  tests/local/qualification-entry-probe/lineage-parent-policy.fixture
           8736086312f51989b17892bb839fc8b30c92880b396daa1166f3c83ad5f833fa  scripts/release/v2/json.ts
           ad897513af80f92245609505a522d2b3a21afffa5400643bb879deb1625e31c6  scripts/release/v2/parent.ts
@@ -84,4 +90,4 @@ jobs:
           "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
           node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
           --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs tests/local/qualification-entry-probe/subject-field-provenance.test.mjs;
-          node --test --test-concurrency=1 tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs'
+          node --test --test-concurrency=1 tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs tests/local/qualification-entry-probe/predeploy-archive-fixed.test.cjs'
