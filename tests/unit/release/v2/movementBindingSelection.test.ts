@@ -29,12 +29,12 @@ beforeEach(async () => {
   roots.push(home);
   await mkdir(path.join(home, 'empty-git-template'));
   for (const key of Object.keys(process.env))
-    if (controlledGitEnvironment(key)) delete process.env[key];
+    if (controlledGitEnvironment(key)) Reflect.deleteProperty(process.env, key);
   Object.assign(process.env, isolatedGitEnvironment(home));
 });
 afterEach(async () => {
   for (const key of Object.keys(process.env))
-    if (controlledGitEnvironment(key)) delete process.env[key];
+    if (controlledGitEnvironment(key)) Reflect.deleteProperty(process.env, key);
   for (const [key, value] of savedGitEnvironment) if (value !== undefined) process.env[key] = value;
   savedGitEnvironment = [];
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
@@ -370,7 +370,8 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     ).rejects.toMatchObject({
       code: 'ENOENT',
     });
-    for (const key of Object.keys(process.env)) if (controlled(key)) delete process.env[key];
+    for (const key of Object.keys(process.env))
+      if (controlled(key)) Reflect.deleteProperty(process.env, key);
     Object.assign(process.env, isolatedGitEnvironment(root));
     await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
     await git('update-ref', 'HEAD', source);
@@ -382,8 +383,9 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     });
     expect(closure.files).toHaveLength(5018);
     expect(closure.digest).toBe('f13b1f3636dcdf3db291f911c6af8ad78352c0482462cc4b28ea1ffb52db63f1');
-    const expectAccepted = async () =>
+    const expectAccepted = async () => {
       expect(await readMovementDeclaration(root, digest)).toEqual(JSON.parse(originalDeclaration));
+    };
     await expectAccepted();
     await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
 
@@ -434,7 +436,8 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     await expectAccepted();
     expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(originalDeclaration);
   } finally {
-    for (const key of Object.keys(process.env)) if (controlled(key)) delete process.env[key];
+    for (const key of Object.keys(process.env))
+      if (controlled(key)) Reflect.deleteProperty(process.env, key);
     for (const [key, value] of originalEnvironment)
       if (value !== undefined) process.env[key] = value;
   }
