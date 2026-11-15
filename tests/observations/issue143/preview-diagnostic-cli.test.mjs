@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-const cli=fileURLToPath(new URL('./preview-diagnostic.mjs',import.meta.url));
+const cli=fileURLToPath(new URL('./preview-diagnostic-cli.mjs',import.meta.url));
 async function temp(run) {const d=await mkdtemp(join(tmpdir(),'preview-diag-'));try {await run(d);} finally {await rm(d,{recursive:true,force:true});}}
 const invoke=p=>spawnSync(process.execPath,[cli,p],{encoding:'utf8'});
 test('CLI prints only fixed categories from valid input, discarding private extra fields',async()=>{

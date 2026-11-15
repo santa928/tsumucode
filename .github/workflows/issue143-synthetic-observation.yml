@@ -53,7 +53,7 @@ jobs:
           node --test observation/tests/observations/issue143/check-report.test.mjs
           node --test observation/tests/observations/issue143/local-diagnostic.test.mjs observation/tests/observations/issue143/local-diagnostic-cli.test.mjs
           node --test observation/tests/observations/issue143/preview-diagnostic.test.mjs observation/tests/observations/issue143/preview-diagnostic-cli.test.mjs
-          node --test observation/tests/observations/issue143/startup-diagnostic.test.mjs observation/tests/observations/issue143/startup-diagnostic-cli.test.mjs
+          node --test observation/tests/observations/issue143/startup-diagnostic.test.mjs observation/tests/observations/issue143/startup-diagnostic-cli.test.mjs observation/tests/observations/issue143/loader-list-check.test.mjs
           node --test observation/tests/observations/issue143/identity-http-diagnostic.test.mjs
           node --test observation/tests/observations/issue143/identity-preflight.test.mjs
           node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
@@ -70,7 +70,7 @@ jobs:
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
           docker run --rm --init --user "$(id -u):$(id -g)" --network none --read-only --tmpfs "/tmp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)" --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true \
             --mount "type=bind,src=$GITHUB_WORKSPACE/observation/tests/observations/issue143,dst=/workspace/tests/observations/issue143,readonly" \
-            --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" --test /workspace/tests/observations/issue143/preview-diagnostic-compat.test.mjs
+            --entrypoint sh "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" -c 'node --test /workspace/tests/observations/issue143/preview-diagnostic-compat.test.mjs && node /workspace/tests/observations/issue143/loader-list-check.mjs'
           for image in "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" "$TSUMUCODE_LOCAL_OWNER-project:local"; do
             docker image inspect --format '{{.Id}}' "$image"
           done
@@ -130,13 +130,13 @@ jobs:
             --mount "type=bind,src=$localdir,dst=/exchange" --env OBSERVATION_PHASE=local --env "P6_RUN_EXPORT_SHA256=$sha" \
             --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" /workspace/tests/observations/issue143/local-bridge.mjs >"$localdir/private-run.log" 2>&1; then
             node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
-            node "$overlay/preview-diagnostic.mjs" "$localdir/local-preview.json" 2>/dev/null || true
+            node "$overlay/preview-diagnostic-cli.mjs" "$localdir/local-preview.json" 2>/dev/null || true
             node "$overlay/startup-diagnostic.mjs" "$localdir/private-run.log" 2>/dev/null || true
             echo 'Synthetic Local observation failed; private log not uploaded'; exit 1
           fi
           if ! node "$overlay/check-report.mjs" "$localdir/local-report.json" 1; then
             node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
-            node "$overlay/preview-diagnostic.mjs" "$localdir/local-preview.json" 2>/dev/null || true
+            node "$overlay/preview-diagnostic-cli.mjs" "$localdir/local-preview.json" 2>/dev/null || true
             exit 1
           fi
           test "$(sha256sum "$input" | cut -d' ' -f1)" = "$sha"

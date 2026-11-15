@@ -4,14 +4,14 @@ import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 
 const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
-const previewHash = 'e77ef537f8be948853e472f6851e5e0e938694d3711705aed527c835e14170ea';
+const previewHash = 'ecf574b68b1a42b652bc6bd16a4d1e69f9e6f964ec8c515ba5442f566d38d923';
 const maxBytes = 1048576;
 const patterns = [
   ['pattern-seen-async-require', /ERR_REQUIRE_ASYNC_MODULE|require\(\) cannot be used on an ESM graph with top-level await/],
   ['pattern-seen-esm-require', /\bERR_REQUIRE_ESM\b/],
   ['pattern-seen-module-not-found', /\b(?:ERR_MODULE_NOT_FOUND|MODULE_NOT_FOUND)\b/],
   ['pattern-seen-no-tests', /\bNo tests found\b/],
-  ['pattern-seen-module-syntax', /Cannot use import statement outside a module|Unexpected token 'export'/],
+  ['pattern-seen-module-syntax', /Cannot use import statement outside a module|Cannot use 'import\.meta' outside a module|Unexpected token 'export'/],
 ];
 export const classifySources = (spec, preview) => spec === specHash && preview === previewHash;
 export function classifyStartup(text) {

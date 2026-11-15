@@ -1,8 +1,3 @@
-import { createHash } from 'node:crypto';
-import { constants } from 'node:fs';
-import { open, readFile } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
-
 // This will be updated to the exact observational spec hash after the hook is inserted.
 const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
 const networkKeys = ['session', 'capabilities', 'run', 'poll'];
@@ -96,22 +91,4 @@ export async function capturePreviewFailure(page, tracker) {
   } catch { /* Ignore observation errors and keep the original failure. */ }
   finally { clearTimeout(timer); }
   return tracker.snapshot(ui);
-}
-
-async function main() {
-  let file;
-  try {
-    if (process.argv.length !== 3) throw Error();
-    file = await open(process.argv[2], constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await file.stat();
-    if (!stat.isFile() || stat.size > 4096) throw Error();
-    const body = await file.readFile('utf8');
-    const sha = createHash('sha256').update(await readFile(new URL('./local-import.spec.ts', import.meta.url))).digest('hex');
-    for (const line of previewLines(JSON.parse(body), sha)) console.log(line);
-  } catch { console.log('preview-diagnostic unavailable'); }
-  finally { await file?.close(); }
-}
-
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  void main().catch(() => console.log('preview-diagnostic unavailable'));
 }
