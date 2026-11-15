@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { execFile } from 'node:child_process';
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -231,6 +231,12 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   );
   expect(await readMovementDeclaration(root, digest)).toEqual(expected);
   await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+  await expect(
+    readMovementDeclaration(
+      root,
+      'bf5b4a053e405301728761e1488fbadf600f95a372cd997943734b35e75084dc',
+    ),
+  ).rejects.toThrow();
   const target = 'content/learning-paths/python-basics.yaml';
   const original = await readFile(path.join(root, target));
   await writeFile(path.join(root, target), 'tampered');
@@ -389,6 +395,12 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     };
     await expectAccepted();
     await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+    await expect(
+      readMovementDeclaration(
+        root,
+        'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
+      ),
+    ).rejects.toThrow();
 
     for (const target of [
       'content/learning-paths/python-basics.yaml',
@@ -423,6 +435,16 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     await rm(path.join(root, excluded));
     await writeFile(path.join(root, '.git/info/exclude'), '');
     await expectAccepted();
+    const empty = path.join(root, 'content/learning-paths/unapproved-empty');
+    await mkdir(empty);
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await rm(empty, { recursive: true });
+    await expectAccepted();
+    const link = path.join(root, 'content/learning-paths/unapproved-link');
+    await symlink('python-basics.yaml', link);
+    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+    await rm(link);
+    await expectAccepted();
     const target = 'content/python-practice/course.yaml';
     await git('update-index', '--skip-worktree', target);
     await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
@@ -432,10 +454,16 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
     await git('config', 'core.filemode', 'true');
     await expectAccepted();
-    await chmod(path.join(root, target), 0o755);
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await chmod(path.join(root, target), 0o644);
-    await expectAccepted();
+    for (const modePath of [
+      'content/learning-paths/python-basics.yaml',
+      'content/python-practice/course.yaml',
+      'content/python-oop/course.yaml',
+    ]) {
+      await chmod(path.join(root, modePath), 0o755);
+      await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
+      await chmod(path.join(root, modePath), 0o644);
+      await expectAccepted();
+    }
     expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(originalDeclaration);
   } finally {
     for (const key of Object.keys(process.env))

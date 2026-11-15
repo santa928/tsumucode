@@ -458,13 +458,36 @@ const pythonPathContinuation = {
   sha256: '0c260a4ef4cd0359ebd9cda6feaaf36eb55603f601d3b743933b21cfff030e4b',
 } as const;
 
+// The published practice and OOP candidate is a separate fixed continuation.
+// The original movement declaration and the complete content/receipt checks remain mandatory.
+const pythonPublicationContinuation = {
+  inventoryDigest: 'bf5b4a053e405301728761e1488fbadf600f95a372cd997943734b35e75084dc',
+  contentTree: '958588d67cb195a1a9a15f30f771a8c74393ac69',
+  contentClosure: 'f13b1f3636dcdf3db291f911c6af8ad78352c0482462cc4b28ea1ffb52db63f1',
+  files: [
+    {
+      path: 'content/learning-paths/python-basics.yaml',
+      sha256: 'e99729f1216d2a7709e0a3daec5fa12e6b4f657f7ae36211b10edb6a46531120',
+    },
+    {
+      path: 'content/python-practice/course.yaml',
+      sha256: '80f64e3ad1694c805a722433dd75ace037b205fb1776dffa451559e34bf3a7be',
+    },
+    {
+      path: 'content/python-oop/course.yaml',
+      sha256: '79efaa918dc319f69c74da4d245ee35835dfe7c71038042d7f4230893c8356c4',
+    },
+  ],
+} as const;
+
 function isJavascriptContinuation(
   declaration: MovementInputs['declaration'],
   inventoryDigest?: string,
 ) {
   return (
     declaration.declarationDigest === javascriptContinuation.declarationDigest &&
-    inventoryDigest === javascriptContinuation.inventoryDigest
+    (inventoryDigest === javascriptContinuation.inventoryDigest ||
+      inventoryDigest === pythonPublicationContinuation.inventoryDigest)
   );
 }
 
@@ -856,7 +879,25 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
   const contentTree = continuation
     ? (await git('git', ['rev-parse', 'HEAD:content'], options)).stdout.trim()
     : '';
-  const pythonPath = continuation && contentTree === pythonPathContinuation.contentTree;
+  const pythonPath =
+    continuation &&
+    inventoryDigest === javascriptContinuation.inventoryDigest &&
+    contentTree === pythonPathContinuation.contentTree;
+  const pythonPublication =
+    continuation &&
+    inventoryDigest === pythonPublicationContinuation.inventoryDigest &&
+    contentTree === pythonPublicationContinuation.contentTree;
+  if (
+    continuation &&
+    inventoryDigest === pythonPublicationContinuation.inventoryDigest &&
+    !pythonPublication
+  )
+    throw Error('Movement Python publication content tree differs');
+  const exceptions = pythonPath
+    ? [pythonPathContinuation]
+    : pythonPublication
+      ? pythonPublicationContinuation.files
+      : [];
   // 審査記録より前の教材原本commitと現HEADのcontent treeを比較する。
   // 固定後続では全教材treeに加え、同梱したJavaScriptの8件を含むreceipt台帳も固定する。
   await git(
@@ -868,7 +909,7 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
       'HEAD',
       '--',
       ...sources,
-      ...(pythonPath ? [':(exclude)' + pythonPathContinuation.path] : []),
+      ...exceptions.map(({ path: file }) => ':(exclude)' + file),
     ],
     options,
   );
@@ -879,7 +920,7 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
       options,
     );
     if (stdout) throw Error('Movement continuation has dirty content or receipts');
-    if (pythonPath) {
+    if (pythonPath || pythonPublication) {
       const ignored = await git(
         'git',
         ['ls-files', '--others', '--ignored', '--exclude-standard', '-z', '--', ...sources],
@@ -898,18 +939,23 @@ export async function readMovementDeclaration(root: string, inventoryDigest?: st
         throw Error('Movement continuation has hidden index entries');
       if (
         (await hashArtifact(path.join(root, 'content'), { rejectEmptyDirectories: true }))
-          .digest !== pythonPathContinuation.contentClosure
+          .digest !==
+        (pythonPath
+          ? pythonPathContinuation.contentClosure
+          : pythonPublicationContinuation.contentClosure)
       )
         throw Error('Movement continuation content closure differs');
-      const file = path.join(root, pythonPathContinuation.path);
-      const stat = await lstat(file);
-      if (
-        !stat.isFile() ||
-        stat.isSymbolicLink() ||
-        Boolean(stat.mode & 0o111) ||
-        hashBytes(await readFile(file)) !== pythonPathContinuation.sha256
-      )
-        throw Error('Movement continuation Python path differs');
+      for (const expected of exceptions) {
+        const file = path.join(root, expected.path);
+        const stat = await lstat(file);
+        if (
+          !stat.isFile() ||
+          stat.isSymbolicLink() ||
+          Boolean(stat.mode & 0o111) ||
+          hashBytes(await readFile(file)) !== expected.sha256
+        )
+          throw Error('Movement continuation Python path differs');
+      }
     }
     const { stdout: receiptBlob } = await git('git', ['show', `${sourceCommit}:${receiptPath}`], {
       ...options,
