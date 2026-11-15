@@ -4,6 +4,11 @@ import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { fixtureFiles } from '../../scripts/release/v2/fixtureSource';
 import { createPythonFixtureObservations } from '../../scripts/release/v2/pythonCoverage';
 import { readStoredProgress, replaceEditorText } from './helpers/progress';
+import {
+  isNativeGradeStarted,
+  isNativeUnsupportedCompletion,
+  nativeGradeIdentity,
+} from './helpers/pythonFixtureCoverage';
 import { testBasePath } from './helpers/testBasePath';
 
 const source = await Promise.all(
@@ -47,9 +52,55 @@ async function observeFixture(
   const before =
     ((await savedDraft(page, exercise.id))?.['validationHistory'] as unknown[] | undefined) ?? [];
   const ungradedAlert = page.getByRole('alert').filter({ hasText: /採点していません/ });
+  const currentUnsupported = page
+    .getByRole('status')
+    .filter({ hasText: 'この環境では未対応です。採点していません。' });
+  let createdGrade: ReturnType<Page['waitForResponse']> | undefined;
+  let completedGrade: ReturnType<Page['waitForResponse']> | undefined;
   if (expected === 'system-error') {
-    // A stale preview error must never be counted as a new validation result.
-    await expect(ungradedAlert).toHaveCount(0);
+    // In Local, editing retains a previous alert. Bind the new grade request and result instead.
+    if (mode === 'cpython') {
+      await expect(currentUnsupported).toHaveCount(0);
+      createdGrade = page.waitForResponse(
+        (response) =>
+          new URL(response.url()).origin === new URL(page.url()).origin &&
+          new URL(response.url()).pathname === '/api/grades' &&
+          response.request().method() === 'POST' &&
+          response.status() === 202,
+        { timeout: 30_000 },
+      );
+      completedGrade = page.waitForResponse(
+        async (response) => {
+          const url = new URL(response.url());
+          if (
+            url.origin !== new URL(page.url()).origin ||
+            !/^\/api\/runs\/[^/]+$/u.test(url.pathname) ||
+            response.request().method() !== 'POST' ||
+            !response.ok()
+          )
+            return false;
+          if (!createdGrade) throw Error('Missing native grade observer');
+          const created = await createdGrade;
+          const identity = nativeGradeIdentity(
+            created.request().postDataJSON(),
+            exercise.id,
+            files,
+          );
+          if (url.pathname !== `/api/runs/${encodeURIComponent(identity.runId)}`) return false;
+          const result: unknown = await response.json().catch(() => undefined);
+          return (
+            typeof result === 'object' &&
+            result !== null &&
+            'state' in result &&
+            result.state === 'completed'
+          );
+        },
+        { timeout: 30_000 },
+      );
+    } else {
+      // A stale Browser preview error must never be counted as a new validation result.
+      await expect(ungradedAlert).toHaveCount(0);
+    }
     await button.evaluate((node) => {
       document.documentElement.dataset['pythonFixtureValidationStarted'] = 'no';
       const observer = new MutationObserver((records) => {
@@ -73,6 +124,17 @@ async function observeFixture(
     await expect
       .poll(() => page.locator('html').getAttribute('data-python-fixture-validation-started'))
       .toBe('yes');
+    if (mode === 'cpython') {
+      if (!createdGrade || !completedGrade) throw Error('Missing native grade observers');
+      const [created, completed] = await Promise.all([createdGrade, completedGrade]);
+      const identity = nativeGradeIdentity(created.request().postDataJSON(), exercise.id, files);
+      expect(isNativeGradeStarted(await created.json(), identity)).toBe(true);
+      expect(new URL(completed.url()).pathname).toBe(
+        `/api/runs/${encodeURIComponent(identity.runId)}`,
+      );
+      expect(isNativeUnsupportedCompletion(await completed.json(), identity)).toBe(true);
+      await expect(currentUnsupported).toBeVisible({ timeout: 30_000 });
+    }
     const unsupportedMessage =
       mode === 'pyodide'
         ? 'このLessonの採点範囲外です。採点していません。'
