@@ -250,6 +250,7 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   await rm(path.join(root, 'content/unapproved-test-file'));
   const hidden = 'content/learning-paths/unapproved-extra.yaml';
   const fixedClosure = (await hashArtifact(path.join(root, 'content'))).digest;
+  await mkdir(path.join(root, '.git/info'), { recursive: true });
   await writeFile(path.join(root, '.git/info/exclude'), hidden + '\n');
   await writeFile(path.join(root, hidden), 'schemaVersion: 1\n');
   expect((await hashArtifact(path.join(root, 'content'))).digest).not.toBe(fixedClosure);
@@ -328,7 +329,7 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
   const root = await temporaryRoot();
   const compiled = await compileContent({
     sourceRoot: path.resolve('content'),
-    outputRoot: path.join(root, 'compiled'),
+    outputRoot: path.join(root, 'generated/content'),
     checkOnly: true,
   });
   expect(hashValue(buildInventory(compiled.compilations))).toBe(digest);
@@ -415,6 +416,7 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     await git('reset', '--', tracked);
     await expectAccepted();
     const excluded = 'content/learning-paths/unapproved-extra.yaml';
+    await mkdir(path.join(root, '.git/info'), { recursive: true });
     await writeFile(path.join(root, '.git/info/exclude'), excluded + '\n');
     await writeFile(path.join(root, excluded), 'unapproved');
     await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
