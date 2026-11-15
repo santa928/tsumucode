@@ -1,7 +1,17 @@
 // @vitest-environment node
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { execFile } from 'node:child_process';
-import { chmod, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+  chmod,
+  lstat,
+  mkdir,
+  mkdtemp,
+  open,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -13,6 +23,7 @@ import { readMovementBaselineProofs } from '../../../../scripts/release/v2/movem
 import { hashArtifact, hashValue } from '../../../../scripts/release/v2/identity';
 import { compileContent } from '../../../../scripts/content/compile';
 import { buildInventory } from '../../../../scripts/release/v2/inventory';
+import { readMountInfoBounded, validatedReadonlyGitObjects } from './readonlyGitObjects.mjs';
 import { releaseFixture } from './releaseFixture';
 
 const exec = promisify(execFile);
@@ -82,6 +93,7 @@ function isolatedGitEnvironment(home: string) {
     GIT_CONFIG_KEY_3: 'safe.directory',
     GIT_CONFIG_VALUE_3: process.cwd(),
     GIT_TERMINAL_PROMPT: '0',
+    GIT_NO_LAZY_FETCH: '1',
   };
 }
 
@@ -89,6 +101,27 @@ function isolatedGitAt(root: string, home: string) {
   const env = isolatedGitEnvironment(home);
   return async (...args: string[]) =>
     (await exec('/usr/bin/git', args, { cwd: root, env, encoding: 'utf8' })).stdout.trim();
+}
+
+async function sourceObjects(home: string): Promise<string> {
+  const workspace = process.cwd();
+  const metadata = await lstat(path.join(workspace, '.git'));
+  if (metadata.isSymbolicLink() || (!metadata.isDirectory() && !metadata.isFile()))
+    throw Error('Unsupported Git source metadata');
+  if (workspace === '/workspace' && metadata.isFile()) {
+    const mountinfo = await open('/proc/self/mountinfo', 'r');
+    try {
+      return await validatedReadonlyGitObjects(workspace, await readMountInfoBounded(mountinfo));
+    } finally {
+      await mountinfo.close();
+    }
+  }
+  return isolatedGitAt(workspace, home)(
+    'rev-parse',
+    '--path-format=absolute',
+    '--git-path',
+    'objects',
+  );
 }
 
 async function declarationRoot() {
@@ -112,6 +145,64 @@ async function declarationRoot() {
   declaration.body.candidateContentCommit = await git('rev-parse', 'HEAD');
   return { root, declaration };
 }
+
+it('linked worktree の Git objects は一意な read-only mount と実directoryだけを受け入れる', async () => {
+  const root = await temporaryRoot();
+  const common = path.join(root, '.git-common');
+  const objects = path.join(common, 'objects');
+  await mkdir(objects, { recursive: true });
+  const readonly = `41 30 0:9 / ${common} ro,relatime - ext4 /dev/fake rw\n`;
+  expect(await validatedReadonlyGitObjects(root, readonly)).toBe(objects);
+  const child = `42 41 0:10 / ${objects}/pack rw,relatime - ext4 /dev/fake rw\n`;
+  for (const bad of [
+    '',
+    readonly.replace(' ro,', ' rw,'),
+    readonly + readonly,
+    readonly.replace(' - ', ' broken '),
+    readonly + child,
+    'x'.repeat(1024 * 1024 + 1),
+  ])
+    await expect(validatedReadonlyGitObjects(root, bad)).rejects.toThrow();
+  await mkdir(path.join(objects, 'info'));
+  const alternate = path.join(objects, 'info/alternates');
+  await writeFile(alternate, '/not-allowed');
+  await expect(validatedReadonlyGitObjects(root, readonly)).rejects.toThrow();
+  await rm(alternate);
+  const nestedLink = path.join(objects, 'nested-link');
+  await symlink(root, nestedLink);
+  await expect(validatedReadonlyGitObjects(root, readonly)).rejects.toThrow();
+  await rm(nestedLink);
+  await rm(objects, { recursive: true });
+  await expect(validatedReadonlyGitObjects(root, readonly)).rejects.toThrow();
+  await symlink(root, objects);
+  await expect(validatedReadonlyGitObjects(root, readonly)).rejects.toThrow();
+});
+
+it('mount metadata は上限内の完全なUTF-8だけを読み、過大を拒否する', async () => {
+  const root = await temporaryRoot();
+  const file = path.join(root, 'mountinfo');
+  await writeFile(file, 'x'.repeat(1024 * 1024));
+  let handle = await open(file, 'r');
+  try {
+    expect((await readMountInfoBounded(handle)).length).toBe(1024 * 1024);
+  } finally {
+    await handle.close();
+  }
+  await writeFile(file, 'x'.repeat(1024 * 1024 + 1));
+  handle = await open(file, 'r');
+  try {
+    await expect(readMountInfoBounded(handle)).rejects.toThrow();
+  } finally {
+    await handle.close();
+  }
+  await writeFile(file, new Uint8Array([255]));
+  handle = await open(file, 'r');
+  try {
+    await expect(readMountInfoBounded(handle)).rejects.toThrow();
+  } finally {
+    await handle.close();
+  }
+});
 
 it('eb2用の宣言を明示的に優先し、旧宣言の元bytesは保持する', async () => {
   const { root, declaration } = await declarationRoot();
@@ -153,11 +244,10 @@ it('eb2の固定後続だけを許し、各教材とreceiptの追加変更を拒
   const previousDigest = '8fd703f3db5754e38639f7efd5959c78267d9f0236c03360b8eba65ab83eac26';
   const root = await temporaryRoot();
   const git = gitAt(root);
-  const objects = (
-    await exec('git', ['rev-parse', '--path-format=absolute', '--git-path', 'objects'])
-  ).stdout.trim();
+  const objects = await sourceObjects(root);
   await git('init', '-b', 'main');
   await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  await git('cat-file', '-e', source + '^{commit}');
   const declarationPath = 'docs/quality/movement-eb2-v2.json';
   const original = await readFile(declarationPath, 'utf8');
   await git('update-ref', 'HEAD', source);
@@ -208,11 +298,10 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   const digest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
   const root = await temporaryRoot();
   const git = gitAt(root);
-  const objects = (
-    await exec('git', ['rev-parse', '--path-format=absolute', '--git-path', 'objects'])
-  ).stdout.trim();
+  const objects = await sourceObjects(root);
   await git('init', '-b', 'main');
   await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  await git('cat-file', '-e', source + '^{commit}');
   await git('update-ref', 'HEAD', source);
   await git('read-tree', '--reset', '-u', source);
   const beforeRss = process.memoryUsage.rss();
@@ -336,12 +425,7 @@ async function publicationFixture() {
   const root = await temporaryRoot();
   await mkdir(path.join(root, 'empty-git-template'));
   const git = isolatedGitAt(root, root);
-  const objects = await isolatedGitAt(process.cwd(), root)(
-    'rev-parse',
-    '--path-format=absolute',
-    '--git-path',
-    'objects',
-  );
+  const objects = await sourceObjects(root);
   const originalEnvironment = Object.entries(process.env).filter(([key]) =>
     controlledGitEnvironment(key),
   );
@@ -376,6 +460,7 @@ async function publicationFixture() {
       if (value !== undefined) process.env[key] = value;
   }
   await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  await git('cat-file', '-e', publicationSource + '^{commit}');
   await git('update-ref', 'HEAD', publicationSource);
   await git('read-tree', '--reset', '-u', publicationSource);
   const declarationPath = 'docs/quality/movement-eb2-v2.json';
