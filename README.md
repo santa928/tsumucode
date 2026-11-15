@@ -222,7 +222,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳の保存先は`docs/quality/javascript-agent-learning.yaml`（現treeでは未作成）です。実記録があればrunbookの`release:learning-coverage`手順で確認済み／未確認を区別します。新規・未確認教材だけ3人で一度評価し、確認済み評価・原証拠・本人checkpointは新しいセッションでも引き継ぎます。
 
-作業中とpushの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`を必須とし、関連testの代わりに全Unit/Component/Contentを実行します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使い、Compile・Lint・Buildは各1回です。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。ローカルの差分基準は`HEAD`、push CIではpush前のSHAです。
+作業中の`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`による全Unit/Component/Contentを維持し、変更関連検査も別途確認します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使います。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。
 
 Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
@@ -243,7 +243,11 @@ Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本
 ./scripts/docker-compose.sh run --rm app npm run format:check
 ```
 
-push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SHA（mainへのpushは変更前SHA）を明示して次を実行します。`check:prepush`はNode/直接依存の固定版を照合し、provenanceと既存の`check`全工程を実行します。手動で選んだテストやPrettierだけの成功を代用しません。失敗・OOM・signal終了・未commit変更・検証中のSource変更があれば成功記録を出さず、pushを止めます。
+未検証の変更は、公開されるcommitと差分に秘密情報・非公開資料が含まれないことを確認したうえで、検証専用のDraft PRに限りpushできます。Draftであっても公開リポジトリの内容は公開されます。未検証の変更をmainへ直接pushしたり、Draftを解除してマージ・公開したりしません。
+
+マージ前に、最終HEADとbase、それらに対応する仮mergeのSHA/treeを固定し、GitHub-hostedの隔離環境・固定Node/依存関係でprovenance、型、Lint、必要なテスト・build・変更面のBrowser確認を完了します。実行対象と結果を同じ候補に結び、skip・失敗・OOM・signal終了やSource/base変更を成功として扱いません。独立レビューと教材ごとの受入も別途必要です。branch protectionでの強制を前提とせず、各結果と最新のHEAD/baseをマージ前に確認します。PR CIの成功は正式資格や公開成功を意味しません。
+
+ローカルで確認できる場合は、変更をcommitしたcleanなcheckoutで、PRのbase SHAを指定して従来の`check:prepush`を実行できます。固定Node/直接依存とprovenance、型、既存の`check`、実行前後のHEAD/tree/baseを確認する検証であり、結果が未完でも上記の検証専用Draft PRへpushできます。
 
 低速・少メモリの作者検証環境で、実教材準備が既定のUnit用wall-clock枠を超える場合だけ、`TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を明示できます。未指定時のVitest既定値と通常CIは変えません。この固定プロファイルは作者側testを20秒・準備hookを60秒にし、各caseの明示期限、学習者Runnerの計算/待機/回収上限、性能のassertion、対象選択と検査内容は維持します。使用した環境・profile・HEADを検証記録に残し、性能合格や実人観察へ読み替えません。Composeでは `-e TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を渡します。
 
@@ -251,7 +255,7 @@ push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SH
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
 ```
 
-資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。対象・期待値・失敗条件はCIと同じです。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。Lintは同じESLint設定で選ばれる全ファイルを64件ずつ直列実行し、一括実行時のメモリ集中を避けます。失敗したbatchがあれば後続へ進まず全体を失敗にします。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後Sourceを変更した場合だけ影響範囲を検証し直します。必要な型・Lintがローカルで未完了のまま、確認をCIへ持ち越してpushしません。
+資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。選択した各testの期待値と失敗条件は維持し、PR CIでは別途全件を実行します。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。Lintは同じESLint設定で選ばれる全ファイルを64件ずつ直列実行し、一括実行時のメモリ集中を避けます。失敗したbatchがあれば後続へ進まず全体を失敗にします。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後HEAD・base・環境・検証条件が変わった場合は必要な検証をやり直します。ローカル検証を省略した場合も、同一候補の型・Lintと必要な検査がGitHub上で成功するまでマージしません。
 
 正式公開候補の確定後は、同じ入口へ`--release`を加え、教材承認と全Unit/Component/Contentを含む既存`check:release`を先に通します。実CLIの`release:target`も、workflowと同じCourse/Source/workflow-headと生成済み教材で解決を確認します。これらの成功はBrowser・性能・公開成功を意味しません。正式qualityではその同じ候補のBrowser/性能・出力集約を一度実行し、既存証拠はSource・生成物hash・検査条件が一致する範囲だけ再利用します。公開後の配信物と実操作確認も別に行います。
 
