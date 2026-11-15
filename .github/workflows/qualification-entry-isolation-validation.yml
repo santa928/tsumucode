@@ -1,0 +1,74 @@
+name: Qualification entry synthetic draft validation
+
+on:
+  pull_request:
+    branches: [codex/python-oop-stacked]
+    types: [opened, synchronize, reopened, converted_to_draft]
+
+permissions: {}
+
+jobs:
+  qualification_entry:
+    # No real GitHub, parent observation, qualification, signing or deployment.
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/validate-qualification-entry-probe' &&
+          github.event.pull_request.base.sha == '6d1f24a220d64d9781b3b3cd3c88289ef2f1f777' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact draft HEAD without persisted credentials
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify candidate and fixed inputs
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          git rev-parse HEAD 'HEAD^{tree}'
+          sha256sum --check <<'SHA256'
+          2d26afccb2fc4d21791c1e176264e9a25a7d1b11308fae5262ac1cbd115b4677  Dockerfile
+          15c380765bbf2e109f96275248e842b7a9649fca7efa633427ee85ab8fd19aa4  package.json
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          71d5e6329eb617384edf8742a64d9f8533ee5f7832d6586ac6c9150eab1967c8  .dockerignore
+          fa6c741186a6df8a07c7067d0de020d17a36a2b8fec0b2a43024dae07526ef01  src/core/persistence/canonicalJson.ts
+          775a57b75a6aabb69358dd1174dd9e0147926b1bbaf11648ec5289306a3a229a  tests/unit/release/v2/admission.test.ts
+          ca2b1ccf8db469eeb9f22e2d135a1535db55cd69f017558b45037351a6f723f1  scripts/release/v2/qualify.ts
+          2f8a94a67804fba90754d6d72bac5f733d8f3fe5c8d09ee5287fbab7fc1e2abd  scripts/release/v2/admission.ts
+          73ae190808c78a0e707a59da01df2c093368aeb50d45c2f6a15631c079f545c9  scripts/release/v2/attempts.ts
+          1f7b3c9560ab6bc8adcd21e169462840aa3453678edccdd7d12c391c737eadd3  scripts/release/v2/verify.ts
+          4487e1f50383e68e784cf4a1584b725855ce2383648c90d40e903e68fe753dfd  scripts/release/v2/reports.ts
+          c1a591a5777ef00778fddd0eb9b02af61cd095de52aadcb7dffe90d21fb715d5  scripts/release/v2/executionPlan.ts
+          b7f6e8a59b73230c30425a366f1ce2731d24014a2029f36f1a5a6f2168911f9a  scripts/release/v2/identity.ts
+          c87bce1c282992b4e73cf552e6ea88b960ce72ae4d491285e2ae4be335b01b3f  scripts/release/v2/plan.ts
+          93f1e64490bccdd8c264a418a26263418c7ae4cf6afc711027db8d179e4e5521  scripts/release/v2/schema.ts
+          05da4afd2eaecf049cbeb0c9610e0facb9c6639e10c40c10a186d03256baaa1f  tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs
+          7e48b28ffeeb0f83d88738ca5601083d46d93f2aedf4fa4a7f906d9d0de6808e  tests/local/qualification-entry-probe/resolve-ts.mjs
+          SHA256
+      - name: Build fixed Node and locked dependencies
+        env:
+          IMAGE: qualification-entry-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: docker build --target dependencies --tag "$IMAGE" .
+      - name: Run isolated synthetic qualification checks
+        env:
+          IMAGE: qualification-entry-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          docker run --rm --network none --read-only --user 65534:65534
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --tmpfs /tmp:rw,nosuid,nodev,noexec,size=64m,mode=1777
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/scripts,target=/workspace/scripts,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/src,target=/workspace/src,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/unit/release/v2,target=/workspace/tests/unit/release/v2,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/qualification-entry-probe,target=/workspace/tests/local/qualification-entry-probe,readonly"
+          "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
+          node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
+          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs'
