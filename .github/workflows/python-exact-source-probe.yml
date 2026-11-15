@@ -1,0 +1,91 @@
+name: Fixed Python public historical source probe
+
+on:
+  pull_request:
+    branches: [codex/issue152-combined-fixed-ci]
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  historical_source:
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/verify-python-historical-8fda' &&
+          github.event.pull_request.base.sha == '8fdaeb61205ba8fad334af16886a725b49c50fde' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the bounded probe
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out the exact fixed candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 8fdaeb61205ba8fad334af16886a725b49c50fde
+          path: fixed-candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind probe and retrieve public Git source
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          case "$EXPECTED_HEAD" in *[!0-9a-f]*|'') exit 1;; esac
+          test "${#EXPECTED_HEAD}" = 40
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
+          test "$(git rev-parse HEAD^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          expected_paths=$(printf '%s\n' \
+            '.github/workflows/python-exact-source-probe.yml' \
+            'tests/local/python-exact-source-probe/check.ts' \
+            'tests/local/python-exact-source-probe/diagnostic.node-test.mjs' \
+            'tests/local/python-exact-source-probe/diagnostic.ts')
+          test "$(git diff --no-renames --name-only HEAD^ HEAD)" = "$expected_paths"
+          cd fixed-candidate
+          test "$(git rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          test "$(git rev-parse HEAD:content/python-practice)" = 84e0eec7a4c769d0be1ff8b5ac4de5bde98c5be0
+          test "$(git rev-parse HEAD:content/python-oop)" = 0e5051a9e548ceb617e56a7156eb0c82cc54917c
+          if git config --local --get-regexp '^http\..*\.extraheader$' >/dev/null; then exit 1; fi
+          if env -i PATH=/usr/bin:/bin HOME=/tmp GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
+            git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false \
+            fetch --quiet --no-tags https://github.com/santa928/tsumucode.git 6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931 >/dev/null 2>&1; then
+            echo 'public-source-fetch=passed'
+          else
+            echo 'public-source-fetch=failed'
+            exit 1
+          fi
+          test "$(git rev-parse '6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931^{tree}')" = 85b143b26b35aaeb68ce11df1b8b16729a6ab966
+          test "$(git rev-parse '6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931:content/python-practice')" = 36829dae17cb50ddaedf4fdeb0d3b0697c7531a8
+          test "$(git rev-parse '6b06d58530a57a5bda7c6c1a8b0eb3d95fce7931:content/python-oop')" = 84d280595c7584f9a71b5acc4a4471ddcf649c64
+          git merge-base --is-ancestor 9821a4eb16b7395ccf94bfbb59f467507bca97b3 HEAD
+          git merge-base --is-ancestor 87296dd27654455c16212e41a68c106021c72ef9 HEAD
+      - name: Build the fixed locked Node image
+        run: docker build --target dependencies --tag python-exact-source-probe fixed-candidate
+      - name: Verify both public historical readers in isolation
+        run: >-
+          docker run --rm --network none --read-only --user "$(id -u):$(id -g)"
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --env HOME=/tmp --env GIT_CONFIG_NOSYSTEM=1 --env GIT_CONFIG_GLOBAL=/dev/null
+          --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/workspace
+          --tmpfs /tmp:rw,nosuid,nodev,noexec,size=128m,mode=1777
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/fixed-candidate/.git,target=/workspace/.git,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/fixed-candidate/scripts,target=/workspace/scripts,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/fixed-candidate/src,target=/workspace/src,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/fixed-candidate/content,target=/workspace/content,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/fixed-candidate/docs,target=/workspace/docs,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/python-exact-source-probe,target=/workspace/tests/local/python-exact-source-probe,readonly"
+          python-exact-source-probe sh -ec 'test "$(node --version)" = v24.18.0;
+          test "$(stat -c %u /workspace)" = 0;
+          test "$(stat -c %u /workspace/.git)" = "$(id -u)";
+          test "$(git config --get-all safe.directory)" = /workspace;
+          node --test tests/local/python-exact-source-probe/diagnostic.node-test.mjs;
+          node --import tsx tests/local/python-exact-source-probe/check.ts'
