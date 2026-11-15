@@ -1,0 +1,10 @@
+name: Qualification needs reusable fixture (draft only)
+on:
+  workflow_call:
+permissions: {}
+jobs:
+  fixture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: 'true'
