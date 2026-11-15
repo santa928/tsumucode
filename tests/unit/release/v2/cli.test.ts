@@ -91,27 +91,38 @@ describe('release v2 command boundary', () => {
           courseId: string;
           contentRows: string;
           publication: string;
+          learnerApproval: string;
           currentDeployment: string;
         }[];
       };
     };
     expect(report.status).toBe('shadow-only');
     expect(report.inventory.courses.some((course) => course.id === 'python-basics')).toBe(true);
+    const pythonPractice = report.inventory.courses.filter(
+      (course) => course.id === 'python-practice',
+    );
+    expect(pythonPractice).toHaveLength(1);
+    expect(pythonPractice[0]).toMatchObject({ publicationStatus: 'published' });
+    const coursesWithoutLegacyRecords = ['python-practice', 'tailwind'];
+    const publishedWithoutLegacyRecords = report.inventory.courses
+      .filter(
+        (course) =>
+          course.publicationStatus === 'published' && coursesWithoutLegacyRecords.includes(course.id),
+      )
+      .map((course) => course.id);
     expect(
       report.shadow.courses
         .filter((course) => course.contentRows !== 'valid')
         .map((course) => course.courseId),
-    ).toEqual(
-      report.inventory.courses.some(
-        (course) => course.id === 'tailwind' && course.publicationStatus === 'published',
-      )
-        ? ['tailwind']
-        : [],
-    );
-    const tailwind = report.shadow.courses.find((course) => course.courseId === 'tailwind');
-    if (tailwind) {
-      // The new bounded receipt is separate from the legacy-record shadow diagnostics.
-      expect(tailwind).toMatchObject({ contentRows: 'missing', publication: 'unknown' });
+    ).toEqual(publishedWithoutLegacyRecords);
+    for (const courseId of publishedWithoutLegacyRecords) {
+      // Bounded historical receipts are separate from legacy-record shadow diagnostics.
+      expect(report.shadow.courses.find((course) => course.courseId === courseId)).toMatchObject({
+        contentRows: 'missing',
+        publication: 'unknown',
+        learnerApproval: 'new-evidence-required',
+        currentDeployment: 'unverified',
+      });
     }
     expect(
       report.shadow.courses.find((course) => course.courseId === 'html-css')!.publication,
