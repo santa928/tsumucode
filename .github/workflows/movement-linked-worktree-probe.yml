@@ -32,10 +32,11 @@ jobs:
           [[ "$EVENT_HEAD" =~ ^[0-9a-f]{40}$ ]]
           test "$(git rev-parse HEAD)" = "$EVENT_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
-          test "$(git diff --name-status --no-renames HEAD^ HEAD)" = $'A\t.github/workflows/movement-linked-worktree-probe.yml'
+          test "$(git rev-parse HEAD^)" = 733cf87a810230f7babf1963a018f70b5295bb48
+          test "$(git rev-parse HEAD^^)" = 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
+          test "$(git diff --name-status --no-renames HEAD^^ HEAD)" = $'A\t.github/workflows/movement-linked-worktree-probe.yml'
           test -z "$(git status --porcelain --untracked-files=all)"
-          test "$(git rev-parse HEAD^:content)" = 958588d67cb195a1a9a15f30f771a8c74393ac69
+          test "$(git rev-parse HEAD^^:content)" = 958588d67cb195a1a9a15f30f771a8c74393ac69
       - name: Create isolated linked worktree
         shell: bash
         run: |
@@ -59,7 +60,7 @@ jobs:
           probe="movement-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           docker build --target development --tag "$base" "$root/source"
           mkdir -m 700 "$root/build"
-          printf '%s\n' 'ARG BASE' 'FROM ${BASE}' 'RUN test ! -e /workspace/.git && touch /workspace/.git' > "$root/build/Dockerfile"
+          printf '%s\n' 'ARG BASE' 'FROM ${BASE}' 'RUN test ! -e /workspace/.git && test ! -L /workspace/.git && test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && touch /workspace/.git && mkdir /workspace/node_modules/.vite-temp' > "$root/build/Dockerfile"
           docker build --network none --build-arg "BASE=$base" --tag "$probe" "$root/build"
       - name: Exercise fixed Source in linked worktree
         shell: bash
@@ -69,6 +70,7 @@ jobs:
           probe="movement-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           docker run --rm --init --network none --read-only --user 1000:1000 --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true \
             --tmpfs /tmp:rw,nosuid,nodev,noexec,size=512m,mode=1777 \
+            --tmpfs /workspace/node_modules/.vite-temp:rw,nosuid,nodev,noexec,size=32m,uid=1000,gid=1000,mode=0700 \
             --mount "type=bind,source=$root/source/.git,target=/workspace/.git,readonly" \
             --mount "type=bind,source=$GITHUB_WORKSPACE/.git,target=/workspace/.git-common,readonly" \
             --workdir /workspace "$probe" sh -ec 'test "$(node --version)" = v24.18.0; test -f .git; test ! -L .git; node node_modules/vitest/vitest.mjs run tests/unit/release/v2/movementBindingSelection.test.ts --maxWorkers=1 --no-file-parallelism --no-cache'
