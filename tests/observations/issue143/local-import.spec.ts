@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { editorText, readStoredProgress } from '../../e2e/helpers/progress';
+import { capturePreviewFailure, createPreviewTracker } from './preview-diagnostic.mjs';
 
 const lesson = 'python-basics-ch02-l01';
 const exercise = `${lesson}-e01`;
@@ -54,8 +55,24 @@ test('P6 new same-run synthetic Pages export imports into Local and runs the Pyt
   const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
   await expect(input).toHaveValue('');
   await input.fill('3\n5');
-  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Console出力', exact: true }).getByText('8', { exact: true })).toBeVisible({ timeout: 30_000 });
+  const previewTracker = createPreviewTracker();
+  page.on('request', previewTracker.request);
+  page.on('response', previewTracker.response);
+  page.on('requestfailed', previewTracker.failed);
+  try {
+    await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true }).getByText('8', { exact: true })).toBeVisible({ timeout: 30_000 });
+  } catch (error) {
+    try {
+      const observation = await capturePreviewFailure(page, previewTracker);
+      await writeFile('/exchange/local-preview.json', JSON.stringify(observation), { flag: 'wx', mode: 0o600 });
+    } catch { /* Preserve the original failure; diagnostic output is optional. */ }
+    throw error;
+  } finally {
+    page.off('request', previewTracker.request);
+    page.off('response', previewTracker.response);
+    page.off('requestfailed', previewTracker.failed);
+  }
   await expect(page.getByLabel('実行環境')).toContainText('CPython 3.14.2');
   expect((await draft())?.['validationHistory']).toEqual(source.validationHistory);
   expect((await draft())?.['lastPassingSnapshots']).toEqual(source.lastPassingSnapshots);

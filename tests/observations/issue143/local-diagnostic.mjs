@@ -3,25 +3,25 @@ import { constants } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-const specHash = 'e78a20030bcb47f96587abdfac733a84286ce57404932e9298ad0720d7b26abe';
+const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
 const testTitle = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
 const allowedFiles = new Set(['local-import.spec.ts', '/workspace/tests/observations/issue143/local-import.spec.ts']);
 const status = new Map([['passed', 'passed'], ['failed', 'failed'], ['timedOut', 'timed-out'], ['skipped', 'skipped'], ['interrupted', 'interrupted']]);
 const stages = new Map([
-  [17, 'input-read'], [18, 'input-hash'], [19, 'input-parse'], [20, 'input-draft'], [21, 'input-lesson'],
-  [22, 'input-draft-count'], [23, 'input-files'], [24, 'input-history-count'], [25, 'input-history-status'],
-  [26, 'input-passing-snapshot'], [27, 'input-lesson-complete'], [29, 'local-home-navigation'],
-  [30, 'local-origin'], [31, 'initial-local-read'], [32, 'initial-local-courses'], [33, 'initial-local-drafts'],
-  [34, 'import-upload'], [35, 'import-upload'], [36, 'import-upload'], [37, 'import-preview'],
-  [38, 'import-navigation-wait'], [39, 'import-confirmation'], [40, 'import-navigation'],
-  [41, 'imported-draft-read'], [42, 'imported-files'], [43, 'imported-history'], [44, 'imported-snapshot'],
-  [45, 'imported-course-read'], [46, 'imported-lesson-progress'], [48, 'local-exercise-navigation'],
-  [49, 'local-backend'], [50, 'editor-tabs'], [51, 'editor-tab-click'], [52, 'editor-content'],
-  [54, 'input-locator'], [55, 'input-empty'], [56, 'input-fill'], [57, 'preview-click'], [58, 'preview-output'],
-  [59, 'runtime-version'], [60, 'preview-history'], [61, 'preview-snapshot'], [62, 'preview-files'],
-  [63, 'grade-locator'], [64, 'grade-ready'], [65, 'grade-request'], [66, 'grade-request'],
-  [67, 'grade-request'], [68, 'grade-click'], [69, 'grade-response'], [70, 'grade-result'],
-  [71, 'saved-files-after-grade'], [72, 'input-hash-after'],
+  [18, 'input-read'], [19, 'input-hash'], [20, 'input-parse'], [21, 'input-draft'], [22, 'input-lesson'],
+  [23, 'input-draft-count'], [24, 'input-files'], [25, 'input-history-count'], [26, 'input-history-status'],
+  [27, 'input-passing-snapshot'], [28, 'input-lesson-complete'], [30, 'local-home-navigation'],
+  [31, 'local-origin'], [32, 'initial-local-read'], [33, 'initial-local-courses'], [34, 'initial-local-drafts'],
+  [35, 'import-upload'], [36, 'import-upload'], [37, 'import-upload'], [38, 'import-preview'],
+  [39, 'import-navigation-wait'], [40, 'import-confirmation'], [41, 'import-navigation'],
+  [42, 'imported-draft-read'], [43, 'imported-files'], [44, 'imported-history'], [45, 'imported-snapshot'],
+  [46, 'imported-course-read'], [47, 'imported-lesson-progress'], [49, 'local-exercise-navigation'],
+  [50, 'local-backend'], [51, 'editor-tabs'], [52, 'editor-tab-click'], [53, 'editor-content'],
+  [55, 'input-locator'], [56, 'input-empty'], [57, 'input-fill'], [58, 'preview-observer'],
+  [63, 'preview-click'], [64, 'preview-output'], [76, 'runtime-version'], [77, 'preview-history'],
+  [78, 'preview-snapshot'], [79, 'preview-files'], [80, 'grade-locator'], [81, 'grade-ready'],
+  [82, 'grade-request'], [83, 'grade-request'], [84, 'grade-request'], [85, 'grade-click'],
+  [86, 'grade-response'], [87, 'grade-result'], [88, 'saved-files-after-grade'], [89, 'input-hash-after'],
 ]);
 
 export function summarizeLocal(report, actualHash) {

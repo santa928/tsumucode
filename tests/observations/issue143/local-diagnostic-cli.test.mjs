@@ -17,7 +17,7 @@ test('CLI prints only fixed identifiers when private data occurs in a report', a
     const file = join(dir, 'input.json');
     const item = { title: 'P6 new same-run synthetic Pages export imports into Local and runs the Python project', file: 'local-import.spec.ts', tests: [{
       projectName: 'chromium', expectedStatus: 'passed', results: [{ retry: 0, status: 'failed',
-        errorLocation: { file: 'local-import.spec.ts', line: 59 },
+        errorLocation: { file: 'local-import.spec.ts', line: 76 },
         errors: [{ message: 'PRIVATE_MARKER_nonpublic_url_code' }],
       }],
     }] };

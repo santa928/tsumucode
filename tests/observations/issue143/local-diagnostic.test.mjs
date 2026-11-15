@@ -1,19 +1,19 @@
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { summarizeLocal } from './local-diagnostic.mjs';
-const hash = 'e78a20030bcb47f96587abdfac733a84286ce57404932e9298ad0720d7b26abe';
+const hash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
 const title = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
 const row = (status, location) => ({ title, file: 'local-import.spec.ts', tests: [{ projectName: 'chromium', expectedStatus: 'passed', results: [{ retry: 0, status, errorLocation: location, errors: [{ message: 'PRIVATE_MARKER_nonpublic_url_code', location }] }] }] });
 const report = specs => ({ suites: [{ suites: [{ specs }] }] });
 const loc = line => ({ file: '/workspace/tests/observations/issue143/local-import.spec.ts', line });
 
 test('classifies only the exact test, status, expected state and fixed failure location', () => {
-  assert.deepEqual(summarizeLocal(report([row('failed', loc(59))]), hash), ['local p6 status=failed expected=passed stage=runtime-version']);
+  assert.deepEqual(summarizeLocal(report([row('failed', loc(76))]), hash), ['local p6 status=failed expected=passed stage=runtime-version']);
   assert.deepEqual(summarizeLocal(report([row('passed')]), hash), ['local p6 status=passed expected=passed stage=not-applicable']);
 });
 test('reports absent, timeout, skipped and duplicate tests without inventing success', () => {
   assert.deepEqual(summarizeLocal(report([]), hash), ['local p6 status=not-reported expected=not-reported stage=not-reported']);
-  assert.match(summarizeLocal(report([row('timedOut', loc(70))]), hash)[0], /status=timed-out expected=passed stage=grade-result/);
+  assert.match(summarizeLocal(report([row('timedOut', loc(87))]), hash)[0], /status=timed-out expected=passed stage=grade-result/);
   assert.match(summarizeLocal(report([row('skipped')]), hash)[0], /status=skipped/);
   assert.match(summarizeLocal(report([row('failed'), row('passed')]), hash)[0], /status=ambiguous/);
 });
@@ -38,8 +38,12 @@ test('unknown location does not become a known stage', () => {
 });
 
 test('distinguishes backend, preview version and preview history and rejects old spec', () => {
-  assert.match(summarizeLocal(report([row('failed', loc(49))]), hash)[0], /stage=local-backend/);
-  assert.match(summarizeLocal(report([row('failed', loc(59))]), hash)[0], /stage=runtime-version/);
-  assert.match(summarizeLocal(report([row('failed', loc(60))]), hash)[0], /stage=preview-history/);
+  assert.match(summarizeLocal(report([row('failed', loc(50))]), hash)[0], /stage=local-backend/);
+  assert.match(summarizeLocal(report([row('failed', loc(76))]), hash)[0], /stage=runtime-version/);
+  assert.match(summarizeLocal(report([row('failed', loc(77))]), hash)[0], /stage=preview-history/);
   assert.deepEqual(summarizeLocal(report([]), '26640ed90c40399f06097d22d133abd885dd2a8d720df44f6527a3d85c9338e4'), ['local-diagnostic spec-mismatch']);
+});
+
+test('rejects the immediately preceding spec hash after adding passive diagnostics', () => {
+  assert.deepEqual(summarizeLocal(report([]), 'e78a20030bcb47f96587abdfac733a84286ce57404932e9298ad0720d7b26abe'), ['local-diagnostic spec-mismatch']);
 });
