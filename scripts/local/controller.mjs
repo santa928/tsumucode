@@ -6,6 +6,7 @@ import {
   pythonSourceSnapshot,
 } from './pythonLessonProfiles.mjs';
 import { PracticeRunner, PRACTICE_LIMITS } from './python-practice.mjs';
+import { createPythonGradeCiObserver } from './python-grade-ci-diagnostic.mjs';
 import { pythonFixedFixtures } from './pythonFixedFixtures.mjs';
 import console from 'node:console';
 import { createServer } from 'node:http';
@@ -153,6 +154,12 @@ async function cancel(run, reason) {
   }
 }
 
+/** Fail-closed CI-only categories; never copy run inputs or exceptions. */
+function markPythonGradeCi(run, analyze, stage) {
+  try { run.ciGradeObserver?.mark(run.ciGradeCase, analyze ? 'analysis' : 'execution', stage); }
+  catch { /* Diagnostic failures must not affect execution. */ }
+}
+
 /** 1回の実containerを監視し、終了理由を維持して全資源を回収する。 */
 async function executePhase(run, analyze = false) {
   const started = performance.now();
@@ -164,6 +171,7 @@ async function executePhase(run, analyze = false) {
   let exitCode = null;
   try {
     if (!run.reason) {
+      markPythonGradeCi(run, analyze, 'create');
       const container = await docker(
         'POST',
         '/containers/create',
@@ -180,6 +188,7 @@ async function executePhase(run, analyze = false) {
       );
       run.containerId = container.Id;
       if (!run.reason) {
+        markPythonGradeCi(run, analyze, 'start');
         await docker('POST', `/containers/${container.Id}/start`);
         executionStarted = performance.now();
         timeout = setTimeout(() => {
@@ -187,6 +196,7 @@ async function executePhase(run, analyze = false) {
             recoveryNeeded = true;
           });
         }, LIMITS.wallMs);
+        markPythonGradeCi(run, analyze, 'output');
         output = followOutput(
           container.Id,
           (stream, data) => (stream === 2 ? stderr : stdout).push(data),
@@ -203,6 +213,7 @@ async function executePhase(run, analyze = false) {
             recoveryNeeded = true;
           });
         });
+        markPythonGradeCi(run, analyze, 'wait');
         const waited = await docker(
           'POST',
           `/containers/${container.Id}/wait?condition=not-running`,
@@ -210,8 +221,10 @@ async function executePhase(run, analyze = false) {
           LIMITS.wallMs + 10000,
         );
         clearTimeout(timeout);
+        markPythonGradeCi(run, analyze, 'output');
         await outputDone;
         exitCode = waited.StatusCode;
+        markPythonGradeCi(run, analyze, 'inspect');
         const inspected = await docker('GET', `/containers/${container.Id}/json`);
         if (
           process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1' &&
@@ -233,6 +246,7 @@ async function executePhase(run, analyze = false) {
     output?.close();
     if (run.containerId) {
       try {
+        markPythonGradeCi(run, analyze, 'cleanup');
         await removeContainer(run.containerId);
         run.containerId = undefined;
       } catch (error) {
@@ -414,19 +428,29 @@ async function executeFixedGrade(run) {
   const observations = [];
   let selected;
   let failed;
+  let ciGradeObserver;
+  try {
+    ciGradeObserver = createPythonGradeCiObserver({
+      enabled: process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1',
+      owner, exerciseId: input.exerciseId, runId: input.runId,
+    });
+  } catch { /* Diagnostics must never change grading. */ }
   const deadline = setTimeout(() => {
     void cancel(run, 'timeout').catch(() => {
       recoveryNeeded = true;
     });
   }, 60000);
   try {
-    for (const fixture of suite) {
+    for (const [index, fixture] of suite.entries()) {
       // 取消理由は子phaseより先に固定し、case境界でも次containerを起動しない。
       if (run.reason && selected) break;
       const current = {
         input: { ...input, runId: `${input.runId}:${fixture.id}`, inputLines: fixture.inputLines },
         reason: run.reason,
+        ciGradeObserver,
+        ciGradeCase: index + 1,
       };
+      try { ciGradeObserver?.mark(index + 1, 'unknown', 'fixture'); } catch { /* no effect on grading */ }
       run.current = current;
       await execute(current);
       selected ??= current.result;
@@ -464,6 +488,7 @@ async function executeFixedGrade(run) {
     run.input = { ...input, files: {} };
   } finally {
     clearTimeout(deadline);
+    try { ciGradeObserver?.stop(); } catch { /* no effect on grading */ }
     run.current = undefined;
     if (active === run) active = undefined;
   }

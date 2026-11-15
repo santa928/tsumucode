@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { Page, Request, Response, TestInfo } from '@playwright/test';
 
 /** URL・run identity・queryは残さず、有限のAPI分類だけを返す。 */
@@ -37,6 +38,23 @@ export function localConsolePollState(input: unknown) {
   };
 }
 
+/** Only a strong random local CPython grade identity may be correlated. */
+export function localConsoleGradeRunHash(input: unknown): string {
+  if (typeof input !== 'object' || input === null) return 'unknown';
+  const value = input as Record<string, unknown>;
+  if (
+    value.backend !== 'local' ||
+    value.engine !== 'cpython' ||
+    value.state !== 'running' ||
+    typeof value.runId !== 'string' ||
+    !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}:[1-9][0-9]{0,5}$/u.test(
+      value.runId,
+    )
+  )
+    return 'unknown';
+  return createHash('sha256').update(value.runId).digest('hex');
+}
+
 /** 失敗時の境界判別用。最大768eventを保持し、認証headerや要求本文を読まない。 */
 export function observeLocalConsole(page: Page) {
   const events: unknown[] = [];
@@ -69,6 +87,18 @@ export function observeLocalConsole(page: Page) {
       status: reply.status(),
       elapsedMs: Date.now() - entry.startedAt,
     });
+    if (
+      entry.route === 'grade' &&
+      reply.status() === 202 &&
+      page
+        .url()
+        .endsWith(
+          '#/courses/python-basics/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01',
+        )
+    ) {
+      const runHash = await reply.json().then(localConsoleGradeRunHash, () => 'unknown');
+      record({ event: 'grade-identity', ordinal: entry.ordinal, runHash });
+    }
     if (entry.route === 'poll' || entry.route === 'cancel') {
       const state = await reply
         .json()

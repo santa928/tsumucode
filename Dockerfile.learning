@@ -44,7 +44,7 @@ COPY --from=build /workspace/public/generated/content/courses/python-basics/inde
 COPY --from=build /workspace/public/generated/content/courses/python-practice/index.json ./python-practice-course-index.json
 COPY --from=build /workspace/public/generated/content/courses/python-oop/index.json ./python-oop-course-index.json
 COPY src/core/runtime/pythonLessonProfiles.mjs ./
-COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
+COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs scripts/local/python-grade-ci-diagnostic.mjs ./
 COPY scripts/local/python-profile.mjs scripts/local/python-practice.mjs scripts/local/python-practice.py ./
 COPY src/core/runtime/pythonFixedFixtures.mjs ./
 COPY src/core/runtime/pythonLessonAnalysis.mjs ./python-lesson-analysis.mjs

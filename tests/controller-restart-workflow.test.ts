@@ -24,7 +24,7 @@ it('runs the Python CI diagnostic tests separately before the CPython recovery s
   expect(steps[diagnostic]?.if).toBeUndefined();
   expect([undefined, false]).toContain(steps[diagnostic]?.['continue-on-error']);
   expect(steps[diagnostic]?.run?.trim()).toBe(
-    'node --test scripts/local/python-ci-diagnostic.node-test.mjs',
+    'node --test scripts/local/python-ci-diagnostic.node-test.mjs scripts/local/python-grade-ci-diagnostic.node-test.mjs',
   );
 });
 const restartSteps = [

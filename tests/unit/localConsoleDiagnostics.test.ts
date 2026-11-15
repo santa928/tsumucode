@@ -4,6 +4,7 @@ import type { Page, TestInfo } from '@playwright/test';
 import {
   localConsoleRoute,
   localConsolePollState,
+  localConsoleGradeRunHash,
   observeLocalConsole,
 } from '../e2e/helpers/localConsoleDiagnostics';
 
@@ -42,6 +43,63 @@ describe('Local Consoleの診断へ入力や認証値を持ち出さない', () 
       state: 'running',
     });
     expect(localConsolePollState(null)).toEqual({ state: 'other' });
+  });
+
+  it('暗号学的なrun IDだけを固定hashへ変換し入力や認証値を残さない', () => {
+    const input = {
+      backend: 'local',
+      engine: 'cpython',
+      state: 'running',
+      runId: '123e4567-e89b-42d3-a456-426614174000:7',
+      source: 'PRIVATE_INPUT',
+      token: 'PRIVATE_SECRET',
+    };
+    expect(localConsoleGradeRunHash(input)).toMatch(/^[a-f0-9]{64}$/u);
+    expect(localConsoleGradeRunHash({ ...input, runId: 'private id' })).toBe('unknown');
+    expect(localConsoleGradeRunHash({ ...input, backend: 'other' })).toBe('unknown');
+    expect(localConsoleGradeRunHash({ ...input, engine: 'node' })).toBe('unknown');
+    expect(localConsoleGradeRunHash({ ...input, state: 'completed' })).toBe('unknown');
+    expect(localConsoleGradeRunHash(null)).toBe('unknown');
+  });
+
+  it('対象 grade の受理だけを hash に結合し、応答の他データを保存しない', async () => {
+    const page = Object.assign(new EventEmitter(), {
+      context: () => ({ browser: () => null }),
+      url: () =>
+        'http://127.0.0.1:4173/#/courses/python-basics/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01',
+    });
+    const observer = observeLocalConsole(page as unknown as Page);
+    const request = { url: () => 'http://127.0.0.1:4173/api/grades' };
+    page.emit('request', request);
+    page.emit('response', {
+      request: () => request,
+      status: () => 202,
+      json: () =>
+        Promise.resolve({
+          backend: 'local',
+          engine: 'cpython',
+          state: 'running',
+          runId: '123e4567-e89b-42d3-a456-426614174000:7',
+          source: 'PRIVATE_INPUT',
+          token: 'PRIVATE_SECRET',
+        }),
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+    const reports: string[] = [];
+    const info = {
+      attach: (_name: string, options: { body: string }) => {
+        reports.push(options.body);
+        return Promise.resolve();
+      },
+    } as unknown as TestInfo;
+    await observer.attach(info);
+    const value = JSON.parse(reports[0]!) as { events: { event: string; runHash?: string }[] };
+    expect(value.events.find((event) => event.event === 'grade-identity')?.runHash).toMatch(
+      /^[a-f0-9]{64}$/u,
+    );
+    expect(reports[0]).not.toMatch(/PRIVATE|123e4567/u);
+    observer.stop();
   });
 
   it('本文が未完了でもheaders到着を残し、本文完了と区別する', async () => {
