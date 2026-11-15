@@ -52,7 +52,6 @@ describe('Draft PRの固定検証', () => {
         'reopened',
         'synchronize',
         'edited',
-        'ready_for_review',
       ]);
       if (name !== 'pages') {
         expect(workflow(name).on.pull_request.paths).toBeDefined();
