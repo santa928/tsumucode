@@ -1,0 +1,67 @@
+name: Private manifest redaction draft validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, converted_to_draft]
+
+permissions: {}
+
+jobs:
+  private_manifest_redaction:
+    # Synthetic validation only; no signing, OIDC, qualification or deployment authority.
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/validate-lineage-manifest-redaction' &&
+          github.event.pull_request.base.sha == '2a0dfa3a196cca736c6c7b6129e0cacb1d263d20' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact draft HEAD without persisted credentials
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify candidate and fixed inputs
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          git rev-parse HEAD 'HEAD^{tree}'
+          sha256sum --check <<'SHA256'
+          2d26afccb2fc4d21791c1e176264e9a25a7d1b11308fae5262ac1cbd115b4677  Dockerfile
+          15c380765bbf2e109f96275248e842b7a9649fca7efa633427ee85ab8fd19aa4  package.json
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          71d5e6329eb617384edf8742a64d9f8533ee5f7832d6586ac6c9150eab1967c8  .dockerignore
+          fa6c741186a6df8a07c7067d0de020d17a36a2b8fec0b2a43024dae07526ef01  src/core/persistence/canonicalJson.ts
+          6ede94b6b37989fef56113074beb150daa810c1345af90e25b142cdcf08b0050  tests/local/lineage-manifest-redaction/lineageManifestIntake.ts
+          3cb2e29d9c748beb5026f4014731a2a7b24540a56c3d6aa2b311f9143b17093f  tests/local/lineage-manifest-redaction/lineageNeedsParse.ts
+          0bfeddcbb5c517fe4c755a623ed912da24df1219e29d0dffcce65a51986de20d  tests/local/lineage-manifest-redaction/manifest.test.cjs
+          3b45683ad6116fb90998e1b549e6864a3be05a1349f6ab64ae69764acdd906bf  tests/local/lineage-manifest-redaction/nested-needs.test.cjs
+          7b4a2eaccfb8dd21165a399fb46018e0e4026260de91463577151b383c62184c  tests/local/lineage-manifest-redaction/original-direct-needs.fixture
+          19f5cf3db8ddaeb7d5f2cfe7357dd9a54921135152aae3637f7cf1863f819842  tests/local/lineage-manifest-redaction/candidate-direct-needs.fixture
+          SHA256
+      - name: Build fixed Node and locked dependencies
+        env:
+          IMAGE: private-manifest-redaction-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: docker build --target dependencies --tag "$IMAGE" .
+      - name: Run isolated synthetic privacy checks
+        env:
+          IMAGE: private-manifest-redaction-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          docker run --rm --network none --read-only --user 65534:65534
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/lineage-manifest-redaction,target=/workspace/tests/local/lineage-manifest-redaction,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/src/core/persistence/canonicalJson.ts,target=/workspace/src/core/persistence/canonicalJson.ts,readonly"
+          "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
+          node --test tests/local/lineage-manifest-redaction/manifest.test.cjs tests/local/lineage-manifest-redaction/nested-needs.test.cjs;
+          ./node_modules/.bin/tsc --ignoreConfig --noEmit --target es2022 --module esnext --moduleResolution bundler
+          --types node --skipLibCheck --strict tests/local/lineage-manifest-redaction/lineageManifestIntake.ts
+          tests/local/lineage-manifest-redaction/lineageNeedsParse.ts'
