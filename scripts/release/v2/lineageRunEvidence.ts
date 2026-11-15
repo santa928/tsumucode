@@ -89,11 +89,22 @@ const Expected = z
 
 /** Structural match only. The workflow must authenticate its producer and reverify the live parent. */
 export function matchSameRunLineageEvidence(input: Uint8Array, expectedInput: unknown) {
-  const bytes = snapshotBytes(input, 16 * 1024, 'Invalid lineage evidence bytes'),
+  const bytes = snapshotBytes(input, 16 * 1024, 'Invalid lineage evidence bytes');
+  let expected: z.infer<typeof Expected>;
+  try {
     expected = Expected.parse(expectedInput);
+  } catch {
+    throw Error('Invalid lineage expected context');
+  }
   if (hashBytes(bytes) !== expected.sha256) throw Error('Lineage evidence digest differs');
-  const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes),
+  let text: string;
+  let evidence: z.infer<typeof Evidence>;
+  try {
+    text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     evidence = Evidence.parse(JSON.parse(text) as unknown);
+  } catch {
+    throw Error('Invalid lineage evidence');
+  }
   if (
     canonicalJson(evidence) !== text ||
     evidence.runId !== expected.runId ||
@@ -112,14 +123,36 @@ export function matchLineageEvidenceFiles(
   evidenceInput: unknown,
   files: { subject?: Uint8Array; bundle?: Uint8Array },
 ) {
-  const evidence = Evidence.parse(evidenceInput);
+  let evidence: z.infer<typeof Evidence>;
+  let subjectInput: Uint8Array | undefined;
+  let bundleInput: Uint8Array | undefined;
+  try {
+    evidence = Evidence.parse(evidenceInput);
+  } catch {
+    throw Error('Invalid lineage evidence');
+  }
+  try {
+    subjectInput = files.subject;
+  } catch {
+    throw Error('Invalid lineage file input');
+  }
+  if (evidence.mode === 'anchor' && subjectInput !== undefined)
+    throw Error('Anchor carries unexpected signed evidence');
+  const subject = evidence.mode === 'signed'
+    ? snapshotBytes(subjectInput, 16 * 1024, 'Invalid lineage file bytes')
+    : undefined;
+  try {
+    bundleInput = files.bundle;
+  } catch {
+    throw Error('Invalid lineage file input');
+  }
   if (evidence.mode === 'anchor') {
-    if (files.subject !== undefined || files.bundle !== undefined)
+    if (bundleInput !== undefined)
       throw Error('Anchor carries unexpected signed evidence');
     return {};
   }
-  const subject = snapshotBytes(files.subject, 16 * 1024, 'Invalid lineage file bytes'),
-    bundle = snapshotBytes(files.bundle, 4 * 1024 * 1024, 'Invalid lineage file bytes');
+  if (!subject) throw Error('Invalid lineage file bytes');
+  const bundle = snapshotBytes(bundleInput, 4 * 1024 * 1024, 'Invalid lineage file bytes');
   if (hashBytes(subject) !== evidence.subjectSha256 || hashBytes(bundle) !== evidence.bundleSha256)
     throw Error('Signed parent bytes differ');
   return { subject, bundle };
@@ -127,9 +160,19 @@ export function matchLineageEvidenceFiles(
 
 /** Compare a fresh v1 parent capture structurally; this does not authenticate its source. */
 export function matchLineageEvidenceParent(evidenceInput: unknown, capturedInput: unknown) {
-  const evidence = Evidence.parse(evidenceInput),
-    captured = validateCapturedBaseline(capturedInput),
-    proof = captured.proof;
+  let evidence: z.infer<typeof Evidence>;
+  let captured: ReturnType<typeof validateCapturedBaseline>;
+  try {
+    evidence = Evidence.parse(evidenceInput);
+  } catch {
+    throw Error('Invalid lineage evidence');
+  }
+  try {
+    captured = validateCapturedBaseline(capturedInput);
+  } catch {
+    throw Error('Invalid lineage parent');
+  }
+  const proof = captured.proof;
   if (
     proof.repository !== evidence.repository ||
     proof.deploymentId !== evidence.parentDeploymentId ||
