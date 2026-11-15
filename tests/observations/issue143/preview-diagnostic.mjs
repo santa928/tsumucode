@@ -98,7 +98,7 @@ export async function capturePreviewFailure(page, tracker) {
   return tracker.snapshot(ui);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+async function main() {
   let file;
   try {
     if (process.argv.length !== 3) throw Error();
@@ -110,4 +110,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     for (const line of previewLines(JSON.parse(body), sha)) console.log(line);
   } catch { console.log('preview-diagnostic unavailable'); }
   finally { await file?.close(); }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  void main().catch(() => console.log('preview-diagnostic unavailable'));
 }
