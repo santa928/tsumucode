@@ -16,7 +16,7 @@ export function isExpectedList(status, output) {
 async function main() {
   try {
     const hash = value => createHash('sha256').update(value).digest('hex');
-    const spec = hash(await readFile(new URL('./local-import.spec.ts', import.meta.url)));
+    const spec = hash(await readFile(new URL('./local-import.pw-spec.ts', import.meta.url)));
     const module = hash(await readFile(new URL('./preview-diagnostic.mjs', import.meta.url)));
     if (!hashesMatch(spec, module)) throw Error();
     const result = spawnSync(process.execPath, ['node_modules/@playwright/test/cli.js', 'test', '--list', '--reporter=list', '--config=/workspace/tests/observations/issue143/observation.config.ts'], {

@@ -27,7 +27,7 @@ async function main() {
     file = await open(process.argv[2], constants.O_RDONLY | constants.O_NOFOLLOW);
     const stat = await file.stat();
     if (!stat.isFile() || stat.size > maxBytes) throw Error();
-    const spec = sha(await readFile(new URL('./local-import.spec.ts', import.meta.url)));
+    const spec = sha(await readFile(new URL('./local-import.pw-spec.ts', import.meta.url)));
     const preview = sha(await readFile(new URL('./preview-diagnostic.mjs', import.meta.url)));
     if (!classifySources(spec, preview)) { console.log('startup-diagnostic source-mismatch'); return; }
     const buffer = Buffer.alloc(maxBytes + 1);

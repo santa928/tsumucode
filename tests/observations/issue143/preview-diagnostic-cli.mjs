@@ -12,7 +12,7 @@ async function main() {
     const stat = await file.stat();
     if (!stat.isFile() || stat.size > 4096) throw Error();
     const body = await file.readFile('utf8');
-    const sha = createHash('sha256').update(await readFile(new URL('./local-import.spec.ts', import.meta.url))).digest('hex');
+    const sha = createHash('sha256').update(await readFile(new URL('./local-import.pw-spec.ts', import.meta.url))).digest('hex');
     for (const line of previewLines(JSON.parse(body), sha)) console.log(line);
   } catch { console.log('preview-diagnostic unavailable'); }
   finally { await file?.close(); }

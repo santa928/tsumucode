@@ -38,7 +38,7 @@ test('CLI fails closed on changed source without exposing source or log', async 
   try {
     const copied = join(await realpath(dir), 'startup-diagnostic.mjs'), log = join(dir, 'private.log');
     await copyFile(cli, copied);
-    await copyFile(new URL('./local-import.spec.ts', import.meta.url), join(dir, 'local-import.spec.ts'));
+    await copyFile(new URL('./local-import.pw-spec.ts', import.meta.url), join(dir, 'local-import.pw-spec.ts'));
     await writeFile(join(dir, 'preview-diagnostic.mjs'), 'PRIVATE_MARKER');
     await writeFile(log, 'ERR_REQUIRE_ASYNC_MODULE PRIVATE_MARKER');
     const result = spawnSync(process.execPath, [copied, log], { encoding: 'utf8', timeout: 5000 });

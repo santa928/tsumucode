@@ -5,7 +5,7 @@ import { open, readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
 const specHash = '2c5f51ef7c45e9c2da44bba7ae205666210f111255be41a61918a64c58fd985e';
-const allowedFiles = new Set(['home-resume.spec.mjs', '/workspace/tests/observations/issue143/home-resume.spec.mjs']);
+const allowedFiles = new Set(['home-resume.pw-spec.mjs', '/workspace/tests/observations/issue143/home-resume.pw-spec.mjs']);
 const names = new Map([
   ['course resumes the saved exercise and source', 'course'],
   ['path resumes the saved exercise and source', 'path'],
@@ -74,7 +74,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const stat = await file.stat();
     if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw Error();
     const body = await file.readFile('utf8');
-    const sha = createHash('sha256').update(await readFile(new URL('./home-resume.spec.mjs', import.meta.url))).digest('hex');
+    const sha = createHash('sha256').update(await readFile(new URL('./home-resume.pw-spec.mjs', import.meta.url))).digest('hex');
     for (const line of summarizeHome(JSON.parse(body), sha)) console.log(line);
   } catch {
     console.log('home-diagnostic report-unavailable');

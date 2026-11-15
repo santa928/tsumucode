@@ -17,9 +17,9 @@ const invoke = path => spawnSync(process.execPath, [cli, path], { encoding: 'utf
 test('CLI prints only known labels even if error contents contain private data', async () => {
   await withTemporaryDirectory(async dir => {
     const file = join(dir, 'input.json');
-    const item = { title: 'course resumes the saved exercise and source', file: 'home-resume.spec.mjs', tests: [{
+    const item = { title: 'course resumes the saved exercise and source', file: 'home-resume.pw-spec.mjs', tests: [{
       projectName: 'chromium', expectedStatus: 'passed', results: [{ retry: 0, status: 'failed',
-        errorLocation: { file: 'home-resume.spec.mjs', line: 30 },
+        errorLocation: { file: 'home-resume.pw-spec.mjs', line: 30 },
         errors: [{ message: 'PRIVATE_MARKER_secret_url_code' }],
       }],
     }] };

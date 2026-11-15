@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const phase = process.env['OBSERVATION_PHASE'];
 if (!phase || !['export', 'home', 'local'].includes(phase)) throw Error('Invalid observation phase');
 const names: Record<string, string> = {
-  export: 'pages-export.spec.ts', home: 'home-resume.spec.mjs', local: 'local-import.spec.ts',
+  export: 'pages-export.pw-spec.ts', home: 'home-resume.pw-spec.mjs', local: 'local-import.pw-spec.ts',
 };
 const testMatch = names[phase];
 if (!testMatch) throw Error('Invalid observation phase');

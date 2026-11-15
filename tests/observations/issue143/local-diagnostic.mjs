@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 
 const specHash = '1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
 const testTitle = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
-const allowedFiles = new Set(['local-import.spec.ts', '/workspace/tests/observations/issue143/local-import.spec.ts']);
+const allowedFiles = new Set(['local-import.pw-spec.ts', '/workspace/tests/observations/issue143/local-import.pw-spec.ts']);
 const status = new Map([['passed', 'passed'], ['failed', 'failed'], ['timedOut', 'timed-out'], ['skipped', 'skipped'], ['interrupted', 'interrupted']]);
 const stages = new Map([
   [18, 'input-read'], [19, 'input-hash'], [20, 'input-parse'], [21, 'input-draft'], [22, 'input-lesson'],
@@ -71,7 +71,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const stat = await file.stat();
     if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw Error();
     const body = await file.readFile('utf8');
-    const sha = createHash('sha256').update(await readFile(new URL('./local-import.spec.ts', import.meta.url))).digest('hex');
+    const sha = createHash('sha256').update(await readFile(new URL('./local-import.pw-spec.ts', import.meta.url))).digest('hex');
     for (const line of summarizeLocal(JSON.parse(body), sha)) console.log(line);
   } catch {
     console.log('local-diagnostic report-unavailable');
