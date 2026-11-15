@@ -186,6 +186,75 @@ it('preserves the fixed baseline identity error for a valid-shaped inconsistent 
   expect(() => matchLineageEvidenceParent({ ...common, mode: 'anchor' }, parent))
     .toThrow('Captured baseline identity differs from its proof');
 });
+
+it('reads an untrusted nested getter once and does not invoke toJSON', () => {
+  const captured = structuredClone(releaseFixture().capturedBaseline);
+  const deploymentId = captured.baseline.deploymentId;
+  let reads = 0;
+  let jsonCalls = 0;
+  Object.defineProperty(captured.baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; return deploymentId; },
+  });
+  Object.defineProperty(captured.baseline.inventory, 'toJSON', {
+    value() { jsonCalls += 1; throw Error('synthetic-private-marker'); },
+  });
+  expect(() => matchLineageEvidenceParent({ ...common, mode: 'anchor' }, captured))
+    .toThrow('Fresh parent identity differs');
+  expect(reads).toBe(1);
+  expect(jsonCalls).toBe(0);
+});
+
+it('does not invoke toJSON when returning a matched parent', () => {
+  const fixture = releaseFixture().capturedBaseline;
+  const proof = {
+    ...fixture.proof,
+    repository: 'santa928/tsumucode',
+    deploymentId: common.parentDeploymentId,
+    sourceCommit: common.parentSource,
+    workflowHeadCommit: common.parentSource,
+    tagDigest: common.parentTagDigest,
+  };
+  const baseline = {
+    ...fixture.baseline,
+    deploymentId: proof.deploymentId,
+    sourceCommit: proof.sourceCommit,
+    sourceRecordDigest: hashValue(proof),
+  };
+  const evidence = { ...common, mode: 'anchor', parentIdentityDigest: hashValue({ ...proof, observedAt: null }) };
+  const expected = canonicalJson({ baseline, proof });
+  const deploymentId = baseline.deploymentId;
+  let reads = 0;
+  let jsonCalls = 0;
+  Object.defineProperty(baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; return deploymentId; },
+  });
+  Object.defineProperty(baseline.inventory, 'toJSON', {
+    value() { jsonCalls += 1; throw Error('synthetic-private-marker'); },
+  });
+  expect(matchLineageEvidenceParent(evidence, { baseline, proof })).toBe(expected);
+  expect(reads).toBe(1);
+  expect(jsonCalls).toBe(0);
+});
+
+it('hides a throwing nested getter without re-reading it', () => {
+  const captured = structuredClone(releaseFixture().capturedBaseline);
+  let reads = 0;
+  Object.defineProperty(captured.baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; throw Error('synthetic-private-marker'); },
+  });
+  try {
+    matchLineageEvidenceParent({ ...common, mode: 'anchor' }, captured);
+    throw Error('Expected rejection');
+  } catch (error) {
+    expect((error as Error).message).toBe('Invalid lineage parent');
+    expect((error as Error).stack).not.toContain('synthetic-private-marker');
+    expect((error as Error).cause).toBeUndefined();
+  }
+  expect(reads).toBe(1);
+});
 it('matches bounded canonical evidence to independently supplied same-run context (shape only)', () => {
   const anchor = test({ ...common, mode: 'anchor' }),
     expected = {
