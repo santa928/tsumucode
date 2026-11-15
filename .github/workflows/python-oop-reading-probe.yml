@@ -1,0 +1,117 @@
+name: Fixed Python OOP reading probe
+
+on:
+  pull_request:
+    branches: [codex/issue152-combined-fixed-ci]
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  oop_reading:
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.repository == 'santa928/tsumucode' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/verify-oop-reading-8fda' &&
+          github.event.pull_request.base.sha == '8fdaeb61205ba8fad334af16886a725b49c50fde' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - name: Check out the bounded probe
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out the exact candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 8fdaeb61205ba8fad334af16886a725b49c50fde
+          path: fixed-candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind both source trees
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          case "$EXPECTED_HEAD" in *[!0-9a-f]*|'') exit 1;; esac
+          test "${#EXPECTED_HEAD}" = 40
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
+          test "$(git rev-parse HEAD^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          expected_paths=$(printf '%s\n' \
+            '.github/workflows/python-oop-reading-probe.yml' \
+            'tests/local/oop-reading-probe/check-dist.py' \
+            'tests/local/oop-reading-probe/check-report.py' \
+            'tests/local/oop-reading-probe/oop-horizontal.config.ts' \
+            'tests/local/oop-reading-probe/oop-horizontal.spec.ts')
+          test "$(git diff --no-renames --name-only HEAD^ HEAD)" = "$expected_paths"
+          test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
+          test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
+      - name: Build the existing fixed Node and Browser image
+        run: |
+          set -euo pipefail
+          log=$(mktemp "$RUNNER_TEMP/oop-image.XXXXXX")
+          trap 'rm -f "$log"' EXIT
+          if docker build --target app --tag oop-reading-probe fixed-candidate >"$log" 2>&1; then
+            echo 'fixed-image=passed'
+          else
+            echo 'fixed-image=failed'
+            exit 1
+          fi
+      - name: Rebuild and match every existing preview byte
+        run: |
+          set -euo pipefail
+          log=$(mktemp "$RUNNER_TEMP/oop-build.XXXXXX")
+          trap 'rm -f "$log"' EXIT
+          if docker run --rm --network none --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
+            --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --tmpfs "/workspace/node_modules/.vite-temp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/fixed-candidate,target=/workspace" \
+            --mount type=volume,target=/workspace/node_modules \
+            oop-reading-probe npm run build >"$log" 2>&1; then
+            echo 'candidate-build=passed'
+          else
+            echo 'candidate-build=failed'
+            exit 1
+          fi
+          cd fixed-candidate
+          python3 ../tests/local/oop-reading-probe/check-dist.py
+      - name: Execute existing 34-slide reading checks and one horizontal scroll observation
+        run: |
+          set -euo pipefail
+          mkdir -p fixed-candidate/tests/local/oop-reading-probe fixed-candidate/test-results probe-results
+          log=$(mktemp "$RUNNER_TEMP/oop-browser.XXXXXX")
+          trap 'rm -f "$log"' EXIT
+          result=0
+          docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
+            --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --tmpfs "/tmp:rw,nosuid,nodev,size=256m,uid=$(id -u),gid=$(id -g)" \
+            --tmpfs "/workspace/node_modules/.vite-temp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/fixed-candidate,target=/workspace,readonly" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/workspace/tests/local/oop-reading-probe,readonly" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/probe-results,target=/workspace/test-results" \
+            --mount type=volume,target=/workspace/node_modules,readonly \
+            oop-reading-probe sh -ec '
+              node node_modules/@playwright/test/cli.js test --config=tests/acceptance/python-oop.config.ts;
+              node node_modules/@playwright/test/cli.js test --config=tests/local/oop-reading-probe/oop-horizontal.config.ts' >"$log" 2>&1 || result=1
+          python3 tests/local/oop-reading-probe/check-report.py "$result"
+      - name: Preserve bounded machine test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: oop-reading-probe-8fda-${{ github.run_attempt }}
+          path: bounded-oop-reading.json
+          if-no-files-found: warn
+          retention-days: 7
