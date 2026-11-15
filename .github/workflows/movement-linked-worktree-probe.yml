@@ -1,0 +1,92 @@
+name: Movement linked worktree probe
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [codex/movement-python-path-boundary]
+
+permissions:
+  contents: read
+
+jobs:
+  linked-worktree:
+    if: >-
+      github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/verify-movement-linked-worktree-701a' &&
+      github.event.pull_request.base.sha == '701a8b5a65a6e915d009b4faeffaaab1f3b05c7f'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact candidate and probe scope
+        shell: bash
+        env:
+          EVENT_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EVENT_HEAD" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$EVENT_HEAD"
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
+          test "$(git rev-parse HEAD^)" = 733cf87a810230f7babf1963a018f70b5295bb48
+          test "$(git rev-parse HEAD^^)" = 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
+          test "$(git diff --name-status --no-renames HEAD^^ HEAD)" = $'A\t.github/workflows/movement-linked-worktree-probe.yml'
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test "$(git rev-parse HEAD^^:content)" = 958588d67cb195a1a9a15f30f771a8c74393ac69
+      - name: Create isolated linked worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_RUN_ID" =~ ^[0-9]+$ && "$GITHUB_RUN_ATTEMPT" =~ ^[0-9]+$ ]]
+          root="$RUNNER_TEMP/movement-linked-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          test ! -e "$root" && test ! -L "$root"
+          mkdir -m 700 "$root" "$root/home"
+          env -i PATH=/usr/bin:/bin HOME="$root/home" GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 GIT_NO_LAZY_FETCH=1 \
+            git -c core.hooksPath=/dev/null -c core.fsmonitor=false worktree add --detach "$root/source" 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
+          test -f "$root/source/.git" && test ! -L "$root/source/.git"
+          test "$(git -C "$root/source" rev-parse HEAD)" = 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
+          test -z "$(git -C "$root/source" status --porcelain --untracked-files=all)"
+          test "$(git -C "$root/source" rev-parse --path-format=absolute --git-common-dir)" = "$GITHUB_WORKSPACE/.git"
+      - name: Build fixed candidate image
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/movement-linked-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          base="movement-base-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          probe="movement-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker build --target development --tag "$base" "$root/source"
+          mkdir -m 700 "$root/build"
+          printf '%s\n' 'ARG BASE' 'FROM ${BASE}' 'RUN test ! -e /workspace/.git && test ! -L /workspace/.git && test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && touch /workspace/.git && mkdir /workspace/node_modules/.vite-temp' > "$root/build/Dockerfile"
+          docker build --network none --build-arg "BASE=$base" --tag "$probe" "$root/build"
+      - name: Exercise fixed Source in linked worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/movement-linked-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          probe="movement-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker run --rm --init --network none --read-only --user 1000:1000 --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true \
+            --tmpfs /tmp:rw,nosuid,nodev,noexec,size=512m,mode=1777 \
+            --tmpfs /workspace/node_modules/.vite-temp:rw,nosuid,nodev,noexec,size=32m,uid=1000,gid=1000,mode=0700 \
+            --mount "type=bind,source=$root/source/.git,target=/workspace/.git,readonly" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/.git,target=/workspace/.git-common,readonly" \
+            --workdir /workspace "$probe" sh -ec 'test "$(node --version)" = v24.18.0; test -f .git; test ! -L .git; node node_modules/vitest/vitest.mjs run tests/unit/release/v2/movementBindingSelection.test.ts --maxWorkers=1 --no-file-parallelism --no-cache'
+      - name: Remove isolated worktree and images
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_RUN_ID" =~ ^[0-9]+$ && "$GITHUB_RUN_ATTEMPT" =~ ^[0-9]+$ ]]
+          root="$RUNNER_TEMP/movement-linked-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          if test -e "$root/source"; then
+            test -d "$root/source" && test ! -L "$root/source"
+            test "$(git -C "$root/source" rev-parse HEAD)" = 701a8b5a65a6e915d009b4faeffaaab1f3b05c7f
+            env -i PATH=/usr/bin:/bin HOME="$root/home" GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 GIT_NO_LAZY_FETCH=1 \
+              git -c core.hooksPath=/dev/null -c core.fsmonitor=false worktree remove "$root/source"
+          fi
+          for image in "movement-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" "movement-base-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"; do
+            if docker image inspect "$image" >/dev/null 2>&1; then docker image rm "$image"; fi
+          done
