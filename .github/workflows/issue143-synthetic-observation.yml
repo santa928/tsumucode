@@ -51,6 +51,7 @@ jobs:
           if docker network inspect "${TSUMUCODE_LOCAL_OWNER}_web" >/dev/null 2>&1; then exit 1; fi
           if ss -H -ltn | grep -Eq ':(4173|4175)[[:space:]]'; then exit 1; fi
           node --test observation/tests/observations/issue143/check-report.test.mjs
+          node --test observation/tests/observations/issue143/local-diagnostic.test.mjs observation/tests/observations/issue143/local-diagnostic-cli.test.mjs
           node --test observation/tests/observations/issue143/identity-http-diagnostic.test.mjs
           node --test observation/tests/observations/issue143/identity-preflight.test.mjs
           node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
@@ -123,9 +124,13 @@ jobs:
             --mount "type=bind,src=$input,dst=/p6-input/synthetic-progress.json,readonly" \
             --mount "type=bind,src=$localdir,dst=/exchange" --env OBSERVATION_PHASE=local --env "P6_RUN_EXPORT_SHA256=$sha" \
             --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" /workspace/tests/observations/issue143/local-bridge.mjs >"$localdir/private-run.log" 2>&1; then
+            node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
             echo 'Synthetic Local observation failed; private log not uploaded'; exit 1
           fi
-          node "$overlay/check-report.mjs" "$localdir/local-report.json" 1
+          if ! node "$overlay/check-report.mjs" "$localdir/local-report.json" 1; then
+            node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
+            exit 1
+          fi
           test "$(sha256sum "$input" | cut -d' ' -f1)" = "$sha"
           printf 'Synthetic same-job export SHA-256: %s\n' "$sha"
       - name: Recheck public Source
