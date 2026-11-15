@@ -9,7 +9,16 @@ export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 mkdir -p "$HOME" /capture /tmp/issue261-private
 phase=preview
 server_pid=
-trap 'status=$?; if [ -n "$server_pid" ]; then kill "$server_pid" 2>/dev/null || true; fi; if [ "$status" -ne 0 ]; then printf "observation failed at %s\n" "$phase" >&2; fi' EXIT
+classify_failure() {
+  for entry in 'permission:EACCES|EPERM|Permission denied' 'read-only:EROFS|read-only file system' 'missing:ENOENT|Cannot find module|Executable.*doesn.t exist' 'browser-launch:browserType.launch|Failed to launch|Target closed' 'timeout:Timeout|timed out' 'cli-daemon:Daemon process exited'; do
+    category=${entry%%:*}
+    pattern=${entry#*:}
+    if grep -Eiq "$pattern" /tmp/issue261-private/cli.log 2>/dev/null; then
+      printf 'diagnostic-marker=%s\n' "$category" >&2
+    fi
+  done
+}
+trap 'status=$?; if [ -n "$server_pid" ]; then kill "$server_pid" 2>/dev/null || true; fi; if [ "$status" -ne 0 ]; then printf "observation failed at %s\n" "$phase" >&2; classify_failure; fi' EXIT
 npm --prefix /workspace run preview -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/issue261-private/server.log 2>&1 &
 server_pid=$!
 node - <<'NODE'
@@ -24,6 +33,32 @@ const deadline = Date.now() + 60_000;
 NODE
 PW=/tool/node_modules/.bin/playwright-cli
 phase=browser-open
+if ! node - > /tmp/issue261-private/browser-preflight.log 2>&1 <<'NODE'
+const fs = require('node:fs');
+const core = require('/tool/node_modules/playwright-core/package.json');
+if (core.version !== '1.61.1') throw Error('Fixed browser library differs');
+const executable = require('/tool/node_modules/playwright').chromium.executablePath();
+try {
+  for (const file of [executable, '/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-linux64/chrome-headless-shell'])
+    fs.accessSync(file, fs.constants.R_OK | fs.constants.X_OK);
+  console.log('Fixed Chromium and headless shell are readable and executable.');
+} catch (error) {
+  const code = error && typeof error === 'object' && 'code' in error ? error.code : 'unknown';
+  console.error(code === 'ENOENT' ? 'Fixed Chromium executable missing.' : code === 'EACCES' || code === 'EPERM' ? 'Fixed Chromium executable denied.' : 'Fixed Chromium executable unavailable.');
+  process.exit(1);
+}
+NODE
+then
+  if grep -Fq 'Fixed Chromium executable missing.' /tmp/issue261-private/browser-preflight.log; then
+    echo 'Fixed Chromium executable missing.' >&2
+  elif grep -Fq 'Fixed Chromium executable denied.' /tmp/issue261-private/browser-preflight.log; then
+    echo 'Fixed Chromium executable denied.' >&2
+  else
+    echo 'Fixed Chromium preflight failed.' >&2
+  fi
+  exit 1
+fi
+echo 'Fixed Chromium preflight passed.'
 "$PW" --version > /capture/cli-version.txt
 "$PW" -s=issue261 open 'http://127.0.0.1:4173/' > /tmp/issue261-private/cli.log 2>&1
 
