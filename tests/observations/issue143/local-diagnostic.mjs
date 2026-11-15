@@ -3,7 +3,7 @@ import { constants } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-const specHash = '26640ed90c40399f06097d22d133abd885dd2a8d720df44f6527a3d85c9338e4';
+const specHash = 'e78a20030bcb47f96587abdfac733a84286ce57404932e9298ad0720d7b26abe';
 const testTitle = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
 const allowedFiles = new Set(['local-import.spec.ts', '/workspace/tests/observations/issue143/local-import.spec.ts']);
 const status = new Map([['passed', 'passed'], ['failed', 'failed'], ['timedOut', 'timed-out'], ['skipped', 'skipped'], ['interrupted', 'interrupted']]);
@@ -16,10 +16,12 @@ const stages = new Map([
   [38, 'import-navigation-wait'], [39, 'import-confirmation'], [40, 'import-navigation'],
   [41, 'imported-draft-read'], [42, 'imported-files'], [43, 'imported-history'], [44, 'imported-snapshot'],
   [45, 'imported-course-read'], [46, 'imported-lesson-progress'], [48, 'local-exercise-navigation'],
-  [49, 'runtime-version'], [50, 'editor-tabs'], [51, 'editor-tab-click'], [52, 'editor-content'],
-  [54, 'input-locator'], [55, 'input-empty'], [56, 'input-fill'], [57, 'grade-locator'], [58, 'grade-ready'],
-  [59, 'grade-request'], [60, 'grade-request'], [61, 'grade-request'], [62, 'grade-click'],
-  [63, 'grade-response'], [64, 'grade-result'], [65, 'saved-files-after-grade'], [66, 'input-hash-after'],
+  [49, 'local-backend'], [50, 'editor-tabs'], [51, 'editor-tab-click'], [52, 'editor-content'],
+  [54, 'input-locator'], [55, 'input-empty'], [56, 'input-fill'], [57, 'preview-click'], [58, 'preview-output'],
+  [59, 'runtime-version'], [60, 'preview-history'], [61, 'preview-snapshot'], [62, 'preview-files'],
+  [63, 'grade-locator'], [64, 'grade-ready'], [65, 'grade-request'], [66, 'grade-request'],
+  [67, 'grade-request'], [68, 'grade-click'], [69, 'grade-response'], [70, 'grade-result'],
+  [71, 'saved-files-after-grade'], [72, 'input-hash-after'],
 ]);
 
 export function summarizeLocal(report, actualHash) {

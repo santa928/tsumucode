@@ -46,7 +46,7 @@ test('P6 new same-run synthetic Pages export imports into Local and runs the Pyt
   expect((course?.['lessons'] as Record<string, unknown>)?.[lesson]).toEqual(originalLesson);
 
   await page.goto(`/#/courses/python-basics/lessons/${lesson}/exercises/${exercise}`);
-  await expect(page.getByLabel('実行環境')).toContainText('CPython 3.14.2');
+  await expect(page.getByLabel('実行環境')).toContainText('ローカル CPython');
   for (const path of ['main.py', 'lesson_tools.py']) {
     await page.getByRole('tab', { name: path, exact: true }).click();
     await expect.poll(() => editorText(page)).toBe(source.files[path]);
@@ -54,6 +54,12 @@ test('P6 new same-run synthetic Pages export imports into Local and runs the Pyt
   const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
   await expect(input).toHaveValue('');
   await input.fill('3\n5');
+  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Console出力', exact: true }).getByText('8', { exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByLabel('実行環境')).toContainText('CPython 3.14.2');
+  expect((await draft())?.['validationHistory']).toEqual(source.validationHistory);
+  expect((await draft())?.['lastPassingSnapshots']).toEqual(source.lastPassingSnapshots);
+  expect((await draft())?.['files']).toEqual(source.files);
   const grade = page.getByRole('button', { name: '判定する', exact: true });
   await expect(grade).toBeEnabled({ timeout: 30_000 });
   const localGrade = page.waitForResponse(response =>
