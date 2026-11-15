@@ -108,8 +108,21 @@ describe('仮mergeの親照合 shell', () => {
     )?.run;
     expect(identity).toBeDefined();
     const dir = mkdtempSync(join(tmpdir(), 'draft-pr-identity-'));
-    const env = {
+    // Compose injects Git variables pointing at the read-only checkout.
+    // Deliberately include them here so this fixture exercises their removal.
+    const inheritedEnv = {
       ...process.env,
+      GIT_DIR: '/nonexistent/read-only-git',
+      GIT_WORK_TREE: '/nonexistent/work-tree',
+      GIT_CONFIG_COUNT: '1',
+      GIT_CONFIG_KEY_0: 'safe.directory',
+      GIT_CONFIG_VALUE_0: '/nonexistent/work-tree',
+    };
+    const cleanEnv = Object.fromEntries(
+      Object.entries(inheritedEnv).filter(([key]) => !key.toUpperCase().startsWith('GIT_')),
+    );
+    const env = {
+      ...cleanEnv,
       GIT_CONFIG_NOSYSTEM: '1',
       GIT_CONFIG_GLOBAL: '/dev/null',
       GIT_AUTHOR_NAME: 'test',
