@@ -31,7 +31,7 @@ function gradeOutput(output, limit = 64 * 1024) {
 function gradeProgress(stderr) {
   return [
     ...stderr.matchAll(
-      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
+      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter(?:-(?:select|submit|response|verify|invalid|recovery))?|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
     ),
   ]
     .slice(-32)
@@ -260,11 +260,17 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       }
       const phase =
         stderr.match(
-          /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release)\n/mu,
+          /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter(?:-(?:select|submit|response|verify|invalid|recovery))?|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release)\n/mu,
         )?.[1] ?? gradeProgress(stderr).at(-1)?.phase;
       const reason = stderr.match(
         /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,
       )?.[1];
+      const errorKind =
+        phase === 'project-filter' || phase?.startsWith('project-filter-')
+          ? (stderr.match(
+              /^TSUMUCODE_GRADE_ERROR_KIND:(type-error|range-error|syntax-error|error|non-error)\n/mu,
+            )?.[1] ?? 'unknown')
+          : undefined;
       if (
         phase === 'form-reserve' &&
         reason === 'form-busy' &&
@@ -286,6 +292,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
           enginePhase,
           phase: phase ?? 'unknown',
           reason: reason ?? 'unknown',
+          ...(errorKind === undefined ? {} : { errorKind }),
           waitExitCode: exitCode(ended.StatusCode),
           graderExitCode: exitCode(state?.State?.ExitCode),
           graderOOMKilled:
@@ -298,7 +305,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       );
       throw new RequestError(
         503,
-        `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,
+        `採点用Browserが終了しました（段階: ${phase?.startsWith('project-filter-') ? 'project-filter' : (phase ?? '未確認')} / 分類: ${reason ?? '未確認'}）。`,
       );
     }
     enginePhase = 'result-read';
