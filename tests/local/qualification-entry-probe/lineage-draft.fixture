@@ -1,0 +1,61 @@
+import { z } from 'zod';
+import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { BuildIdentitySchema } from './schema';
+import { QualificationSchema } from './admission';
+import { BaselineProofSchema } from './parent';
+import { AppRecordSchema } from './appRecord';
+import { hashBytes, hashValue } from './identity';
+import { assertLineageConsistencyOnly, assertPinnedAnchorEvidence } from './publicLineage';
+import { assertLineageSuccessorStructure } from './inductiveParent';
+
+const attempt = z.number().int().positive();
+const Attempts = z.object({ qualificationAttempt:attempt, recordAttempt:attempt, signerAttempt:attempt }).strict();
+const toBytes = (value:unknown) => Buffer.from(canonicalJson(value));
+const parse = (bytes:Uint8Array, max:number):unknown => {
+  if (!(bytes instanceof Uint8Array) || bytes.length === 0 || bytes.length > max) throw Error('Invalid draft input');
+  return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)) as unknown;
+};
+
+type DraftInput = {proof:Uint8Array; plan:Uint8Array; execution:Uint8Array;
+  candidate:Uint8Array; qualification:Uint8Array; recordTag:Uint8Array; anchorTag:Uint8Array; attempts:unknown};
+/** In-memory structure only. Caller must independently authenticate all inputs. */
+export function buildAnchorLineageDraft(input:DraftInput) { return buildDraft(input); }
+/** In-memory structure only. Previous subject requires separate signature and actual-parent verification. */
+export function buildSuccessorLineageDraft(input:DraftInput, previous:Uint8Array) { return buildDraft(input,previous); }
+function buildDraft(input:DraftInput, previous?:Uint8Array) {
+  const snapshot = (bytes:Uint8Array,max:number) => {
+    if (!(bytes instanceof Uint8Array) || bytes.buffer instanceof SharedArrayBuffer || bytes.byteLength===0 || bytes.byteLength>max)
+      throw Error('Invalid draft snapshot');
+    return Buffer.from(bytes);
+  };
+  const copies = { proof:snapshot(input.proof,16*1024),plan:snapshot(input.plan,4*1024*1024),
+    execution:snapshot(input.execution,4*1024*1024),candidate:snapshot(input.candidate,4*1024*1024),
+    qualification:snapshot(input.qualification,4*1024*1024),recordTag:snapshot(input.recordTag,16*1024),
+    anchorTag:snapshot(input.anchorTag,16*1024) };
+  const predecessor=previous === undefined ? undefined : snapshot(previous,16*1024);
+  const proof = BaselineProofSchema.parse(parse(copies.proof,16*1024));
+  const candidate = BuildIdentitySchema.parse(parse(copies.candidate,4*1024*1024));
+  const qualification = QualificationSchema.parse(parse(copies.qualification,4*1024*1024));
+  const attempts = Attempts.parse(input.attempts);
+  if (candidate.buildAttempt > attempts.qualificationAttempt || attempts.qualificationAttempt > attempts.recordAttempt ||
+      attempts.recordAttempt > attempts.signerAttempt) throw Error('Invalid attempt ordering');
+  if (!(copies.recordTag instanceof Uint8Array) || copies.recordTag.length > 16*1024) throw Error('Invalid record tag');
+  const tag = /^object ([a-f0-9]{40})\ntype commit\ntag ([A-Za-z0-9._-]+)\ntagger [^\n]+\n\n([\s\S]+)$/u.exec(new TextDecoder('utf-8',{fatal:true}).decode(copies.recordTag));
+  if (!tag) throw Error('Invalid record tag');
+  const record = AppRecordSchema.parse(JSON.parse(tag[3]!) as unknown);
+  const draft = toBytes({ schemaVersion:1, repository:candidate.repository, sourceCommit:candidate.recipe.sourceCommit,
+    runId:candidate.runId, buildAttempt:candidate.buildAttempt, ...attempts, deploymentId:record.deploymentId,
+    recordTagDigest:hashBytes(copies.recordTag), candidateDigest:hashValue(candidate), planDigest:candidate.planDigest,
+    qualificationDigest:hashValue(qualification), qualificationRawDigest:hashBytes(copies.qualification),
+    declarationDigest:'4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494',
+    anchorTagDigest:'005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b',
+    parentDeploymentId:proof.deploymentId, parentSourceCommit:proof.sourceCommit, parentTagDigest:proof.tagDigest,
+    parentProofDigest:hashValue(proof), parentIdentityDigest:hashValue({...proof,observedAt:null}), parentLineageDigest:predecessor ? hashBytes(predecessor) : null,
+  });
+  assertLineageConsistencyOnly(draft,toBytes(proof),copies.plan,copies.execution,copies.candidate,copies.qualification,copies.recordTag);
+  if (predecessor) {
+    if (hashBytes(copies.anchorTag)!=='005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b') throw Error('Anchor tag differs');
+    assertLineageSuccessorStructure(predecessor,draft,proof);
+  } else assertPinnedAnchorEvidence(draft,toBytes(proof),copies.anchorTag);
+  return draft;
+}

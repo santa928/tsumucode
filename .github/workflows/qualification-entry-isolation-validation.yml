@@ -54,6 +54,9 @@ jobs:
           7e48b28ffeeb0f83d88738ca5601083d46d93f2aedf4fa4a7f906d9d0de6808e  tests/local/qualification-entry-probe/resolve-ts.mjs
           bfdd54bcf75952d9be2412e25d166f7f58e4f27aa7e1986e3e126fa94d00559f  tests/local/qualification-entry-probe/needs-shape.mjs
           07c6238aa4f698b7aef402f2c9fec62b8e9d44ddd1c64417bb744071de9d7017  tests/local/qualification-entry-probe/needs-shape.test.mjs
+          a2cf226daf74c0a23653dad4161a5e0b04649292fae8cd13fced2588be56fb48  tests/local/qualification-entry-probe/subject-field-provenance.mjs
+          f3b3616e3948a366e0f01db0edd2736d35ce6f06009c6e091850982fe46b7099  tests/local/qualification-entry-probe/subject-field-provenance.test.mjs
+          058b6a8b4af3d1a148230c1511671935607c36be6d1c4da16083fbf1ed36f2b6  tests/local/qualification-entry-probe/lineage-draft.fixture
           SHA256
       - name: Build fixed Node and locked dependencies
         env:
@@ -73,4 +76,4 @@ jobs:
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/qualification-entry-probe,target=/workspace/tests/local/qualification-entry-probe,readonly"
           "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
           node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
-          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs'
+          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs tests/local/qualification-entry-probe/subject-field-provenance.test.mjs'
