@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    types: [opened, reopened, synchronize, edited]
   workflow_dispatch:
     inputs:
       migration_checks:
@@ -114,6 +114,48 @@ jobs:
         if: ${{ false }}
         id: target
         run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
+
+  # A Draft PR may carry unverified code, but this job never authorizes a merge or publication.
+  pr_premerge:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_MERGE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind PR head and base
+        run: |
+          set -eu
+          for sha in "$PR_HEAD_SHA" "$PR_BASE_SHA" "$PR_MERGE_SHA"; do
+            case "$sha" in *[!0-9a-f]*|'') exit 1 ;; esac
+            [ "${#sha}" -eq 40 ] || exit 1
+          done
+          [ "$(git rev-parse HEAD)" = "$PR_MERGE_SHA" ]
+          [ "$(git rev-parse HEAD^1)" = "$PR_BASE_SHA" ]
+          [ "$(git rev-parse HEAD^2)" = "$PR_HEAD_SHA" ]
+          [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse "${PR_HEAD_SHA}^{tree}")" ]
+          git merge-base --is-ancestor "$PR_BASE_SHA" HEAD
+          printf 'PR head: `%s`\nBase: `%s`\nTest merge: `%s`\nTree: `%s`\n' \
+            "$PR_HEAD_SHA" "$PR_BASE_SHA" "$PR_MERGE_SHA" "$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_STEP_SUMMARY"
+      - name: Build the fixed pre-push image
+        run: ./scripts/docker-compose.sh build app
+      - name: Verify the required Node version
+        run: >-
+          ./scripts/docker-compose.sh run --rm app node -e
+          'if (process.versions.node !== "24.18.0") process.exit(1)'
+      - name: Run the existing pre-push checks
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:prepush -- "$PR_BASE_SHA"
 
   fast:
     if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true

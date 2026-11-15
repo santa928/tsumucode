@@ -38,8 +38,8 @@ test('unrecognized page data is never returned, and status fields are finite', (
 test('report output rejects arbitrary fields and unknown values without echoing them', () => {
   const bad={network:{session:'PRIVATE_MARKER'},ui:{version:'PRIVATE_MARKER'}};
   assert.deepEqual(previewLines(bad,'PRIVATE_MARKER'),['preview-diagnostic spec-mismatch']);
-  assert.deepEqual(previewLines(bad,'482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37'),['preview-diagnostic invalid']);
-  assert.doesNotMatch(JSON.stringify(previewLines(bad,'482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37')),/PRIVATE_MARKER/);
+  assert.deepEqual(previewLines(bad,'1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735'),['preview-diagnostic invalid']);
+  assert.doesNotMatch(JSON.stringify(previewLines(bad,'1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735')),/PRIVATE_MARKER/);
 });
 
 test('bounded DOM capture emits only the fixed schema and handles evaluation failure', async () => {
@@ -52,7 +52,7 @@ test('bounded DOM capture emits only the fixed schema and handles evaluation fai
   assert.deepEqual(failed.ui,bad.ui);
 });
 test('valid report emits exactly two fixed-category lines', () => {
-  const hash='482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
+  const hash='1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
   const value=createPreviewTracker().snapshot(goodUi);
   assert.deepEqual(previewLines(value,hash),[
     'preview network-session=none capabilities=none run=none poll=none',

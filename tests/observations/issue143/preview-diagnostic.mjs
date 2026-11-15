@@ -1,5 +1,7 @@
+/* global document -- the callback executes in the browser. */
+const { URL, setTimeout, clearTimeout } = globalThis;
 // This will be updated to the exact observational spec hash after the hook is inserted.
-const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
+const specHash = '1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
 const networkKeys = ['session', 'capabilities', 'run', 'poll'];
 const networkValues = new Set(['none', 'pending', 'network-failed', '2xx', '3xx', '4xx', '5xx', 'other', 'mixed']);
 const versions = new Set(['expected', 'unversioned', 'other', 'absent', 'unknown']);

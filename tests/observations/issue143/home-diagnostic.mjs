@@ -1,3 +1,4 @@
+const { process, URL, console } = globalThis;
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';

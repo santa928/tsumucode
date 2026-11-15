@@ -78,7 +78,7 @@ on:
       - .github/workflows/local-runtime.yml
       - .github/workflows/pages.yml
   pull_request:
-    branches: [main]
+    types: [opened, reopened, synchronize, edited]
     paths:
       - content/next/**
       - content/python-basics/**

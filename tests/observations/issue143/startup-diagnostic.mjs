@@ -1,10 +1,11 @@
+const { process, URL, console, Buffer } = globalThis;
 import { constants } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 
-const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
-const previewHash = 'ecf574b68b1a42b652bc6bd16a4d1e69f9e6f964ec8c515ba5442f566d38d923';
+const specHash = '1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
+const previewHash = '0045edb75678d7b820a16d3a0ddbfcdc649afebe7aee8a463b6fbf5f2da47ea6';
 const maxBytes = 1048576;
 const patterns = [
   ['pattern-seen-async-require', /ERR_REQUIRE_ASYNC_MODULE|require\(\) cannot be used on an ESM graph with top-level await/],

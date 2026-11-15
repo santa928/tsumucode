@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { summarizeLocal } from './local-diagnostic.mjs';
-const hash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
+const hash = '1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
 const title = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
 const row = (status, location) => ({ title, file: 'local-import.spec.ts', tests: [{ projectName: 'chromium', expectedStatus: 'passed', results: [{ retry: 0, status, errorLocation: location, errors: [{ message: 'PRIVATE_MARKER_nonpublic_url_code', location }] }] }] });
 const report = specs => ({ suites: [{ suites: [{ specs }] }] });

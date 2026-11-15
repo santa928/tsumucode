@@ -1,3 +1,4 @@
+const { process, console } = globalThis;
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 

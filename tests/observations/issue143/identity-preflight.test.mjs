@@ -1,3 +1,4 @@
+const { URL, process } = globalThis;
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';

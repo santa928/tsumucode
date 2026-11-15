@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$OBSERVATION_BASE" = af8b7513a9304ae2fd82f8f43833698e8635b795
+          test "$OBSERVATION_BASE" = 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20
           test "$(git -C observation rev-parse HEAD)" = "$OBSERVATION_HEAD"
           git -C observation merge-base --is-ancestor "$OBSERVATION_BASE" "$OBSERVATION_HEAD"
           printf 'Observation commit/tree: %s %s\n' "$OBSERVATION_HEAD" "$(git -C observation rev-parse HEAD^{tree})"

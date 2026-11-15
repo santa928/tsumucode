@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { editorText, readStoredProgress } from '../../e2e/helpers/progress';
-import { capturePreviewFailure, createPreviewTracker } from './preview-diagnostic.mjs';
+import { capturePreviewFailure, createPreviewTracker } from './preview-diagnostic.mjs'; import { z } from 'zod'; const syntheticProgressSchema = z.object({ drafts: z.record(z.string(), z.object({ files: z.record(z.string(), z.string()), validationHistory: z.array(z.object({ status: z.string() }).loose()), lastPassingSnapshots: z.record(z.string(), z.object({ files: z.record(z.string(), z.string()) }).loose()) }).loose()), courses: z.record(z.string(), z.object({ lessons: z.record(z.string(), z.object({ currentComplete: z.boolean() }).loose()) }).loose()) }).loose();
 
 const lesson = 'python-basics-ch02-l01';
 const exercise = `${lesson}-e01`;
@@ -17,14 +17,14 @@ test('P6 new same-run synthetic Pages export imports into Local and runs the Pyt
   test.setTimeout(180_000);
   const bytes = await readFile(jsonPath);
   expect(hash(bytes)).toBe(expectedHash);
-  const original = JSON.parse(bytes.toString('utf8'));
-  const source = original.drafts[`python-basics:${exercise}`];
-  const originalLesson = original.courses['python-basics'].lessons[lesson];
+  const original = syntheticProgressSchema.parse(JSON.parse(bytes.toString('utf8')) as unknown);
+  const source = original.drafts[`python-basics:${exercise}`]!;
+  const originalLesson = original.courses['python-basics']!.lessons[lesson]!;
   expect(Object.keys(original.drafts)).toEqual([`python-basics:${exercise}`]);
   expect(Object.keys(source.files).sort()).toEqual(['lesson_tools.py', 'main.py']);
   expect(source.validationHistory).toHaveLength(1);
-  expect(source.validationHistory[0].status).toBe('pass');
-  expect(source.lastPassingSnapshots[exercise].files).toEqual(source.files);
+  expect(source.validationHistory[0]!.status).toBe('pass');
+  expect(source.lastPassingSnapshots[exercise]!.files).toEqual(source.files);
   expect(originalLesson.currentComplete).toBe(true);
 
   await page.goto('/#/');
@@ -44,7 +44,7 @@ test('P6 new same-run synthetic Pages export imports into Local and runs the Pyt
   expect((await draft())?.['validationHistory']).toEqual(source.validationHistory);
   expect((await draft())?.['lastPassingSnapshots']).toEqual(source.lastPassingSnapshots);
   const course = (await readStoredProgress(page)).courses.find(row => row['courseId'] === 'python-basics');
-  expect((course?.['lessons'] as Record<string, unknown>)?.[lesson]).toEqual(originalLesson);
+  expect((course?.['lessons'] as Record<string, unknown> | undefined)?.[lesson]).toEqual(originalLesson);
 
   await page.goto(`/#/courses/python-basics/lessons/${lesson}/exercises/${exercise}`);
   await expect(page.getByLabel('実行環境')).toContainText('ローカル CPython');

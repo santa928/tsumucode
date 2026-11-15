@@ -1,3 +1,4 @@
+const { process } = globalThis;
 import { spawn } from 'node:child_process';
 import { bridge } from '/workspace/scripts/local/browser-test-bridge.mjs';
 const server = await bridge(4173, 'web');

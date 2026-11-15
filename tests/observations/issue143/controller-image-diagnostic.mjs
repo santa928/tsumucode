@@ -1,3 +1,4 @@
+const { clearTimeout, Buffer, setTimeout, console, process } = globalThis;
 import { request } from 'node:http';
 
 // These are the exact b930 protocol constants, not values read from an environment or a response.

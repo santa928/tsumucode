@@ -1,3 +1,4 @@
+const { URL, process, Buffer } = globalThis;
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';

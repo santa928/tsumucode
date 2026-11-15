@@ -1,3 +1,4 @@
+const { fetch, AbortSignal, console, URL, Buffer } = globalThis;
 import { createHash } from 'node:crypto';
 import { classifyIdentityResponse } from './identity-http-diagnostic.mjs';
 

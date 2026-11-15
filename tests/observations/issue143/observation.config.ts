@@ -5,8 +5,10 @@ if (!phase || !['export', 'home', 'local'].includes(phase)) throw Error('Invalid
 const names: Record<string, string> = {
   export: 'pages-export.spec.ts', home: 'home-resume.spec.mjs', local: 'local-import.spec.ts',
 };
+const testMatch = names[phase];
+if (!testMatch) throw Error('Invalid observation phase');
 export default defineConfig({
-  testDir: '.', testMatch: names[phase], workers: 1, retries: 0, forbidOnly: true,
+  testDir: '.', testMatch, workers: 1, retries: 0, forbidOnly: true,
   timeout: 60_000,
   outputDir: `/exchange/${phase}-artifacts`,
   reporter: [['json', { outputFile: `/exchange/${phase}-report.json` }]],

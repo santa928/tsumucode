@@ -1,10 +1,11 @@
+const { URL, process, console } = globalThis;
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-const specHash = '482cd0e6ddcd50022b81fadf8b4df3d644e60454fb4b5f28673d86746be45e37';
-const moduleHash = 'ecf574b68b1a42b652bc6bd16a4d1e69f9e6f964ec8c515ba5442f566d38d923';
+const specHash = '1f36bb58a33602f93a11d3b7e6d0376f9a350729a62e6781b70eea8e4f945735';
+const moduleHash = '0045edb75678d7b820a16d3a0ddbfcdc649afebe7aee8a463b6fbf5f2da47ea6';
 const name = 'P6 new same-run synthetic Pages export imports into Local and runs the Python project';
 export const hashesMatch = (spec, module) => spec === specHash && module === moduleHash;
 export function isExpectedList(status, output) {
