@@ -1,0 +1,139 @@
+name: Python grade observer probe (inconclusive is not proof)
+
+on:
+  pull_request:
+    branches: [codex/python-grade-stage-observation]
+    paths:
+      - .github/workflows/python-grade-observer-probe.yml
+      - tests/observations/python-grade-probe/**
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.event.pull_request.draft == true && github.event.repository.full_name == 'santa928/tsumucode' && github.event.pull_request.head.repo.full_name == github.event.repository.full_name && github.event.pull_request.base.sha == '93be9a451f7c433e0ab90bd1918c81c7f40f96c3'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PROBE_HEAD: ${{ github.event.pull_request.head.sha }}
+      TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
+      TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+      TSUMUCODE_NEXT_SOURCE_SHA: 93be9a451f7c433e0ab90bd1918c81c7f40f96c3
+      COMPOSE_PARALLEL_LIMIT: 1
+    steps:
+      - name: Checkout reviewed probe
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: probe
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the exact product candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 93be9a451f7c433e0ab90bd1918c81c7f40f96c3
+          path: source
+          persist-credentials: false
+      - name: Verify identities and fresh isolated resources
+        id: preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C probe rev-parse HEAD)" = "$PROBE_HEAD"
+          git -C probe merge-base --is-ancestor 93be9a451f7c433e0ab90bd1918c81c7f40f96c3 "$PROBE_HEAD"
+          git -C probe diff --no-renames --name-only -z 93be9a451f7c433e0ab90bd1918c81c7f40f96c3 "$PROBE_HEAD" | node -e '
+            const fs = require("node:fs");
+            const allowed = new Set([
+              ".github/workflows/python-grade-observer-probe.yml",
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs", "api-observation.mjs", "api-observation.d.mts", "api-observation.node-test.mjs", "node-image-check.mjs", "node-image-check.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
+            ]);
+            const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
+            if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
+          '
+          printf 'Probe head %s; fixed product source %s\n' "$PROBE_HEAD" "$TSUMUCODE_NEXT_SOURCE_SHA"
+          test -z "$(git -C probe status --porcelain)"
+          test "$(git -C source rev-parse HEAD)" = 93be9a451f7c433e0ab90bd1918c81c7f40f96c3
+          test "$(git -C source rev-parse 'HEAD^{tree}')" = ea878a4bbbf65a6f8d6d01d85827a162b1ac8360
+          test -z "$(git -C source status --porcelain)"
+          test -S "$TSUMUCODE_LOCAL_SOCKET"
+          test -z "$(docker ps -aq --filter "label=app.tsumucode.owner=$TSUMUCODE_LOCAL_OWNER")"
+          test -z "$(docker ps -aq --filter "label=com.docker.compose.project=$TSUMUCODE_LOCAL_OWNER")"
+          if docker network inspect "${TSUMUCODE_LOCAL_OWNER}_web" >/dev/null 2>&1; then exit 1; fi
+          if ss -H -ltn | grep -Eq ':(4173|4175)[[:space:]]'; then exit 1; fi
+          node --test probe/tests/observations/python-grade-probe/*.node-test.mjs
+          mkdir -m 700 "$RUNNER_TEMP/python-grade-probe"
+          echo "safe=true" >> "$GITHUB_OUTPUT"
+      - name: Build fixed source and start isolated stack
+        shell: bash
+        working-directory: source
+        run: |
+          set -euo pipefail
+          node "$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe/node-image-check.mjs" before
+          node_ready=0
+          for pull_attempt in 1 2 3; do
+            if docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5; then
+              node_ready=1
+              break
+            fi
+            if [ "$pull_attempt" -lt 3 ]; then sleep 5; fi
+          done
+          node "$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe/node-image-check.mjs" after
+          test "$node_ready" -eq 1
+          docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
+          docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-probe" .
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml -f compose.learning.ci-diagnostic.yaml up --no-build -d web controller preview
+      - name: Verify fixed controller Python identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          controller=$(cd source && ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller 2>/dev/null)
+          test -n "$controller"
+          docker image inspect 'python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941' >/dev/null 2>&1
+          docker exec "$controller" node --input-type=module -e 'import { PYTHON_IMAGE, PYTHON_VERSION } from "/app/protocol.mjs"; if (PYTHON_VERSION !== "3.14.2" || PYTHON_IMAGE !== "python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941") process.exit(1)' >/dev/null 2>&1
+      - name: Run one normal hardcoded grade
+        id: grade
+        shell: bash
+        run: |
+          set -euo pipefail
+          node probe/tests/observations/python-grade-probe/private-command.mjs "$RUNNER_TEMP/python-grade-probe/docker-private.log" docker run --rm --init --user "$(id -u):$(id -g)" --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,src=$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe,dst=/workspace/tests/observations/python-grade-probe,readonly" \
+            --mount "type=bind,src=$RUNNER_TEMP/python-grade-probe,dst=/exchange" \
+            --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-probe" /workspace/tests/observations/python-grade-probe/run.mjs
+      - name: Print only fixed private-log pattern clues
+        if: ${{ always() && steps.preflight.outputs.safe == 'true' && steps.grade.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          node probe/tests/observations/python-grade-probe/diagnose.mjs "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/browser-private.log"
+          node probe/tests/observations/python-grade-probe/probe-stage.mjs "$RUNNER_TEMP/python-grade-probe"
+      - name: Compare only sanitized same-run records
+        if: ${{ always() && steps.preflight.outputs.safe == 'true' && steps.grade.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          controller=$(cd source && ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller 2>/dev/null || true)
+          : > "$RUNNER_TEMP/python-grade-probe/stage-report.txt"
+          if [ -n "$controller" ]; then
+            timeout 3s docker exec "$controller" node /app/python-grade-ci-diagnostic.mjs --report > "$RUNNER_TEMP/python-grade-probe/stage-report.txt" 2>/dev/null || true
+          fi
+          node probe/tests/observations/python-grade-probe/verify.mjs "$RUNNER_TEMP/python-grade-probe/grade-hash.json" "$RUNNER_TEMP/python-grade-probe/stage-report.txt"
+      - name: Stop only this isolated stack
+        if: ${{ always() && steps.preflight.outputs.safe == 'true' }}
+        shell: bash
+        run: |
+          if [ -d source ]; then
+            cd source
+            ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down || true
+          fi
+          rm -f -- "$RUNNER_TEMP/python-grade-probe/grade-hash.json" "$RUNNER_TEMP/python-grade-probe/browser-private.log" "$RUNNER_TEMP/python-grade-probe/docker-private.log" "$RUNNER_TEMP/python-grade-probe/stage-report.txt"
+          for stage in runner-enter bridge-ready playwright-spawned spec-started navigation-complete editor-ready fixture-set grade-clicking grade-click-returned grade-accepted identity-saved dialog-visible checks-passed; do
+            rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-$stage"
+          done
+          for route in session capability grade; do
+            for event in request network-failure response-2xx response-3xx response-4xx response-5xx response-other; do
+              rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-api-$route-$event"
+            done
+          done
+          rm -f -- "$RUNNER_TEMP/python-grade-probe/stage-api-grade-response-202"
+          rmdir -- "$RUNNER_TEMP/python-grade-probe" || true
