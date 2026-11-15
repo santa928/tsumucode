@@ -2,7 +2,7 @@ name: Python input focus
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, edited, ready_for_review]
+    types: [opened, reopened, synchronize, edited]
     paths:
       - tests/e2e/python-input.spec.ts
       - tests/e2e/helpers/**
