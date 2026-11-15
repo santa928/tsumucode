@@ -1,3 +1,4 @@
+import { types } from 'node:util';
 import { AppRecordSchema } from './appRecord';
 import { hashBytes } from './identity';
 import { BaselineProofSchema } from './parent';
@@ -7,18 +8,34 @@ const tagName = 'tsumucode-app-42929117936-7699435659';
 const tagDigest = '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b';
 const inventoryDigest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
 const publicDigest = '36b593f9e489346671b61c881237bf1e3e04fc8bf0d47e3a3b0c4569af9c6df9';
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
+const bufferDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer');
+const lengthDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength');
+const offsetDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset');
 
 /** Local fixed bytes and record consistency only, not a live-deployment authorization. */
 export function assertFixedPythonFirstAnchor(proofInput: unknown, tagInput: Uint8Array) {
   const proof = BaselineProofSchema.parse(proofInput);
   if (
+    !types.isUint8Array(tagInput) ||
     !(tagInput instanceof Uint8Array) ||
-    tagInput.buffer instanceof SharedArrayBuffer ||
-    !tagInput.byteLength ||
-    tagInput.byteLength > 16 * 1024
+    !bufferDescriptor?.get ||
+    !lengthDescriptor?.get ||
+    !offsetDescriptor?.get
   )
     throw Error('Invalid anchor tag bytes');
-  const tag = Buffer.from(tagInput);
+  const backing: unknown = bufferDescriptor.get.call(tagInput);
+  const length: unknown = lengthDescriptor.get.call(tagInput);
+  const offset: unknown = offsetDescriptor.get.call(tagInput);
+  if (
+    !types.isArrayBuffer(backing) ||
+    typeof length !== 'number' ||
+    !length ||
+    length > 16 * 1024 ||
+    typeof offset !== 'number'
+  )
+    throw Error('Invalid anchor tag bytes');
+  const tag = Buffer.from(new Uint8Array(backing, offset, length));
   if (
     proof.repository !== repository ||
     proof.deploymentId !== '7699435659' ||
