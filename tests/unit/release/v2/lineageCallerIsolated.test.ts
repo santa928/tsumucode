@@ -8,8 +8,10 @@ vi.mock('../../../../scripts/release/v2/callerNormalization',()=>({normalizedCal
 vi.mock('../../../../scripts/release/v2/identity',()=>({hashBytes:(bytes:Buffer)=>bytes.toString()}));
 vi.mock('../../../../scripts/release/v2/signerTopology',()=>({assertSignerTopology:vi.fn()}));
 import { assertReviewedCaller } from '../../../../scripts/release/v2/lineageCallerPolicy';
+const execScratch=process.env.LINEAGE_EXEC_SCRATCH ?? '/tmp';
+if (!['/tmp','/tmp/lineage-exec'].includes(execScratch)) throw Error('Unsupported fixture scratch path');
 function fixture(){
- const workspace=mkdtempSync('/tmp/lineage-exec/lineage-caller-isolated-'),root=path.join(workspace,'candidate');mkdirSync(root);
+ const workspace=mkdtempSync(path.join(execScratch,'lineage-caller-isolated-')),root=path.join(workspace,'candidate');mkdirSync(root);
  const env={PATH:'/usr/bin:/bin',HOME:workspace,GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'/dev/null'};
  const git=(...args:string[])=>execFileSync('/usr/bin/git',args,{cwd:root,env,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
  git('init','-q');git('config','user.name','Fixture');git('config','user.email','fixture@example.invalid');

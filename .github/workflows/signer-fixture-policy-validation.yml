@@ -51,13 +51,13 @@ jobs:
           143684b5fe942211e592a0d8f87e07a95c3809bc1265319a823123853caa9537  scripts/release/v2/trustedLineagePolicy.ts
           bdd746008fa7ebb284a7f8c9f91ca3e429427ac7470a48f11e2bb4b9676cc815  scripts/release/v2/signerTopology.ts
           491db8742ea5a544896cc56521fe9b4440849a49ec2577446d88fd1973884488  scripts/release/v2/callerNormalization.ts
-          6cce25a1298ab6619427d15ce2d361cddefd34ea8d87fa737ac7be2d88ab8d84  tests/unit/release/v2/isolatedCandidateGit.node-test.mjs
+          042bf3a707553f1ddd9fd3c3358f023692068ee759b9dae91169ac3a2d23a878  tests/unit/release/v2/isolatedCandidateGit.node-test.mjs
           510967ba0a3484ec636314723cc4f92e2ddcdd68d588db0e8b4b9b17fc3dde93  tests/unit/release/v2/lineageCallerPolicy.test.ts
-          d8097901dd7f4da56393ab9b53efe228658b95f3eea790a7613158e157faa4c2  tests/unit/release/v2/lineageCallerIsolated.test.ts
+          e95075b8f6082cc1c3cbe071cef1dddfa2f1f3c46a85aa67f5d8a993b3a5323f  tests/unit/release/v2/lineageCallerIsolated.test.ts
           796cc9d976aee3f8ffc2a586dd7b99ad64ff29669d5d980068ed7ab156bfe611  tests/local/signer-fixture-policy/policy.test.cjs
           3feab102f3f671f10267a609a3fd32bce2a71390ab8bd7036ddbd6ea5c69331c  tests/local/signer-fixture-policy/integration-empty.test.cjs
           bf6dac9ab0e45601898a78b1667b69804e743450a6c71dce0059a42b4f8fd7a5  tests/local/signer-fixture-policy/topology-check.test.cjs
-          51c6825b0a69bdea9c44277794d64dfeff52beb5cc8a24937b6050c434b14f61  tests/local/signer-fixture-policy/run-fixed-validation.sh
+          34c6dafb4f3d53f2f291744123f52134314872fd24fb30d1ba938237e73026ca  tests/local/signer-fixture-policy/run-fixed-validation.sh
           c8784d9778cbe4ae5a6a482b7f3340d221b7b019ff135f279df0599308e0bd7a  tests/local/signer-fixture-policy/original-wip.test.fixture
           b5350f9613f6d080ae72a2530b072d231bd0e8d793ae838fcb8d88eff2986c95  tests/local/signer-fixture-policy/release-checks-352.yml
           c319dbf148aa03728776e055855c5648dcef0268308fa52a8e9b07b03f62d74b  .github/workflows/release-v2-checks.yml
@@ -75,7 +75,7 @@ jobs:
           --memory 2g --memory-swap 2g --pids-limit 256
           --tmpfs /tmp:rw,nosuid,nodev,noexec,size=1g,uid=65534,gid=65534
           --tmpfs /tmp/lineage-exec:rw,nosuid,nodev,exec,size=96m,uid=65534,gid=65534
-          --env HOME=/tmp --env TMPDIR=/tmp --env CI=true
+          --env HOME=/tmp --env TMPDIR=/tmp --env CI=true --env LINEAGE_EXEC_SCRATCH=/tmp/lineage-exec
           --mount "type=bind,source=${GITHUB_WORKSPACE}/scripts/release/v2,target=/workspace/scripts/release/v2,readonly"
           --mount "type=bind,source=${GITHUB_WORKSPACE}/src,target=/workspace/src,readonly"
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests,target=/workspace/tests,readonly"

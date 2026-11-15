@@ -8,8 +8,10 @@ import { appendFile, link, rename, symlink } from 'node:fs/promises';
 import { URL, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { observeIsolatedCandidateGit, observeIsolatedCandidateSource, observeIsolatedCandidateSourceWithPythonFixtures } from '../../../../scripts/release/v2/isolatedCandidateGit.mjs';
+const execScratch=process.env.LINEAGE_EXEC_SCRATCH ?? '/tmp';
+if (!['/tmp','/tmp/lineage-exec'].includes(execScratch)) throw Error('Unsupported fixture scratch path');
 function fixture() {
- const workspace=mkdtempSync('/tmp/lineage-exec/lineage-inspection-fixture-'),root=path.join(workspace,'candidate');
+ const workspace=mkdtempSync(path.join(execScratch,'lineage-inspection-fixture-')),root=path.join(workspace,'candidate');
  mkdirSync(root);
  const env={PATH:'/usr/bin:/bin',HOME:workspace,GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'/dev/null'};
  const git=(...args)=>execFileSync('/usr/bin/git',args,{cwd:root,env,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();

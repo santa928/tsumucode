@@ -2,6 +2,7 @@
 # Intended only for a fixed, isolated validation runner; not release authorization.
 set -eu
 test "$(node --version)" = v24.18.0
+test "${LINEAGE_EXEC_SCRATCH-}" = /tmp/lineage-exec
 /usr/bin/git --version
 # Prove the isolated fixture helper can execute before relying on absent markers.
 scratch="$(mktemp -d /tmp/lineage-exec/helper-check-XXXXXX)"
