@@ -85,12 +85,16 @@ test('public checkout uses only fixed absolute mock git with scrubbed environmen
   const d = await mkdtemp(join(tmpdir(), 'issue143-git-'));
   try {
     await makeMocks(d);
-    const r = spawnSync('/bin/bash', ['-euo', 'pipefail', '-c', checkout], {
-      cwd: d,
-      env: fixtureEnv(d),
-      encoding: 'utf8',
-      timeout: 5000,
-    });
+    const r = spawnSync(
+      '/bin/bash',
+      ['--noprofile', '--norc', '-euo', 'pipefail', '-c', checkout],
+      {
+        cwd: d,
+        env: fixtureEnv(d),
+        encoding: 'utf8',
+        timeout: 5000,
+      },
+    );
     assert.equal(r.status, 0);
     assert.equal((r.stdout + r.stderr).includes('PRIVATE_MARKER'), false);
     assert.equal((await stat(join(d, 'issue143-git-home'))).mode & 0o777, 0o700);
@@ -105,12 +109,16 @@ test('unvalidated raw candidate is rejected before mock git without being printe
   const d = await mkdtemp(join(tmpdir(), 'issue143-invalid-'));
   try {
     await makeMocks(d);
-    const r = spawnSync('/bin/bash', ['-euo', 'pipefail', '-c', checkout], {
-      cwd: d,
-      env: fixtureEnv(d, 'PRIVATE_MARKER\nraw'),
-      encoding: 'utf8',
-      timeout: 5000,
-    });
+    const r = spawnSync(
+      '/bin/bash',
+      ['--noprofile', '--norc', '-euo', 'pipefail', '-c', checkout],
+      {
+        cwd: d,
+        env: fixtureEnv(d, 'PRIVATE_MARKER\nraw'),
+        encoding: 'utf8',
+        timeout: 5000,
+      },
+    );
     assert.equal(r.error, undefined);
     assert.equal(r.signal, null);
     assert.equal(r.status, 1);
@@ -136,12 +144,16 @@ test('remote candidate head changing after approval stops mock checkout', async 
   const d = await mkdtemp(join(tmpdir(), 'issue143-head-race-'));
   try {
     await makeMocks(d, { mismatch: true });
-    const r = spawnSync('/bin/bash', ['-euo', 'pipefail', '-c', checkout], {
-      cwd: d,
-      env: fixtureEnv(d),
-      encoding: 'utf8',
-      timeout: 5000,
-    });
+    const r = spawnSync(
+      '/bin/bash',
+      ['--noprofile', '--norc', '-euo', 'pipefail', '-c', checkout],
+      {
+        cwd: d,
+        env: fixtureEnv(d),
+        encoding: 'utf8',
+        timeout: 5000,
+      },
+    );
     assert.equal(r.error, undefined);
     assert.equal(r.signal, null);
     assert.equal(r.status, 1);
@@ -167,7 +179,7 @@ test('identity code is not started when checkout commit differs from trusted wor
       ['a'.repeat(40), 0],
     ]) {
       const env = { PATH: d, GITHUB_SHA: 'a'.repeat(40), TRUSTED_CHECKOUT_COMMIT: actual };
-      const r = spawnSync('/bin/bash', ['-euo', 'pipefail', '-c', run], {
+      const r = spawnSync('/bin/bash', ['--noprofile', '--norc', '-euo', 'pipefail', '-c', run], {
         cwd: d,
         env,
         encoding: 'utf8',
@@ -207,7 +219,7 @@ test('trusted checkout requires action output, actual HEAD and a clean tree', as
         GITHUB_SHA: 'a'.repeat(40),
         TRUSTED_CHECKOUT_COMMIT: item.output.repeat(40),
       };
-      const r = spawnSync('/bin/bash', ['-euo', 'pipefail', '-c', run], {
+      const r = spawnSync('/bin/bash', ['--noprofile', '--norc', '-euo', 'pipefail', '-c', run], {
         cwd: d,
         env,
         encoding: 'utf8',

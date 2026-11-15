@@ -42,7 +42,7 @@ jobs:
           356d0ae5db1c1e5295222b92c232edfe544dd50f838991af025e17627745299f  scripts/issue143-trusted/guard.test.mjs
           5defe9a5cdacfa33d9fdf0267e7f1c2b0f71082d31ca43bf461d8292cca333d6  scripts/issue143-trusted/identity-cli.mjs
           d0ac8b9360dedc22babbfdb62fbc8164e3402e5226729601058e5b2e84e6382c  scripts/issue143-trusted/identity-cli.test.mjs
-          ca42eee0c4239a496c6f832eee06cf6ade0616167b7de9d7fd507aaf06d98d2b  scripts/issue143-trusted/workflow-wiring.test.mjs
+          c0ee4510bedc0a491d459f75ec812f70a69417904f694ac7074870f2b9f12c93  scripts/issue143-trusted/workflow-wiring.test.mjs
           f0bba4c9b975f4d6bc65b626606363a825f97b7a7fad407106e58fd4576a9085  scripts/issue143-trusted/pr-contract.test.mjs
           ca5db64c35b0ab2774970bb810cb9d5443d80e3ea33d7b61119a8906a2bfe049  scripts/issue143-trusted/scratch-preflight.mjs
           0cc910e449e0c6fc609282b7b2512d3a2ce68e6f7b593963ac3857cd6ac0f76e  scripts/issue143-trusted/scratch-preflight.test.mjs
