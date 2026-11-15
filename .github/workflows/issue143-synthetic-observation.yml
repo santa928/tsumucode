@@ -51,7 +51,9 @@ jobs:
           if docker network inspect "${TSUMUCODE_LOCAL_OWNER}_web" >/dev/null 2>&1; then exit 1; fi
           if ss -H -ltn | grep -Eq ':(4173|4175)[[:space:]]'; then exit 1; fi
           node --test observation/tests/observations/issue143/check-report.test.mjs
-          node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
+          node --test observation/tests/observations/issue143/identity-http-diagnostic.test.mjs
+          node --test observation/tests/observations/issue143/identity-preflight.test.mjs
+          node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
           node observation/tests/observations/issue143/public-identity.mjs
           mkdir -m 700 "$RUNNER_TEMP/issue143-export" "$RUNNER_TEMP/issue143-home" "$RUNNER_TEMP/issue143-local"
       - name: Build fixed Source images in the hosted runner

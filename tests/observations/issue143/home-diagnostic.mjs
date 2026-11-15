@@ -3,7 +3,7 @@ import { constants } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-const specHash = '709bb25b52c9ace02712d51146a955cecb6166cfbc077c75d5de19be5d341095';
+const specHash = '2c5f51ef7c45e9c2da44bba7ae205666210f111255be41a61918a64c58fd985e';
 const allowedFiles = new Set(['home-resume.spec.mjs', '/workspace/tests/observations/issue143/home-resume.spec.mjs']);
 const names = new Map([
   ['course resumes the saved exercise and source', 'course'],
@@ -11,11 +11,16 @@ const names = new Map([
 ]);
 const status = new Map([['passed', 'passed'], ['failed', 'failed'], ['timedOut', 'timed-out'], ['skipped', 'skipped'], ['interrupted', 'interrupted']]);
 const stages = new Map([
-  [20, 'exercise-navigation'], [21, 'editor-visible'], [22, 'read-editor'], [23, 'edit-source'],
+  [20, 'course-start-and-progress'], [21, 'editor-visible'], [22, 'read-editor'], [23, 'edit-source'],
   [24, 'wait-for-draft'], [25, 'read-draft'], [26, 'saved-source'], [27, 'home-navigation'],
   [28, 'find-card'], [29, 'find-resume-link'], [30, 'resume-link-href'], [31, 'resume-click'],
   [32, 'resume-exercise-url'], [33, 'resumed-editor-source'], [34, 'resumed-saved-source'],
   [35, 'reload'], [36, 'reloaded-editor-source'], [37, 'reloaded-saved-source'],
+  [45, 'home-start'], [46, 'open-python-path'], [47, 'start-python-course'], [48, 'slide-sequence'],
+  [49, 'slide-sequence'], [50, 'slide-visible'], [51, 'course-progress-saved'],
+  [52, 'course-progress-saved'], [53, 'course-progress-saved'], [54, 'course-progress-saved'],
+  [55, 'next-slide'], [57, 'course-progress-read'], [58, 'lesson-unfinished'],
+  [59, 'open-exercise'], [60, 'exercise-url'],
 ]);
 
 export function summarizeHome(report, actualHash) {

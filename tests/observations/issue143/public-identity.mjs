@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { classifyIdentityResponse } from './identity-http-diagnostic.mjs';
 
 // Read-only identity check; deliberately not a complete public-file receipt.
 const root = 'https://santa928.github.io/tsumucode/';
@@ -10,7 +11,10 @@ const expected = {
 };
 async function read(url) {
   const r = await fetch(url, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(15_000) });
-  if (!r.ok) throw Error(`Identity read failed (${r.status}): ${new URL(url).pathname}`);
+  if (!r.ok) {
+    console.error(classifyIdentityResponse(r));
+    throw Error(`Identity read failed (${r.status}): ${new URL(url).pathname}`);
+  }
   return r;
 }
 const deployments = await (await read(api + '/deployments?environment=github-pages&per_page=1')).json();

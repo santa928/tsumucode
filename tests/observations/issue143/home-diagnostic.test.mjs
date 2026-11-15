@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { summarizeHome } from './home-diagnostic.mjs';
 
-const hash = '709bb25b52c9ace02712d51146a955cecb6166cfbc077c75d5de19be5d341095';
+const hash = '2c5f51ef7c45e9c2da44bba7ae205666210f111255be41a61918a64c58fd985e';
 const title = id => `${id} resumes the saved exercise and source`;
 const testResult = (id, status, location) => ({
   title: title(id), file: 'home-resume.spec.mjs',
@@ -49,4 +49,9 @@ test('unknown path or line never maps to a specific expectation', () => {
     assert.match(x, /stage=external-or-unknown/);
     assert.doesNotMatch(x, /PRIVATE_MARKER|resume-link-href/);
   }
+});
+test('the new saved-course precondition has a fixed stage and the old spec hash is rejected', () => {
+  const x = summarizeHome(report([testResult('course', 'failed', loc(53))]), hash);
+  assert.match(x[0], /stage=course-progress-saved/);
+  assert.deepEqual(summarizeHome(report([]), '709bb25b52c9ace02712d51146a955cecb6166cfbc077c75d5de19be5d341095'), ['home-diagnostic spec-mismatch']);
 });

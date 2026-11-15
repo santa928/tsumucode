@@ -17,7 +17,7 @@ test.describe('Python Home resume, synthetic unfinished draft', () => {
     ['path', 'Python入門の学習パス', '「Python入門の学習パス」のつづきから'],
   ]) {
     test(`${kind} resumes the saved exercise and source`, async ({ page }) => {
-      await page.goto(route);
+      await beginFromHomeAndOpenExercise(page);
       await expect(page.locator('.cm-content')).toBeVisible();
       const source = (await editorText(page)) + marker;
       await replaceEditorText(page, source);
@@ -38,3 +38,24 @@ test.describe('Python Home resume, synthetic unfinished draft', () => {
     });
   }
 });
+
+// Establish CourseProgress through ordinary Home → Path → slides before editing.
+// A fresh context with only a direct exercise draft has no CourseProgress to resume.
+async function beginFromHomeAndOpenExercise(page) {
+  await page.goto(`${site}#/`);
+  await page.getByRole('link', { name: 'Python入門の学習パスの全体を見る', exact: true }).click();
+  await page.getByRole('link', { name: 'Python 値と変数の第一歩を始める', exact: true }).click();
+  for (const [index, id] of ['s01', 's02', 's03'].entries()) {
+    const slideId = `${lesson}-${id}`;
+    await expect(page.getByTestId('slide-stage')).toHaveAttribute('data-slide-id', slideId);
+    await expect.poll(async () => {
+      const saved = (await readStoredProgress(page)).courses.find(row => row.courseId === course);
+      return saved?.currentLessonId === lesson && saved?.lessons?.[lesson]?.viewedSlideIds?.includes(slideId) === true;
+    }).toBe(true);
+    if (index < 2) await page.getByRole('link', { name: '次のスライドへ →', exact: true }).click();
+  }
+  const saved = (await readStoredProgress(page)).courses.find(row => row.courseId === course);
+  expect(saved?.lessons?.[lesson]?.currentComplete).toBe(false);
+  await page.getByRole('link', { name: '「変数の値と加算の結果を表示する」のコード演習を始める', exact: true }).click();
+  await expect(page).toHaveURL(route);
+}
