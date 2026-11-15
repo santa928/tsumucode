@@ -10,7 +10,7 @@ mkdir -p "$HOME" /capture /tmp/issue261-private
 phase=preview
 server_pid=
 classify_failure() {
-  for entry in 'permission:EACCES|EPERM|Permission denied' 'read-only:EROFS|read-only file system' 'missing:ENOENT|Cannot find module|Executable.*doesn.t exist' 'browser-launch:browserType.launch|Failed to launch|Target closed' 'timeout:Timeout|timed out' 'cli-daemon:Daemon process exited'; do
+  for entry in 'permission:EACCES|EPERM|Permission denied' 'read-only:EROFS|read-only file system' 'missing:ENOENT|Cannot find module|Executable.*doesn.t exist' 'chrome-distribution:Chromium distribution .* is not found' 'sandbox:No usable sandbox|Failed to move to new namespace|Operation not permitted' 'browser-launch:browserType.launch|Failed to launch|Target closed' 'timeout:Timeout|timed out' 'cli-daemon:Daemon process exited'; do
     category=${entry%%:*}
     pattern=${entry#*:}
     if grep -Eiq "$pattern" /tmp/issue261-private/cli.log 2>/dev/null; then
@@ -32,11 +32,18 @@ const deadline = Date.now() + 60_000;
 })();
 NODE
 PW=/tool/node_modules/.bin/playwright-cli
+pw() {
+  env -i HOME="$HOME" PATH=/usr/local/bin:/usr/bin:/bin \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright PLAYWRIGHT_MCP_SANDBOX=true "$PW" "$@"
+}
 phase=browser-open
 if ! node - > /tmp/issue261-private/browser-preflight.log 2>&1 <<'NODE'
 const fs = require('node:fs');
 const core = require('/tool/node_modules/playwright-core/package.json');
 if (core.version !== '1.61.1') throw Error('Fixed browser library differs');
+const cliConfig = require('/tool/cli.config.json');
+if (JSON.stringify(cliConfig) !== JSON.stringify({browser:{launchOptions:{chromiumSandbox:true}}}))
+  throw Error('Fixed CLI configuration differs');
 const executable = require('/tool/node_modules/playwright').chromium.executablePath();
 try {
   for (const file of [executable, '/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-linux64/chrome-headless-shell'])
@@ -59,11 +66,12 @@ then
   exit 1
 fi
 echo 'Fixed Chromium preflight passed.'
-"$PW" --version > /capture/cli-version.txt
-"$PW" -s=issue261 open 'http://127.0.0.1:4173/' > /tmp/issue261-private/cli.log 2>&1
+pw --version > /capture/cli-version.txt
+test "$(cat /capture/cli-version.txt)" = '0.1.14'
+pw -s=issue261 open --browser=chromium --config=/tool/cli.config.json 'http://127.0.0.1:4173/' > /tmp/issue261-private/cli.log 2>&1
 
 snapshot() {
-  "$PW" -s=issue261 snapshot --filename="$1" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 snapshot --filename="$1" >> /tmp/issue261-private/cli.log 2>&1
 }
 find_ref() {
   node - "$1" "$2" <<'NODE'
@@ -78,7 +86,7 @@ NODE
 }
 for lesson in 01 02 03; do
   phase="lesson-${lesson}-initial"
-  "$PW" -s=issue261 goto "http://127.0.0.1:4173/#/courses/python-practice/lessons/python-practice-ch01-l${lesson}/exercises/python-practice-ch01-l${lesson}-e01" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 goto "http://127.0.0.1:4173/#/courses/python-practice/lessons/python-practice-ch01-l${lesson}/exercises/python-practice-ch01-l${lesson}-e01" >> /tmp/issue261-private/cli.log 2>&1
   ready=0
   for attempt in $(seq 1 40); do
     snapshot "/capture/l${lesson}-initial.yml"
@@ -86,7 +94,7 @@ for lesson in 01 02 03; do
     sleep 1
   done
   test "$ready" = 1
-  "$PW" -s=issue261 eval '() => window.location.hash' > /tmp/issue261-private/location.txt
+  pw -s=issue261 eval '() => window.location.hash' > /tmp/issue261-private/location.txt
   grep -Fq "#/courses/python-practice/lessons/python-practice-ch01-l${lesson}/exercises/python-practice-ch01-l${lesson}-e01" /tmp/issue261-private/location.txt
   case "$lesson" in
     01) title='内包表記で変換とfilterを分ける' ;;
@@ -94,15 +102,15 @@ for lesson in 01 02 03; do
     03) title='Generatorを作り、進め、使い切る' ;;
   esac
   grep -Fq "$title" "/capture/l${lesson}-initial.yml"
-  "$PW" -s=issue261 screenshot --filename="/capture/l${lesson}-initial.png" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 screenshot --filename="/capture/l${lesson}-initial.png" >> /tmp/issue261-private/cli.log 2>&1
   phase="lesson-${lesson}-review-open"
-  "$PW" -s=issue261 click "$(cat /tmp/issue261-private/ref)" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 click "$(cat /tmp/issue261-private/ref)" >> /tmp/issue261-private/cli.log 2>&1
   snapshot "/capture/l${lesson}-review-open.yml"
   grep -Fq 'dialog "関連スライド：' "/capture/l${lesson}-review-open.yml"
   find_ref "/capture/l${lesson}-review-open.yml" '閉じる' > /tmp/issue261-private/close-ref
-  "$PW" -s=issue261 screenshot --filename="/capture/l${lesson}-review-open.png" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 screenshot --filename="/capture/l${lesson}-review-open.png" >> /tmp/issue261-private/cli.log 2>&1
   phase="lesson-${lesson}-review-close"
-  "$PW" -s=issue261 click "$(cat /tmp/issue261-private/close-ref)" >> /tmp/issue261-private/cli.log 2>&1
+  pw -s=issue261 click "$(cat /tmp/issue261-private/close-ref)" >> /tmp/issue261-private/cli.log 2>&1
   snapshot "/capture/l${lesson}-review-closed.yml"
   find_ref "/capture/l${lesson}-review-closed.yml" '説明を見直す' > /dev/null
   if grep -Fq 'dialog "関連スライド：' "/capture/l${lesson}-review-closed.yml"; then exit 1; fi
@@ -111,4 +119,4 @@ for lesson in 01 02 03; do
     printf 'l%s %s accessibility-snapshot=%s\n' "$lesson" "$state" "$value" >> /capture/observations.txt
   done
 done
-"$PW" -s=issue261 close >> /tmp/issue261-private/cli.log 2>&1
+pw -s=issue261 close >> /tmp/issue261-private/cli.log 2>&1
