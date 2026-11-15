@@ -15,7 +15,6 @@ const offsetDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'b
 
 /** Local fixed bytes and record consistency only, not a live-deployment authorization. */
 export function assertFixedPythonFirstAnchor(proofInput: unknown, tagInput: Uint8Array) {
-  const proof = BaselineProofSchema.parse(proofInput);
   if (
     !types.isUint8Array(tagInput) ||
     !(tagInput instanceof Uint8Array) ||
@@ -36,6 +35,7 @@ export function assertFixedPythonFirstAnchor(proofInput: unknown, tagInput: Uint
   )
     throw Error('Invalid anchor tag bytes');
   const tag = Buffer.from(new Uint8Array(backing, offset, length));
+  const proof = BaselineProofSchema.parse(proofInput);
   if (
     proof.repository !== repository ||
     proof.deploymentId !== '7699435659' ||

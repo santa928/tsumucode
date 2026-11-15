@@ -116,3 +116,36 @@ it('copies only the actual bounded backing bytes without consulting caller hooks
     assertFixedPythonFirstAnchor(proof, new Proxy(ordinary, {}));
   }).toThrow('Invalid anchor tag bytes');
 });
+
+it('snapshots tag bytes before proof accessors can change the input', () => {
+  const altered = Uint8Array.from(tag);
+  altered[0] = altered[0]! ^ 1;
+  let alteredGetterCalls = 0;
+  const alteredProof = {
+    ...proof,
+    get repository() {
+      alteredGetterCalls++;
+      altered.set(tag);
+      return proof.repository;
+    },
+  };
+  expect(() => {
+    assertFixedPythonFirstAnchor(alteredProof, altered);
+  }).toThrow('Pinned anchor identity differs');
+  expect(alteredGetterCalls).toBeGreaterThan(0);
+
+  const original = Uint8Array.from(tag);
+  let originalGetterCalls = 0;
+  const originalProof = {
+    ...proof,
+    get repository() {
+      originalGetterCalls++;
+      original[0] = original[0]! ^ 1;
+      return proof.repository;
+    },
+  };
+  expect(() => {
+    assertFixedPythonFirstAnchor(originalProof, original);
+  }).not.toThrow();
+  expect(originalGetterCalls).toBeGreaterThan(0);
+});
