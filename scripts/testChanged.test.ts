@@ -10,7 +10,7 @@ const selector = path.resolve('scripts/testChanged.ts');
 const tsx = path.resolve('node_modules/.bin/tsx');
 
 /** 外側のGit metadataから隔離したfixtureで、npm実行対象だけを捕捉する。 */
-function selectedTests(changed: string): readonly string[] {
+function selectedTests(changed: string, moveTo?: string, remove = false): readonly string[] {
   const root = mkdtempSync(path.join(os.tmpdir(), 'tsumucode-test-selection-'));
   temporary.push(root);
   const repository = path.join(root, 'repo');
@@ -21,9 +21,14 @@ function selectedTests(changed: string): readonly string[] {
     '.github/workflows/pages.yml',
     'content/next/release-history.yaml',
     'docs/quality/next-release-approval.yaml',
+    'docs/quality/typescript-ch01-l01-draft/lesson.yaml',
+    'docs/quality/typescript-ch01-l02-draft/exercises/example/fixtures/solution.ts',
+    'docs/quality/typescript-ch01-l03-draft/glossary.yaml',
+    'docs/quality/typescript-ch01-l04-draft/lesson.yaml',
     'tests/pages-workflow.test.ts',
     'tests/unit/config/playwrightOutputIsolation.test.ts',
     'tests/content/course.test.ts',
+    'tests/content/typescript-lesson-drafts.test.ts',
     'tests/content/javascript-learning-evidence.test.ts',
     'tests/unit/release/typescriptRelease.test.ts',
     'tests/unit/release/nextRelease.test.ts',
@@ -53,7 +58,14 @@ function selectedTests(changed: string): readonly string[] {
     'fixture',
   );
   const base = git('rev-parse', 'HEAD').trim();
-  writeFileSync(path.join(repository, changed), 'after\n');
+  if (remove) {
+    git('rm', '--quiet', changed);
+  } else if (moveTo) {
+    mkdirSync(path.dirname(path.join(repository, moveTo)), { recursive: true });
+    git('mv', changed, moveTo);
+  } else {
+    writeFileSync(path.join(repository, changed), 'after\n');
+  }
   const calls = path.join(root, 'args.txt');
   const npm = path.join(bin, 'npm');
   writeFileSync(npm, '#!/bin/sh\nprintf "%s\\n" "$@" > "$CALLS"\n');
@@ -86,8 +98,40 @@ it.each([
   expect(selected).toContain('tests/unit/release/nextRelease.test.ts');
 });
 
+it('draft外への移動でも元のdraft testを選択する', () => {
+  expect(
+    selectedTests(
+      'docs/quality/typescript-ch01-l01-draft/lesson.yaml',
+      'docs/quality/other/moved.yaml',
+    ),
+  ).toContain('tests/content/typescript-lesson-drafts.test.ts');
+});
+
+it('draftファイル削除でも元のdraft testを選択する', () => {
+  expect(
+    selectedTests('docs/quality/typescript-ch01-l01-draft/lesson.yaml', undefined, true),
+  ).toContain('tests/content/typescript-lesson-drafts.test.ts');
+});
+
 it('selector自体の変更でも自身の回帰testを漏らさない', () => {
   expect(selectedTests('scripts/testChanged.ts')).toContain('scripts/testChanged.test.ts');
+});
+
+it.each([
+  'docs/quality/typescript-ch01-l01-draft/lesson.yaml',
+  'docs/quality/typescript-ch01-l02-draft/exercises/example/fixtures/solution.ts',
+  'docs/quality/typescript-ch01-l03-draft/glossary.yaml',
+])('%sの変更では動的読込のdraft testも選択する', (changed) => {
+  expect(selectedTests(changed)).toContain('tests/content/typescript-lesson-drafts.test.ts');
+});
+
+it.each([
+  'docs/quality/next-release-approval.yaml',
+  'docs/quality/typescript-ch01-l04-draft/lesson.yaml',
+])('%sは対象外としてdraft testを追加しない', (changed) => {
+  expect(selectedTests(changed)).not.toContain(
+    'tests/content/typescript-lesson-drafts.test.ts',
+  );
 });
 
 it('workflow変更ではfsで実workflowを読む旧品質契約testも選択する', () => {
