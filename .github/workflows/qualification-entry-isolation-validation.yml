@@ -57,6 +57,13 @@ jobs:
           a2cf226daf74c0a23653dad4161a5e0b04649292fae8cd13fced2588be56fb48  tests/local/qualification-entry-probe/subject-field-provenance.mjs
           f3b3616e3948a366e0f01db0edd2736d35ce6f06009c6e091850982fe46b7099  tests/local/qualification-entry-probe/subject-field-provenance.test.mjs
           058b6a8b4af3d1a148230c1511671935607c36be6d1c4da16083fbf1ed36f2b6  tests/local/qualification-entry-probe/lineage-draft.fixture
+          4d2b505a7c3490fc89c82d87072ebba728d8e1a428c57e0fffd9845bc81aadff  tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs
+          ba9f1f9348c1b56776841c813e28a58a1747c859ea38c2a21ff8db9e33a6e124  tests/local/qualification-entry-probe/private-predeploy-handoff.fixture
+          b0a579d480ab6d74a5639f4642f4eb9971553548fabcdfcd0563f58f7d1f63d1  tests/local/qualification-entry-probe/protected-needs-observation.fixture
+          ae3d91ebd7335268201ee68a9adf07468b306c0d84184acdce4ca25f49b93ca0  tests/local/qualification-entry-probe/lineage-run-evidence.fixture
+          85e8fdb39499031aa3971f44aaac7898078a3b3395d1913a0711747ba77d0fa6  tests/local/qualification-entry-probe/lineage-parent-policy.fixture
+          8736086312f51989b17892bb839fc8b30c92880b396daa1166f3c83ad5f833fa  scripts/release/v2/json.ts
+          ad897513af80f92245609505a522d2b3a21afffa5400643bb879deb1625e31c6  scripts/release/v2/parent.ts
           SHA256
       - name: Build fixed Node and locked dependencies
         env:
@@ -76,4 +83,5 @@ jobs:
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/qualification-entry-probe,target=/workspace/tests/local/qualification-entry-probe,readonly"
           "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
           node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
-          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs tests/local/qualification-entry-probe/subject-field-provenance.test.mjs'
+          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs tests/local/qualification-entry-probe/subject-field-provenance.test.mjs;
+          node --test --test-concurrency=1 tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs'
