@@ -1,0 +1,14 @@
+/** Future fixed-workflow provider; these fail closed until independently authenticated. */
+export type FutureProtectedSource = {
+  manifest: Uint8Array;
+  parentTag: Uint8Array;
+  previous?: Uint8Array;
+  bundle?: Uint8Array;
+};
+export async function authenticateFixedWorkflowAndDirectNeeds(): Promise<FutureProtectedSource> {
+  throw Error('Authenticated pre-deploy parent is not configured');
+}
+export async function authenticatePredeployObservation(source: FutureProtectedSource): Promise<unknown> {
+  void source;
+  throw Error('Authenticated pre-deploy observation is not configured');
+}
