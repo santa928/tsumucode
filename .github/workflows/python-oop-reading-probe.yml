@@ -44,14 +44,15 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dist.py' \
             'tests/local/oop-reading-probe/check-report.py' \
             'tests/local/oop-reading-probe/oop-horizontal.config.ts' \
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts')
-          test "$(git diff --no-renames --name-only HEAD^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
@@ -104,9 +105,24 @@ jobs:
             --mount "type=bind,source=$GITHUB_WORKSPACE/probe-results,target=/workspace/test-results" \
             --mount type=volume,target=/workspace/node_modules,readonly \
             oop-reading-probe sh -ec '
+              printf "%s\n" PROBE_STAGE=container-ready;
+              test "$(node --version)" = v24.18.0;
+              printf "%s\n" PROBE_STAGE=list-reading;
+              node node_modules/@playwright/test/cli.js test --config=tests/acceptance/python-oop.config.ts --list;
+              printf "%s\n" PROBE_STAGE=list-horizontal;
+              node node_modules/@playwright/test/cli.js test --config=tests/local/oop-reading-probe/oop-horizontal.config.ts --list;
+              printf "%s\n" PROBE_STAGE=server-start;
+              node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4173 --strictPort & server=$!;
+              trap "kill $server 2>/dev/null || true" EXIT;
+              node --input-type=module -e '"'"'let ok=false; for(let i=0;i<100;i++){try{const r=await fetch("http://127.0.0.1:4173/tsumucode/");if(r.ok){ok=true;break}}catch{}await new Promise(r=>setTimeout(r,200))}if(!ok){process.stderr.write("server-unavailable\n");process.exit(1)}'"'"';
+              printf "%s\n" PROBE_STAGE=server-ready;
+              kill "$server"; wait "$server" || true; trap - EXIT;
+              printf "%s\n" PROBE_STAGE=test-reading;
               node node_modules/@playwright/test/cli.js test --config=tests/acceptance/python-oop.config.ts;
-              node node_modules/@playwright/test/cli.js test --config=tests/local/oop-reading-probe/oop-horizontal.config.ts' >"$log" 2>&1 || result=1
-          python3 tests/local/oop-reading-probe/check-report.py "$result"
+              printf "%s\n" PROBE_STAGE=test-horizontal;
+              node node_modules/@playwright/test/cli.js test --config=tests/local/oop-reading-probe/oop-horizontal.config.ts;
+              printf "%s\n" PROBE_STAGE=complete' >"$log" 2>&1 || result=1
+          python3 tests/local/oop-reading-probe/check-report.py "$result" "$log"
       - name: Preserve bounded machine test reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
