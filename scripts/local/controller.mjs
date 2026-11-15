@@ -34,6 +34,7 @@ import {
   containerConfig,
   followOutput,
   capturePythonCiDiagnostic,
+  observePythonCiExit,
   cleanupOwned,
   removeContainer,
 } from './docker-engine.mjs';
@@ -162,6 +163,13 @@ async function executePhase(run, analyze = false) {
   const stdout = [];
   const stderr = [];
   let exitCode = null;
+  const diagnosticSince =
+    process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1' &&
+    run.input.runtimeProfileId === PYTHON_PROFILE_ID &&
+    run.input.exerciseSessionId === 'python-acceptance' &&
+    !analyze
+      ? Date.now() / 1000
+      : undefined;
   try {
     if (!run.reason) {
       const container = await docker(
@@ -209,6 +217,7 @@ async function executePhase(run, analyze = false) {
           undefined,
           LIMITS.wallMs + 10000,
         );
+        const diagnosticWaitAtMs = diagnosticSince === undefined ? undefined : Date.now();
         clearTimeout(timeout);
         await outputDone;
         exitCode = waited.StatusCode;
@@ -217,9 +226,27 @@ async function executePhase(run, analyze = false) {
           process.env.TSUMUCODE_PYTHON_CI_DIAGNOSTICS === '1' &&
           run.input.runtimeProfileId === PYTHON_PROFILE_ID &&
           run.input.exerciseSessionId === 'python-acceptance' &&
-          !analyze && !run.reason && exitCode === 137 && inspected.State.OOMKilled !== true
+          !analyze &&
+          !run.reason &&
+          exitCode === 137 &&
+          inspected.State.OOMKilled !== true
         ) {
-          capturePythonCiDiagnostic({ enabled: true, runId: run.input.runId, inspected });
+          // Do not await diagnostics in the result, cancellation or cleanup path.
+          const runId = run.input.runId;
+          void observePythonCiExit({
+            enabled: true,
+            api: docker,
+            id: container.Id,
+            owner,
+            inspected,
+            waitedCode: exitCode,
+            since: diagnosticSince,
+            until: Date.now() / 1000,
+            waitAtMs: diagnosticWaitAtMs,
+          }).then(
+            (timeline) => capturePythonCiDiagnostic({ enabled: true, runId, inspected, timeline }),
+            () => capturePythonCiDiagnostic({ enabled: true, runId, inspected }),
+          );
         }
         if (inspected.State.OOMKilled && run.reason !== 'system-error') run.reason = 'memory-limit';
       }

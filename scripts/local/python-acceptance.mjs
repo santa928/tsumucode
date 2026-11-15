@@ -182,10 +182,12 @@ const memory = await finish(memoryRunId);
 assert.equal(memory.engine, 'cpython');
 assert.equal(memory.engineVersion, '3.14.2');
 if (memory.status !== 'stopped' || memory.terminationReason !== 'memory-limit') {
-  const diagnostic = readPythonCiDiagnostic({
-    enabled: diagnosticPrepared,
-    runId: memoryRunId,
-  });
+  let diagnostic = readPythonCiDiagnostic({ enabled: diagnosticPrepared, runId: memoryRunId });
+  // The optional controller observation never blocks execution; wait only after this failed case.
+  for (let attempt = 0; diagnosticPrepared && !diagnostic && attempt < 12; attempt++) {
+    await sleep(50);
+    diagnostic = readPythonCiDiagnostic({ enabled: true, runId: memoryRunId });
+  }
   if (diagnosticsEnabled) {
     try {
       if (diagnostic) console.error('Python CI exit diagnostic', JSON.stringify(diagnostic));
