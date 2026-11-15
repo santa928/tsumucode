@@ -44,15 +44,16 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-parse HEAD^)" = f9e7627742df88f89dd762259023de1d766fafa3
+          test "$(git rev-parse HEAD^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
+          test "$(git rev-parse HEAD^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dist.py' \
             'tests/local/oop-reading-probe/check-report.py' \
             'tests/local/oop-reading-probe/oop-horizontal.config.ts' \
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts')
-          test "$(git diff --no-renames --name-only HEAD^^ HEAD)" = "$expected_paths"
+          test "$(git diff --no-renames --name-only HEAD^^^ HEAD)" = "$expected_paths"
           test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
@@ -93,17 +94,52 @@ jobs:
           mkdir -p fixed-candidate/tests/local/oop-reading-probe fixed-candidate/test-results probe-results
           log=$(mktemp "$RUNNER_TEMP/oop-browser.XXXXXX")
           trap 'rm -f "$log"' EXIT
+          for item in fixed probe results; do
+            case "$item" in
+              fixed) source_dir="$GITHUB_WORKSPACE/fixed-candidate" ;;
+              probe) source_dir="$GITHUB_WORKSPACE/tests/local/oop-reading-probe" ;;
+              results) source_dir="$GITHUB_WORKSPACE/probe-results" ;;
+            esac
+            if [ -d "$source_dir" ] && [ ! -L "$source_dir" ]; then
+              echo "mount-source-$item=present"
+            else
+              echo "mount-source-$item=missing"
+              exit 1
+            fi
+          done
+          if [ -d fixed-candidate/node_modules ]; then
+            echo 'node-modules-target=present'
+          else
+            echo 'node-modules-target=absent'
+          fi
+          mounts=(
+            --tmpfs "/tmp:rw,nosuid,nodev,size=256m,uid=$(id -u),gid=$(id -g)"
+            --tmpfs "/workspace/node_modules/.vite-temp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)"
+            --mount "type=bind,source=$GITHUB_WORKSPACE/fixed-candidate,target=/workspace,readonly"
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/workspace/tests/local/oop-reading-probe,readonly"
+            --mount "type=bind,source=$GITHUB_WORKSPACE/probe-results,target=/workspace/test-results"
+            --mount type=volume,target=/workspace/node_modules,readonly
+          )
+          if container=$(docker create --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
+            --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            "${mounts[@]}" oop-reading-probe sh -ec ':' 2>"$log"); then
+            case "$container" in *[!0-9a-f]*|'') exit 1;; esac
+            test "${#container}" = 64
+            docker rm -v "$container" >/dev/null 2>&1
+            echo 'mount-preflight=passed'
+            : >"$log"
+          else
+            python3 tests/local/oop-reading-probe/check-report.py 1 "$log"
+            exit 1
+          fi
           result=0
           docker run --rm --network none --read-only --user "$(id -u):$(id -g)" --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --env BASE_PATH --env CI=true \
             --cap-drop ALL --security-opt no-new-privileges:true \
             --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
-            --tmpfs "/tmp:rw,nosuid,nodev,size=256m,uid=$(id -u),gid=$(id -g)" \
-            --tmpfs "/workspace/node_modules/.vite-temp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)" \
-            --mount "type=bind,source=$GITHUB_WORKSPACE/fixed-candidate,target=/workspace,readonly" \
-            --mount "type=bind,source=$GITHUB_WORKSPACE/tests/local/oop-reading-probe,target=/workspace/tests/local/oop-reading-probe,readonly" \
-            --mount "type=bind,source=$GITHUB_WORKSPACE/probe-results,target=/workspace/test-results" \
-            --mount type=volume,target=/workspace/node_modules,readonly \
+            "${mounts[@]}" \
             oop-reading-probe sh -ec '
               printf "%s\n" PROBE_STAGE=container-ready;
               test "$(node --version)" = v24.18.0;
