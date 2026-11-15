@@ -1,0 +1,56 @@
+name: Issue 143 synthetic trusted contract
+on:
+  pull_request:
+permissions: {}
+jobs:
+  synthetic:
+    if: ${{ github.event.pull_request.head.repo.full_name == 'santa928/tsumucode' && github.event.pull_request.head.ref == 'codex/issue143-trusted-contract-check' && github.event.pull_request.base.ref == 'main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions: {}
+    env:
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Fetch reviewed public branch without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! [[ "$HEAD_SHA" =~ ^[a-f0-9]{40}$ ]] || [ "$BASE_SHA" != 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20 ]; then
+            echo 'Candidate identity rejected' >&2
+            exit 1
+          fi
+          mkdir -m 700 "$RUNNER_TEMP/public-git-home"
+          git_public() {
+            env -i PATH=/usr/bin:/bin HOME="$RUNNER_TEMP/public-git-home" GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false "$@"
+          }
+          git_public init -q "$RUNNER_TEMP/candidate"
+          git_public -C "$RUNNER_TEMP/candidate" fetch -q --no-tags https://github.com/santa928/tsumucode.git refs/heads/codex/issue143-trusted-contract-check
+          test "$(git_public -C "$RUNNER_TEMP/candidate" rev-parse FETCH_HEAD)" = "$HEAD_SHA"
+          git_public -C "$RUNNER_TEMP/candidate" checkout -q --detach "$HEAD_SHA"
+          git_public -C "$RUNNER_TEMP/candidate" merge-base --is-ancestor "$BASE_SHA" "$HEAD_SHA"
+          test -z "$(git_public -C "$RUNNER_TEMP/candidate" status --porcelain --untracked-files=all)"
+      - name: Verify exact inputs
+        shell: bash
+        working-directory: ${{ runner.temp }}/candidate
+        run: |
+          set -euo pipefail
+          sha256sum --check <<'SHA256'
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          476673680a853687ab28bf4eaa2b0c42680a97756fb60edef427b15bda23febe  .github/workflows/issue143-trusted-dispatch.yml
+          6dd27ac2de37341a90fde6e7c72082a6a178cc58d8f9e41a7ed13099aaceeea6  scripts/issue143-trusted/guard.mjs
+          356d0ae5db1c1e5295222b92c232edfe544dd50f838991af025e17627745299f  scripts/issue143-trusted/guard.test.mjs
+          5defe9a5cdacfa33d9fdf0267e7f1c2b0f71082d31ca43bf461d8292cca333d6  scripts/issue143-trusted/identity-cli.mjs
+          d0ac8b9360dedc22babbfdb62fbc8164e3402e5226729601058e5b2e84e6382c  scripts/issue143-trusted/identity-cli.test.mjs
+          171ffdfa05d5064e36ea73726e28313d89976a155d1e32aa1a6cca632ab10040  scripts/issue143-trusted/workflow-wiring.test.mjs
+          c4a95eac64d2335a78fa8669da12301737eec26054c8bdcbe568da179297aaee  scripts/issue143-trusted/pr-contract.test.mjs
+          SHA256
+      - name: Run synthetic contracts in isolated fixed Node image
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -m 700 "$RUNNER_TEMP/public-docker-config"
+          export DOCKER_CONFIG="$RUNNER_TEMP/public-docker-config"
+          image='node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5'
+          docker pull "$image"
+          docker run --rm --init --network none --read-only --user 1000:1000 --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true --tmpfs /tmp:rw,nosuid,nodev,size=64m,uid=1000,gid=1000 --mount "type=bind,src=$RUNNER_TEMP/candidate,dst=/repo,readonly" --workdir /repo "$image" node --test scripts/issue143-trusted/guard.test.mjs scripts/issue143-trusted/identity-cli.test.mjs scripts/issue143-trusted/workflow-wiring.test.mjs scripts/issue143-trusted/pr-contract.test.mjs

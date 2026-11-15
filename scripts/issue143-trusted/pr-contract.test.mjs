@@ -1,0 +1,45 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const workflow = await readFile(
+  new URL('../../.github/workflows/issue143-pr-contract.yml', import.meta.url),
+  'utf8',
+);
+
+function valid(source) {
+  return (
+    /^  pull_request:\s*$/mu.test(source) &&
+    !/pull_request_target|workflow_dispatch|github\.token|secrets\./u.test(source) &&
+    /^permissions: \{\}\s*$/mu.test(source) &&
+    /^    permissions: \{\}\s*$/mu.test(source) &&
+    source.includes("github.event.pull_request.head.repo.full_name == 'santa928/tsumucode'") &&
+    source.includes("github.event.pull_request.head.ref == 'codex/issue143-trusted-contract-check'") &&
+    source.includes('2a0dfa3a196cca736c6c7b6129e0cacb1d263d20') &&
+    source.includes('node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5') &&
+    source.includes('GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0') &&
+    source.includes('credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false') &&
+    source.includes('--network none --read-only --user 1000:1000') &&
+    source.includes('--cap-drop ALL --security-opt no-new-privileges:true') &&
+    source.includes('dst=/repo,readonly') &&
+    !/docker\.sock|--privileged|--network host/u.test(source) &&
+    source.includes('sha256sum --check') &&
+    source.includes('node --test scripts/issue143-trusted/guard.test.mjs scripts/issue143-trusted/identity-cli.test.mjs scripts/issue143-trusted/workflow-wiring.test.mjs scripts/issue143-trusted/pr-contract.test.mjs')
+  );
+}
+
+test('PR-only synthetic workflow retains fixed identity and sandbox boundaries', () => {
+  assert.equal(valid(workflow), true);
+});
+
+test('rejects a token, changed image, network, permissions or dispatch trigger', () => {
+  for (const bad of [
+    workflow.replace('permissions: {}', 'permissions: {contents: read}'),
+    workflow.replace('pull_request:', 'workflow_dispatch:'),
+    workflow.replace('--network none', '--network host'),
+    workflow.replace('node:24.18.0-bookworm-slim', 'node:latest'),
+    workflow + '\n# github.token\n',
+  ]) {
+    assert.equal(valid(bad), false);
+  }
+});

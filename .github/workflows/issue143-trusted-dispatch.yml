@@ -1,0 +1,345 @@
+name: Trusted Python Pages-to-Local observation (manual only)
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Independently reviewed exact candidate SHA
+        required: true
+        type: string
+permissions: {}
+jobs:
+  identity_before:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && github.repository == 'santa928/tsumucode' && github.actor == 'santa928' && github.workflow_sha == github.sha }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      run: ${{ steps.proof.outputs.run }}
+      attempt: ${{ steps.proof.outputs.attempt }}
+      head: ${{ steps.proof.outputs.head }}
+      base: ${{ steps.proof.outputs.base }}
+      source: ${{ steps.proof.outputs.source }}
+    steps:
+      - name: Checkout reviewed main only
+        id: trusted_checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: santa928/tsumucode
+          ref: ${{ github.sha }}
+          path: trusted-main
+          persist-credentials: false
+      - name: Verify trusted main checkout
+        shell: bash
+        working-directory: trusted-main
+        env:
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+        run: &trusted_tree |
+          set -euo pipefail
+          if [ "$TRUSTED_CHECKOUT_COMMIT" != "$GITHUB_SHA" ]; then echo 'Trusted checkout rejected'; exit 1; fi
+          if ! actual=$(git rev-parse --verify HEAD 2>/dev/null) || [ "$actual" != "$GITHUB_SHA" ]; then echo 'Trusted checkout rejected'; exit 1; fi
+          if ! state=$(git status --porcelain --untracked-files=all 2>/dev/null) || [ -n "$state" ]; then echo 'Trusted checkout rejected'; exit 1; fi
+      - name: Verify current identity and bind
+        id: proof
+        env:
+          IDENTITY_TOKEN: ${{ github.token }}
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+          IDENTITY_MODE: pre
+          TRUSTED_WORKFLOW_SHA: ${{ github.workflow_sha }}
+        shell: bash
+        run: &trusted_identity |
+          set +x
+          if [ "$TRUSTED_CHECKOUT_COMMIT" != "$GITHUB_SHA" ]; then
+            echo 'Trusted checkout rejected'
+            exit 1
+          fi
+          node trusted-main/scripts/issue143-trusted/identity-cli.mjs
+  observation:
+    needs: [identity_before]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions: {}
+    outputs:
+      run: ${{ steps.proof.outputs.run }}
+      attempt: ${{ steps.proof.outputs.attempt }}
+      head: ${{ steps.proof.outputs.head }}
+      base: ${{ steps.proof.outputs.base }}
+      source: ${{ steps.proof.outputs.source }}
+    env:
+      OBSERVATION_HEAD: ${{ needs.identity_before.outputs.head }}
+      OBSERVATION_BASE: ${{ needs.identity_before.outputs.base }}
+      TRUSTED_CONTEXT_SHA: ${{ github.sha }}
+      TSUMUCODE_LOCAL_OWNER: tsumucode-p6-${{ github.run_id }}-${{ github.run_attempt }}
+      TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+      TSUMUCODE_NEXT_SOURCE_SHA: b9306eb3414e69a2068603cfdbf2706ebe4e9284
+      COMPOSE_PARALLEL_LIMIT: 1
+    steps:
+      - name: Fetch reviewed public Source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          trap 'echo "Public checkout failed" >&2' ERR
+          if ! [[ "$OBSERVATION_HEAD" =~ ^[0-9a-f]{40}$ ]] || ! [[ "$OBSERVATION_BASE" =~ ^[0-9a-f]{40}$ ]]; then
+            echo 'Public checkout input rejected' >&2
+            exit 1
+          fi
+          mkdir -m 700 "${RUNNER_TEMP}/issue143-git-home"
+          git_public() {
+            env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false "$@" 2>/dev/null
+          }
+          git_public init -q observation
+          git_public -C observation fetch -q --no-tags https://github.com/santa928/tsumucode.git refs/heads/codex/issue143-hosted-draft
+          test "$(git_public -C observation rev-parse FETCH_HEAD)" = "$OBSERVATION_HEAD"
+          git_public -C observation checkout -q --detach "$OBSERVATION_HEAD"
+          git_public -C observation merge-base --is-ancestor "$OBSERVATION_BASE" "$OBSERVATION_HEAD"
+          git_public init -q source
+          git_public -C source fetch -q --no-tags https://github.com/santa928/tsumucode.git refs/heads/main
+          test "$(git_public -C source rev-parse FETCH_HEAD)" = "$OBSERVATION_BASE"
+          git_public -C source checkout -q --detach b9306eb3414e69a2068603cfdbf2706ebe4e9284
+          test "$(git_public -C source rev-parse HEAD^{tree})" = fb74d1c12f1081b28dad4e45e87ecef19a67e729
+      - name: Validate identity and isolated owner
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          test "$OBSERVATION_BASE" = "$TRUSTED_CONTEXT_SHA"
+          test "$(git -C observation rev-parse HEAD)" = "$OBSERVATION_HEAD"
+          git -C observation merge-base --is-ancestor "$OBSERVATION_BASE" "$OBSERVATION_HEAD"
+          printf 'Observation commit/tree: %s %s\n' "$OBSERVATION_HEAD" "$(git -C observation rev-parse HEAD^{tree})"
+          test "$(git -C source rev-parse HEAD)" = b9306eb3414e69a2068603cfdbf2706ebe4e9284
+          test "$(git -C source rev-parse HEAD^{tree})" = fb74d1c12f1081b28dad4e45e87ecef19a67e729
+          test -z "$(git -C source status --porcelain)"
+          test -S "$TSUMUCODE_LOCAL_SOCKET"
+          test -z "$(docker ps -aq --filter "label=com.docker.compose.project=$TSUMUCODE_LOCAL_OWNER")"
+          if docker network inspect "${TSUMUCODE_LOCAL_OWNER}_web" >/dev/null 2>&1; then exit 1; fi
+          if ss -H -ltn | grep -Eq ':(4173|4175)[[:space:]]'; then exit 1; fi
+          node --test observation/tests/observations/issue143/check-report.test.mjs
+          node --test observation/tests/observations/issue143/local-diagnostic.test.mjs observation/tests/observations/issue143/local-diagnostic-cli.test.mjs
+          node --test observation/tests/observations/issue143/preview-diagnostic.test.mjs observation/tests/observations/issue143/preview-diagnostic-cli.test.mjs
+          node --test observation/tests/observations/issue143/startup-diagnostic.test.mjs observation/tests/observations/issue143/startup-diagnostic-cli.test.mjs observation/tests/observations/issue143/loader-list-check.test.mjs observation/tests/observations/issue143/controller-image-diagnostic.test.mjs
+          node --test observation/tests/observations/issue143/identity-http-diagnostic.test.mjs
+          node --test observation/tests/observations/issue143/identity-preflight.test.mjs
+          node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
+          mkdir -m 700 "$RUNNER_TEMP/issue143-export" "$RUNNER_TEMP/issue143-home" "$RUNNER_TEMP/issue143-local"
+          OBSERVATION
+      - name: Build fixed Source images in the hosted runner
+        working-directory: source
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml build web controller preview
+          docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
+          docker run --rm --init --user "$(id -u):$(id -g)" --network none --read-only --tmpfs "/tmp:rw,nosuid,nodev,size=64m,uid=$(id -u),gid=$(id -g)" --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,src=$GITHUB_WORKSPACE/observation/tests/observations/issue143,dst=/workspace/tests/observations/issue143,readonly" \
+            --entrypoint sh "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" -c 'node --test /workspace/tests/observations/issue143/preview-diagnostic-compat.test.mjs && node /workspace/tests/observations/issue143/loader-list-check.mjs'
+          for image in "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" "$TSUMUCODE_LOCAL_OWNER-project:local"; do
+            docker image inspect --format '{{.Id}}' "$image"
+          done
+          OBSERVATION
+      - name: Start only the isolated Local stack
+        working-directory: source
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          test -n "$controller"
+          expected=$(sha256sum src/core/runtime/pythonLessonProfiles.mjs | cut -d' ' -f1)
+          actual=$(docker exec "$controller" node --input-type=module -e 'import fs from "node:fs"; import crypto from "node:crypto"; process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync("/app/pythonLessonProfiles.mjs")).digest("hex"))')
+          test "$actual" = "$expected"
+          web=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q web)
+          test -n "$web"
+          index_hash='import fs from "node:fs"; import crypto from "node:crypto"; process.stdout.write(crypto.createHash("sha256").update(fs.readFileSync(process.argv[1])).digest("hex"))'
+          controller_index=$(docker exec "$controller" node --input-type=module -e "$index_hash" /app/python-course-index.json)
+          web_index=$(docker exec "$web" node --input-type=module -e "$index_hash" /app/dist/generated/content/courses/python-basics/index.json)
+          test "$controller_index" = "$web_index"
+          test "$web_index" = 380b46f8bffe0aeebeb19394f0ef2b5c1c23e86004d6965241ed2f6157295698
+          echo 'Fixed Source Python index and controller/web hashes match the published candidate'
+          overlay="$GITHUB_WORKSPACE/observation/tests/observations/issue143"
+          if ! docker exec -i "$controller" node --input-type=module - --run-before < "$overlay/controller-image-diagnostic.mjs" 2>/dev/null; then
+            echo 'controller-images unavailable'
+          fi
+          OBSERVATION
+      - name: Export fresh synthetic Pages data and check Home resume
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          overlay="$GITHUB_WORKSPACE/observation/tests/observations/issue143"
+          for phase in export home; do
+            dir="$RUNNER_TEMP/issue143-$phase"
+            if ! docker run --rm --init --user "$(id -u):$(id -g)" --network bridge --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true \
+              --mount "type=bind,src=$overlay,dst=/workspace/tests/observations/issue143,readonly" \
+              --mount "type=bind,src=$dir,dst=/exchange" --env "OBSERVATION_PHASE=$phase" \
+              --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" node_modules/@playwright/test/cli.js test --config=/workspace/tests/observations/issue143/observation.config.ts >"$dir/private-run.log" 2>&1; then
+              if [ "$phase" = home ]; then node "$overlay/home-diagnostic.mjs" "$dir/home-report.json" 2>/dev/null || true; fi
+              echo "Synthetic $phase observation failed; private log not uploaded"; exit 1
+            fi
+            count=1; if [ "$phase" = home ]; then count=2; fi
+            if ! node "$overlay/check-report.mjs" "$dir/$phase-report.json" "$count"; then
+              if [ "$phase" = home ]; then node "$overlay/home-diagnostic.mjs" "$dir/home-report.json" 2>/dev/null || true; fi
+              exit 1
+            fi
+          done
+          OBSERVATION
+      - name: Import that same export into isolated Local
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          overlay="$GITHUB_WORKSPACE/observation/tests/observations/issue143"
+          input="$RUNNER_TEMP/issue143-export/synthetic-progress.json"
+          localdir="$RUNNER_TEMP/issue143-local"
+          test -f "$input"
+          sha=$(sha256sum "$input" | cut -d' ' -f1)
+          case "$sha" in *[!0-9a-f]*|'') exit 1;; esac
+          test "${#sha}" -eq 64
+          if ! docker run --rm --init --user "$(id -u):$(id -g)" --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,src=$overlay,dst=/workspace/tests/observations/issue143,readonly" \
+            --mount "type=bind,src=$input,dst=/p6-input/synthetic-progress.json,readonly" \
+            --mount "type=bind,src=$localdir,dst=/exchange" --env OBSERVATION_PHASE=local --env "P6_RUN_EXPORT_SHA256=$sha" \
+            --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" /workspace/tests/observations/issue143/local-bridge.mjs >"$localdir/private-run.log" 2>&1; then
+            node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
+            node "$overlay/preview-diagnostic-cli.mjs" "$localdir/local-preview.json" 2>/dev/null || true
+            node "$overlay/startup-diagnostic.mjs" "$localdir/private-run.log" 2>/dev/null || true
+            controller=$(cd source && ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller 2>/dev/null) || controller=''
+            if [[ "$controller" =~ ^[0-9a-f]{12,64}$ ]]; then
+              if ! docker exec -i "$controller" node --input-type=module - --run-after < "$overlay/controller-image-diagnostic.mjs" 2>/dev/null; then
+                echo 'controller-images unavailable'
+              fi
+            else
+              echo 'controller-images unavailable'
+            fi
+            echo 'Synthetic Local observation failed; private log not uploaded'; exit 1
+          fi
+          if ! node "$overlay/check-report.mjs" "$localdir/local-report.json" 1; then
+            node "$overlay/local-diagnostic.mjs" "$localdir/local-report.json" 2>/dev/null || true
+            node "$overlay/preview-diagnostic-cli.mjs" "$localdir/local-preview.json" 2>/dev/null || true
+            exit 1
+          fi
+          test "$(sha256sum "$input" | cut -d' ' -f1)" = "$sha"
+          printf 'Synthetic same-job export SHA-256: %s\n' "$sha"
+          OBSERVATION
+      - name: Recheck fixed Source
+        if: always()
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = b9306eb3414e69a2068603cfdbf2706ebe4e9284
+          test "$(git -C source rev-parse HEAD^{tree})" = fb74d1c12f1081b28dad4e45e87ecef19a67e729
+          test -z "$(git -C source status --porcelain)"
+          OBSERVATION
+      - name: Stop only this job's Local stack
+        if: always()
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="${RUNNER_TEMP}/issue143-git-home" RUNNER_TEMP="$RUNNER_TEMP" GITHUB_WORKSPACE="$GITHUB_WORKSPACE" OBSERVATION_HEAD="$OBSERVATION_HEAD" OBSERVATION_BASE="$OBSERVATION_BASE" TRUSTED_CONTEXT_SHA="$TRUSTED_CONTEXT_SHA" TSUMUCODE_LOCAL_OWNER="$TSUMUCODE_LOCAL_OWNER" TSUMUCODE_LOCAL_SOCKET="$TSUMUCODE_LOCAL_SOCKET" TSUMUCODE_NEXT_SOURCE_SHA="$TSUMUCODE_NEXT_SOURCE_SHA" COMPOSE_PARALLEL_LIMIT="$COMPOSE_PARALLEL_LIMIT" CI=true bash -euo pipefail <<'OBSERVATION'
+          if test -f source/compose.learning.yaml && test -n "$(docker ps -aq --filter "label=com.docker.compose.project=$TSUMUCODE_LOCAL_OWNER")"; then
+            cd source
+            ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml stop
+          fi
+          OBSERVATION
+      - name: Bind successful observation
+        id: proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! [[ "$GITHUB_RUN_ID" =~ ^[1-9][0-9]{0,19}$ ]] || ! [[ "$GITHUB_RUN_ATTEMPT" =~ ^[1-9][0-9]{0,19}$ ]] || ! [[ "$OBSERVATION_HEAD" =~ ^[0-9a-f]{40}$ ]] || ! [[ "$OBSERVATION_BASE" =~ ^[0-9a-f]{40}$ ]]; then
+            echo 'Observation binding rejected' >&2
+            exit 1
+          fi
+          test "$(git -C observation rev-parse HEAD)" = "$OBSERVATION_HEAD"
+          test "$(git -C source rev-parse HEAD)" = b9306eb3414e69a2068603cfdbf2706ebe4e9284
+          test "$(git -C source rev-parse HEAD^{tree})" = fb74d1c12f1081b28dad4e45e87ecef19a67e729
+          test -z "$(git -C source status --porcelain)"
+          printf 'run=%s\nattempt=%s\nhead=%s\nbase=%s\nsource=%s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$OBSERVATION_HEAD" "$OBSERVATION_BASE" b9306eb3414e69a2068603cfdbf2706ebe4e9284 >> "$GITHUB_OUTPUT"
+  identity_after:
+    needs: [identity_before, observation]
+    if: ${{ always() && needs.identity_before.result == 'success' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && github.repository == 'santa928/tsumucode' && github.actor == 'santa928' && github.workflow_sha == github.sha }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      run: ${{ steps.proof.outputs.run }}
+      attempt: ${{ steps.proof.outputs.attempt }}
+      head: ${{ steps.proof.outputs.head }}
+      base: ${{ steps.proof.outputs.base }}
+      source: ${{ steps.proof.outputs.source }}
+    steps:
+      - name: Checkout reviewed main only
+        id: trusted_checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: santa928/tsumucode
+          ref: ${{ github.sha }}
+          path: trusted-main
+          persist-credentials: false
+      - name: Verify trusted main checkout
+        shell: bash
+        working-directory: trusted-main
+        env:
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+        run: *trusted_tree
+      - name: Verify current identity and bind
+        id: proof
+        env:
+          IDENTITY_TOKEN: ${{ github.token }}
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+          IDENTITY_MODE: post
+          TRUSTED_WORKFLOW_SHA: ${{ github.workflow_sha }}
+        shell: bash
+        run: *trusted_identity
+  admission:
+    needs: [identity_before, observation, identity_after]
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && github.repository == 'santa928/tsumucode' && github.actor == 'santa928' && github.workflow_sha == github.sha }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout reviewed main only
+        id: trusted_checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: santa928/tsumucode
+          ref: ${{ github.sha }}
+          path: trusted-main
+          persist-credentials: false
+      - name: Verify trusted main checkout
+        shell: bash
+        working-directory: trusted-main
+        env:
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+        run: *trusted_tree
+      - name: Verify same-attempt results and final freshness
+        env:
+          IDENTITY_TOKEN: ${{ github.token }}
+          TRUSTED_CHECKOUT_COMMIT: ${{ steps.trusted_checkout.outputs.commit }}
+          IDENTITY_MODE: admission
+          TRUSTED_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          PRE_RESULT: ${{ needs.identity_before.result }}
+          PRE_RUN: ${{ needs.identity_before.outputs.run }}
+          PRE_ATTEMPT: ${{ needs.identity_before.outputs.attempt }}
+          PRE_HEAD: ${{ needs.identity_before.outputs.head }}
+          PRE_BASE: ${{ needs.identity_before.outputs.base }}
+          PRE_SOURCE: ${{ needs.identity_before.outputs.source }}
+          OBS_RESULT: ${{ needs.observation.result }}
+          OBS_RUN: ${{ needs.observation.outputs.run }}
+          OBS_ATTEMPT: ${{ needs.observation.outputs.attempt }}
+          OBS_HEAD: ${{ needs.observation.outputs.head }}
+          OBS_BASE: ${{ needs.observation.outputs.base }}
+          OBS_SOURCE: ${{ needs.observation.outputs.source }}
+          POST_RESULT: ${{ needs.identity_after.result }}
+          POST_RUN: ${{ needs.identity_after.outputs.run }}
+          POST_ATTEMPT: ${{ needs.identity_after.outputs.attempt }}
+          POST_HEAD: ${{ needs.identity_after.outputs.head }}
+          POST_BASE: ${{ needs.identity_after.outputs.base }}
+          POST_SOURCE: ${{ needs.identity_after.outputs.source }}
+        shell: bash
+        run: *trusted_identity
