@@ -34,25 +34,40 @@ jobs:
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 821be836b1b46f2ef3862bd4ed691c12cabd5ff4
-          test "$(git rev-parse HEAD^^)" = 854c308a9a9e99c7b6a8bbfc78a51cd1cf29bb78
-          test "$(git rev-parse HEAD^^^)" = d44904d5043ef9fde8c37bf486e42f58f4fad364
-          test "$(git rev-parse HEAD^^^^)" = 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20
+          test "$(git rev-parse HEAD^)" = efd8152fc9044e225221a0c5490184b34a00a091
+          test "$(git rev-parse HEAD^^)" = 821be836b1b46f2ef3862bd4ed691c12cabd5ff4
+          test "$(git rev-parse HEAD^^^)" = 854c308a9a9e99c7b6a8bbfc78a51cd1cf29bb78
+          test "$(git rev-parse HEAD^^^^)" = d44904d5043ef9fde8c37bf486e42f58f4fad364
+          test "$(git rev-parse HEAD^^^^^)" = 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20
           test -z "$(git status --porcelain --untracked-files=normal)"
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-practice-source-probe.yml' \
+            'Dockerfile.learning' \
             'content/learning-paths/python-basics.yaml' \
             'content/python-practice/course.yaml' \
             'tests/acceptance/helpers/pythonDraftReading.ts' \
+            'tests/e2e/helpers/pythonPracticePublication.ts' \
+            'tests/e2e/python-context.spec.ts' \
+            'tests/e2e/python-data-project.spec.ts' \
             'tests/e2e/python-release-smoke.spec.ts' \
             'tests/local/python-learning.spec.ts' \
             'tests/local/python-practice-source-probe/check.ts' \
             'tests/local/python-practice-source-probe/diagnostic.node-test.mjs' \
             'tests/local/python-practice-source-probe/diagnostic.ts' \
             'tests/unit/release/v2/cli.test.ts')
-          actual_paths=$(git diff --no-renames --name-only HEAD^^^^ HEAD)
+          actual_paths=$(git diff --no-renames --name-only HEAD^^^^^ HEAD)
           if [ "$actual_paths" != "$expected_paths" ]; then echo 'candidate-paths=failed'; exit 1; fi
-          git diff --quiet HEAD^^^^ HEAD -- Dockerfile .dockerignore package.json package-lock.json scripts/release/v2 scripts/content
+          git diff --quiet HEAD^^^^^ HEAD -- Dockerfile .dockerignore package.json package-lock.json scripts/release/v2 scripts/content
+          git show HEAD^^^^^:Dockerfile.learning > "$RUNNER_TEMP/practice-base-dockerfile"
+          python3 - "$RUNNER_TEMP/practice-base-dockerfile" <<'PY'
+          import pathlib, sys
+          old = pathlib.Path(sys.argv[1]).read_bytes()
+          anchor = b'COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/\n'
+          addition = b'COPY tests/e2e/helpers/pythonPracticePublication.ts ./tests/e2e/helpers/pythonPracticePublication.ts\n'
+          if old.count(anchor) != 1 or pathlib.Path('Dockerfile.learning').read_bytes() != old.replace(anchor, anchor + addition):
+              raise SystemExit('fixed-learning-dockerfile=failed')
+          print('fixed-learning-dockerfile=passed')
+          PY
           if git config --local --get-regexp '^http\..*\.extraheader$' >/dev/null; then exit 1; fi
           if env -i PATH=/usr/bin:/bin HOME=/tmp GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
             git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false \
@@ -88,3 +103,15 @@ jobs:
           test "$(git config --get-all safe.directory)" = /workspace;
           node --test tests/local/python-practice-source-probe/diagnostic.node-test.mjs;
           node --import tsx tests/local/python-practice-source-probe/check.ts'
+      - name: Build the fixed Python browser test image
+        run: docker build --file Dockerfile.learning --target python-browser-checks --tag python-practice-import-probe .
+      - name: Verify both baked Playwright spec imports
+        run: >-
+          docker run --rm --network none --read-only --user "$(id -u):$(id -g)"
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --env HOME=/tmp --env PW_TEST_CACHE_DIR=/tmp/practice-playwright-cache
+          --tmpfs /tmp:rw,nosuid,nodev,noexec,size=128m,mode=1777
+          --entrypoint sh python-practice-import-probe -ec '
+          node node_modules/@playwright/test/cli.js test --config=playwright.python-local.config.ts --list --reporter=list --output=/tmp/practice-results tests/e2e/python-context.spec.ts;
+          node node_modules/@playwright/test/cli.js test --config=playwright.python-local.config.ts --list --reporter=list --output=/tmp/practice-results tests/e2e/python-data-project.spec.ts'

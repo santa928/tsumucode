@@ -1,7 +1,45 @@
-export type ProbeStage = 'compile' | 'inventory' | 'candidate' | 'reader' | 'receipt';
+export type ProbeStage = 'compile' | 'inventory' | 'candidate' | 'reader' | 'receipt' | 'rechecks';
+
+const fixedLessons = [
+  'python-practice/python-practice-ch01-l01',
+  'python-practice/python-practice-ch01-l02',
+  'python-practice/python-practice-ch01-l03',
+  'python-practice/python-practice-ch02-l01',
+  'python-practice/python-practice-ch03-l01',
+] as const;
+
+export function countTechnicalRechecks(
+  rows: readonly { lesson: string; scopes: string[] }[],
+): number[] {
+  const counts = [0, 0, 0, 0, 0];
+  const seen = new Set<string>();
+  const allowed = new Set(['exercise', 'navigation', 'persistence']);
+  for (const row of rows) {
+    const index = fixedLessons.findIndex((id) => id === row.lesson);
+    if (
+      index < 0 ||
+      seen.has(row.lesson) ||
+      !Array.isArray(row.scopes) ||
+      row.scopes.length === 0 ||
+      row.scopes.some((scope) => !allowed.has(scope)) ||
+      new Set(row.scopes).size !== row.scopes.length
+    )
+      throw new Error('Invalid technical recheck shape');
+    seen.add(row.lesson);
+    counts[index] = row.scopes.length;
+  }
+  return counts;
+}
 
 export function formatFailure(stage: unknown, error: unknown): string {
-  const stages: readonly string[] = ['compile', 'inventory', 'candidate', 'reader', 'receipt'];
+  const stages: readonly string[] = [
+    'compile',
+    'inventory',
+    'candidate',
+    'reader',
+    'receipt',
+    'rechecks',
+  ];
   const fixedStage = typeof stage === 'string' && stages.includes(stage) ? stage : 'unknown';
   let kind = 'other';
   let child = 'other';

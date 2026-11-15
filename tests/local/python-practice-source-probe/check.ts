@@ -2,7 +2,11 @@ import path from 'node:path';
 import { compileCourse } from '../../../scripts/content/compileCourse';
 import { buildInventory } from '../../../scripts/release/v2/inventory';
 import { readVerifiedPythonHistoricalAcceptances } from '../../../scripts/release/v2/pythonHistoricalAcceptance';
-import { formatFailure, type ProbeStage } from './diagnostic.ts';
+import {
+  pythonPracticeHistoricalDeclaration,
+  readPythonPracticeHistoricalPublicEvidence,
+} from '../../../scripts/release/v2/pythonPracticeHistoricalAcceptance';
+import { countTechnicalRechecks, formatFailure, type ProbeStage } from './diagnostic.ts';
 
 let stage: ProbeStage = 'compile';
 async function main(): Promise<void> {
@@ -29,6 +33,15 @@ async function main(): Promise<void> {
     receipts[0].receiptDigest !== 'e5d27e6fe7567dae5c80fdcfee2d49541915c016eb849414d9b1c6af79abc4a5'
   )
     throw new Error('receipt identity');
+  stage = 'rechecks';
+  const details = await readPythonPracticeHistoricalPublicEvidence(
+    root,
+    inventory,
+    pythonPracticeHistoricalDeclaration(),
+  );
+  const counts = countTechnicalRechecks(details.technicalRechecks);
+  process.stdout.write(`practice-technical-rechecks=${counts.join(',')}\n`);
+  if (counts.some((count) => count !== 0)) throw new Error('Technical rechecks required');
   process.stdout.write('practice-public-reader=passed; lessons=5; old-reader-commit=unverified\n');
 }
 

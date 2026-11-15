@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { formatFailure } from './diagnostic.ts';
+import { countTechnicalRechecks, formatFailure } from './diagnostic.ts';
 
 test('only fixed stages and error categories are emitted', () => {
   assert.equal(
@@ -73,6 +73,30 @@ test('only fixed stages and error categories are emitted', () => {
     ),
     'practice-public-reader=failed; stage=reader; kind=child-nonzero; child=git-archive; reason=other\n',
   );
+});
+
+test('technical rechecks report only five bounded counts and reject invalid rows', () => {
+  const first = 'python-practice/python-practice-ch01-l01';
+  const last = 'python-practice/python-practice-ch03-l01';
+  assert.deepEqual(countTechnicalRechecks([]), [0, 0, 0, 0, 0]);
+  assert.deepEqual(
+    countTechnicalRechecks([
+      { lesson: first, scopes: ['exercise', 'persistence'] },
+      { lesson: last, scopes: ['navigation'] },
+    ]),
+    [2, 0, 0, 0, 1],
+  );
+  for (const rows of [
+    [{ lesson: 'private-marker', scopes: ['exercise'] }],
+    [{ lesson: first, scopes: ['private-marker'] }],
+    [{ lesson: first, scopes: [] }],
+    [{ lesson: first, scopes: ['exercise', 'exercise'] }],
+    [
+      { lesson: first, scopes: ['exercise'] },
+      { lesson: first, scopes: ['navigation'] },
+    ],
+  ])
+    assert.throws(() => countTechnicalRechecks(rows));
 });
 
 test('only the fixed workspace passes the isolated git trust check', () => {
