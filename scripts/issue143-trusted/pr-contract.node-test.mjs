@@ -8,16 +8,17 @@ const workflow = await readFile(
   'utf8',
 );
 const testFiles = [
-  'scripts/issue143-trusted/guard.test.mjs',
-  'scripts/issue143-trusted/identity-cli.test.mjs',
-  'scripts/issue143-trusted/workflow-wiring.test.mjs',
-  'scripts/issue143-trusted/pr-contract.test.mjs',
-  'scripts/issue143-trusted/scratch-preflight.test.mjs',
+  'scripts/issue143-trusted/guard.node-test.mjs',
+  'scripts/issue143-trusted/identity-cli.node-test.mjs',
+  'scripts/issue143-trusted/workflow-wiring.node-test.mjs',
+  'scripts/issue143-trusted/pr-contract.node-test.mjs',
+  'scripts/issue143-trusted/scratch-preflight.node-test.mjs',
 ];
 const testCommand = 'exec node --test ' + testFiles.join(' ');
 
 function valid(source) {
   return (
+    testFiles.every((file) => file.endsWith('.node-test.mjs')) &&
     /^ {2}pull_request:\s*$/mu.test(source) &&
     !/pull_request_target|workflow_dispatch|github\.token|secrets\./u.test(source) &&
     /^permissions: \{\}\s*$/mu.test(source) &&
@@ -53,6 +54,11 @@ test('rejects omission of every required synthetic suite', () => {
   for (const file of testFiles) {
     assert.equal(valid(workflow.replace(testCommand, testCommand.replace(' ' + file, ''))), false);
   }
+});
+
+test('all explicit Node suites use the Node-only filename convention', () => {
+  assert.equal(testFiles.length, 5);
+  for (const file of testFiles) assert.match(file, /\.node-test\.mjs$/u);
 });
 
 test('rejects a token, changed image, network, permissions or dispatch trigger', () => {

@@ -39,13 +39,13 @@ jobs:
           191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
           476673680a853687ab28bf4eaa2b0c42680a97756fb60edef427b15bda23febe  .github/workflows/issue143-trusted-dispatch.yml
           6dd27ac2de37341a90fde6e7c72082a6a178cc58d8f9e41a7ed13099aaceeea6  scripts/issue143-trusted/guard.mjs
-          356d0ae5db1c1e5295222b92c232edfe544dd50f838991af025e17627745299f  scripts/issue143-trusted/guard.test.mjs
+          356d0ae5db1c1e5295222b92c232edfe544dd50f838991af025e17627745299f  scripts/issue143-trusted/guard.node-test.mjs
           5defe9a5cdacfa33d9fdf0267e7f1c2b0f71082d31ca43bf461d8292cca333d6  scripts/issue143-trusted/identity-cli.mjs
-          d0ac8b9360dedc22babbfdb62fbc8164e3402e5226729601058e5b2e84e6382c  scripts/issue143-trusted/identity-cli.test.mjs
-          c0ee4510bedc0a491d459f75ec812f70a69417904f694ac7074870f2b9f12c93  scripts/issue143-trusted/workflow-wiring.test.mjs
-          f0bba4c9b975f4d6bc65b626606363a825f97b7a7fad407106e58fd4576a9085  scripts/issue143-trusted/pr-contract.test.mjs
+          d0ac8b9360dedc22babbfdb62fbc8164e3402e5226729601058e5b2e84e6382c  scripts/issue143-trusted/identity-cli.node-test.mjs
+          c0ee4510bedc0a491d459f75ec812f70a69417904f694ac7074870f2b9f12c93  scripts/issue143-trusted/workflow-wiring.node-test.mjs
+          85c0f224a42e4023064eede267c7b0829422a8fe3e81e7734a84493501885efb  scripts/issue143-trusted/pr-contract.node-test.mjs
           ca5db64c35b0ab2774970bb810cb9d5443d80e3ea33d7b61119a8906a2bfe049  scripts/issue143-trusted/scratch-preflight.mjs
-          0cc910e449e0c6fc609282b7b2512d3a2ce68e6f7b593963ac3857cd6ac0f76e  scripts/issue143-trusted/scratch-preflight.test.mjs
+          0cc910e449e0c6fc609282b7b2512d3a2ce68e6f7b593963ac3857cd6ac0f76e  scripts/issue143-trusted/scratch-preflight.node-test.mjs
           SHA256
       - name: Run synthetic contracts in isolated fixed Node image
         shell: bash
@@ -55,4 +55,4 @@ jobs:
           export DOCKER_CONFIG="$RUNNER_TEMP/public-docker-config"
           image='node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5'
           docker pull "$image"
-          docker run --rm --init --network none --read-only --user 1000:1000 --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true --tmpfs /tmp:rw,nosuid,nodev,size=64m,uid=1000,gid=1000 --tmpfs /mock-tmp:rw,exec,nosuid,nodev,size=8m,uid=1000,gid=1000 --env TMPDIR=/mock-tmp --mount "type=bind,src=$RUNNER_TEMP/candidate,dst=/repo,readonly" --workdir /repo "$image" /bin/sh -c 'node scripts/issue143-trusted/scratch-preflight.mjs && exec node --test scripts/issue143-trusted/guard.test.mjs scripts/issue143-trusted/identity-cli.test.mjs scripts/issue143-trusted/workflow-wiring.test.mjs scripts/issue143-trusted/pr-contract.test.mjs scripts/issue143-trusted/scratch-preflight.test.mjs'
+          docker run --rm --init --network none --read-only --user 1000:1000 --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true --tmpfs /tmp:rw,nosuid,nodev,size=64m,uid=1000,gid=1000 --tmpfs /mock-tmp:rw,exec,nosuid,nodev,size=8m,uid=1000,gid=1000 --env TMPDIR=/mock-tmp --mount "type=bind,src=$RUNNER_TEMP/candidate,dst=/repo,readonly" --workdir /repo "$image" /bin/sh -c 'node scripts/issue143-trusted/scratch-preflight.mjs && exec node --test scripts/issue143-trusted/guard.node-test.mjs scripts/issue143-trusted/identity-cli.node-test.mjs scripts/issue143-trusted/workflow-wiring.node-test.mjs scripts/issue143-trusted/pr-contract.node-test.mjs scripts/issue143-trusted/scratch-preflight.node-test.mjs'
