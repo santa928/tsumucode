@@ -37,8 +37,35 @@ jobs:
           test "$(git -C source rev-parse HEAD)" = 45fc0e5d672fc6d3dde237c458f8dc018bc6badf
           test -z "$(git -C source status --porcelain --untracked-files=all)"
           docker build --target app --tag issue261-fixed-source:45fc source
-          docker build --network none --file observer/.github/issue261-python-observation/Dockerfile \
-            --tag issue261-observation:45fc observer/.github/issue261-python-observation
+          builder=$(docker create --init --network none --cpus 2 --memory 4g \
+            --pids-limit 512 --cap-drop ALL --security-opt no-new-privileges:true \
+            -e BASE_PATH=/ --entrypoint sh issue261-fixed-source:45fc -c '
+              set -eu
+              npm run content:compile
+              npm run build:app
+              test -d /workspace/node_modules && test ! -L /workspace/node_modules
+              test ! -L /workspace/node_modules/.vite-temp
+              mkdir -p /workspace/node_modules/.vite-temp
+              test -d /workspace/node_modules/.vite-temp
+              test ! -L /workspace/node_modules/.vite-temp
+              test "$(readlink -f /workspace/node_modules/.vite-temp)" = /workspace/node_modules/.vite-temp
+            ')
+          cleanup() {
+            status=$?
+            trap - EXIT
+            if docker rm "$builder" >/dev/null 2>&1; then
+              echo 'Fixed Source builder removed.'
+            else
+              echo 'Fixed Source builder cleanup incomplete.' >&2
+              if [ "$status" -eq 0 ]; then status=1; fi
+            fi
+            exit "$status"
+          }
+          trap cleanup EXIT
+          test "$(docker inspect --format '{{len .Mounts}}' "$builder")" = 0
+          docker start --attach "$builder"
+          test "$(docker inspect --format '{{.State.Status}} {{.State.ExitCode}}' "$builder")" = 'exited 0'
+          docker commit "$builder" issue261-observation:45fc >/dev/null
       - name: Install separately locked observation CLI
         run: |
           set -eu
