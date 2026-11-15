@@ -100,6 +100,10 @@ test('the actual workflow scope allows probe files and rejects hidden rename and
         'probe-stage.d.mts',
         'probe-stage-lib.mjs',
         'probe-stage-lib.d.mts',
+        'runtime-label.mjs',
+        'runtime-label.d.mts',
+        'runtime-label.node-test.mjs',
+        'controller-identity.node-test.mjs',
       ].map((name) => `tests/observations/python-grade-probe/${name}`),
     ];
     for (const file of files) {

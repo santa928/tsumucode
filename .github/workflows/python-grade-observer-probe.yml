@@ -46,7 +46,7 @@ jobs:
             const fs = require("node:fs");
             const allowed = new Set([
               ".github/workflows/python-grade-observer-probe.yml",
-              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts"].map(x => `tests/observations/python-grade-probe/${x}`),
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
             ]);
             const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
             if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
@@ -73,6 +73,14 @@ jobs:
           ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-probe" .
           ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml -f compose.learning.ci-diagnostic.yaml up --no-build -d web controller preview
+      - name: Verify fixed controller Python identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          controller=$(cd source && ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller 2>/dev/null)
+          test -n "$controller"
+          docker image inspect 'python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941' >/dev/null 2>&1
+          docker exec "$controller" node --input-type=module -e 'import { PYTHON_IMAGE, PYTHON_VERSION } from "/app/protocol.mjs"; if (PYTHON_VERSION !== "3.14.2" || PYTHON_IMAGE !== "python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941") process.exit(1)' >/dev/null 2>&1
       - name: Run one normal hardcoded grade
         id: grade
         shell: bash

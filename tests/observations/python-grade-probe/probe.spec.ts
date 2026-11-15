@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import { localConsoleGradeRunHash } from '../../e2e/helpers/localConsoleDiagnostics';
 import { readStoredProgress, replaceEditorText } from '../../e2e/helpers/progress';
 import { markProbeStage } from './probe-stage-lib.mjs';
+import { afterGradeLabel, beforeGradeLabel } from './runtime-label.mjs';
 
 const exerciseId = 'python-basics-ch01-l02-e01';
 const lessonId = 'python-basics-ch01-l02';
@@ -19,7 +20,7 @@ test('one normal fixed-source hardcoded grade; observation remains unknown when 
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
     timeout: 30_000,
   });
-  expect((await page.getByLabel('実行環境').textContent())?.includes('CPython 3.14.2')).toBe(true);
+  expect(beforeGradeLabel(await page.getByLabel('実行環境').textContent())).toBe(true);
   markProbeStage('editor-ready');
   await replaceEditorText(page, await readFile(fixture, 'utf8'));
   await page.getByLabel('実行前の入力（1行につきinput 1回）').fill('Sora');
@@ -48,6 +49,9 @@ test('one normal fixed-source hardcoded grade; observation remains unknown when 
   const visible = expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
   await Promise.all([accepted, visible]);
   markProbeStage('dialog-visible');
+  await expect
+    .poll(async () => afterGradeLabel(await page.getByLabel('実行環境').textContent()))
+    .toBe(true);
   await expect
     .poll(async () => {
       const draft = (await readStoredProgress(page)).drafts.find(
