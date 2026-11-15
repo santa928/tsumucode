@@ -219,7 +219,10 @@ async function setup(mode = 'create') {
         if(method==='POST'&&options.headers.Authorization!=='Bearer synthetic-write-token')throw Error('Missing synthetic writer');
         if(relative==='/git/tags'&&method==='POST'){
           if(mode==='uncertain-object')throw Error('synthetic uncertain annotation');
-          return reply({sha:'9'.repeat(40),tag:mode==='annotation-wrong-name'?'other':'tsumucode-app-101-501',message:mode==='annotation-wrong-message'?'{}':JSON.stringify(record),object:{type:mode==='annotation-wrong-type'?'tree':'commit',sha:mode==='annotation-wrong-source'?'0'.repeat(40):record.workflowHeadCommit}},201);
+          const request=JSON.parse(options.body);
+          if(JSON.stringify(request.tagger)!==JSON.stringify({name:'github-actions[bot]',email:'41898282+github-actions[bot]@users.noreply.github.com'}))throw Error('Tagger was not fixed');
+          const tagger=mode==='annotation-missing-tagger'?undefined:{name:mode==='annotation-wrong-tagger-name'?'synthetic':request.tagger.name,email:mode==='annotation-wrong-tagger-email'?'synthetic@example.invalid':request.tagger.email};
+          return reply({sha:'9'.repeat(40),tag:mode==='annotation-wrong-name'?'other':'tsumucode-app-101-501',message:mode==='annotation-wrong-message'?'{}':JSON.stringify(record),tagger,object:{type:mode==='annotation-wrong-type'?'tree':'commit',sha:mode==='annotation-wrong-source'?'0'.repeat(40):record.workflowHeadCommit}},201);
         }
         if(relative==='/git/refs'&&method==='POST'){
           refAttempted=true;
@@ -358,6 +361,9 @@ it.each([
   'annotation-wrong-message',
   'annotation-wrong-type',
   'annotation-wrong-source',
+  'annotation-missing-tagger',
+  'annotation-wrong-tagger-name',
+  'annotation-wrong-tagger-email',
 ])('does not write a ref when the tag creation response differs: %s', async (mode) => {
   const row = await setup(mode);
   await expect(row.run()).rejects.toThrow();
