@@ -21,12 +21,12 @@ type Job = {
 };
 type Workflow = { on?: Record<string, { paths?: string[] }>; jobs: Record<string, Job> };
 async function workflows() {
-  const files = [
-    '.github/workflows/local-runtime.yml',
-    '.github/workflows/python-fixtures.yml',
-    '.github/workflows/release-v2-checks.yml',
-  ];
-  return Promise.all(files.map(async (file) => parse(await readFile(file, 'utf8')) as Workflow));
+  const readWorkflow = async (file: string) => parse(await readFile(file, 'utf8')) as Workflow;
+  return Promise.all([
+    readWorkflow('.github/workflows/local-runtime.yml'),
+    readWorkflow('.github/workflows/python-fixtures.yml'),
+    readWorkflow('.github/workflows/release-v2-checks.yml'),
+  ]);
 }
 it('fixes a separate same-run Python producer in PR and the qualification direct needs', async () => {
   const [local, fixture, release] = await workflows();
