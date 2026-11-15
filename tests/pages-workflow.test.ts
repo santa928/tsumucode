@@ -158,7 +158,13 @@ describe('TsumuCode Pages workflow', () => {
     const { parsed } = workflow();
 
     expect(parsed.on).toHaveProperty('push.branches', ['main']);
-    expect(parsed.on).toHaveProperty('pull_request.branches', ['main']);
+    expect(parsed.on).toHaveProperty('pull_request.types', [
+      'opened',
+      'reopened',
+      'synchronize',
+      'edited',
+      'ready_for_review',
+    ]);
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.deploy.type', 'boolean');
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.release_mode.options', [
       'candidate',

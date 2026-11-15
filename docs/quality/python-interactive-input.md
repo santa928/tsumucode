@@ -42,7 +42,7 @@ Chromiumでは、連続input・同じrunへの送信・空文字・EOF・二重/
 
 Dockerを停止後、Mac Chromeとlocalhost限定の静的配信で、通常画面の入力待機、1行送信、正常終了・未採点、開始ボタンへのfocus復帰を観測した。配信artifactは `test-results/input-artifact-identity.json` に固定した。画面上部に残っていた「実行中の追加入力は未対応」という案内はSourceで修正済みだが、この文言修正版の再build/再確認は未完。
 
-未完の検証を実行済みとしない。READMEの `check:prepush` 契約に従い、cleanな最終commitで単一入口を通過するまでpush/PRへ進めない。Issueも公開・検証が揃うまでOPENを維持する。最終commitの検証結果はPR/Issueへ記録し、この途中候補の失敗履歴を成功記録へ書き換えない。
+未完の検証を実行済みとしない。この記録の作成時には、cleanな最終commitで `check:prepush` を通過してからpushする運用だった。現行の検証専用Draft PRの手順は [README](../../README.md) に従い、同じ候補の必要な検査とレビューが揃うまではマージ・公開しない。Issueも公開・検証が揃うまでOPENを維持する。最終commitの検証結果はPR/Issueへ記録し、この途中候補の失敗履歴を成功記録へ書き換えない。
 
 独立AIペルソナは、固定artifactの通常UIで対話待機・空欄・EOF・中止/再開を観測し、参照先のl02 Slide/手順書に残る「Browserは途中入力に未対応」という説明との矛盾をImportantとして指摘した。初回観測はその版のまま保存し、該当2文書を今回のSourceで修正した。この教材本文修正の再build・配信UI再確認と、本文指紋に結び付く教材review/公開証拠の更新は未完。ID・課題Source・Rule・Fixture・進捗形式は変更していない。既存の承認原本を今回の本文の承認へ付け替えない。
 

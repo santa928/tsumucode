@@ -22,7 +22,7 @@ interface Step {
 }
 
 const workflow = parse(readFileSync('.github/workflows/pages.yml', 'utf8')) as {
-  on: { pull_request: { branches: string[]; paths?: string[]; 'paths-ignore'?: string[] } };
+  on: { pull_request: { branches?: string[]; paths?: string[]; 'paths-ignore'?: string[] } };
   jobs: Record<
     string,
     {
@@ -65,7 +65,9 @@ function runScript(source: string, failure = '', environment: Record<string, str
 
 describe('PR CIと公開unitの範囲', () => {
   it.each([false, true])('全PRで必須の全件check:ciを呼び、失敗=%sを伝える', (failure) => {
-    expect(workflow.on.pull_request).toEqual({ branches: ['main'] });
+    expect(workflow.on.pull_request).toEqual({
+      types: ['opened', 'reopened', 'synchronize', 'edited', 'ready_for_review'],
+    });
     const fast = workflow.jobs.fast!;
     expect(runInNewContext(fast.if!, { github: { event_name: 'pull_request' }, inputs: {} })).toBe(
       true,
