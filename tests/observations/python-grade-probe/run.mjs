@@ -3,7 +3,7 @@ import console from 'node:console';
 import { spawn } from 'node:child_process';
 import { bridge } from '/workspace/scripts/local/browser-test-bridge.mjs';
 import { createPrivateLog } from './private-log.mjs';
-import { markOnSpawn, markProbeStage } from './probe-stage.mjs';
+import { markOnSpawn, markProbeStage } from './probe-stage-lib.mjs';
 
 let server;
 let outcome = 'failed';

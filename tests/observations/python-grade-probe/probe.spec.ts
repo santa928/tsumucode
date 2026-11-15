@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { localConsoleGradeRunHash } from '../../e2e/helpers/localConsoleDiagnostics';
 import { readStoredProgress, replaceEditorText } from '../../e2e/helpers/progress';
-import { markProbeStage } from './probe-stage.mjs';
+import { markProbeStage } from './probe-stage-lib.mjs';
 
 const exerciseId = 'python-basics-ch01-l02-e01';
 const lessonId = 'python-basics-ch01-l02';
