@@ -46,7 +46,7 @@ jobs:
             const fs = require("node:fs");
             const allowed = new Set([
               ".github/workflows/python-grade-observer-probe.yml",
-              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs", "api-observation.mjs", "api-observation.d.mts", "api-observation.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
+              ...["probe.spec.ts", "playwright.config.ts", "run.mjs", "verify.mjs", "verify.node-test.mjs", "private-log.mjs", "private-log.node-test.mjs", "private-command.mjs", "private-command.node-test.mjs", "scope.node-test.mjs", "diagnose.mjs", "diagnose.node-test.mjs", "probe-stage.mjs", "probe-stage.node-test.mjs", "probe-stage.d.mts", "probe-stage-lib.mjs", "probe-stage-lib.d.mts", "runtime-label.mjs", "runtime-label.d.mts", "runtime-label.node-test.mjs", "controller-identity.node-test.mjs", "api-observation.mjs", "api-observation.d.mts", "api-observation.node-test.mjs", "node-image-check.mjs", "node-image-check.node-test.mjs"].map(x => `tests/observations/python-grade-probe/${x}`),
             ]);
             const paths = fs.readFileSync(0, "utf8").split("\0").filter(Boolean);
             if (paths.length !== allowed.size || paths.some(path => !allowed.has(path))) process.exit(1);
@@ -69,6 +69,17 @@ jobs:
         working-directory: source
         run: |
           set -euo pipefail
+          node "$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe/node-image-check.mjs" before
+          node_ready=0
+          for pull_attempt in 1 2 3; do
+            if docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5; then
+              node_ready=1
+              break
+            fi
+            if [ "$pull_attempt" -lt 3 ]; then sleep 5; fi
+          done
+          node "$GITHUB_WORKSPACE/probe/tests/observations/python-grade-probe/node-image-check.mjs" after
+          test "$node_ready" -eq 1
           docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
           ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-probe" .
