@@ -41,6 +41,7 @@ jobs:
           71d5e6329eb617384edf8742a64d9f8533ee5f7832d6586ac6c9150eab1967c8  .dockerignore
           08e1a836dc91e5b25ac312e4631edaea5d66e019bca9f50157486b77d6404828  tests/local/lineage-metadata-deadline/lineageArtifactMetadata.ts
           a862fb87d9cb083f2e9cceed96f0f02e2fb15e4c5a0e871bc186759f1e34f746  tests/local/lineage-metadata-deadline/deadline.test.mjs
+          d060a6ee7d6c8aa62fa8c2edee081669cf7ccc196cfc46a0bb98f81652876974  tests/local/lineage-metadata-deadline/identity.test.mjs
           SHA256
       - name: Build fixed Node and locked dependencies
         env:
@@ -54,4 +55,4 @@ jobs:
           --cap-drop ALL --security-opt no-new-privileges --cpus 1
           --memory 512m --memory-swap 512m --pids-limit 128
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/lineage-metadata-deadline,target=/workspace/tests/local/lineage-metadata-deadline,readonly"
-          "$IMAGE" node --test tests/local/lineage-metadata-deadline/deadline.test.mjs
+          "$IMAGE" node --test tests/local/lineage-metadata-deadline/deadline.test.mjs tests/local/lineage-metadata-deadline/identity.test.mjs
