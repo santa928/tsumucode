@@ -49,7 +49,7 @@ jobs:
           2264016f64b06d920a42a54e48dbe7a74d30262130f34ae94a779fe5cba502b0  scripts/release/v2/isolatedCandidateGit.d.mts
           cb3a5ae7a57b067a7c191323a442bf4121577c29a8255de2c9cdb46876bb6228  scripts/release/v2/lineageCallerPolicy.ts
           143684b5fe942211e592a0d8f87e07a95c3809bc1265319a823123853caa9537  scripts/release/v2/trustedLineagePolicy.ts
-          8f8ba19aec9207eed684032ad7d949afead941e78e230091cff952c0540e3e10  scripts/release/v2/signerTopology.ts
+          bdd746008fa7ebb284a7f8c9f91ca3e429427ac7470a48f11e2bb4b9676cc815  scripts/release/v2/signerTopology.ts
           491db8742ea5a544896cc56521fe9b4440849a49ec2577446d88fd1973884488  scripts/release/v2/callerNormalization.ts
           6cce25a1298ab6619427d15ce2d361cddefd34ea8d87fa737ac7be2d88ab8d84  tests/unit/release/v2/isolatedCandidateGit.node-test.mjs
           510967ba0a3484ec636314723cc4f92e2ddcdd68d588db0e8b4b9b17fc3dde93  tests/unit/release/v2/lineageCallerPolicy.test.ts

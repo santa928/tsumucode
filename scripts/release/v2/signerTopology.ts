@@ -56,7 +56,7 @@ export function assertSignerTopology(caller: Uint8Array, checks: Uint8Array, sig
       Object.hasOwn(observation, 'outputs') || Object.keys(observationPermissions).length !== 2 ||
       observationPermissions.contents !== 'read' || observationPermissions.actions !== 'read' ||
       observationSteps.length !== 1 || observationSteps[0]?.run !== 'exit 1' ||
-      Object.keys(observationSteps[0]!).length !== 1)
+      Object.keys(observationSteps[0]).length !== 1)
     throw new Error('Disabled parent observation topology differs');
   const expectedBuild = {
     candidate_artifact_id: '${{ needs.build.outputs.candidate_artifact_id }}',
