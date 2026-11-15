@@ -14,7 +14,7 @@ jobs:
           github.repository == 'santa928/tsumucode' &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event.pull_request.head.ref == 'codex/verify-oop-reading-8fda' &&
-          github.event.pull_request.base.sha == '8fdaeb61205ba8fad334af16886a725b49c50fde' }}
+          github.event.pull_request.base.sha == '75ec2e5a7df2faa3b566d58d34507e6788faea86' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -31,7 +31,7 @@ jobs:
       - name: Check out the exact candidate
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
-          ref: 8fdaeb61205ba8fad334af16886a725b49c50fde
+          ref: 75ec2e5a7df2faa3b566d58d34507e6788faea86
           path: fixed-candidate
           fetch-depth: 0
           persist-credentials: false
@@ -43,14 +43,11 @@ jobs:
           case "$EXPECTED_HEAD" in *[!0-9a-f]*|'') exit 1;; esac
           test "${#EXPECTED_HEAD}" = 40
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 2
-          test "$(git rev-parse HEAD^)" = 25272d3ad485a5c96f37ff36c462ab8d95a1bde3
-          test "$(git rev-parse HEAD^^)" = 69ddc7894212aa26b227c8e5d8004a93e6fe8ebf
-          test "$(git rev-parse HEAD^^^)" = 3182461f6206f88b462d729cb9a60822ce411170
-          test "$(git rev-parse HEAD^^^^)" = 08fbc57d731ddcfcb3d6f93aa193cb4a32a6b17d
-          test "$(git rev-parse HEAD^^^^^)" = f9e7627742df88f89dd762259023de1d766fafa3
-          test "$(git rev-parse HEAD^^^^^^)" = a503815fdd9afd6e6e70f6de13c93184e7e761ea
-          test "$(git rev-parse HEAD^^^^^^^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = 3
+          test "$(git rev-parse HEAD^1)" = e9d10ab49bca63fd1a7d3917ef5a1a953b1b172c
+          test "$(git rev-parse HEAD^2)" = 75ec2e5a7df2faa3b566d58d34507e6788faea86
+          test "$(git rev-parse HEAD^1^)" = 25272d3ad485a5c96f37ff36c462ab8d95a1bde3
+          test "$(git rev-parse HEAD^2^)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
           expected_paths=$(printf '%s\n' \
             '.github/workflows/python-oop-reading-probe.yml' \
             'tests/local/oop-reading-probe/check-dependencies.cjs' \
@@ -61,9 +58,9 @@ jobs:
             'tests/local/oop-reading-probe/oop-horizontal.spec.ts' \
             'tests/local/oop-reading-probe/volume-lifecycle.sh' \
             'tests/local/oop-reading-probe/volume-lifecycle.test.py')
-          test "$(git diff --no-renames --name-only HEAD^^^^^^^ HEAD)" = "$expected_paths"
-          test "$(git -C fixed-candidate rev-parse HEAD)" = 8fdaeb61205ba8fad334af16886a725b49c50fde
-          test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = ce3ea291c500c3afebb8b7c394a210658293d5bf
+          test "$(git diff --no-renames --name-only HEAD^2 HEAD)" = "$expected_paths"
+          test "$(git -C fixed-candidate rev-parse HEAD)" = 75ec2e5a7df2faa3b566d58d34507e6788faea86
+          test "$(git -C fixed-candidate rev-parse 'HEAD^{tree}')" = afe7e225ac61cfddf6090b03fb4b01a483899fe1
           test -z "$(git -C fixed-candidate status --porcelain --untracked-files=normal)"
       - name: Build the existing fixed Node and Browser image
         run: |
@@ -244,7 +241,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: oop-reading-probe-8fda-${{ github.run_attempt }}
+          name: oop-reading-probe-75ec-${{ github.run_attempt }}
           path: bounded-oop-reading.json
           if-no-files-found: warn
           retention-days: 7
