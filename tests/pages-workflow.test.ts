@@ -163,7 +163,6 @@ describe('TsumuCode Pages workflow', () => {
       'reopened',
       'synchronize',
       'edited',
-      'ready_for_review',
     ]);
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.deploy.type', 'boolean');
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.release_mode.options', [
