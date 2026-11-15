@@ -111,6 +111,7 @@ CMD ["node", "next-build-acceptance.mjs"]
 
 # Pythonの通常Lesson検証専用。正負原稿は製品imageへ含めない。
 FROM browser-checks AS python-browser-checks
+COPY package.json ./package.json
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
 COPY --from=dependencies /workspace/node_modules/zod ./node_modules/zod

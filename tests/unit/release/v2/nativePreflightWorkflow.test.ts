@@ -102,6 +102,9 @@ it('bakes and preflights the published Python fixture spec without a host mount'
   expect(exactCopyCount(stage!)).toBe(1);
   expect(exactCopyCount(stage!.replace(copy, ''))).toBe(0);
   expect(dockerfile).toContain('FROM python-browser-checks AS learning-native-checks');
+  const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as { type?: string };
+  expect(packageJson.type).toBe('module');
+  expect(stage).toContain('COPY package.json ./package.json');
 
   const script = await readFile('scripts/local/native-import-preflight.mjs', 'utf8');
   expect(script).toContain(spec);
