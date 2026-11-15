@@ -50,8 +50,10 @@ jobs:
           b7f6e8a59b73230c30425a366f1ce2731d24014a2029f36f1a5a6f2168911f9a  scripts/release/v2/identity.ts
           c87bce1c282992b4e73cf552e6ea88b960ce72ae4d491285e2ae4be335b01b3f  scripts/release/v2/plan.ts
           93f1e64490bccdd8c264a418a26263418c7ae4cf6afc711027db8d179e4e5521  scripts/release/v2/schema.ts
-          05da4afd2eaecf049cbeb0c9610e0facb9c6639e10c40c10a186d03256baaa1f  tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs
+          3b7cafd8314592270e56596a068ffc96d1b6a97e41d9a4406cde01c356a4ff81  tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs
           7e48b28ffeeb0f83d88738ca5601083d46d93f2aedf4fa4a7f906d9d0de6808e  tests/local/qualification-entry-probe/resolve-ts.mjs
+          bfdd54bcf75952d9be2412e25d166f7f58e4f27aa7e1986e3e126fa94d00559f  tests/local/qualification-entry-probe/needs-shape.mjs
+          07c6238aa4f698b7aef402f2c9fec62b8e9d44ddd1c64417bb744071de9d7017  tests/local/qualification-entry-probe/needs-shape.test.mjs
           SHA256
       - name: Build fixed Node and locked dependencies
         env:
@@ -71,4 +73,4 @@ jobs:
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/qualification-entry-probe,target=/workspace/tests/local/qualification-entry-probe,readonly"
           "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
           node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
-          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs'
+          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs'

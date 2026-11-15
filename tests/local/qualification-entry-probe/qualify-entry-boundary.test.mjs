@@ -155,6 +155,18 @@ test('matching synthetic claims qualify, demonstrating the provider-origin bound
     assert.equal(result.status, 'qualified');
   });
 });
+
+test('existing entry accepts additional synthetic needs fields, so source still requires authentication', async () => {
+  await withFixture(async (f) => {
+    f.jobs.synthetic_unknown = { result: 'success' };
+    f.jobs.unit.synthetic_unknown = 'synthetic';
+    const result = await entry(f)(f.root, {
+      ...f.env,
+      RELEASE_V2_NEEDS: JSON.stringify(f.jobs),
+    });
+    assert.equal(result.status, 'qualified');
+  });
+});
 for (const state of ['failure', 'cancelled', 'skipped'])
   test(`fixture ${state} rejects`, async () => {
     await withFixture(async (f) => {
