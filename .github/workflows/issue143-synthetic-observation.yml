@@ -51,6 +51,7 @@ jobs:
           if docker network inspect "${TSUMUCODE_LOCAL_OWNER}_web" >/dev/null 2>&1; then exit 1; fi
           if ss -H -ltn | grep -Eq ':(4173|4175)[[:space:]]'; then exit 1; fi
           node --test observation/tests/observations/issue143/check-report.test.mjs
+          node --test observation/tests/observations/issue143/home-diagnostic.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs observation/tests/observations/issue143/home-diagnostic-cli.test.mjs
           node observation/tests/observations/issue143/public-identity.mjs
           mkdir -m 700 "$RUNNER_TEMP/issue143-export" "$RUNNER_TEMP/issue143-home" "$RUNNER_TEMP/issue143-local"
       - name: Build fixed Source images in the hosted runner
@@ -95,10 +96,14 @@ jobs:
               --mount "type=bind,src=$overlay,dst=/workspace/tests/observations/issue143,readonly" \
               --mount "type=bind,src=$dir,dst=/exchange" --env "OBSERVATION_PHASE=$phase" \
               --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" node_modules/@playwright/test/cli.js test --config=/workspace/tests/observations/issue143/observation.config.ts >"$dir/private-run.log" 2>&1; then
+              if [ "$phase" = home ]; then node "$overlay/home-diagnostic.mjs" "$dir/home-report.json" 2>/dev/null || true; fi
               echo "Synthetic $phase observation failed; private log not uploaded"; exit 1
             fi
             count=1; if [ "$phase" = home ]; then count=2; fi
-            node "$overlay/check-report.mjs" "$dir/$phase-report.json" "$count"
+            if ! node "$overlay/check-report.mjs" "$dir/$phase-report.json" "$count"; then
+              if [ "$phase" = home ]; then node "$overlay/home-diagnostic.mjs" "$dir/home-report.json" 2>/dev/null || true; fi
+              exit 1
+            fi
           done
       - name: Import that same export into isolated Local
         shell: bash
