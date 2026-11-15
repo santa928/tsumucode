@@ -329,16 +329,11 @@ it('承認済みPath後続を固定treeでのみ許し、不正な作業状態�
   await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
 }, 60000);
 
-it('実践とOOPを含む固定候補だけを旧移行の後続として読み、追加改変を拒否する', async () => {
-  const source = '796b77d6289997df47b00a73554a0cde95f96642';
-  const digest = 'bf5b4a053e405301728761e1488fbadf600f95a372cd997943734b35e75084dc';
+const publicationSource = '5d2bf90bf2197c3b40177a151c2a7837fe554e7f';
+const publicationDigest = 'bf5b4a053e405301728761e1488fbadf600f95a372cd997943734b35e75084dc';
+
+async function publicationFixture() {
   const root = await temporaryRoot();
-  const compiled = await compileContent({
-    sourceRoot: path.resolve('content'),
-    outputRoot: path.join(root, 'generated/content'),
-    checkOnly: true,
-  });
-  expect(hashValue(buildInventory(compiled.compilations))).toBe(digest);
   await mkdir(path.join(root, 'empty-git-template'));
   const git = isolatedGitAt(root, root);
   const objects = await isolatedGitAt(process.cwd(), root)(
@@ -347,8 +342,9 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     '--git-path',
     'objects',
   );
-  const controlled = controlledGitEnvironment;
-  const originalEnvironment = Object.entries(process.env).filter(([key]) => controlled(key));
+  const originalEnvironment = Object.entries(process.env).filter(([key]) =>
+    controlledGitEnvironment(key),
+  );
   const trap = path.join(root, 'unapproved-worktree');
   await mkdir(trap);
   const hostileTemplate = path.join(root, 'unapproved-template');
@@ -356,9 +352,7 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
   await writeFile(
     path.join(hostileTemplate, 'hooks/reference-transaction'),
     '#!/bin/sh\nexit 99\n',
-    {
-      mode: 0o755,
-    },
+    { mode: 0o755 },
   );
   const globalConfig = path.join(root, 'unapproved-global-config');
   await writeFile(
@@ -374,102 +368,124 @@ it('実践とOOPを含む固定候補だけを旧移行の後続として読み�
     expect(await git('rev-parse', '--show-toplevel')).toBe(root);
     await expect(
       readFile(path.join(root, '.git/hooks/reference-transaction')),
-    ).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
-    for (const key of Object.keys(process.env))
-      if (controlled(key)) Reflect.deleteProperty(process.env, key);
-    Object.assign(process.env, isolatedGitEnvironment(root));
-    await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
-    await git('update-ref', 'HEAD', source);
-    await git('read-tree', '--reset', '-u', source);
-    const declarationPath = 'docs/quality/movement-eb2-v2.json';
-    const originalDeclaration = await readFile(path.join(root, declarationPath), 'utf8');
-    const closure = await hashArtifact(path.join(root, 'content'), {
-      rejectEmptyDirectories: true,
-    });
-    expect(closure.files).toHaveLength(5018);
-    expect(closure.digest).toBe('f13b1f3636dcdf3db291f911c6af8ad78352c0482462cc4b28ea1ffb52db63f1');
-    const expectAccepted = async () => {
-      expect(await readMovementDeclaration(root, digest)).toEqual(JSON.parse(originalDeclaration));
-    };
-    await expectAccepted();
-    await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
-    await expect(
-      readMovementDeclaration(
-        root,
-        'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
-      ),
-    ).rejects.toThrow();
-
-    for (const target of [
-      'content/learning-paths/python-basics.yaml',
-      'content/python-practice/course.yaml',
-      'content/python-oop/course.yaml',
-      'docs/quality/content-v2-receipts.json',
-      'content/python-basics/course.yaml',
-    ]) {
-      const file = path.join(root, target);
-      const original = await readFile(file);
-      await writeFile(file, 'unapproved change');
-      await expect(readMovementDeclaration(root, digest), target).rejects.toThrow();
-      await git('update-index', '--assume-unchanged', target);
-      await expect(readMovementDeclaration(root, digest), target + ' hidden').rejects.toThrow();
-      await git('update-index', '--no-assume-unchanged', target);
-      await writeFile(file, original);
-      await expectAccepted();
-    }
-    const tracked = 'content/python-basics/course.yaml';
-    const trackedOriginal = await readFile(path.join(root, tracked));
-    await writeFile(path.join(root, tracked), 'unapproved index change');
-    await git('add', '--', tracked);
-    await writeFile(path.join(root, tracked), trackedOriginal);
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await git('reset', '--', tracked);
-    await expectAccepted();
-    const excluded = 'content/learning-paths/unapproved-extra.yaml';
-    await mkdir(path.join(root, '.git/info'), { recursive: true });
-    await writeFile(path.join(root, '.git/info/exclude'), excluded + '\n');
-    await writeFile(path.join(root, excluded), 'unapproved');
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await rm(path.join(root, excluded));
-    await writeFile(path.join(root, '.git/info/exclude'), '');
-    await expectAccepted();
-    const empty = path.join(root, 'content/learning-paths/unapproved-empty');
-    await mkdir(empty);
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await rm(empty, { recursive: true });
-    await expectAccepted();
-    const link = path.join(root, 'content/learning-paths/unapproved-link');
-    await symlink('python-basics.yaml', link);
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await rm(link);
-    await expectAccepted();
-    const target = 'content/python-practice/course.yaml';
-    await git('update-index', '--skip-worktree', target);
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await git('update-index', '--no-skip-worktree', target);
-    await expectAccepted();
-    await git('config', 'core.filemode', 'false');
-    await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-    await git('config', 'core.filemode', 'true');
-    await expectAccepted();
-    for (const modePath of [
-      'content/learning-paths/python-basics.yaml',
-      'content/python-practice/course.yaml',
-      'content/python-oop/course.yaml',
-    ]) {
-      await chmod(path.join(root, modePath), 0o755);
-      await expect(readMovementDeclaration(root, digest)).rejects.toThrow();
-      await chmod(path.join(root, modePath), 0o644);
-      await expectAccepted();
-    }
-    expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(originalDeclaration);
+    ).rejects.toMatchObject({ code: 'ENOENT' });
   } finally {
     for (const key of Object.keys(process.env))
-      if (controlled(key)) Reflect.deleteProperty(process.env, key);
+      if (controlledGitEnvironment(key)) Reflect.deleteProperty(process.env, key);
     for (const [key, value] of originalEnvironment)
       if (value !== undefined) process.env[key] = value;
+  }
+  await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
+  await git('update-ref', 'HEAD', publicationSource);
+  await git('read-tree', '--reset', '-u', publicationSource);
+  const declarationPath = 'docs/quality/movement-eb2-v2.json';
+  const originalDeclaration = await readFile(path.join(root, declarationPath), 'utf8');
+  const expectAccepted = async () => {
+    expect(await readMovementDeclaration(root, publicationDigest)).toEqual(
+      JSON.parse(originalDeclaration),
+    );
+  };
+  await expectAccepted();
+  return { root, git, expectAccepted, declarationPath, originalDeclaration };
+}
+
+it('実践とOOP候補の全inventoryとcontent closureを固定する', async () => {
+  const { root, expectAccepted } = await publicationFixture();
+  const compiled = await compileContent({
+    sourceRoot: path.resolve('content'),
+    outputRoot: path.join(root, 'generated/content'),
+    checkOnly: true,
+  });
+  expect(hashValue(buildInventory(compiled.compilations))).toBe(publicationDigest);
+  const closure = await hashArtifact(path.join(root, 'content'), { rejectEmptyDirectories: true });
+  expect(closure.files).toHaveLength(5018);
+  expect(closure.digest).toBe('f13b1f3636dcdf3db291f911c6af8ad78352c0482462cc4b28ea1ffb52db63f1');
+  await expect(readMovementDeclaration(root, '0'.repeat(64))).rejects.toThrow();
+  await expect(
+    readMovementDeclaration(
+      root,
+      'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310',
+    ),
+  ).rejects.toThrow();
+  await expectAccepted();
+}, 60000);
+
+it('固定3 path・receipt・他のtracked教材の改変を拒否し復元後は受け入れる', async () => {
+  const { root, git, expectAccepted, declarationPath, originalDeclaration } =
+    await publicationFixture();
+  for (const target of [
+    'content/learning-paths/python-basics.yaml',
+    'content/python-practice/course.yaml',
+    'content/python-oop/course.yaml',
+    'docs/quality/content-v2-receipts.json',
+    'content/python-basics/course.yaml',
+  ]) {
+    const file = path.join(root, target);
+    const original = await readFile(file);
+    await writeFile(file, 'unapproved change');
+    await expect(readMovementDeclaration(root, publicationDigest), target).rejects.toThrow();
+    await git('update-index', '--assume-unchanged', target);
+    await expect(
+      readMovementDeclaration(root, publicationDigest),
+      target + ' hidden',
+    ).rejects.toThrow();
+    await git('update-index', '--no-assume-unchanged', target);
+    await writeFile(file, original);
+    await expectAccepted();
+  }
+  expect(await readFile(path.join(root, declarationPath), 'utf8')).toBe(originalDeclaration);
+}, 60000);
+
+it('index・ignored・空dir・symlinkの改変を拒否し復元後は受け入れる', async () => {
+  const { root, git, expectAccepted } = await publicationFixture();
+  const tracked = 'content/python-basics/course.yaml';
+  const original = await readFile(path.join(root, tracked));
+  await writeFile(path.join(root, tracked), 'unapproved index change');
+  await git('add', '--', tracked);
+  await writeFile(path.join(root, tracked), original);
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await git('reset', '--', tracked);
+  await expectAccepted();
+  const excluded = 'content/learning-paths/unapproved-extra.yaml';
+  await mkdir(path.join(root, '.git/info'), { recursive: true });
+  await writeFile(path.join(root, '.git/info/exclude'), excluded + '\n');
+  await writeFile(path.join(root, excluded), 'unapproved');
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await rm(path.join(root, excluded));
+  await writeFile(path.join(root, '.git/info/exclude'), '');
+  await expectAccepted();
+  const empty = path.join(root, 'content/learning-paths/unapproved-empty');
+  await mkdir(empty);
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await rm(empty, { recursive: true });
+  await expectAccepted();
+  const link = path.join(root, 'content/learning-paths/unapproved-link');
+  await symlink('python-basics.yaml', link);
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await rm(link);
+  await expectAccepted();
+}, 60000);
+
+it('隠しindex・filemode設定・3対象のmode改変を拒否し復元後は受け入れる', async () => {
+  const { root, git, expectAccepted } = await publicationFixture();
+  const target = 'content/python-practice/course.yaml';
+  await git('update-index', '--skip-worktree', target);
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await git('update-index', '--no-skip-worktree', target);
+  await expectAccepted();
+  await git('config', 'core.filemode', 'false');
+  await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+  await git('config', 'core.filemode', 'true');
+  await expectAccepted();
+  for (const modePath of [
+    'content/learning-paths/python-basics.yaml',
+    'content/python-practice/course.yaml',
+    'content/python-oop/course.yaml',
+  ]) {
+    await chmod(path.join(root, modePath), 0o755);
+    await expect(readMovementDeclaration(root, publicationDigest)).rejects.toThrow();
+    await chmod(path.join(root, modePath), 0o644);
+    await expectAccepted();
   }
 }, 60000);
 
