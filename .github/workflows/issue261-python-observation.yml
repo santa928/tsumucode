@@ -1,0 +1,72 @@
+name: Python practice visibility observation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - .github/workflows/issue261-python-observation.yml
+      - .github/issue261-python-observation/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: issue261-python-observation-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout observation tooling
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: observer
+          persist-credentials: false
+      - name: Checkout fixed public Source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 45fc0e5d672fc6d3dde237c458f8dc018bc6badf
+          path: source
+          persist-credentials: false
+      - name: Verify Source and build fixed app image
+        run: |
+          set -eu
+          test "$(git -C source rev-parse HEAD)" = 45fc0e5d672fc6d3dde237c458f8dc018bc6badf
+          test -z "$(git -C source status --porcelain --untracked-files=all)"
+          docker build --target app --tag issue261-fixed-source:45fc source
+          docker build --network none --file observer/.github/issue261-python-observation/Dockerfile \
+            --tag issue261-observation:45fc observer/.github/issue261-python-observation
+      - name: Install separately locked observation CLI
+        run: |
+          set -eu
+          docker run --rm --init --cpus 1 --memory 1g --pids-limit 128 \
+            --mount "type=bind,src=$PWD/observer/.github/issue261-python-observation,dst=/tool" \
+            --workdir /tool --entrypoint sh issue261-fixed-source:45fc -c \
+            'npm ci --ignore-scripts --no-audit --no-fund && node -e "if(require(\"playwright/package.json\").version!==\"1.61.1\")process.exit(1)"'
+      - name: Capture fresh synthetic exercise and review states
+        run: |
+          set -eu
+          mkdir -p capture
+          chmod 777 capture
+          docker run --rm --init --network none --read-only --user 65532:65532 \
+            --tmpfs /tmp:rw,nosuid,nodev,size=512m --cpus 2 --memory 4g --pids-limit 512 \
+            --tmpfs /workspace/node_modules/.vite-temp:rw,nosuid,nodev,size=64m,uid=65532,gid=65532,mode=0700 \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,src=$PWD/observer/.github/issue261-python-observation,dst=/tool,readonly" \
+            --mount "type=bind,src=$PWD/capture,dst=/capture" \
+            --workdir /tmp --entrypoint sh issue261-observation:45fc /tool/observe.sh
+      - name: Save synthetic screen observations only
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: issue261-python-visibility-45fc-${{ github.run_attempt }}
+          path: |
+            capture/*.png
+            capture/*.yml
+            capture/observations.txt
+            capture/cli-version.txt
+          if-no-files-found: warn
+          retention-days: 7
