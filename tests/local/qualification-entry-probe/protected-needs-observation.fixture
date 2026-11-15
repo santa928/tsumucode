@@ -1,0 +1,121 @@
+import { z } from 'zod';
+import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { hashBytes } from './identity';
+import { captureAnchorParent } from './lineageAnchorSnapshot';
+import { captureSuccessorParent } from './lineageSuccessorSnapshot';
+import {
+  matchLineageEvidenceFiles,
+  matchLineageEvidenceParent,
+  matchSameRunLineageEvidence,
+} from './lineageRunEvidence';
+import { validateCapturedBaseline } from './parent';
+
+// This reviewed verifier commit remains in the main merge history. Signed verifier policy is
+// intentionally empty until its own independently reviewed immutable commit is available.
+const ANCHOR_VERIFIER = '28edb392dccfaecd14c5b5b03470198abd8ec421';
+const SIGNED_VERIFIERS: readonly string[] = [];
+const decimal = z.string().regex(/^[1-9]\d{0,15}$/u);
+const Context = z
+  .object({
+    repository: z.literal('santa928/tsumucode'),
+    runId: decimal,
+    attempt: z.number().int().positive(),
+    source: z.string().regex(/^[a-f0-9]{40}$/u),
+    producerJobId: decimal,
+    producerJobName: z.string().min(1).max(200),
+    mode: z.enum(['anchor', 'signed']),
+  })
+  .strict();
+const Needs = z
+  .object({
+    result: z.literal('success'),
+    evidenceBase64: z.string().min(4).max(21848),
+    evidenceSha256: z.string().regex(/^[a-f0-9]{64}$/u),
+  })
+  .strict();
+
+/**
+ * Unconnected observation, not release authorization. Context and needs must come from the
+ * reviewed protected workflow and its direct immutable same-run needs edge. This function cannot
+ * authenticate those inputs, the verifier checkout, or the isolation of its process. In particular,
+ * captureAnchorParent statically imports its verifier from this checkout; the commit in evidence
+ * does not prove that fixed commit executed. A separately authenticated read-only verifier checkout
+ * and a fresh parent check immediately before deployment are required before any integration.
+ * Production consumedPythonTrust remains closed. No baseline or token is written to job output.
+ */
+export async function observeProtectedNeedsParent(
+  root: string,
+  contextInput: unknown,
+  needsInput: unknown,
+  token: string,
+  capturedInput: Uint8Array,
+  files: { subject?: Uint8Array; bundle?: Uint8Array } = {},
+) {
+  const context = Context.parse(contextInput),
+    needs = Needs.parse(needsInput);
+  if (!root.startsWith('/') || !token || token.length > 8192 || /[\r\n]/u.test(token))
+    throw Error('Invalid observation environment');
+  const verifierCommit = context.mode === 'anchor' ? ANCHOR_VERIFIER : SIGNED_VERIFIERS[0];
+  if (!verifierCommit) throw Error('No reviewed signed verifier configured');
+  if (
+    !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/u.test(needs.evidenceBase64)
+  )
+    throw Error('Invalid needs evidence encoding');
+  const bytes = Buffer.from(needs.evidenceBase64, 'base64');
+  if (
+    !bytes.length ||
+    bytes.length > 16 * 1024 ||
+    bytes.toString('base64') !== needs.evidenceBase64
+  )
+    throw Error('Invalid needs evidence encoding');
+  const { producerJobName, ...identity } = context;
+  const expected = { ...identity, verifierCommit, sha256: needs.evidenceSha256, producerJobName };
+  const evidence = matchSameRunLineageEvidence(bytes, {
+    ...identity,
+    verifierCommit,
+    sha256: needs.evidenceSha256,
+  });
+  if (
+    !(capturedInput instanceof Uint8Array) ||
+    capturedInput.buffer instanceof SharedArrayBuffer ||
+    !capturedInput.byteLength ||
+    capturedInput.byteLength > 4 * 1024 * 1024
+  )
+    throw Error('Invalid captured baseline bytes');
+  const capturedBytes = Buffer.from(capturedInput);
+  const capturedText = new TextDecoder('utf-8', { fatal: true }).decode(capturedBytes);
+  const captured = validateCapturedBaseline(JSON.parse(capturedText) as unknown);
+  const capturedSnapshot = JSON.parse(canonicalJson(captured)) as unknown;
+  matchLineageEvidenceParent(evidence, capturedSnapshot);
+  const protectedFiles = matchLineageEvidenceFiles(evidence, files);
+  const expectedSnapshot = Buffer.from(
+    canonicalJson({
+      schemaVersion: 1,
+      evidence,
+      proof: validateCapturedBaseline(capturedSnapshot).proof,
+    }),
+  );
+  const result =
+    evidence.mode === 'anchor'
+      ? await captureAnchorParent(root, bytes, expected, token, capturedSnapshot)
+      : await captureSuccessorParent(
+          root,
+          bytes,
+          expected,
+          token,
+          capturedSnapshot,
+          protectedFiles.subject!,
+          protectedFiles.bundle!,
+        );
+  if (
+    !(result.snapshot instanceof Uint8Array) ||
+    result.snapshot.buffer instanceof SharedArrayBuffer ||
+    !result.snapshot.byteLength ||
+    result.snapshot.byteLength > 32 * 1024
+  )
+    throw Error('Invalid observed snapshot');
+  const snapshot = Buffer.from(result.snapshot);
+  if (!snapshot.equals(expectedSnapshot) || hashBytes(snapshot) !== result.sha256)
+    throw Error('Observed snapshot differs');
+  return { snapshot, sha256: result.sha256 };
+}

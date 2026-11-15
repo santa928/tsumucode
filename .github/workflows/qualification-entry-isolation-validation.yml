@@ -1,0 +1,93 @@
+name: Qualification entry synthetic draft validation
+
+on:
+  pull_request:
+    branches: [codex/python-oop-stacked]
+    types: [opened, synchronize, reopened, converted_to_draft]
+
+permissions: {}
+
+jobs:
+  qualification_entry:
+    # No real GitHub, parent observation, qualification, signing or deployment.
+    if: >-
+      ${{ github.event.pull_request.draft == true &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.head.ref == 'codex/validate-qualification-entry-probe' &&
+          github.event.pull_request.base.sha == '6d1f24a220d64d9781b3b3cd3c88289ef2f1f777' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out exact draft HEAD without persisted credentials
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify candidate and fixed inputs
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          git rev-parse HEAD 'HEAD^{tree}'
+          sha256sum --check <<'SHA256'
+          2d26afccb2fc4d21791c1e176264e9a25a7d1b11308fae5262ac1cbd115b4677  Dockerfile
+          15c380765bbf2e109f96275248e842b7a9649fca7efa633427ee85ab8fd19aa4  package.json
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          71d5e6329eb617384edf8742a64d9f8533ee5f7832d6586ac6c9150eab1967c8  .dockerignore
+          fa6c741186a6df8a07c7067d0de020d17a36a2b8fec0b2a43024dae07526ef01  src/core/persistence/canonicalJson.ts
+          775a57b75a6aabb69358dd1174dd9e0147926b1bbaf11648ec5289306a3a229a  tests/unit/release/v2/admission.test.ts
+          ca2b1ccf8db469eeb9f22e2d135a1535db55cd69f017558b45037351a6f723f1  scripts/release/v2/qualify.ts
+          2f8a94a67804fba90754d6d72bac5f733d8f3fe5c8d09ee5287fbab7fc1e2abd  scripts/release/v2/admission.ts
+          73ae190808c78a0e707a59da01df2c093368aeb50d45c2f6a15631c079f545c9  scripts/release/v2/attempts.ts
+          1f7b3c9560ab6bc8adcd21e169462840aa3453678edccdd7d12c391c737eadd3  scripts/release/v2/verify.ts
+          4487e1f50383e68e784cf4a1584b725855ce2383648c90d40e903e68fe753dfd  scripts/release/v2/reports.ts
+          c1a591a5777ef00778fddd0eb9b02af61cd095de52aadcb7dffe90d21fb715d5  scripts/release/v2/executionPlan.ts
+          b7f6e8a59b73230c30425a366f1ce2731d24014a2029f36f1a5a6f2168911f9a  scripts/release/v2/identity.ts
+          c87bce1c282992b4e73cf552e6ea88b960ce72ae4d491285e2ae4be335b01b3f  scripts/release/v2/plan.ts
+          93f1e64490bccdd8c264a418a26263418c7ae4cf6afc711027db8d179e4e5521  scripts/release/v2/schema.ts
+          3b7cafd8314592270e56596a068ffc96d1b6a97e41d9a4406cde01c356a4ff81  tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs
+          7e48b28ffeeb0f83d88738ca5601083d46d93f2aedf4fa4a7f906d9d0de6808e  tests/local/qualification-entry-probe/resolve-ts.mjs
+          bfdd54bcf75952d9be2412e25d166f7f58e4f27aa7e1986e3e126fa94d00559f  tests/local/qualification-entry-probe/needs-shape.mjs
+          07c6238aa4f698b7aef402f2c9fec62b8e9d44ddd1c64417bb744071de9d7017  tests/local/qualification-entry-probe/needs-shape.test.mjs
+          a2cf226daf74c0a23653dad4161a5e0b04649292fae8cd13fced2588be56fb48  tests/local/qualification-entry-probe/subject-field-provenance.mjs
+          f3b3616e3948a366e0f01db0edd2736d35ce6f06009c6e091850982fe46b7099  tests/local/qualification-entry-probe/subject-field-provenance.test.mjs
+          058b6a8b4af3d1a148230c1511671935607c36be6d1c4da16083fbf1ed36f2b6  tests/local/qualification-entry-probe/lineage-draft.fixture
+          4d2b505a7c3490fc89c82d87072ebba728d8e1a428c57e0fffd9845bc81aadff  tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs
+          ba9f1f9348c1b56776841c813e28a58a1747c859ea38c2a21ff8db9e33a6e124  tests/local/qualification-entry-probe/private-predeploy-handoff.fixture
+          b0a579d480ab6d74a5639f4642f4eb9971553548fabcdfcd0563f58f7d1f63d1  tests/local/qualification-entry-probe/protected-needs-observation.fixture
+          ae3d91ebd7335268201ee68a9adf07468b306c0d84184acdce4ca25f49b93ca0  tests/local/qualification-entry-probe/lineage-run-evidence.fixture
+          383ca597d1833b93800309f023ad2dc37b734cb29b9322507fe451951336a1b0  tests/local/qualification-entry-probe/boundedFile.fixture
+          4881df2fd31ba26815d81dac77000aec8b96ddab2a84811103fc0ce49f686d5b  tests/local/qualification-entry-probe/lineageZip.fixture
+          515bdc6a488b6d74dee750e40063229f62ff917c3ed0cbe269acb6082ef6ff94  tests/local/qualification-entry-probe/lineageArtifacts.fixture
+          5cace8644455e221b809b315d56070db0cc4c16ce715b6032eccd5d5547e4aa1  tests/local/qualification-entry-probe/lineagePredeployZip.fixture
+          d02b330261d660d6306dc93ccc674d017881dedc6c71a421b47618debd85b00d  tests/local/qualification-entry-probe/lineageProtectedOrigin.fixture
+          5f2c77a8ff3d337ce1c66df3c934ce71bb7d7dc365babea5fa3028e240dcf529  tests/local/qualification-entry-probe/predeploy-archive-fixed.test.cjs
+          85e8fdb39499031aa3971f44aaac7898078a3b3395d1913a0711747ba77d0fa6  tests/local/qualification-entry-probe/lineage-parent-policy.fixture
+          8736086312f51989b17892bb839fc8b30c92880b396daa1166f3c83ad5f833fa  scripts/release/v2/json.ts
+          ad897513af80f92245609505a522d2b3a21afffa5400643bb879deb1625e31c6  scripts/release/v2/parent.ts
+          SHA256
+      - name: Build fixed Node and locked dependencies
+        env:
+          IMAGE: qualification-entry-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: docker build --target dependencies --tag "$IMAGE" .
+      - name: Run isolated synthetic qualification checks
+        env:
+          IMAGE: qualification-entry-validation:${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          docker run --rm --network none --read-only --user 65534:65534
+          --cap-drop ALL --security-opt no-new-privileges --cpus 1
+          --memory 512m --memory-swap 512m --pids-limit 128
+          --tmpfs /tmp:rw,nosuid,nodev,noexec,size=64m,mode=1777
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/scripts,target=/workspace/scripts,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/src,target=/workspace/src,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/unit/release/v2,target=/workspace/tests/unit/release/v2,readonly"
+          --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/qualification-entry-probe,target=/workspace/tests/local/qualification-entry-probe,readonly"
+          "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
+          node --experimental-loader ./tests/local/qualification-entry-probe/resolve-ts.mjs
+          --test tests/local/qualification-entry-probe/qualify-entry-boundary.test.mjs tests/local/qualification-entry-probe/needs-shape.test.mjs tests/local/qualification-entry-probe/subject-field-provenance.test.mjs;
+          node --test --test-concurrency=1 tests/local/qualification-entry-probe/private-handoff-fixed.test.cjs tests/local/qualification-entry-probe/predeploy-archive-fixed.test.cjs'

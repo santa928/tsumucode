@@ -1,0 +1,156 @@
+import path from 'node:path';
+import { types } from 'node:util';
+import { z } from 'zod';
+import { parseDocument } from 'yaml';
+import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { hashBytes } from './identity';
+import { validateCapturedBaseline } from './parent';
+import { LINEAGE_PARENT_BINDING_POLICY } from './lineageParentBindingPolicy';
+import { matchSameRunLineageEvidence } from './lineageRunEvidence';
+import { observeProtectedNeedsParent } from './lineageProtectedNeedsObservation';
+
+const id = z.string().regex(/^[1-9]\d{0,15}$/u);
+const digest = z.string().regex(/^[a-f0-9]{64}$/u);
+const contextSchema = z
+  .object({
+    repository: z.literal('santa928/tsumucode'),
+    runId: id,
+    attempt: z.number().int().positive(),
+    source: z.string().regex(/^[a-f0-9]{40}$/u),
+    producerJobId: id,
+    producerJobName: z.string().min(1).max(200),
+    mode: z.enum(['anchor', 'signed']),
+  })
+  .strict();
+const needsSchema = z
+  .object({
+    result: z.literal('success'),
+    evidenceBase64: z.string().min(4).max(21848),
+    evidenceSha256: digest,
+  })
+  .strict();
+const snapshotSchema = z
+  .object({ schemaVersion: z.literal(1), evidence: z.unknown(), proof: z.unknown() })
+  .strict();
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
+// These built-in getters intentionally receive the checked typed array as `this`.
+/* eslint-disable @typescript-eslint/unbound-method */
+const typedArrayName = Object.getOwnPropertyDescriptor(
+  typedArrayPrototype,
+  Symbol.toStringTag,
+)!.get!;
+const typedArrayBuffer = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer')!.get!;
+const typedArrayOffset = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset')!.get!;
+const typedArrayLength = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength')!.get!;
+/* eslint-enable @typescript-eslint/unbound-method */
+const copy = (input: unknown, max: number) => {
+  // Intrinsic brand/offset/length access avoids user-defined getters and rejects proxies.
+  if (!ArrayBuffer.isView(input) || typedArrayName.call(input) !== 'Uint8Array')
+    throw Error('Invalid private bytes');
+  const buffer = typedArrayBuffer.call(input) as ArrayBufferLike;
+  const offset = typedArrayOffset.call(input) as number;
+  const length = typedArrayLength.call(input) as number;
+  if (types.isSharedArrayBuffer(buffer) || !length || length > max)
+    throw Error('Invalid private bytes');
+  return Buffer.from(new Uint8Array(buffer, offset, length));
+};
+
+class PrivatePredeployHandoff {
+  readonly authorizationGranted = false as const;
+  readonly #snapshot: Buffer;
+  readonly #digest: string;
+
+  constructor(snapshot: Buffer, digest: string) {
+    this.#snapshot = Buffer.from(snapshot);
+    this.#digest = digest;
+    Object.freeze(this);
+  }
+
+  get privateSnapshot() {
+    return Buffer.from(this.#snapshot);
+  }
+  get snapshotSha256() {
+    return this.#digest;
+  }
+}
+
+/**
+ * Prepares private handoff bytes only. This does not authenticate the caller, direct-needs origin,
+ * parent-observation source, or authorize publication. No workflow or signing job uses it yet.
+ */
+export async function prepareProtectedPredeployHandoff(
+  root: string,
+  contextInput: Uint8Array,
+  needsInput: Uint8Array,
+  token: string,
+  capturedInput: Uint8Array,
+  subjectInput?: Uint8Array,
+  bundleInput?: Uint8Array,
+) {
+  try {
+    // Freeze all byte inputs synchronously before parsing any caller-provided content.
+    const capturedBytes = copy(capturedInput, 4 * 1024 * 1024);
+    const contextBytes = copy(contextInput, 4 * 1024),
+      needsBytes = copy(needsInput, 32 * 1024);
+    const subject = subjectInput === undefined ? undefined : copy(subjectInput, 16 * 1024);
+    const bundle = bundleInput === undefined ? undefined : copy(bundleInput, 4 * 1024 * 1024);
+    if (
+      typeof root !== 'string' ||
+      !path.isAbsolute(root) ||
+      typeof token !== 'string' ||
+      !token ||
+      token.length > 8192 ||
+      /[\r\n]/u.test(token)
+    )
+      throw Error('Invalid context');
+    const contextText = new TextDecoder('utf-8', { fatal: true }).decode(contextBytes);
+    const needsText = new TextDecoder('utf-8', { fatal: true }).decode(needsBytes);
+    const context = contextSchema.parse(JSON.parse(contextText) as unknown);
+    const needs = needsSchema.parse(JSON.parse(needsText) as unknown);
+    if (canonicalJson(context) !== contextText || canonicalJson(needs) !== needsText)
+      throw Error('Context is not canonical');
+    const capturedText = new TextDecoder('utf-8', { fatal: true }).decode(capturedBytes);
+    const captured = validateCapturedBaseline(JSON.parse(capturedText) as unknown);
+    // JSON.parse checks JSON syntax and the existing schema; the existing YAML parser is used
+    // only to reject duplicate decoded keys without requiring a new serialized format.
+    if (parseDocument(capturedText, { schema: 'json', uniqueKeys: true }).errors.length)
+      throw Error('Duplicate captured keys');
+    const proofText = canonicalJson(captured.proof);
+    const observed = await observeProtectedNeedsParent(root, context, needs, token, capturedBytes, {
+      ...(subject === undefined ? {} : { subject }),
+      ...(bundle === undefined ? {} : { bundle }),
+    });
+    const snapshot = copy(observed.snapshot, 32 * 1024);
+    if (hashBytes(snapshot) !== observed.sha256) throw Error('Snapshot differs');
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(snapshot);
+    const document = snapshotSchema.parse(JSON.parse(text) as unknown);
+    if (canonicalJson(document) !== text || canonicalJson(document.proof) !== proofText)
+      throw Error('Snapshot differs');
+    const evidence = Buffer.from(canonicalJson(document.evidence));
+    if (
+      evidence.toString('base64') !== needs.evidenceBase64 ||
+      hashBytes(evidence) !== needs.evidenceSha256
+    )
+      throw Error('Evidence differs');
+    const verifierCommit =
+      context.mode === 'anchor'
+        ? LINEAGE_PARENT_BINDING_POLICY.anchorVerifierCommit
+        : LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits.length === 1
+          ? LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits[0]
+          : undefined;
+    if (!verifierCommit) throw Error('Verifier not configured');
+    matchSameRunLineageEvidence(evidence, {
+      repository: context.repository,
+      runId: context.runId,
+      attempt: context.attempt,
+      source: context.source,
+      producerJobId: context.producerJobId,
+      verifierCommit,
+      mode: context.mode,
+      sha256: needs.evidenceSha256,
+    });
+    return new PrivatePredeployHandoff(snapshot, observed.sha256);
+  } catch {
+    throw Error('Protected predeploy handoff rejected');
+  }
+}

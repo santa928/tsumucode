@@ -1,0 +1,129 @@
+import { lstat, mkdir, readdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { z } from 'zod';
+import { BuildIdentitySchema, CommitSchema, DigestSchema } from './schema';
+import { hashBytes } from './identity';
+import { readBoundedRegularFile, readPredeployBoundedFile } from './boundedFile';
+
+const ExpectedSchema = z.object({
+  repository:z.literal('santa928/tsumucode'),
+  runId:z.string().regex(/^[1-9]\d*$/u), sourceCommit:CommitSchema,
+  candidateArtifactId:z.string().regex(/^[1-9]\d*$/u),
+  qualificationSha256:DigestSchema, smokeSha256:DigestSchema,
+  operationsSha256:DigestSchema, recordPlanSha256:DigestSchema,
+}).strict();
+
+export const PredeployExpectedSchema = ExpectedSchema.pick({ repository:true, runId:true, sourceCommit:true,
+  candidateArtifactId:true, qualificationSha256:true }).extend({ buildAttempt:z.number().int().positive() }).strict();
+
+export function metadataNames(attempt:string) {
+  return ['baseline.json','candidate.json','content-receipts.json','execution-plan.json','preparation.json','static.json',
+    'checks/artifact-preflight.json',`receipts/artifact-preflight-${attempt}.json`,`reports/artifact-preflight-${attempt}.json`];
+}
+
+async function listExact(root: string, expected: readonly string[]) {
+  const rootStat = await lstat(root);
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) throw Error('Artifact root is not a directory');
+  const files: string[] = [];
+  async function visit(directory: string, prefix: string) {
+    for (const entry of await readdir(directory, { withFileTypes:true })) {
+      const relative = prefix ? prefix + '/' + entry.name : entry.name;
+      if (entry.isSymbolicLink()) throw Error('Artifact symlink is forbidden');
+      if (entry.isDirectory()) {
+        if (!expected.some((file) => file.startsWith(relative + '/'))) throw Error('Unexpected artifact directory');
+        await visit(path.join(directory, entry.name), relative);
+      } else if (entry.isFile() && expected.includes(relative)) files.push(relative);
+      else throw Error('Unexpected artifact entry');
+    }
+  }
+  await visit(root, '');
+  if (files.length !== expected.length || expected.some((name) => !files.includes(name)))
+    throw Error('Artifact file set differs');
+}
+
+/** Staging only. Caller must authenticate artifact IDs and all expected values independently. */
+export async function assembleLineageArtifacts(stage: string, root: string, input: unknown) {
+  const expected = ExpectedSchema.parse(input);
+  const stageStat = await lstat(stage), rootStat = await lstat(root);
+  if (!stageStat.isDirectory() || stageStat.isSymbolicLink() || !rootStat.isDirectory() || rootStat.isSymbolicLink())
+    throw Error('Invalid staging roots');
+  const entries = await readdir(stage, { withFileTypes:true });
+  if (entries.length !== 3 || ['metadata','qualification','report'].some((name) => !entries.some((entry) => entry.name === name && entry.isDirectory() && !entry.isSymbolicLink())))
+    throw Error('Artifact staging groups differ');
+  const metadata = path.join(stage,'metadata'), qualification = path.join(stage,'qualification'), report = path.join(stage,'report');
+  const candidateBytes = await readBoundedRegularFile(path.join(metadata,'candidate.json'), 4 * 1024 * 1024);
+  const candidate = BuildIdentitySchema.parse(JSON.parse(new TextDecoder('utf-8', {fatal:true}).decode(candidateBytes)) as unknown);
+  if (candidate.repository !== expected.repository || candidate.runId !== expected.runId ||
+      candidate.recipe.sourceCommit !== expected.sourceCommit || candidate.artifactId !== expected.candidateArtifactId)
+    throw Error('Candidate staging identity differs');
+  const attempt = String(candidate.buildAttempt);
+  const groups = [
+    { root:metadata, names:metadataNames(attempt) },
+    { root:qualification, names:['qualification.json'] },
+    { root:report, names:['public-smoke.json','public-operations.json','app-record-plan.json'] },
+  ];
+  const contents = new Map<string, Buffer>();
+  for (const group of groups) {
+    await listExact(group.root, group.names);
+    for (const name of group.names) {
+      if (contents.has(name)) throw Error('Colliding artifact paths');
+      contents.set(name, group.root === metadata && name === 'candidate.json'
+        ? candidateBytes
+        : await readBoundedRegularFile(path.join(group.root,name),4 * 1024 * 1024));
+    }
+  }
+  for (const [name,digest] of [
+    ['qualification.json',expected.qualificationSha256], ['public-smoke.json',expected.smokeSha256],
+    ['public-operations.json',expected.operationsSha256], ['app-record-plan.json',expected.recordPlanSha256],
+  ] as const) if (hashBytes(contents.get(name)!) !== digest) throw Error('Artifact bytes differ from trusted pin');
+  const destination = path.join(root,'.release-v2');
+  // Never overwrite an existing target; a partial failure remains visibly fail-closed.
+  await mkdir(destination,{mode:0o700});
+  for (const [name,bytes] of contents) {
+    const target = path.join(destination,name);
+    await mkdir(path.dirname(target),{recursive:true,mode:0o700});
+    await writeFile(target,bytes,{flag:'wx',mode:0o600});
+  }
+}
+
+/** Read-only corroboration, not a qualification, producer, archive or parent authentication. */
+export async function inspectPredeployArtifacts(stage:string, input:unknown) {
+  const expected=PredeployExpectedSchema.parse(input);
+  const stat=await lstat(stage);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) throw Error('Invalid staging root');
+  const entries=await readdir(stage,{withFileTypes:true});
+  if (entries.length!==2 || ['metadata','qualification'].some((name)=>
+    !entries.some((entry)=>entry.name===name && entry.isDirectory() && !entry.isSymbolicLink())))
+    throw Error('Predeploy staging groups differ');
+  const metadata=path.join(stage,'metadata'), qualification=path.join(stage,'qualification');
+  const candidateBytes=await readPredeployBoundedFile(path.join(metadata,'candidate.json'),4*1024*1024);
+  const candidate=BuildIdentitySchema.parse(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(candidateBytes)) as unknown);
+  if (candidate.repository!==expected.repository || candidate.runId!==expected.runId ||
+      candidate.recipe.sourceCommit!==expected.sourceCommit || candidate.artifactId!==expected.candidateArtifactId ||
+      candidate.buildAttempt!==expected.buildAttempt) throw Error('Predeploy candidate identity differs');
+  const groups=[{root:metadata,names:metadataNames(String(candidate.buildAttempt))},
+    {root:qualification,names:['qualification.json']}];
+  const contents=new Map<string,Buffer>();
+  for (const group of groups) {
+    await listExact(group.root,group.names);
+    for (const name of group.names) {
+      const bytes=group.root===metadata && name==='candidate.json' ? candidateBytes :
+        await readPredeployBoundedFile(path.join(group.root,name),4*1024*1024);
+      if (group.root===qualification && hashBytes(bytes)!==expected.qualificationSha256)
+        throw Error('Predeploy qualification bytes differ');
+      if(contents.has(name)) throw Error('Colliding artifact paths');
+      contents.set(name,bytes);
+    }
+  }
+  return Object.freeze({
+    getFile(name:string):Buffer {
+      const bytes=contents.get(name);
+      if(!bytes) throw Error('Predeploy artifact path absent');
+      return Buffer.from(bytes);
+    },
+    getCandidate() {
+      return BuildIdentitySchema.parse(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(candidateBytes)) as unknown);
+    },
+    qualificationSha256:expected.qualificationSha256,
+  });
+}

@@ -1,0 +1,6 @@
+/** Populated only by a separately reviewed fixed-workflow bootstrap, never by runtime input. */
+export const LINEAGE_PARENT_BINDING_POLICY = Object.freeze({
+  anchorVerifierCommit:'28edb392dccfaecd14c5b5b03470198abd8ec421',
+  producerJobNames:Object.freeze([] as string[]),
+  signedVerifierCommits:Object.freeze([] as string[]),
+});

@@ -1,0 +1,41 @@
+import { PredeployExpectedSchema, metadataNames } from './lineageArtifacts';
+import { BuildIdentitySchema, DigestSchema } from './schema';
+import { hashBytes } from './identity';
+import { readLineageZip } from './lineageZip';
+
+const Input=PredeployExpectedSchema.extend({metadataArchiveSha256:DigestSchema,qualificationArchiveSha256:DigestSchema}).strict();
+function requireExact(files:Map<string,Buffer>, names:readonly string[]) {
+  if (files.size!==names.length || names.some((name)=>!files.has(name))) throw Error('Predeploy ZIP file set differs');
+}
+
+/** Corroboration only. Inputs and archive origin require independent authentication. */
+export async function inspectPredeployZips(metadataPath:string, qualificationPath:string, input:unknown) {
+  const expected=Input.parse(input);
+  const metadata=await readLineageZip(metadataPath,expected.metadataArchiveSha256,'metadata',
+    {allowedDirectories:['checks','receipts','reports']});
+  const qualification=await readLineageZip(qualificationPath,expected.qualificationArchiveSha256,'metadata',
+    {allowedDirectories:[]});
+  const candidateBytes=metadata.get('candidate.json');
+  if(!candidateBytes) throw Error('Missing candidate');
+  const candidate=BuildIdentitySchema.parse(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(candidateBytes)) as unknown);
+  if(candidate.repository!==expected.repository || candidate.runId!==expected.runId ||
+    candidate.recipe.sourceCommit!==expected.sourceCommit || candidate.artifactId!==expected.candidateArtifactId ||
+    candidate.buildAttempt!==expected.buildAttempt) throw Error('Predeploy candidate identity differs');
+  requireExact(metadata,metadataNames(String(candidate.buildAttempt)));
+  requireExact(qualification,['qualification.json']);
+  const qualificationBytes=qualification.get('qualification.json')!;
+  if(hashBytes(qualificationBytes)!==expected.qualificationSha256) throw Error('Qualification bytes differ');
+  const contents=new Map([...metadata,...qualification]);
+  if(contents.size!==metadata.size+qualification.size) throw Error('Colliding ZIP file paths');
+  return Object.freeze({
+    getFile(name:string):Buffer {
+      const bytes=contents.get(name);
+      if(!bytes) throw Error('Predeploy ZIP path absent');
+      return Buffer.from(bytes);
+    },
+    getCandidate() {
+      return BuildIdentitySchema.parse(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(candidateBytes)) as unknown);
+    },
+    qualificationSha256:expected.qualificationSha256,
+  });
+}

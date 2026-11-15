@@ -1,0 +1,48 @@
+import { constants } from 'node:fs';
+import { open } from 'node:fs/promises';
+
+/** Nonblocking no-follow fd, bounded allocation, and growth/shrink rejection. */
+export async function readBoundedRegularFile(file: string, limit: number): Promise<Buffer> {
+  const handle = await open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  try {
+    const stat = await handle.stat();
+    if (!stat.isFile() || stat.size <= 0 || stat.size > limit) throw new Error('Invalid bounded file');
+    const bytes = Buffer.alloc(stat.size);
+    let position = 0;
+    while (position < bytes.length) {
+      const { bytesRead } = await handle.read(bytes, position, bytes.length - position, position);
+      if (bytesRead === 0) throw new Error('Bounded file shrank while reading');
+      position += bytesRead;
+    }
+    const extra = Buffer.alloc(1);
+    if ((await handle.read(extra, 0, 1, position)).bytesRead !== 0)
+      throw new Error('Bounded file grew while reading');
+    return bytes;
+  } finally {
+    await handle.close();
+  }
+}
+
+/** Stable-read check, not an immutable-filesystem or provenance guarantee. */
+export async function readPredeployBoundedFile(file:string, limit:number):Promise<Buffer> {
+  const handle=await open(file,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);
+  try {
+    const before=await handle.stat({bigint:true});
+    if (!before.isFile() || before.nlink!==1n || before.size<=0n || before.size>BigInt(limit))
+      throw Error('Invalid predeploy file');
+    const bytes=Buffer.alloc(Number(before.size));
+    let position=0;
+    while(position<bytes.length){
+      const {bytesRead}=await handle.read(bytes,position,bytes.length-position,position);
+      if(bytesRead===0) throw Error('Predeploy file shrank');
+      position+=bytesRead;
+    }
+    const extra=Buffer.alloc(1);
+    if((await handle.read(extra,0,1,position)).bytesRead!==0) throw Error('Predeploy file grew');
+    const after=await handle.stat({bigint:true});
+    if(!after.isFile() || after.nlink!==1n || before.dev!==after.dev || before.ino!==after.ino ||
+      before.size!==after.size || before.mtimeNs!==after.mtimeNs || before.ctimeNs!==after.ctimeNs)
+      throw Error('Predeploy file changed while reading');
+    return bytes;
+  } finally { await handle.close(); }
+}
