@@ -13,7 +13,7 @@ jobs:
     if: >-
       ${{ github.event.pull_request.draft == true &&
           github.event.pull_request.head.repo.full_name == github.repository &&
-          github.event.pull_request.head.ref == 'codex/validate-lineage-parent-boundary' &&
+          github.event.pull_request.head.ref == 'codex/validate-lineage-disclosure-fields' &&
           github.event.pull_request.base.sha == '2a0dfa3a196cca736c6c7b6129e0cacb1d263d20' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -50,6 +50,10 @@ jobs:
           d151145d1e239ab8015771fbae6a818d6772b09401094501dba525836a353fa0  tests/local/lineage-manifest-redaction/original-parent.fixture
           2caab92668ff83ea88fcf593a58c67d3792e957cb69ddd0c133ca1aedc187628  tests/local/lineage-manifest-redaction/candidate-parent.fixture
           d02b330261d660d6306dc93ccc674d017881dedc6c71a421b47618debd85b00d  tests/local/lineage-manifest-redaction/original-origin.fixture
+          0c20d347ca468da9d4c50ff9c29028d9ae5f4872d7e2bd5e70e9ea18cbc7d92d  tests/local/lineage-manifest-redaction/disclosure-inventory.test.cjs
+          01f236c9cc95de3f894c98fee47cc6f806aa5ec46d3136b61ed6c94c48528463  tests/local/lineage-manifest-redaction/disclosure-audit.fixture
+          3230bb433be7baa77317592f96190d4da393bcd3f1c92a0c6f6f4960a9ed2af4  tests/local/lineage-manifest-redaction/public-lineage.fixture
+          93f1e64490bccdd8c264a418a26263418c7ae4cf6afc711027db8d179e4e5521  tests/local/lineage-manifest-redaction/schema.fixture
           SHA256
       - name: Build fixed Node and locked dependencies
         env:
@@ -65,7 +69,7 @@ jobs:
           --mount "type=bind,source=${GITHUB_WORKSPACE}/tests/local/lineage-manifest-redaction,target=/workspace/tests/local/lineage-manifest-redaction,readonly"
           --mount "type=bind,source=${GITHUB_WORKSPACE}/src/core/persistence/canonicalJson.ts,target=/workspace/src/core/persistence/canonicalJson.ts,readonly"
           "$IMAGE" sh -ec 'test "$(node --version)" = v24.18.0;
-          node --test tests/local/lineage-manifest-redaction/manifest.test.cjs tests/local/lineage-manifest-redaction/nested-needs.test.cjs tests/local/lineage-manifest-redaction/parent-boundary.test.cjs;
+          node --test tests/local/lineage-manifest-redaction/manifest.test.cjs tests/local/lineage-manifest-redaction/nested-needs.test.cjs tests/local/lineage-manifest-redaction/parent-boundary.test.cjs tests/local/lineage-manifest-redaction/disclosure-inventory.test.cjs;
           ./node_modules/.bin/tsc --ignoreConfig --noEmit --target es2022 --module esnext --moduleResolution bundler
           --types node --skipLibCheck --strict tests/local/lineage-manifest-redaction/lineageManifestIntake.ts
           tests/local/lineage-manifest-redaction/lineageNeedsParse.ts'

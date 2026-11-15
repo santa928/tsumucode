@@ -1,0 +1,41 @@
+import { parsePublicLineage } from '../../../scripts/release/v2/publicLineage';
+
+// Test-only inventory of formats, not a claim that values are public or authenticated.
+const classification = Object.freeze({
+  schemaVersion: 'fixed-version',
+  repository: 'fixed-repository',
+  sourceCommit: 'commit',
+  runId: 'decimal-id',
+  buildAttempt: 'attempt',
+  qualificationAttempt: 'attempt',
+  recordAttempt: 'attempt',
+  signerAttempt: 'attempt',
+  deploymentId: 'decimal-id',
+  recordTagDigest: 'digest',
+  candidateDigest: 'digest',
+  planDigest: 'digest',
+  qualificationDigest: 'digest',
+  qualificationRawDigest: 'digest',
+  declarationDigest: 'digest',
+  anchorTagDigest: 'digest',
+  parentDeploymentId: 'decimal-id',
+  parentSourceCommit: 'commit',
+  parentTagDigest: 'digest',
+  parentProofDigest: 'digest',
+  parentIdentityDigest: 'digest',
+  parentLineageDigest: 'nullable-digest',
+} as const);
+
+/** Only checks the current field inventory. It does not grant permission to attest. */
+export function inspectDisclosureInventory(input: Uint8Array) {
+  try {
+    const parsed = parsePublicLineage(input);
+    const actual = Object.keys(parsed).sort();
+    const expected = Object.keys(classification).sort();
+    if (actual.length !== expected.length || actual.some((key, i) => key !== expected[i]))
+      throw Error('Unreviewed field');
+    return Object.freeze({ authorizationGranted: false as const, fields: classification });
+  } catch {
+    throw Error('Disclosure inventory rejected');
+  }
+}

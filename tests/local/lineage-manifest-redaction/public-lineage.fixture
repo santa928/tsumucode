@@ -1,0 +1,212 @@
+import { z } from 'zod';
+import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { BuildIdentitySchema, CommitSchema, DigestSchema, PlanSchema } from './schema';
+import { ExecutionPlanSchema } from './executionPlan';
+import { QualificationSchema } from './admission';
+import { BaselineProofSchema } from './parent';
+import { AppRecordSchema } from './appRecord';
+import { hashBytes, hashValue } from './identity';
+
+/** Public metadata only. Parsing does not authenticate a signature or establish admission. */
+const PublicLineageSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    repository: z.literal('santa928/tsumucode'),
+    sourceCommit: CommitSchema,
+    runId: z.string().regex(/^[1-9]\d*$/u),
+    buildAttempt: z.number().int().positive(),
+    qualificationAttempt: z.number().int().positive(),
+    recordAttempt: z.number().int().positive(),
+    signerAttempt: z.number().int().positive(),
+    deploymentId: z.string().regex(/^[1-9]\d*$/u),
+    recordTagDigest: DigestSchema,
+    candidateDigest: DigestSchema,
+    planDigest: DigestSchema,
+    qualificationDigest: DigestSchema,
+    qualificationRawDigest: DigestSchema,
+    declarationDigest: DigestSchema,
+    anchorTagDigest: DigestSchema,
+    parentDeploymentId: z.string().regex(/^[1-9]\d*$/u),
+    parentSourceCommit: CommitSchema,
+    parentTagDigest: DigestSchema,
+    parentProofDigest: DigestSchema,
+    parentIdentityDigest: DigestSchema,
+    parentLineageDigest: DigestSchema.nullable(),
+  })
+  .strict();
+
+function boundedCanonicalJson(input: Uint8Array): unknown {
+  if (!(input instanceof Uint8Array) || input.buffer instanceof SharedArrayBuffer || input.byteLength > 16 * 1024)
+    throw new Error('Public lineage input exceeds limit or is not bytes');
+  const raw = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.from(input));
+  const value: unknown = JSON.parse(raw);
+  if (canonicalJson(value) !== raw) throw new Error('Public lineage bytes are not canonical');
+  return value;
+}
+
+/** Shape only; callers must independently verify issuer and every binding. */
+export function parsePublicLineage(input: Uint8Array) {
+  return PublicLineageSchema.parse(boundedCanonicalJson(input));
+}
+
+/** Checks fixed public anchor bytes only. It does not authenticate the live deployment. */
+export function assertPinnedAnchorEvidence(
+  linkInput: Uint8Array,
+  proofInput: Uint8Array,
+  tagObject: Uint8Array,
+) {
+  const link = parsePublicLineage(linkInput);
+  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofInput));
+  if (
+    link.parentLineageDigest !== null ||
+    link.anchorTagDigest !== '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b' ||
+    link.declarationDigest !== '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494' ||
+    link.parentTagDigest !== proof.tagDigest || link.parentSourceCommit !== proof.sourceCommit ||
+    link.parentDeploymentId !== proof.deploymentId || link.parentIdentityDigest !== hashValue({ ...proof, observedAt: null }) ||
+    proof.repository !== link.repository
+  ) throw new Error('Pinned anchor lineage differs');
+  assertPinnedAnchorParent(proofInput,tagObject);
+}
+
+/** Checks only pinned historical bytes and identity; live capture and publication authorization remain separate. */
+export function assertPinnedAnchorParent(proofInput:Uint8Array,tagObject:Uint8Array) {
+  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofInput));
+  if (!(tagObject instanceof Uint8Array) || tagObject.buffer instanceof SharedArrayBuffer || tagObject.byteLength > 16 * 1024)
+    throw new Error('Anchor tag exceeds limit or is not bytes');
+  const tagBytes=Buffer.from(tagObject);
+  const source = 'b9306eb3414e69a2068603cfdbf2706ebe4e9284';
+  const tagDigest = '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b';
+  const inventoryDigest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
+  const publicDigest = '36b593f9e489346671b61c881237bf1e3e04fc8bf0d47e3a3b0c4569af9c6df9';
+  const tagName = 'tsumucode-app-42929117936-7699435659';
+  if (
+    proof.repository !== 'santa928/tsumucode' ||
+    proof.deploymentId !== '7699435659' ||
+    proof.sourceCommit !== source ||
+    proof.workflowHeadCommit !== source ||
+    proof.runId !== '42929117936' ||
+    proof.tag !== 'refs/tags/' + tagName ||
+    proof.tagDigest !== tagDigest ||
+    hashBytes(tagBytes) !== tagDigest ||
+    proof.inventoryDigest !== inventoryDigest ||
+    proof.publicContentDigest !== publicDigest ||
+    proof.artifactDigestFormat !== 'canonical-dist-v1' ||
+    proof.projection !== 'authoring' ||
+    proof.publicFiles !== 479
+  )
+    throw new Error('Pinned anchor identity differs');
+  const text = new TextDecoder('utf-8', { fatal: true }).decode(tagBytes);
+  const match =
+    /^object ([a-f0-9]{40})\ntype commit\ntag ([A-Za-z0-9._-]+)\ntagger [^\n]+\n\n([\s\S]+)$/u.exec(
+      text,
+    );
+  if (!match || match[1] !== source || match[2] !== tagName)
+    throw new Error('Pinned anchor tag object differs');
+  const record = AppRecordSchema.parse(JSON.parse(match[3]!) as unknown);
+  if (
+    record.state !== 'verified' ||
+    record.repository !== proof.repository ||
+    record.deploymentId !== proof.deploymentId ||
+    record.workflowHeadCommit !== source ||
+    record.candidate.runId !== proof.runId ||
+    record.candidate.recipe.sourceCommit !== source ||
+    record.candidate.artifactDigest !== proof.artifactDigest ||
+    record.inventoryDigest !== inventoryDigest ||
+    record.publicContentDigest !== publicDigest ||
+    record.qualificationDigest !==
+      'b691d873d0d32bf28cce69b23b98337a7e9b069a768853c85789340e074471dc' ||
+    record.candidate.planDigest !==
+      '8b1f078a0361ad2fed64d67f62d4c75e4490ee7d3ee08df2286b273d705d2db6' ||
+    Date.parse(proof.observedAt) < Date.parse(record.observedAt)
+  )
+    throw new Error('Pinned anchor record differs');
+}
+
+/** Issuer-only consistency; neither this check nor its inputs establish authenticity. */
+export function assertOriginalParentProof(linkInput: Uint8Array, proofInput: Uint8Array) {
+  const link = parsePublicLineage(linkInput);
+  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofInput));
+  if (
+    link.parentProofDigest !== hashValue(proof) ||
+    link.parentIdentityDigest !== hashValue({ ...proof, observedAt: null })
+  )
+    throw new Error('Original parent proof differs');
+}
+
+/** Structural consistency only: no signature, live-deployment or workflow authentication. */
+export function assertLineageConsistencyOnly(
+  linkBytes: Uint8Array,
+  proofBytes: Uint8Array,
+  planBytes: Uint8Array,
+  executionBytes: Uint8Array,
+  candidateBytes: Uint8Array,
+  qualificationBytes: Uint8Array,
+  tagBytes: Uint8Array,
+) {
+  const link = parsePublicLineage(linkBytes);
+  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofBytes));
+  const parseBounded = (bytes: Uint8Array) => {
+    if (!(bytes instanceof Uint8Array) || bytes.byteLength > 4 * 1024 * 1024)
+      throw new Error('Lineage metadata exceeds limit or is not bytes');
+    const raw = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    const value: unknown = JSON.parse(raw);
+    return { raw, value };
+  };
+  const plan = PlanSchema.parse(parseBounded(planBytes).value);
+  const executionPlan = ExecutionPlanSchema.parse(parseBounded(executionBytes).value);
+  const candidate = BuildIdentitySchema.parse(parseBounded(candidateBytes).value);
+  const qualificationInput = parseBounded(qualificationBytes);
+  if (qualificationInput.raw !== JSON.stringify(qualificationInput.value, null, 2) + '\n')
+    throw new Error('Qualification bytes differ from the documented producer');
+  const qualification = QualificationSchema.parse(qualificationInput.value);
+  if (!(tagBytes instanceof Uint8Array) || tagBytes.byteLength > 16 * 1024)
+    throw new Error('App record tag exceeds limit or is not bytes');
+  const tagText = new TextDecoder('utf-8', { fatal: true }).decode(tagBytes);
+  const match =
+    /^object ([a-f0-9]{40})\ntype commit\ntag ([A-Za-z0-9._-]+)\ntagger [^\n]+\n\n([\s\S]+)$/u.exec(
+      tagText,
+    );
+  if (
+    !match ||
+    match[1] !== candidate.recipe.sourceCommit ||
+    match[2] !== `tsumucode-app-${candidate.runId}-${link.deploymentId}`
+  )
+    throw new Error('App record tag identity differs');
+  const record = AppRecordSchema.parse(JSON.parse(match[3]!) as unknown);
+  assertOriginalParentProof(linkBytes, proofBytes);
+  if (
+    link.repository !== proof.repository ||
+    link.repository !== candidate.repository ||
+    link.parentDeploymentId !== proof.deploymentId ||
+    link.parentSourceCommit !== proof.sourceCommit ||
+    link.parentTagDigest !== proof.tagDigest ||
+    link.sourceCommit !== candidate.recipe.sourceCommit ||
+    link.runId !== candidate.runId ||
+    link.buildAttempt !== candidate.buildAttempt ||
+    link.candidateDigest !== hashValue(candidate) ||
+    link.planDigest !== candidate.planDigest ||
+    candidate.planDigest !== hashValue({ plan, executionPlan }) ||
+    executionPlan.releasePlanDigest !== hashValue(plan) ||
+    link.qualificationRawDigest !== hashBytes(qualificationBytes) ||
+    link.qualificationDigest !== hashValue(qualification) ||
+    qualification.candidateDigest !== hashValue(candidate) ||
+    qualification.technical.candidateDigest !== hashValue(candidate) ||
+    qualification.technical.buildAttempt !== candidate.buildAttempt ||
+    hashValue(qualification.parent) !== hashValue(plan.parent) ||
+    plan.parent === null ||
+    plan.parent.deploymentId !== proof.deploymentId ||
+    plan.parent.sourceRecordDigest !== hashValue(proof) ||
+    record.state !== 'verified' ||
+    record.repository !== candidate.repository ||
+    record.deploymentId !== link.deploymentId ||
+    record.workflowHeadCommit !== candidate.recipe.sourceCommit ||
+    hashValue(record.candidate) !== hashValue(candidate) ||
+    record.inventoryDigest !== plan.inventoryDigest ||
+    record.qualificationDigest !== hashValue(qualification) ||
+    link.recordTagDigest !== hashBytes(tagBytes) ||
+    Date.parse(proof.observedAt) > Date.parse(qualification.qualifiedAt) ||
+    Date.parse(qualification.qualifiedAt) >= Date.parse(qualification.technical.expiresAt) ||
+    Date.parse(qualification.qualifiedAt) > Date.parse(record.observedAt)
+  )
+    throw new Error('Lineage inputs differ');
+}
