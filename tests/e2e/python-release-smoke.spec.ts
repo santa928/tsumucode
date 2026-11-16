@@ -95,7 +95,9 @@ test('Python Pathの3コースを順に表示し、未完の前提があって�
     await expect
       .poll(() => new URL(page.url()).hash)
       .toBe(`#/courses/${course.id}/lessons/${course.lessonId}/slides/${course.slideId}`);
-    await expect(page.getByTestId('slide-stage')).toHaveAttribute('data-slide-id', course.slideId);
+    const slide = page.getByTestId('slide-stage');
+    await expect(slide).toBeVisible();
+    await expect(slide).toHaveAttribute('data-slide-id', course.slideId);
   }
 });
 
