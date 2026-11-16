@@ -195,10 +195,11 @@ describe('HomePage', () => {
     expect(await screen.findByRole('region', { name: '端末データPanel' })).toBeInTheDocument();
   });
 
-  it('Python実践とOOPの棚にそれぞれの前提と進め方を表示する', async () => {
+  it('Python実践・OOPとNextの棚にそれぞれの前提と進め方を表示する', async () => {
     const courses = [
       { ...fixtureCatalog.courses[0]!, id: 'python-practice', title: 'Python実践' },
       { ...fixtureCatalog.courses[0]!, id: 'python-oop', title: 'Python OOP' },
+      { ...fixtureCatalog.courses[0]!, id: 'next', title: 'Next.js' },
     ];
     const router = createMemoryRouter([
       {
@@ -218,12 +219,18 @@ describe('HomePage', () => {
       'article',
     );
     const oop = screen.getByRole('heading', { name: 'Python OOP' }).closest('article');
+    const next = screen.getByRole('heading', { name: 'Next.js' }).closest('article');
     expect(practice).not.toBeNull();
     expect(oop).not.toBeNull();
+    expect(next).not.toBeNull();
     expect(within(practice!).getByText(/リスト.*繰り返し.*関数.*例外/u)).toBeInTheDocument();
     expect(within(oop!).getByText(/関数.*範囲.*データクラス/u)).toBeInTheDocument();
     expect(within(practice!).getByText(/値の変換.*データ集計/u)).toBeInTheDocument();
     expect(within(oop!).getByText(/3種類のメソッド.*記録プログラム/u)).toBeInTheDocument();
+    expect(
+      within(next!).getByText(/TypeScript.*親から渡す値.*Props.*状態.*State/u),
+    ).toBeInTheDocument();
+    expect(within(next!).getByText(/PC.*Docker.*学習版/u)).toBeInTheDocument();
     expect(within(practice!).queryByText('スライドとコード実習')).not.toBeInTheDocument();
     expect(within(oop!).queryByText('スライドとコード実習')).not.toBeInTheDocument();
   });

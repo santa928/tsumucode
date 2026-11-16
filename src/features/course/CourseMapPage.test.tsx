@@ -99,6 +99,7 @@ describe('CourseMapPage', () => {
   it.each([
     ['python-practice', /リスト.*繰り返し.*関数.*例外/u, /外部パッケージ/u],
     ['python-oop', /関数.*範囲.*データクラス/u, /メタクラス.*ディスクリプタ/u],
+    ['next', /TypeScript.*親から渡す値.*Props.*状態.*State.*Docker/u, /本番サーバー/u],
   ])('%s の入口に前提と対象外、進め方を表示する', async (id, before, outside) => {
     renderCourseMap({ ...fixtureCourse, id });
     expect(await screen.findByText('始める前に')).toBeInTheDocument();
