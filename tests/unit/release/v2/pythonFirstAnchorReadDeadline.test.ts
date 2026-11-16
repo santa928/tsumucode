@@ -9,10 +9,10 @@ const roots: string[] = [];
 const root = () => {
   const value = mkdtempSync(path.join(os.tmpdir(), 'anchor-deadline-'));
   roots.push(value);
-  mkdirSync(path.join(value, 'docs/quality'), { recursive: true });
+  mkdirSync(path.join(value, 'docs/quality/movement-history'), { recursive: true });
   writeFileSync(
-    path.join(value, 'docs/quality/movement-eb2-v2.json'),
-    readFileSync('docs/quality/movement-eb2-v2.json'),
+    path.join(value, 'docs/quality/movement-history/movement-eb2-v2.json'),
+    readFileSync('docs/quality/movement-history/movement-eb2-v2.json'),
   );
   return value;
 };

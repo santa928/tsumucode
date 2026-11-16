@@ -52,9 +52,9 @@ it('rejects failed API, different live parent, changed tag ref and changed decla
         encoding: 'utf8',
       }).trim(),
     ).toBe('tag');
-    mkdirSync(path.join(root, 'docs/quality'), { recursive: true });
-    const declaration = readFileSync('docs/quality/movement-eb2-v2.json');
-    const declarationFile = path.join(root, 'docs/quality/movement-eb2-v2.json');
+    mkdirSync(path.join(root, 'docs/quality/movement-history'), { recursive: true });
+    const declaration = readFileSync('docs/quality/movement-history/movement-eb2-v2.json');
+    const declarationFile = path.join(root, 'docs/quality/movement-history/movement-eb2-v2.json');
     writeFileSync(declarationFile, declaration);
     const fixture = releaseFixture().capturedBaseline;
     const validProof = { ...proof, inventoryDigest: hashValue(fixture.baseline.inventory) };
