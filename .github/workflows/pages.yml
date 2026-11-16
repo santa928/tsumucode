@@ -154,8 +154,14 @@ jobs:
           ./scripts/docker-compose.sh run --rm app node -e
           'if (process.versions.node !== "24.18.0") process.exit(1)'
       - name: Run the existing pre-push checks
-        run: >-
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:prepush -- "$PR_BASE_SHA"
+        env:
+          TSUMUCODE_CAPTURE_BASELINE_PHASE: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/capture-phase-diagnostic' && '1' || '0' }}
+        run: |
+          set -eu
+          if [ "$TSUMUCODE_CAPTURE_BASELINE_PHASE" = '1' ]; then
+            ./scripts/docker-compose.sh run --rm app node --test tests/local/captureBaselinePhase.node-test.mjs tests/local/captureBaselineTimeoutProbe.node-test.mjs
+          fi
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TSUMUCODE_CAPTURE_BASELINE_PHASE app npm run check:prepush -- "$PR_BASE_SHA"
 
   fast:
     if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true

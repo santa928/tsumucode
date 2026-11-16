@@ -6,6 +6,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { compileContent } from '../../../../scripts/content/compile';
+import { markCaptureBaselinePhase } from '../../../../scripts/ci/captureBaselinePhase.mjs';
 const exec = promisify(execFile),
   roots: string[] = [];
 afterEach(async () => {
@@ -22,14 +23,23 @@ describe('live baseline capture protocol', () => {
   ] as const)(
     'reconstructs %s original source and checks public bytes instead of trusting current candidate flags',
     async (format) => {
+      const enabled =
+        process.env['TSUMUCODE_CAPTURE_BASELINE_PHASE'] === '1' &&
+        format === 'app-recovery-bad-status';
+      const mark = (phase: string, state: string) => {
+        markCaptureBaselinePhase(enabled, phase, state);
+      };
       const { captureBaseline } = await import('../../../../scripts/release/v2/captureBaseline');
       const root = await mkdtemp(path.join(os.tmpdir(), 'release-capture-'));
       roots.push(root);
       await mkdir(path.join(root, 'content'));
+      mark('copy', 'start');
       await cp('content/html-css', path.join(root, 'content/html-css'), { recursive: true });
+      mark('copy', 'done');
       const git = async (...args: string[]) =>
-        (
-          await exec('git', args, {
+        (async () => {
+          mark('git', 'start');
+          const result = await exec('git', args, {
             cwd: root,
             encoding: 'utf8',
             env: {
@@ -39,8 +49,10 @@ describe('live baseline capture protocol', () => {
               GIT_COMMON_DIR: undefined,
               GIT_INDEX_FILE: undefined,
             },
-          })
-        ).stdout.trim();
+          });
+          mark('git', 'done');
+          return result.stdout.trim();
+        })();
       await git('init', '-b', 'main');
       await git('add', 'content');
       await git(
@@ -78,16 +90,19 @@ describe('live baseline capture protocol', () => {
         source,
       );
       const output = path.join(root, 'old-public/generated/content');
+      mark('compile', 'start');
       await compileContent({
         sourceRoot: path.join(root, 'content'),
         outputRoot: output,
         checkOnly: false,
       });
+      mark('compile', 'done');
       if (format.startsWith('app')) {
         await git('tag', '-d', 'tsumucode-release-fixture');
         const { compileCourse } = await import('../../../../scripts/content/compileCourse');
         const { buildInventory } = await import('../../../../scripts/release/v2/inventory');
         const { hashArtifact, hashValue } = await import('../../../../scripts/release/v2/identity');
+        mark('inventory', 'start');
         const inventory = buildInventory([
           await compileCourse(path.join(root, 'content/html-css')),
         ]);
@@ -123,6 +138,7 @@ describe('live baseline capture protocol', () => {
           smokeDigest: '1'.repeat(64),
           observedAt: '2026-10-28T16:00:00.000Z',
         };
+        mark('inventory', 'done');
         await git(
           '-c',
           'user.name=Fixture',
@@ -184,7 +200,9 @@ describe('live baseline capture protocol', () => {
               : readFile(path.join(output, relative)),
         });
       if (format === 'app-recovery-bad-status' || format === 'app-recovery-bad-bytes') {
+        mark('capture', 'start');
         await expect(capture()).rejects.toThrow();
+        mark('capture', 'done');
         expect(recovered).toHaveBeenCalledOnce();
         return;
       }
