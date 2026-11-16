@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test, type ConsoleMessage, type Page, type TestInfo } from '@playwright/test';
 import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import { canonicalJson, sha256 } from '../../src/core/persistence/canonicalJson';
+import { createCourseProgress, createExerciseDraft } from '../fixtures/progress/all-courses-bundle';
 import {
   observeRuntimeContext,
   observeStableTopUrl,
@@ -767,6 +768,97 @@ test('全Course Bundleを空の新規ContextへImportしてDraftを復元する'
     consoleErrors: [],
   });
   await fresh.close();
+});
+
+test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
+  const revision = '2026-10-02.5';
+  const exerciseId = 'javascript-ch00-l01-e01';
+  const draftKey = `javascript:${exerciseId}`;
+  const stableCourse = createCourseProgress('javascript', revision);
+  const stableFiles = {
+    'index.html': '<main id="message"></main>',
+    'styles.css': 'main { color: blue; }',
+    'script.js': "document.querySelector('#message').textContent = 'draft';",
+  };
+  const passingFiles = { ...stableFiles, 'script.js': "console.log('passing');" };
+  const stableDraft = {
+    ...createExerciseDraft('javascript', revision, exerciseId),
+    lessonId: 'javascript-ch00-l01',
+    exerciseId,
+    files: stableFiles,
+    selectedFile: 'script.js',
+    cursors: { 'script.js': { anchor: 0, head: 0 } },
+    lastPassingSnapshots: {
+      [exerciseId]: {
+        editRevision: 1,
+        contentRevision: revision,
+        files: passingFiles,
+        evaluatedAt: '2026-07-10T00:00:00.000Z',
+      },
+    },
+  };
+  const legacy = legacyBundleUnsigned();
+  const bundlePath = await writeSignedBundle(testInfo, 'mixed-progress.json', {
+    ...legacy,
+    courses: { ...(legacy['courses'] as Record<string, unknown>), javascript: stableCourse },
+    drafts: { ...(legacy['drafts'] as Record<string, unknown>), [draftKey]: stableDraft },
+  });
+
+  await openRuntimeFixture(page);
+  await replaceEditorText(page, VALID_SOURCE);
+  await waitForDraftSaved(page);
+  await page.goto(`${testBasePath()}#/`);
+  const before = await readStoredProgress(page);
+  expect(before.courses.length).toBeGreaterThan(0);
+  expect(before.drafts.length).toBeGreaterThan(0);
+
+  await selectBundle(page, bundlePath);
+  await expect(page.getByRole('region', { name: '読み込み差分' })).toBeVisible();
+  expect(await readStoredProgress(page)).toEqual(before);
+  const reloaded = page.waitForEvent('domcontentloaded');
+  await page.getByRole('button', { name: 'この内容を読み込む' }).click();
+  await reloaded;
+  await page.getByRole('heading', { name: 'この端末の学習データ' }).waitFor();
+
+  const after = await readStoredProgress(page);
+  const previousCourses = Object.fromEntries(
+    before.courses.map((course) => [String(course['courseId']), course]),
+  );
+  const previousDrafts = Object.fromEntries(
+    before.drafts.map(({ key, ...draft }) => [String(key), draft]),
+  );
+  expect(after.backups).toHaveLength(before.backups.length + 1);
+  expect(after.backups).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        reason: 'before-import',
+        snapshot: {
+          schemaVersion: 2,
+          courses: previousCourses,
+          drafts: previousDrafts,
+          quarantined: before.quarantined,
+        },
+      }),
+    ]),
+  );
+  expect(after.courses).toContainEqual(stableCourse);
+  expect(after.drafts).toContainEqual({ ...stableDraft, key: draftKey });
+  expect(after.courses).toContainEqual(
+    expect.objectContaining({
+      courseId: 'html-css',
+      contentRevision: CURRENT_CONTENT_REVISION,
+      currentComplete: false,
+      lessons: {},
+    }),
+  );
+  expect(after.drafts.some((draft) => draft['courseId'] === 'html-css')).toBe(false);
+  expect(JSON.stringify(after.quarantined)).toContain(LEGACY_SOURCE);
+  await page.reload();
+  await page.getByRole('heading', { name: 'この端末の学習データ' }).waitFor();
+  const afterReload = await readStoredProgress(page);
+  expect(afterReload.courses).toContainEqual(stableCourse);
+  expect(afterReload.drafts).toContainEqual({ ...stableDraft, key: draftKey });
+  expect(afterReload.backups).toEqual(after.backups);
 });
 
 test('旧revision Bundleを確定前にreset理由表示して移行し現行Routeを安全に初期化する', async ({
