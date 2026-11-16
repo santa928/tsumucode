@@ -797,11 +797,64 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
       },
     },
   };
+  // 旧草稿 Source a9ea20c8 の 14.3 に実在した OOP Lesson / Workspace。
+  const oopOldRevision = '2026-10-14.3';
+  const oopCurrentRevision = '2026-10-14.5';
+  const oopLessonId = 'python-oop-ch01-l01';
+  const oopExerciseId = 'python-oop-ch01-l01-e01';
+  const oopKey = `python-oop:${oopExerciseId}`;
+  const oopCourse = {
+    ...createCourseProgress('python-oop', oopOldRevision),
+    lessons: {
+      [oopLessonId]: {
+        lessonId: oopLessonId,
+        viewedSlideIds: ['python-oop-ch01-l01-s01'],
+        passedExerciseIds: [oopExerciseId],
+        passedChecklistItemIds: [],
+        passedRuleIds: [],
+        passedViewportIds: [],
+        currentComplete: false,
+      },
+    },
+  };
+  const oopFiles = { 'main.py': '# synthetic old draft\nprint("draft")\n' };
+  const oopPassing = {
+    editRevision: 1,
+    contentRevision: oopOldRevision,
+    files: { 'main.py': '# synthetic old passing\nprint("passed")\n' },
+    evaluatedAt: '2026-10-14T00:00:00.000Z',
+  };
+  const oopDraft = {
+    ...createExerciseDraft('python-oop', oopOldRevision, oopExerciseId),
+    lessonId: oopLessonId,
+    exerciseId: oopExerciseId,
+    files: oopFiles,
+    selectedFile: 'main.py',
+    cursors: { 'main.py': { anchor: 0, head: 0 } },
+    lastPassingSnapshots: { [oopExerciseId]: oopPassing },
+  };
+  const expectedOopCourse = { ...oopCourse, contentRevision: oopCurrentRevision };
+  const expectedOopDraft = {
+    ...oopDraft,
+    key: oopKey,
+    contentRevision: oopCurrentRevision,
+    lastPassingSnapshots: {
+      [oopExerciseId]: { ...oopPassing, contentRevision: oopCurrentRevision },
+    },
+  };
   const legacy = legacyBundleUnsigned();
   const bundlePath = await writeSignedBundle(testInfo, 'mixed-progress.json', {
     ...legacy,
-    courses: { ...(legacy['courses'] as Record<string, unknown>), javascript: stableCourse },
-    drafts: { ...(legacy['drafts'] as Record<string, unknown>), [draftKey]: stableDraft },
+    courses: {
+      ...(legacy['courses'] as Record<string, unknown>),
+      javascript: stableCourse,
+      'python-oop': oopCourse,
+    },
+    drafts: {
+      ...(legacy['drafts'] as Record<string, unknown>),
+      [draftKey]: stableDraft,
+      [oopKey]: oopDraft,
+    },
   });
 
   const seedExerciseId = 'html-css-ch00-l01-e01';
@@ -879,6 +932,12 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
   );
   expect(after.courses).toContainEqual(stableCourse);
   expect(after.drafts).toContainEqual({ ...stableDraft, key: draftKey });
+  expect(after.courses).toContainEqual(expectedOopCourse);
+  expect(after.drafts).toContainEqual(expectedOopDraft);
+  const quarantined = JSON.stringify(after.quarantined);
+  expect(quarantined).not.toContain('python-oop');
+  expect(quarantined).not.toContain('# synthetic old draft');
+  expect(quarantined).not.toContain('# synthetic old passing');
   expect(after.courses).toContainEqual(
     expect.objectContaining({
       courseId: 'html-css',
@@ -894,6 +953,8 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
   const afterReload = await readStoredProgress(page);
   expect(afterReload.courses).toContainEqual(stableCourse);
   expect(afterReload.drafts).toContainEqual({ ...stableDraft, key: draftKey });
+  expect(afterReload.courses).toContainEqual(expectedOopCourse);
+  expect(afterReload.drafts).toContainEqual(expectedOopDraft);
   expect(afterReload.backups).toEqual(after.backups);
 });
 

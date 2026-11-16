@@ -155,7 +155,7 @@ jobs:
           'if (process.versions.node !== "24.18.0") process.exit(1)'
       - name: Run the existing pre-push checks
         run: >-
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:prepush -- "$PR_BASE_SHA"
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm exec -- tsx scripts/runPrCiCheck.ts prepush "$PR_BASE_SHA"
 
   fast:
     if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true
@@ -183,7 +183,11 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
+        run: |-
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            exec ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm exec -- tsx scripts/runPrCiCheck.ts fast
+          fi
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review

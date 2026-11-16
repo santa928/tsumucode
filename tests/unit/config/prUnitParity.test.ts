@@ -15,6 +15,7 @@ const scripts = (
 ).scripts;
 
 interface Step {
+  name?: string;
   if?: string;
   'continue-on-error'?: boolean;
   env?: Record<string, string>;
@@ -82,14 +83,36 @@ describe('PR CIと公開unitの範囲', () => {
     expect(step.env?.CHECK_SCRIPT).toBe(
       "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
     );
-    const command = 'run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check:ci';
-    const result = runScript(
-      step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'),
-      failure ? command : '',
-      {
-        CHECK_SCRIPT: 'check:ci',
-      },
-    );
+    const command =
+      'run --rm -e BASE_PATH -e TEST_BASE_SHA app npm exec -- tsx scripts/runPrCiCheck.ts fast';
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, failure ? command : '', {
+      CHECK_SCRIPT: 'check:ci',
+      GITHUB_EVENT_NAME: 'pull_request',
+    });
+    expect(result.status, result.stderr).toBe(failure ? 43 : 0);
+    expect(result.calls).toEqual([command]);
+  });
+
+  it.each(['push', 'workflow_dispatch'] as const)('%s fastは従来のcheckを使用する', (event) => {
+    const step = workflow.jobs.fast!.steps.find((item) => item.name === 'Fast quality')!;
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, '', { CHECK_SCRIPT: 'check', GITHUB_EVENT_NAME: event });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.calls).toEqual(['run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check']);
+  });
+
+  it.each([false, true])('PR pre-pushは既存checkの失敗=%sを伝える', (failure) => {
+    const step = workflow.jobs.pr_premerge!.steps.find(
+      (item) => item.name === 'Run the existing pre-push checks',
+    )!;
+    const base = 'a'.repeat(40);
+    const command = `run --rm -e BASE_PATH app npm exec -- tsx scripts/runPrCiCheck.ts prepush ${base}`;
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, failure ? command : '', { PR_BASE_SHA: base });
     expect(result.status, result.stderr).toBe(failure ? 43 : 0);
     expect(result.calls).toEqual([command]);
   });
