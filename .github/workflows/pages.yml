@@ -263,7 +263,7 @@ jobs:
           scratch=$(mktemp -d)
           trap 'rm -rf -- "$scratch"' EXIT
           set +e
-          docker run --rm --init --network none --read-only --cap-drop ALL \
+          docker run --rm --init --user 1000:1000 --network none --read-only --cap-drop ALL \
             --security-opt no-new-privileges:true --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --tmpfs /tmp:rw,nosuid,nodev,size=512m \
             --env BASE_PATH --env CI=true --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \

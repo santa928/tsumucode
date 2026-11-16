@@ -4,7 +4,7 @@ import { testServerUrl } from '../e2e/helpers/testBasePath';
 /** Verification-only preview; no qualification receipt is produced. */
 export default defineConfig({
   testDir: '.',
-  testMatch: 'publicOperationFaultProbe.spec.ts',
+  testMatch: 'publicOperationFaultProbe.browser.ts',
   outputDir: '/tmp/public-fault-probe-results',
   workers: 1,
   retries: 0,
@@ -12,6 +12,7 @@ export default defineConfig({
   reporter: 'list',
   use: {
     ...devices['Desktop Chrome'],
+    launchOptions: { chromiumSandbox: true },
     baseURL: testServerUrl(4173),
     trace: 'off',
     screenshot: 'off',
