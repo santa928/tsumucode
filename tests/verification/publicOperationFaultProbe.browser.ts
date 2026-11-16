@@ -7,6 +7,7 @@ function report(failures: readonly string[], resources: ReadonlySet<string>) {
 }
 
 test('observes a representative fixed-source preview without claiming full release coverage', async ({ page, browser }, info) => {
+  console.log('probe-phase=normal-test-started');
   const failures: string[] = [], resources = new Set<string>();
   watchPublicFaults(page, 'primary', failures, resources);
   try {
@@ -40,6 +41,7 @@ test('observes a representative fixed-source preview without claiming full relea
 });
 
 test('detects synthetic console errors and intercepted aborts on both pages', async ({ page, browser }, info) => {
+  console.log('probe-phase=synthetic-test-started');
   const failures: string[] = [], resources = new Set<string>();
   const run = async (target: Page) => {
     await target.route('https://fixture.invalid/**', (route) => route.abort());

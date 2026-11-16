@@ -266,9 +266,11 @@ jobs:
             'FROM tsumucode-pr-visual' \
             'RUN test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && mkdir /workspace/node_modules/.vite-temp' \
             | docker build --network none --tag tsumucode-public-fault-probe - >"$scratch/build.log" 2>&1; then
+            echo 'probe-phase=image-build-failed'
             echo 'public-fault-probe=failed'
             exit 1
           fi
+          echo 'probe-phase=image-ready'
           set +e
           docker run --rm --init --user 1000:1000 --network none --read-only --cap-drop ALL \
             --security-opt no-new-privileges:true --cpus 2 --memory 4g --memory-swap 4g \
@@ -284,6 +286,8 @@ jobs:
           python3 - "$scratch/probe.log" "$status" <<'PY'
           import os, re, stat, sys
           try:
+              status = sys.argv[2]
+              print('probe-docker-status=' + (status if status in ('0', '125', '126', '127', '137') else 'other'))
               fd = os.open(sys.argv[1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
               try:
                   info = os.fstat(fd)
@@ -295,7 +299,16 @@ jobs:
               finally:
                   os.close(fd)
               text = data.decode('utf-8', errors='strict')
-              allowed = re.compile(r'probe-(?:normal=passed|synthetic=passed|fault=(?:(?:primary|transfer)-(?:page-error|console-error|console-unknown|request-failed|request-type-unknown)|observation-overflow)|resource=(?:primary|transfer)-(?:document|stylesheet|image|media|font|script|texttrack|xhr|fetch|eventsource|websocket|manifest|other))')
+              indicators = (
+                  ('sandbox', ('No usable sandbox!', 'Failed to move to new namespace')),
+                  ('browser-launch', ('browserType.launch:',)),
+                  ('webserver', ('Error: Process from config.webServer',)),
+                  ('no-tests', ('No tests found',)),
+              )
+              for label, needles in indicators:
+                  if any(needle in text for needle in needles):
+                      print('probe-indicator=' + label)
+              allowed = re.compile(r'probe-(?:normal=passed|synthetic=passed|phase=(?:normal-test-started|synthetic-test-started)|fault=(?:(?:primary|transfer)-(?:page-error|console-error|console-unknown|request-failed|request-type-unknown)|observation-overflow)|resource=(?:primary|transfer)-(?:document|stylesheet|image|media|font|script|texttrack|xhr|fetch|eventsource|websocket|manifest|other))')
               lines = [line.strip() for line in text.splitlines() if allowed.fullmatch(line.strip())]
               for line in lines:
                   print(line)
