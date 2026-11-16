@@ -804,15 +804,48 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
     drafts: { ...(legacy['drafts'] as Record<string, unknown>), [draftKey]: stableDraft },
   });
 
+  const seedExerciseId = 'html-css-ch00-l01-e01';
+  const seedKey = `html-css:${seedExerciseId}`;
+  const seedHtml =
+    '<!doctype html><html><head><link rel="stylesheet" href="styles.css"></head><body><h1>わたしの学習ノート</h1></body></html>';
+  const seedCss = 'body { background-color: #fffaf0; }';
   await openRuntimeFixture(page);
-  await replaceEditorText(page, VALID_SOURCE);
-  await waitForStoredDraft(page, VALID_SOURCE);
+  await page.getByRole('tab', { name: 'index.html', exact: true }).click();
+  await replaceEditorText(page, seedHtml);
+  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+  await replaceEditorText(page, seedCss);
+  await waitForStoredDraft(page, seedCss);
   await page.getByRole('button', { name: '判定する' }).click();
-  await expect.poll(async () => (await readStoredProgress(page)).courses.length).toBeGreaterThan(0);
-  await waitForStoredDraft(page, VALID_SOURCE);
+  await expect
+    .poll(async () =>
+      (await readStoredProgress(page)).courses.find((course) => course['courseId'] === 'html-css'),
+    )
+    .toMatchObject({
+      courseId: 'html-css',
+      lessons: {
+        'html-css-ch00-l01': { passedExerciseIds: expect.arrayContaining([seedExerciseId]) },
+      },
+    });
+  await expect
+    .poll(async () =>
+      (await readStoredProgress(page)).drafts.find((draft) => draft['key'] === seedKey),
+    )
+    .toMatchObject({
+      courseId: 'html-css',
+      exerciseId: seedExerciseId,
+      files: { 'index.html': seedHtml, 'styles.css': seedCss },
+      validationHistory: expect.arrayContaining([
+        expect.objectContaining({ exerciseId: seedExerciseId, status: 'pass' }),
+      ]),
+      lastPassingSnapshots: {
+        [seedExerciseId]: { files: { 'index.html': seedHtml, 'styles.css': seedCss } },
+      },
+    });
   await page.goto(`${testBasePath()}#/`);
   const before = await readStoredProgress(page);
-  expect(before.courses.length).toBeGreaterThan(0);
+  expect(before.courses).toEqual(
+    expect.arrayContaining([expect.objectContaining({ courseId: 'html-css' })]),
+  );
   expect(before.drafts.length).toBeGreaterThan(0);
 
   await selectBundle(page, bundlePath);
