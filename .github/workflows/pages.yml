@@ -253,10 +253,11 @@ jobs:
       - name: Verify Next course guide entry points
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          TSUMUCODE_NEXT_DOM_DIAGNOSTICS: '1'
         run: >-
           docker run --rm --cpus 2 --memory 4g --memory-swap 4g
           --pids-limit 512 --shm-size 512m
-          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --env BASE_PATH --env TSUMUCODE_NEXT_DOM_DIAGNOSTICS --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
           --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
           --mount type=volume,target=/workspace/node_modules
           tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
