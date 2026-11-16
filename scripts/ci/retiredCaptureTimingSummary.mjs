@@ -2,6 +2,7 @@ import { lstat, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { summarizeUnitSet } from './retiredUnitSetSummary.mjs';
 
 const title =
   'links synthetic b930 capture, retirement guard, real prepare and synthetic-receipt admission';
@@ -61,14 +62,18 @@ export function summarize(report) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   let summary = { status: 'unavailable' };
+  let unitSet = { status: 'unavailable' };
   try {
     const file = 'test-results/retired-capture-raw.json';
     const stat = await lstat(file);
     if (stat.isFile() && !stat.isSymbolicLink() && stat.size <= 64 * 1024 * 1024) {
-      summary = summarize(JSON.parse(await readFile(file, 'utf8')));
+      const report = JSON.parse(await readFile(file, 'utf8'));
+      summary = summarize(report);
+      unitSet = summarizeUnitSet(report);
     }
   } catch {
     // Missing or invalid diagnostics do not replace the original CI outcome.
   }
   process.stdout.write(`Retired capture diagnostic: ${JSON.stringify(summary)}\n`);
+  process.stdout.write(`Retired unit set: ${JSON.stringify(unitSet)}\n`);
 }

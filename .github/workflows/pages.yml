@@ -168,6 +168,9 @@ jobs:
       contents: read
     outputs:
       preview_artifact_id: ${{ steps.static_preview.outputs['artifact-id'] }}
+      retired_unit_set: ${{ steps.retired_summary.outputs.unit_set }}
+      retired_target: ${{ steps.retired_summary.outputs.target }}
+      retired_capacity: ${{ steps.retired_capacity.outputs.capacity }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -178,21 +181,52 @@ jobs:
         run: ./scripts/docker-compose.sh build app
       - name: Content provenance
         run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
+      - name: Observe default test capacity
+        id: retired_capacity
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-full-worker2'
+        continue-on-error: true
+        run: |
+          set -eu
+          private_log=$(mktemp)
+          trap 'rm -f -- "$private_log"' EXIT
+          if ./scripts/docker-compose.sh run --rm app node -e 'const n = require("node:os").availableParallelism(); const valid = Number.isInteger(n) && n > 0 && n <= 256; const d = valid ? Math.max(n - 1, 1) : null; console.log("RETIRED_DEFAULT_CAPACITY=" + (valid ? n : "unknown") + ",workers=" + (d ?? "unknown"));' > "$private_log" 2>&1 && [ "$(grep -Ec '^RETIRED_DEFAULT_CAPACITY=([1-9][0-9]{0,2}|unknown),workers=([1-9][0-9]{0,2}|unknown)$' "$private_log" || true)" = 1 ]; then
+            grep -E '^RETIRED_DEFAULT_CAPACITY=([1-9][0-9]{0,2}|unknown),workers=([1-9][0-9]{0,2}|unknown)$' "$private_log"
+            capacity=$(sed -n 's/^RETIRED_DEFAULT_CAPACITY=\([0-9]*\),workers=.*/\1/p' "$private_log")
+            printf 'capacity=%s\n' "${capacity:-unknown}" >> "$GITHUB_OUTPUT"
+          else
+            printf 'RETIRED_DEFAULT_CAPACITY=unknown,workers=unknown\n'
+            printf 'capacity=unknown\n' >> "$GITHUB_OUTPUT"
+          fi
       - name: Fast quality
         id: fast_quality
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
-          TSUMUCODE_RETIRE_TIMINGS: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-capture-phase-diagnostic' && '1' || '0' }}
+          TSUMUCODE_RETIRE_TIMINGS: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (github.head_ref == 'codex/retired-capture-phase-diagnostic' || github.head_ref == 'codex/retired-full-worker2') && '1' || '0' }}
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_RETIRE_TIMINGS app npm run "$CHECK_SCRIPT"
       - name: Summarize retired capture timings
-        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-capture-phase-diagnostic' && (steps.fast_quality.outcome == 'success' || steps.fast_quality.outcome == 'failure')
+        id: retired_summary
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (github.head_ref == 'codex/retired-capture-phase-diagnostic' || github.head_ref == 'codex/retired-full-worker2') && (steps.fast_quality.outcome == 'success' || steps.fast_quality.outcome == 'failure')
         continue-on-error: true
         run: |
           set -eu
-          timeout 10s node scripts/ci/retiredCaptureTimingSummary.mjs >> "$GITHUB_STEP_SUMMARY"
-          timeout 5s tail -n 1 "$GITHUB_STEP_SUMMARY"
+          private_summary=$(mktemp)
+          trap 'rm -f -- "$private_summary"' EXIT
+          if ! timeout 10s node scripts/ci/retiredCaptureTimingSummary.mjs > "$private_summary" 2>/dev/null; then
+            printf 'Retired capture summary: unavailable\n'
+            exit 1
+          fi
+          cat "$private_summary" >> "$GITHUB_STEP_SUMMARY"
+          timeout 5s cat "$private_summary"
+          if [ "$(grep -c '^Retired unit set: ' "$private_summary" || true)" = 1 ]; then
+            unit_set=$(sed -n 's/^Retired unit set: //p' "$private_summary")
+            printf 'unit_set=%s\n' "$unit_set" >> "$GITHUB_OUTPUT"
+          fi
+          if [ "$(grep -c '^Retired capture diagnostic: ' "$private_summary" || true)" = 1 ]; then
+            target=$(sed -n 's/^Retired capture diagnostic: //p' "$private_summary")
+            printf 'target=%s\n' "$target" >> "$GITHUB_OUTPUT"
+          fi
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
@@ -286,6 +320,97 @@ jobs:
             fi
           done
           if ! node scripts/ci/retiredCaptureContrast.mjs "$private_dir/default.json" "$private_dir/capped.json"; then
+            failure=1
+          fi
+          exit "$failure"
+
+  retired_full_worker2:
+    # This job is observation only; the ordinary full fast gate above remains unchanged.
+    if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-full-worker2' && needs.resolve.result == 'success' && (needs.fast.result == 'success' || needs.fast.result == 'failure')
+    needs: [resolve, fast]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TSUMUCODE_DOCKER_TARGET: development
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.resolve.outputs.checkout_sha }}
+      - name: Build the existing fixed image
+        run: ./scripts/docker-compose.sh build app
+      - name: Verify diagnostic safeguards
+        run: |
+          if ./scripts/docker-compose.sh run --rm app node --test tests/local/retiredUnitSetSummary.node-test.mjs tests/local/retiredCaptureTimingSummary.node-test.mjs >/dev/null 2>&1; then
+            printf 'Retired diagnostic safeguards: passed\n'
+          else
+            printf 'Retired diagnostic safeguards: failed\n'
+            exit 1
+          fi
+      - name: Run the complete unit suite with two workers
+        env:
+          DEFAULT_UNIT_SET: ${{ needs.fast.outputs.retired_unit_set }}
+          DEFAULT_TARGET: ${{ needs.fast.outputs.retired_target }}
+          DEFAULT_CAPACITY: ${{ needs.fast.outputs.retired_capacity }}
+        run: |
+          set -eu
+          private_dir=$(mktemp -d)
+          cleanup_full() {
+            saved=$?
+            trap - EXIT
+            if ! ./scripts/docker-compose.sh run --rm app rm -f test-results/retired-capture-raw.json > "$private_dir/cleanup.log" 2>&1; then
+              printf 'Retired full suite cleanup: failed\n'
+              if [ "$saved" = 0 ]; then saved=1; fi
+            fi
+            if ! rm -rf -- "$private_dir" 2>/dev/null; then
+              printf 'Retired full private cleanup: failed\n'
+              if [ "$saved" = 0 ]; then saved=1; fi
+            fi
+            exit "$saved"
+          }
+          trap cleanup_full EXIT
+          start=$(date +%s)
+          failure=0
+          if ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_RETIRE_TIMINGS=1 -e TSUMUCODE_TEST_MAX_WORKERS=2 app sh -c '
+            set -eu
+            [ "$(node -p process.versions.node)" = 24.18.0 ]
+            node -e "const n = require(\"node:os\").availableParallelism(); console.log(\"RETIRED_CAP2_CAPACITY=\" + (Number.isInteger(n) && n > 0 && n <= 256 ? n : \"unknown\"));"
+            rm -f test-results/retired-capture-raw.json
+            npm run content:compile
+            printf "RETIRED_FULL_READY\n"
+            exec npm run test:run
+          ' > "$private_dir/test.log" 2>&1; then
+            printf 'Retired full suite command: passed\n'
+          else
+            printf 'Retired full suite command: failed\n'
+            failure=1
+          fi
+          end=$(date +%s)
+          elapsed=$((end - start))
+          if [ "$elapsed" -ge 0 ] && [ "$elapsed" -le 3600 ]; then
+            printf 'Retired full suite elapsed seconds: %s\n' "$elapsed"
+          else
+            printf 'Retired full suite elapsed seconds: unknown\n'
+          fi
+          if [ "$(grep -Ec '^RETIRED_CAP2_CAPACITY=([1-9][0-9]{0,2}|unknown)$' "$private_dir/test.log" || true)" = 1 ]; then
+            grep -E '^RETIRED_CAP2_CAPACITY=([1-9][0-9]{0,2}|unknown)$' "$private_dir/test.log"
+            CAP2_CAPACITY=$(sed -n 's/^RETIRED_CAP2_CAPACITY=\([0-9]*\)$/\1/p' "$private_dir/test.log")
+          else
+            printf 'RETIRED_CAP2_CAPACITY=unknown\n'
+            CAP2_CAPACITY=unknown
+          fi
+          export CAP2_CAPACITY
+          if grep -Fxq RETIRED_FULL_READY "$private_dir/test.log" && timeout 10s node scripts/ci/retiredCaptureTimingSummary.mjs > "$private_dir/summary" 2> "$private_dir/summary-error"; then
+            cat "$private_dir/summary"
+            if ! timeout 10s node scripts/ci/retiredUnitSetCompare.mjs > "$private_dir/comparison" 2> "$private_dir/comparison-error"; then failure=1; fi
+            if [ -f "$private_dir/comparison" ]; then cat "$private_dir/comparison"; fi
+          else
+            printf 'Retired full suite summary: unavailable\n'
             failure=1
           fi
           exit "$failure"
