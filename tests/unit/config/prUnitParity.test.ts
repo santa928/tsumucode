@@ -82,7 +82,8 @@ describe('PR CIと公開unitの範囲', () => {
     expect(step.env?.CHECK_SCRIPT).toBe(
       "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
     );
-    const command = 'run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check:ci';
+    const command =
+      'run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_RETIRE_TIMINGS app npm run check:ci';
     const result = runScript(
       step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'),
       failure ? command : '',

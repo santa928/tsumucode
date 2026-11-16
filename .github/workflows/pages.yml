@@ -179,11 +179,17 @@ jobs:
       - name: Content provenance
         run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
       - name: Fast quality
+        id: fast_quality
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
+          TSUMUCODE_RETIRE_TIMINGS: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-capture-phase-diagnostic' && '1' || '0' }}
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_RETIRE_TIMINGS app npm run "$CHECK_SCRIPT"
+      - name: Summarize retired capture timings
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-capture-phase-diagnostic' && (steps.fast_quality.outcome == 'success' || steps.fast_quality.outcome == 'failure')
+        continue-on-error: true
+        run: node scripts/ci/retiredCaptureTimingSummary.mjs >> "$GITHUB_STEP_SUMMARY"
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
