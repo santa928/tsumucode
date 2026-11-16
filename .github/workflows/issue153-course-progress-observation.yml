@@ -1,0 +1,66 @@
+name: Issue 153 course progress roundtrip observation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind the reviewed Source and observation only
+        env:
+          EVENT_HEAD: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+          EVENT_HEAD_REF: ${{ github.head_ref }}
+          EVENT_BASE_REF: ${{ github.base_ref }}
+          EVENT_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          EVENT_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          source_sha=e06db110c0e21a542aaba69cfaddec10532421b1
+          [[ "$EVENT_HEAD" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$EVENT_BASE" == "$source_sha" ]]
+          [[ "$EVENT_HEAD_REF" == codex/issue153-course-progress-observation ]]
+          [[ "$EVENT_BASE_REF" == codex/issue153-course-progress-roundtrip ]]
+          [[ "$EVENT_HEAD_REPO" == "$EVENT_REPO" ]]
+          [[ "$(git rev-parse HEAD)" == "$EVENT_HEAD" ]]
+          [[ "$(git rev-list --parents -n 1 HEAD)" == "$EVENT_HEAD $source_sha" ]]
+          [[ "$(git diff --name-status --no-renames "$source_sha" HEAD)" == $'A\t.github/workflows/issue153-course-progress-observation.yml' ]]
+          git checkout --detach "$source_sha"
+          [[ "$(git rev-parse HEAD)" == "$source_sha" ]]
+          [[ -z "$(git status --porcelain)" ]]
+      - name: Build the existing browser image
+        run: docker build --target app --tag tsumucode-issue153-progress .
+      - name: Build the same-Source static preview
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-issue153-progress sh -c 'npm run content:compile && npm run build:app'
+      - name: Observe the manifest roundtrip
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --env TSUMUCODE_RELEASE_V2=1
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-issue153-progress node node_modules/@playwright/test/cli.js test
+          --config=playwright.config.ts tests/e2e/manifest-progress-roundtrip.spec.ts
+          --project=chromium --grep-invert '@visual-extended' --workers=1 --retries=0 --reporter=list
