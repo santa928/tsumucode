@@ -15,6 +15,7 @@ const scripts = (
 ).scripts;
 
 interface Step {
+  id?: string;
   if?: string;
   'continue-on-error'?: boolean;
   env?: Record<string, string>;
@@ -28,6 +29,8 @@ const workflow = parse(readFileSync('.github/workflows/pages.yml', 'utf8')) as {
     {
       if?: string;
       'continue-on-error'?: boolean;
+      env?: Record<string, string>;
+      outputs?: Record<string, string>;
       permissions?: Record<string, string>;
       steps: Step[];
     }
@@ -82,7 +85,8 @@ describe('PR CIと公開unitの範囲', () => {
     expect(step.env?.CHECK_SCRIPT).toBe(
       "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
     );
-    const command = 'run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check:ci';
+    expect(step.env?.TSUMUCODE_CI_SOURCE_SHA).toBe('${{ needs.resolve.outputs.checkout_sha }}');
+    const command = 'run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_CI_SOURCE_SHA -e TSUMUCODE_CI_SOURCE_REQUIRED=1 app npm run check:ci';
     const result = runScript(
       step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'),
       failure ? command : '',
@@ -92,6 +96,47 @@ describe('PR CIと公開unitの範囲', () => {
     );
     expect(result.status, result.stderr).toBe(failure ? 43 : 0);
     expect(result.calls).toEqual([command]);
+  });
+
+  it('PR fastとpremergeへ同一event Sourceを渡して失敗を隠さない', () => {
+    const resolve = workflow.jobs.resolve!;
+    const binding = resolve.steps.find((step) => step.id === 'default_target')!;
+    const alternate = resolve.steps.find((step) => step.id === 'target')!;
+    expect(alternate.if).toBe('${{ false }}');
+    expect(resolve.outputs?.checkout_sha).toBe(
+      '${{ steps.target.outputs.checkout_sha || steps.default_target.outputs.checkout_sha }}',
+    );
+    expect(binding.env?.EVENT_SHA).toBe('${{ github.sha }}');
+    expect(binding.if).toBeUndefined();
+    expect(binding['continue-on-error']).not.toBe(true);
+    const directory = mkdtempSync(path.join(os.tmpdir(), 'pr-event-binding-'));
+    try {
+      const output = path.join(directory, 'output');
+      const result = spawnSync('sh', ['-c', binding.run!], {
+        encoding: 'utf8',
+        env: { ...process.env, EVENT_SHA: 'synthetic-event-sha', GITHUB_OUTPUT: output },
+      });
+      expect(result.status, result.stderr).toBe(0);
+      expect(readFileSync(output, 'utf8')).toBe(
+        'checkout_sha=synthetic-event-sha\nverified_source_commit=synthetic-event-sha\n',
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+    const premerge = workflow.jobs.pr_premerge!;
+    expect(runInNewContext(premerge.if!, { github: { event_name: 'pull_request' } })).toBe(true);
+    expect(premerge.env?.TSUMUCODE_CI_SOURCE_SHA).toBe('${{ github.sha }}');
+    expect(premerge['continue-on-error']).not.toBe(true);
+    const step = premerge.steps.find((item) => item.run?.includes('npm run check:prepush'))!;
+    expect(step.if).toBeUndefined();
+    expect(step['continue-on-error']).not.toBe(true);
+    const command = 'run --rm -e BASE_PATH -e TSUMUCODE_CI_SOURCE_SHA -e TSUMUCODE_CI_SOURCE_REQUIRED=1 app npm run check:prepush -- synthetic-base';
+    const environment = { PR_BASE_SHA: 'synthetic-base' };
+    const passing = runScript(step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'), '', environment);
+    const failing = runScript(step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'), command, environment);
+    expect(passing.status, passing.stderr).toBe(0);
+    expect(passing.calls).toEqual([command]);
+    expect(failing.status, failing.stderr).toBe(43);
   });
 
   it.each(['', 'run lint', 'run test:run'])('重複実行せず%sの失敗を後段へ伝える', (failure) => {

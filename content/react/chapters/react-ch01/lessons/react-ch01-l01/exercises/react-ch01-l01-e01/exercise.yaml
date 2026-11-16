@@ -20,8 +20,8 @@ steps:
     file: main.tsx
     target: 問題文promptの値
     starterAnchor: 'prompt: 42'
-    change: 問題文を指定の文字列へ直す
-    observe: 型の案内が消え、問題カードの見出しに反映される
+    change: main.tsxのpromptを文字列「HTMLが受け持つものは？」へ直します。Questionの型注釈、選択肢「内容」「見た目」、correctIndexの0、QuestionCardへ渡すコードは残します。
+    observe: 「プレビューを更新」で型の案内が消え、見出し「HTMLが受け持つものは？」、選択肢「内容」「見た目」、個数2を確認します。「判定する」で表示も確かめます。
     requiresConceptIds:
       - react-props-data
     validationRuleIds:

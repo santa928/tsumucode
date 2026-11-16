@@ -544,7 +544,7 @@ async function publicationFixture() {
 it('実践とOOP候補の全inventoryとcontent closureを固定する', async () => {
   const { root, expectAccepted } = await publicationFixture();
   const compiled = await compileContent({
-    sourceRoot: path.resolve('content'),
+    sourceRoot: path.join(root, 'content'),
     outputRoot: path.join(root, 'generated/content'),
     checkOnly: true,
   });
@@ -571,6 +571,7 @@ it('固定3 path・receipt・他のtracked教材の改変を拒否し復元後�
     'content/python-oop/course.yaml',
     'docs/quality/content-v2-receipts.json',
     'content/python-basics/course.yaml',
+    'content/react/course.yaml',
   ]) {
     const file = path.join(root, target);
     const original = await readFile(file);
