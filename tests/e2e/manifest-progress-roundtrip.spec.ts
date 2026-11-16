@@ -45,19 +45,29 @@ function syntheticSnapshot(): RepositorySnapshot {
       };
       for (const exercise of lesson.exercises) {
         const source = 'synthetic saved workspace: ' + index.id + '/' + exercise.workspaceId;
-        drafts[index.id + ':' + exercise.workspaceId] = {
+        const draftKey = index.id + ':' + exercise.workspaceId;
+        const passingSource = 'synthetic passing snapshot: ' + index.id + '/' + exercise.id;
+        drafts[draftKey] = {
           courseId: index.id,
           lessonId: lesson.id,
           exerciseId: exercise.id,
           workspaceId: exercise.workspaceId,
           contentRevision: index.revision,
-          editRevision: 1,
+          editRevision: 2,
           files: { 'saved.txt': source },
           selectedFile: 'saved.txt',
           cursors: { 'saved.txt': { anchor: 0, head: 0 } },
           validationHistory: [],
           revealedHintIds: [],
-          lastPassingSnapshots: {},
+          lastPassingSnapshots: {
+            ...drafts[draftKey]?.lastPassingSnapshots,
+            [exercise.id]: {
+              editRevision: 1,
+              contentRevision: index.revision,
+              files: { 'saved.txt': passingSource },
+              evaluatedAt: now,
+            },
+          },
           updatedAt: now,
         };
       }
@@ -112,6 +122,21 @@ test('manifestの全Lesson・workspaceと既知進捗を実IndexedDBからExport
 }, info) => {
   test.setTimeout(90_000);
   const snapshot = syntheticSnapshot();
+  const expectedExerciseCount = indexes.reduce(
+    (count, index) =>
+      count +
+      index.phases.flatMap(({ chapters }) =>
+        chapters.flatMap(({ lessons }) => lessons.flatMap(({ exercises }) => exercises)),
+      ).length,
+    0,
+  );
+  expect(expectedExerciseCount).toBeGreaterThan(0);
+  expect(
+    Object.values(snapshot.drafts).reduce(
+      (count, draft) => count + Object.keys(draft.lastPassingSnapshots).length,
+      0,
+    ),
+  ).toBe(expectedExerciseCount);
   const unsigned = { ...snapshot, appVersion: '0.1.0', exportedAt: now };
   await importJson(
     page,
