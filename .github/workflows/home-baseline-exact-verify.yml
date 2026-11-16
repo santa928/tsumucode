@@ -1,0 +1,95 @@
+name: Home baseline exact verification
+
+on:
+  pull_request:
+    branches: [codex/home-python-path-baseline]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/home-python-baseline-verify'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind diagnostic scope to the fixed Source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=73b6260de67daa7a33c3648b44fcf1b1592e9cfa
+          read -r -a parents <<< "$(git show -s --format=%P HEAD)"
+          test "${#parents[@]}" -eq 1
+          test "${parents[0]}" = "$source_sha"
+          test "$(git diff --no-renames --name-status "$source_sha" HEAD)" = $'A\t.github/workflows/home-baseline-exact-verify.yml'
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 73b6260de67daa7a33c3648b44fcf1b1592e9cfa
+          path: observed-source
+          persist-credentials: false
+      - name: Verify fixed Source
+        run: test "$(git -C observed-source rev-parse HEAD)" = 73b6260de67daa7a33c3648b44fcf1b1592e9cfa
+      - name: Verify the expected snapshot bytes
+        run: >-
+          printf '%s  %s\n'
+          558f10bf23f54d651e9ecea2765c04db78e100c6c48bd732a03609b67231db14
+          observed-source/tests/e2e/visual-regression.spec.ts-snapshots/home-desktop-compact-chromium-linux.png
+          | sha256sum --check -
+      - name: Build the fixed browser image
+        run: docker build --target app --tag tsumucode-home-observation observed-source
+      - name: Rebuild the fixed Source for diagnosis
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-home-observation npm run build
+      - name: Verify one Home test is selected
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g \
+            --pids-limit 512 --shm-size 512m \
+            --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace" \
+            --mount type=volume,target=/workspace/node_modules \
+            tsumucode-home-observation node node_modules/@playwright/test/cli.js test \
+            --config=playwright.qualification.config.ts tests/e2e/visual-regression.spec.ts \
+            --project=chromium --workers=1 --retries=0 --reporter=list \
+            --output=test-results/home-observation --grep 'home-desktop-compact$' --list > "$RUNNER_TEMP/home-selection.txt"
+          test "$(tail -n 1 "$RUNNER_TEMP/home-selection.txt")" = 'Total: 1 test in 1 file'
+      - name: Compare one Home image without updating baselines
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-home-observation node node_modules/@playwright/test/cli.js test
+          --config=playwright.qualification.config.ts tests/e2e/visual-regression.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
+          --output=test-results/home-observation --grep 'home-desktop-compact$'
+      - name: Preserve Home comparison images only
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: home-baseline-exact-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            observed-source/test-results/home-observation/**/*-actual.png
+            observed-source/test-results/home-observation/**/*-expected.png
+            observed-source/test-results/home-observation/**/*-diff.png
+          if-no-files-found: warn
+          retention-days: 7
