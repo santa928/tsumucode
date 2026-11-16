@@ -20,6 +20,8 @@ function assertSyntheticTimeout(result, enabled) {
     enabled,
     'synthetic phase marker mismatch',
   );
+  assert.ok(output.includes('capture-phase-probe late-attempt'), 'late attempt marker missing');
+  assert.equal(output.includes('capture-baseline-phase copy done'), false, 'late phase leaked');
 }
 
 test('a missing marker does not expose captured child output', () => {
@@ -55,8 +57,9 @@ for (const enabled of [true, false]) {
       );
       writeFileSync(
         path.join(temporary, 'probe.test.mjs'),
-        `import { markCaptureBaselinePhase } from ${JSON.stringify(helper)};\n` +
-          `test('synthetic timeout', async () => { markCaptureBaselinePhase(${enabled}, 'copy', 'start'); await new Promise(() => {}); }, 250);\n`,
+        `import { markActiveCaptureBaselinePhase } from ${JSON.stringify(helper)};\n` +
+          `afterAll(async () => { await new Promise((resolve) => setTimeout(resolve, 700)); });\n` +
+          `test('synthetic timeout', async ({ signal }) => { markActiveCaptureBaselinePhase(signal, ${enabled}, 'copy', 'start'); await new Promise((resolve) => setTimeout(resolve, 500)); process.stderr.write('capture-phase-probe late-attempt\\n'); markActiveCaptureBaselinePhase(signal, ${enabled}, 'copy', 'done'); }, 250);\n`,
       );
       const result = spawnSync(
         process.execPath,
