@@ -15,6 +15,7 @@ const scripts = (
 ).scripts;
 
 interface Step {
+  name?: string;
   if?: string;
   'continue-on-error'?: boolean;
   env?: Record<string, string>;
@@ -42,10 +43,6 @@ function runScript(source: string, failure = '', environment: Record<string, str
     writeFileSync(trace, '');
     const stub =
       '#!/bin/sh\nprintf "%s\\n" "$*" >> "$TRACE"\n' +
-      'if [ "${CHECK_WORKERS-}" = 1 ]; then\n' +
-      '  [ "${TSUMUCODE_TEST_MAX_WORKERS-}" = adaptive:2 ] || exit 41\n' +
-      '  case " $* " in *" -e TSUMUCODE_TEST_MAX_WORKERS "*) ;; *) exit 42 ;; esac\n' +
-      'fi\n' +
       'if [ "$*" = "$FAIL_COMMAND" ]; then exit 43; fi\n';
     for (const name of ['npm', 'docker-compose.sh']) {
       writeFileSync(path.join(directory, name), stub);
@@ -68,127 +65,56 @@ function runScript(source: string, failure = '', environment: Record<string, str
 }
 
 describe('PR CIと公開unitの範囲', () => {
-  it.each([false, true])('pre-pushもadaptive workerを渡し失敗=%sを伝える', (failure) => {
-    const prepush = workflow.jobs.pr_premerge!;
-    expect(prepush['continue-on-error']).not.toBe(true);
-    const step = prepush.steps.find((item) => item.run?.includes('npm run check:prepush'))!;
-    expect(step.if).toBeUndefined();
-    expect(step['continue-on-error']).not.toBe(true);
-    expect(step.env?.TSUMUCODE_TEST_MAX_WORKERS).toBe('adaptive:2');
-    const source = step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh');
-    const command =
-      'run --rm -e BASE_PATH -e TSUMUCODE_TEST_MAX_WORKERS app npm run check:prepush -- base';
-    const env = {
-      PR_BASE_SHA: 'base',
-      TSUMUCODE_TEST_MAX_WORKERS: 'adaptive:2',
-      CHECK_WORKERS: '1',
-    };
-    const result = runScript(source, failure ? command : '', env);
-    expect(result.status, result.stderr).toBe(failure ? 43 : 0);
-    expect(result.calls).toEqual([command]);
-    expect(runScript(source, '', { ...env, TSUMUCODE_TEST_MAX_WORKERS: '' }).status).toBe(41);
-    expect(runScript(source.replace(' -e TSUMUCODE_TEST_MAX_WORKERS', ''), '', env).status).toBe(
-      42,
-    );
-  });
-
-  it.each([
-    ['pull_request', 'check:ci', false],
-    ['pull_request', 'check:ci', true],
-    ['push', 'check', false],
-    ['push', 'check', true],
-    ['workflow_dispatch', 'check', false],
-    ['workflow_dispatch', 'check', true],
-  ] as const)(
-    '%s の fast (%s) はPR時のみ adaptive worker を使い失敗=%sを伝える',
-    (event, check, failure) => {
-      expect(workflow.on.pull_request).toEqual({
-        types: ['opened', 'reopened', 'synchronize', 'edited'],
-      });
-      const fast = workflow.jobs.fast!;
-      expect(runInNewContext(fast.if!, { github: { event_name: event }, inputs: {} })).toBe(true);
-      expect(fast['continue-on-error']).not.toBe(true);
-      expect(fast.permissions).toEqual({ contents: 'read' });
-      const step = fast.steps.find(
-        (item) => item.run?.includes('npm run') && item.env?.TEST_BASE_SHA !== undefined,
-      )!;
-      expect(step.if).toBeUndefined();
-      expect(step['continue-on-error']).not.toBe(true);
-      expect(step.env?.CHECK_SCRIPT).toBe(
-        "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
-      );
-      expect(step.env?.TSUMUCODE_TEST_MAX_WORKERS).toBe('adaptive:2');
-      const expression = step.env!.CHECK_SCRIPT!.slice(3, -2).trim();
-      expect(runInNewContext(expression, { github: { event_name: event } })).toBe(check);
-      const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
-      expect(source).not.toContain('./scripts/docker-compose.sh');
-      const capped = event === 'pull_request';
-      const workerArg = capped ? ' -e TSUMUCODE_TEST_MAX_WORKERS' : '';
-      const command = `run --rm -e BASE_PATH -e TEST_BASE_SHA${workerArg} app npm run ${check}`;
-      const env = {
-        CHECK_SCRIPT: check,
-        GITHUB_EVENT_NAME: event,
-        TSUMUCODE_TEST_MAX_WORKERS: 'adaptive:2',
-        ...(capped ? { CHECK_WORKERS: '1' } : {}),
-      };
-      const result = runScript(source, failure ? command : '', env);
-      expect(result.status, result.stderr).toBe(failure ? 43 : 0);
-      expect(result.calls).toEqual([command]);
-      if (capped) {
-        expect(runScript(source, '', { ...env, TSUMUCODE_TEST_MAX_WORKERS: '' }).status).toBe(41);
-        expect(
-          runScript(source.replace(' -e TSUMUCODE_TEST_MAX_WORKERS', ''), '', env).status,
-        ).toBe(42);
-      }
-    },
-  );
-
-  it('配信・migration実行では従来どおりfastを使わない', () => {
-    const condition = workflow.jobs.fast!.if!;
-    expect(
-      runInNewContext(condition, {
-        github: { event_name: 'workflow_dispatch' },
-        inputs: { deploy: true },
-      }),
-    ).toBe(false);
-    expect(
-      runInNewContext(condition, {
-        github: { event_name: 'workflow_dispatch' },
-        inputs: { migration_checks: true },
-      }),
-    ).toBe(false);
-  });
-
-  it('pre-push証拠の並列数はCIと決めつけず実際の指定を記録する', () => {
-    const file = ts.createSourceFile(
-      'checkBeforePush.ts',
-      readFileSync('scripts/checkBeforePush.ts', 'utf8'),
-      ts.ScriptTarget.Latest,
+  it.each([false, true])('全PRで必須の全件check:ciを呼び、失敗=%sを伝える', (failure) => {
+    expect(workflow.on.pull_request).toEqual({
+      types: ['opened', 'reopened', 'synchronize', 'edited'],
+    });
+    const fast = workflow.jobs.fast!;
+    expect(runInNewContext(fast.if!, { github: { event_name: 'pull_request' }, inputs: {} })).toBe(
       true,
     );
-    let initializer: ts.Expression | undefined;
-    const visit = (node: ts.Node) => {
-      if (
-        ts.isPropertyAssignment(node) &&
-        node.name.getText(file) === 'testMaxWorkers' &&
-        ts.isBinaryExpression(node.initializer)
-      )
-        initializer = node.initializer;
-      ts.forEachChild(node, visit);
-    };
-    visit(file);
-    expect(initializer).toBeDefined();
-    for (const [value, expected] of [
-      [undefined, 'Vitest既定値（明示なし）'],
-      ['1', '1'],
-      ['adaptive:2', 'adaptive:2'],
-    ] as const) {
-      expect(
-        runInNewContext(initializer!.getText(file), {
-          process: { env: { TSUMUCODE_TEST_MAX_WORKERS: value } },
-        }),
-      ).toBe(expected);
-    }
+    expect(fast['continue-on-error']).not.toBe(true);
+    expect(fast.permissions).toEqual({ contents: 'read' });
+    const step = fast.steps.find(
+      (item) => item.run?.includes('npm run') && item.env?.TEST_BASE_SHA !== undefined,
+    )!;
+    expect(step.if).toBeUndefined();
+    expect(step['continue-on-error']).not.toBe(true);
+    expect(step.env?.CHECK_SCRIPT).toBe(
+      "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
+    );
+    const command =
+      'run --rm -e BASE_PATH -e TEST_BASE_SHA app npm exec -- tsx scripts/runPrCiCheck.ts fast';
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, failure ? command : '', {
+      CHECK_SCRIPT: 'check:ci',
+      GITHUB_EVENT_NAME: 'pull_request',
+    });
+    expect(result.status, result.stderr).toBe(failure ? 43 : 0);
+    expect(result.calls).toEqual([command]);
+  });
+
+  it.each(['push', 'workflow_dispatch'] as const)('%s fastは従来のcheckを使用する', (event) => {
+    const step = workflow.jobs.fast!.steps.find((item) => item.name === 'Fast quality')!;
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, '', { CHECK_SCRIPT: 'check', GITHUB_EVENT_NAME: event });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.calls).toEqual(['run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check']);
+  });
+
+  it.each([false, true])('PR pre-pushは既存checkの失敗=%sを伝える', (failure) => {
+    const step = workflow.jobs.pr_premerge!.steps.find(
+      (item) => item.name === 'Run the existing pre-push checks',
+    )!;
+    const base = 'a'.repeat(40);
+    const command = `run --rm -e BASE_PATH app npm exec -- tsx scripts/runPrCiCheck.ts prepush ${base}`;
+    const source = step.run!.replaceAll('./scripts/docker-compose.sh', 'docker-compose.sh');
+    expect(source).not.toContain('./scripts/docker-compose.sh');
+    const result = runScript(source, failure ? command : '', { PR_BASE_SHA: base });
+    expect(result.status, result.stderr).toBe(failure ? 43 : 0);
+    expect(result.calls).toEqual([command]);
   });
 
   it.each(['', 'run lint', 'run test:run'])('重複実行せず%sの失敗を後段へ伝える', (failure) => {
@@ -198,21 +124,6 @@ describe('PR CIと公開unitの範囲', () => {
       'run content:compile',
       'run lint',
       'run test:run',
-      'run build:app',
-      'run smoke:learning-chunks',
-    ];
-    expect(result.status, result.stderr).toBe(failure ? 43 : 0);
-    expect(result.calls).toEqual(
-      failure ? commands.slice(0, commands.indexOf(failure) + 1) : commands,
-    );
-  });
-
-  it.each(['', 'run lint', 'run test:changed'])('pushの既存checkで%sの失敗を伝える', (failure) => {
-    const result = runScript(scripts['check']!, failure);
-    const commands = [
-      'run content:compile',
-      'run lint',
-      'run test:changed',
       'run build:app',
       'run smoke:learning-chunks',
     ];

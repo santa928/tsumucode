@@ -91,7 +91,9 @@ describe('Draft PRの固定検証', () => {
     expect(node?.run).toContain('24.18.0');
     expect(node?.if).toBeUndefined();
     const prepush = steps.find((step) => step.name === 'Run the existing pre-push checks');
-    expect(prepush?.run).toContain('npm run check:prepush -- "$PR_BASE_SHA"');
+    expect(prepush?.run).toContain(
+      'npm exec -- tsx scripts/runPrCiCheck.ts prepush "$PR_BASE_SHA"',
+    );
     expect(prepush?.['continue-on-error']).not.toBe(true);
     expect(prepush?.if).toBeUndefined();
     expect((jobs.fast?.steps ?? []).find((step) => step.name === 'Fast quality')?.run).toContain(
