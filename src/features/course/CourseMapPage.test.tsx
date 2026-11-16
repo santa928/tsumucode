@@ -48,7 +48,7 @@ function renderCourseMap(course: CourseIndex | CourseManifest = fixtureCourse) {
         element: <CourseMapPage />,
       },
     ],
-    { initialEntries: ['/courses/html-css'] },
+    { initialEntries: [`/courses/${course.id}`] },
   );
 
   render(<RouterProvider router={router} />);
@@ -94,6 +94,18 @@ describe('CourseMapPage', () => {
     expect(
       screen.getByText('ページの動きを作るJavaScriptや、サーバーへの公開手順は扱いません。'),
     ).toBeInTheDocument();
+  });
+
+  it.each([
+    ['python-practice', /リスト.*繰り返し.*関数.*例外/u, /外部パッケージ/u],
+    ['python-oop', /関数.*範囲.*データクラス/u, /メタクラス.*ディスクリプタ/u],
+  ])('%s の入口に前提と対象外、進め方を表示する', async (id, before, outside) => {
+    renderCourseMap({ ...fixtureCourse, id });
+    expect(await screen.findByText('始める前に')).toBeInTheDocument();
+    expect(screen.getByText(before)).toBeInTheDocument();
+    expect(screen.getByText('できるようになること')).toBeInTheDocument();
+    expect(screen.getByText('練習の進め方')).toBeInTheDocument();
+    expect(screen.getByText(outside)).toBeInTheDocument();
   });
 
   it('全工程合格でも記録と最終工程での制作完成判定を区別する', async () => {
