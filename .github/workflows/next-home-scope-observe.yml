@@ -1,0 +1,74 @@
+name: Next Home scoped locator observation
+
+on:
+  pull_request:
+    branches: [codex/next-home-scope]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/next-home-scope-observe' &&
+      github.event.pull_request.base.sha == 'bc58c873aad0e3627d5fc3c6ad7e4c36d9aae593'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind observation to its fixed Source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=bc58c873aad0e3627d5fc3c6ad7e4c36d9aae593
+          read -r -a parents <<< "$(git show -s --format=%P HEAD)"
+          test "${#parents[@]}" -eq 1
+          test "${parents[0]}" = "$source_sha"
+          test "$(git diff --no-renames --name-status "$source_sha" HEAD)" = $'A\t.github/workflows/next-home-scope-observe.yml'
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: bc58c873aad0e3627d5fc3c6ad7e4c36d9aae593
+          path: observed-source
+          persist-credentials: false
+      - name: Verify fixed Source
+        run: test "$(git -C observed-source rev-parse HEAD)" = bc58c873aad0e3627d5fc3c6ad7e4c36d9aae593
+      - name: Build the fixed browser image
+        run: docker build --target app --tag tsumucode-next-home-scope observed-source
+      - name: Build the fixed Source
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-next-home-scope npm run build
+      - name: Observe scoped locator and complete guide checks in Chromium
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-next-home-scope node node_modules/@playwright/test/cli.js test
+          --config=playwright.authoring.config.ts tests/e2e/next-course-guide.spec.ts
+          --project=chromium --workers=1 --retries=0 --repeat-each=3 --reporter=list
+      - name: Preserve bounded failure evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: next-home-scope-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            observed-source/test-results/e2e-artifacts/next-course-guide-*/error-context.md
+            observed-source/test-results/e2e-artifacts/next-course-guide-*/*.png
+          if-no-files-found: warn
+          retention-days: 7
