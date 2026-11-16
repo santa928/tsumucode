@@ -302,7 +302,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
             page.on('request', (request) => {
               const url = new URL(request.url());
               if (/__tsumucode|\/control\/|\/preview\//u.test(url.pathname))
-                requests.push(url.href);
+                requests.push('forbidden-local-endpoint');
             });
           const route =
             './#/courses/' +
