@@ -1,0 +1,91 @@
+name: Prepush worker contrast (diagnostic only)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/prepush-worker-contrast'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      TSUMUCODE_DOCKER_TARGET: app
+      BASE_PATH: /tsumucode/
+      TEST_BASE_SHA: d6e7f015300e4536097cb004e616f68c867ada55
+      SUBJECT_HEAD_SHA: 0ed2ba36e1b684297fae7f0736bdb617793f59ef
+      SUBJECT_MERGE_SHA: b25681911168c278ed52226eb7c7ca8044a506d5
+      SUBJECT_TREE_SHA: 917e1ebe5976a834bae1eaabd478394146d96b2d
+    steps:
+      - name: Check out observation code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: observer
+      - name: Bind observer and exact Source
+        working-directory: observer
+        run: |
+          set -eu
+          [ '${{ github.event.pull_request.base.sha }}' = "$SUBJECT_HEAD_SHA" ]
+          [ "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}' ]
+          [ "$(git rev-parse HEAD^1)" = "$SUBJECT_HEAD_SHA" ]
+          git diff --name-only "$SUBJECT_HEAD_SHA" HEAD | LC_ALL=C sort > "$RUNNER_TEMP/observer-files"
+          printf '%s\n' '.github/workflows/prepush-worker-contrast.yml' 'scripts/ci/prepush-unit-compare.mjs' 'scripts/ci/prepush-unit-compare.test.mjs' | LC_ALL=C sort > "$RUNNER_TEMP/expected-observer-files"
+          cmp "$RUNNER_TEMP/observer-files" "$RUNNER_TEMP/expected-observer-files"
+      - name: Check out fixed pre-push Source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: b25681911168c278ed52226eb7c7ca8044a506d5
+          fetch-depth: 0
+          persist-credentials: false
+          path: subject
+      - name: Bind selector and fixed Source
+        working-directory: subject
+        run: |
+          set -eu
+          [ "$(git rev-parse HEAD)" = "$SUBJECT_MERGE_SHA" ]
+          [ "$(git rev-parse HEAD^{tree})" = "$SUBJECT_TREE_SHA" ]
+          [ "$(git rev-parse HEAD^1)" = "$TEST_BASE_SHA" ]
+          [ "$(git rev-parse HEAD^2)" = "$SUBJECT_HEAD_SHA" ]
+          git merge-base --is-ancestor "$TEST_BASE_SHA" HEAD
+          git diff --quiet "$TEST_BASE_SHA" HEAD -- scripts/testChanged.ts scripts/vitestChanged.config.ts
+          git diff --name-only "$TEST_BASE_SHA" HEAD | grep -Fx vitest.config.ts
+          node -e "const s=require('node:fs').readFileSync('scripts/testChanged.ts','utf8'); if (!s.includes(\"runTests(['run'])\") || !s.includes(\"'scripts/vitestChanged.config.ts'\")) process.exit(1)"
+      - name: Build fixed pre-push image
+        working-directory: subject
+        run: ./scripts/docker-compose.sh build app
+      - name: Compare the full selected suite on one runner
+        working-directory: subject
+        run: |
+          set -eu
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -v "$GITHUB_WORKSPACE/observer/scripts/ci:/probe:ro" app sh -c '
+            set -eu
+            [ "$(node -p process.versions.node)" = 24.18.0 ]
+            node --test /probe/prepush-unit-compare.test.mjs
+            node -e "const n=require(\"node:os\").availableParallelism(); if (!Number.isSafeInteger(n)||n<1||n>256) process.exit(1); console.log(\"Available CPUs: \"+n)"
+            tmp=$(mktemp -d)
+            trap '\''rm -rf -- "$tmp"'\'' EXIT
+            unset TSUMUCODE_TEST_MAX_WORKERS
+            ./node_modules/.bin/tsx scripts/checkBeforePush.ts prepare "$tmp/default.snapshot" "$TEST_BASE_SHA" >/dev/null
+            if ! npm run content:provenance >"$tmp/default-provenance.log" 2>&1; then echo "Default provenance failed"; exit 1; fi
+            if ! npm run typecheck >"$tmp/default-typecheck.log" 2>&1; then echo "Default typecheck failed"; exit 1; fi
+            if ! npm run content:compile >"$tmp/default-compile.log" 2>&1; then echo "Default compile failed"; exit 1; fi
+            if ! npm run lint >"$tmp/default-lint.log" 2>&1; then echo "Default lint failed"; exit 1; fi
+            if npm exec -- vitest run --config scripts/vitestChanged.config.ts --reporter=default --reporter=json --outputFile.json="$tmp/default.json" >"$tmp/default.log" 2>&1; then first=0; else first=$?; fi
+            if ! ./node_modules/.bin/tsx scripts/checkBeforePush.ts finish "$tmp/default.snapshot" "$TEST_BASE_SHA" >/dev/null; then echo "Default Source binding failed"; exit 1; fi
+            export TSUMUCODE_TEST_MAX_WORKERS=adaptive:2
+            ./node_modules/.bin/tsx scripts/checkBeforePush.ts prepare "$tmp/capped.snapshot" "$TEST_BASE_SHA" >/dev/null
+            if ! npm run content:provenance >"$tmp/capped-provenance.log" 2>&1; then echo "Capped provenance failed"; exit 1; fi
+            if ! npm run typecheck >"$tmp/capped-typecheck.log" 2>&1; then echo "Capped typecheck failed"; exit 1; fi
+            if ! npm run content:compile >"$tmp/capped-compile.log" 2>&1; then echo "Capped compile failed"; exit 1; fi
+            if ! npm run lint >"$tmp/capped-lint.log" 2>&1; then echo "Capped lint failed"; exit 1; fi
+            if npm exec -- vitest run --config scripts/vitestChanged.config.ts --reporter=default --reporter=json --outputFile.json="$tmp/capped.json" >"$tmp/capped.log" 2>&1; then second=0; else second=$?; fi
+            if ! ./node_modules/.bin/tsx scripts/checkBeforePush.ts finish "$tmp/capped.snapshot" "$TEST_BASE_SHA" >/dev/null; then echo "Capped Source binding failed"; exit 1; fi
+            if node /probe/prepush-unit-compare.mjs "$tmp/default.json" "$tmp/capped.json"; then compared=0; else compared=$?; fi
+            printf "Default exit: %s; capped exit: %s\n" "$first" "$second"
+            [ "$first" -eq 0 ] && [ "$second" -eq 0 ] && [ "$compared" -eq 0 ]
+          '
