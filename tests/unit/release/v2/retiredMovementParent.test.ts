@@ -160,6 +160,8 @@ it('accepts the same descendant from a normal linked worktree without inheriting
   await git('update-ref', 'HEAD', descendant);
   await git('worktree', 'add', '--detach', linked, descendant);
   const original = process.cwd();
+  const originalGitDir = process.env.GIT_DIR;
+  const originalWorkTree = process.env.GIT_WORK_TREE;
   try {
     process.chdir(linked);
     vi.stubEnv('GIT_DIR', path.join(linked, '.git-common/worktrees/other'));
@@ -168,6 +170,12 @@ it('accepts the same descendant from a normal linked worktree without inheriting
       assertRetiredMovementParent(linked, { proof: { ...proof, sourceCommit: descendant } }),
     ).rejects.toThrow('Retired movement parent is not verified');
     vi.unstubAllEnvs();
+    expect(process.env.GIT_DIR).toBe(originalGitDir);
+    expect(process.env.GIT_WORK_TREE).toBe(originalWorkTree);
+    // The positive case models a standalone worktree, not the outer compose
+    // checkout. Do not reuse that outer checkout's repository selectors.
+    vi.stubEnv('GIT_DIR', undefined);
+    vi.stubEnv('GIT_WORK_TREE', undefined);
     vi.stubEnv('GIT_CONFIG_COUNT', '1');
     vi.stubEnv('GIT_CONFIG_KEY_0', 'core.repositoryformatversion');
     vi.stubEnv('GIT_CONFIG_VALUE_0', '999');
