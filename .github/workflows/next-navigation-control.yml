@@ -33,7 +33,9 @@ jobs:
           source_sha=7c0b42fd7ae34aa315e7807128cf43fa91dde95d
           read -r -a parents <<< "$(git show -s --format=%P HEAD)"
           test "${#parents[@]}" -eq 1
-          test "${parents[0]}" = "$source_sha"
+          test "${parents[0]}" = ef4fd2238cf5331a7f499b1c5315e9c1e5554c23
+          test "$(git show -s --format=%P "${parents[0]}")" = a1d1f9db29ca2c139ca960182910c73c1f97db23
+          test "$(git show -s --format=%P a1d1f9db29ca2c139ca960182910c73c1f97db23)" = "$source_sha"
           expected=$'A\t.github/workflows/next-navigation-control.yml\nA\ttests/e2e/next-navigation-control.spec.ts'
           test "$(git diff --no-renames --name-status "$source_sha" HEAD)" = "$expected"
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
