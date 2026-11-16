@@ -33,7 +33,7 @@ const allowed = new Set(
 
 for (let iteration = 1; iteration <= 3; iteration += 1) {
   for (const variant of ['original', 'visible-loading-text-absent'] as const) {
-    test(`Next same-page navigation ${iteration} ${variant}`, async ({ page }) => {
+    test(`Next same-page navigation ${String(iteration)} ${variant}`, async ({ page }) => {
       const events: string[] = [];
       page.on('console', (message) => {
         if (allowed.has(message.text()) || message.text() === '[next-control] hashchange home') {
@@ -89,7 +89,7 @@ for (let iteration = 1; iteration <= 3; iteration += 1) {
           .evaluate(() => window.dispatchEvent(new Event('tsumucode-next-observe-stop')))
           .catch(() => {});
         console.info(
-          `[next-control] ${variant} ${iteration} elapsed-ms ${Math.round(performance.now() - started)}`,
+          `[next-control] ${variant} ${String(iteration)} elapsed-ms ${String(Math.round(performance.now() - started))}`,
         );
         for (const event of events) console.info(event);
       }
