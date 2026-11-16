@@ -1,0 +1,75 @@
+name: Observe bounded WebKit UI probe
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  observe:
+    if: github.event.pull_request.draft == true && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/webkit-ui-probe-validation' && github.base_ref == 'codex/webkit-busy-diagnostic'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind the reviewed diagnostic Source
+        env:
+          EVENT_HEAD: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -eu
+          source='5c8bc642c0a414531298d2ccbfa60fa1fc0d2d71'
+          test "$EVENT_BASE" = "$source"
+          test "$(git rev-parse HEAD)" = "$EVENT_HEAD"
+          test "$(git rev-parse HEAD^)" = "$source"
+          test "$(git diff --name-only "$source" HEAD)" = '.github/workflows/observe-webkit-bounded-ui.yml'
+      - name: Build the fixed Browser image
+        run: ./scripts/docker-compose.sh build app
+      - name: Evaluate bounded diagnostics in real WebKit
+        run: |
+          ./scripts/docker-compose.sh run --rm -T app sh -c 'node --import tsx --input-type=module <<'"'"'NODE'"'"'
+          import assert from "node:assert/strict";
+          import { webkit } from "@playwright/test";
+          import { readManifestDiagnosticUi, withManifestDiagnostic } from "./tests/e2e/helpers/manifestDiagnostic.ts";
+
+          const browser = await webkit.launch({ headless: true });
+          try {
+            const page = await browser.newPage();
+            await page.setContent(`<div class="tc-exercise-pager">
+              <button class="tc-exercise-pager-secondary" disabled>更新しています</button>
+              <button class="tc-exercise-pager-primary" disabled>判定する</button>
+              <p class="tc-exercise-operation-error">synthetic-private-marker</p></div>`);
+            const populated = await page.evaluate(readManifestDiagnosticUi);
+            assert.deepEqual(populated, { grade: "ready-label", gradeDisabled: true, preview: "updating", operationError: true });
+            const failure = new Error("synthetic-private-marker");
+            let annotation;
+            await assert.rejects(withManifestDiagnostic(async () => { throw failure; }, (value) => { annotation = value; }, () => page.evaluate(readManifestDiagnosticUi)), (error) => error === failure);
+            assert.deepEqual(JSON.parse(annotation).ui, populated);
+            assert.equal(annotation.includes("synthetic-private-marker"), false);
+            await page.setContent(`<div class="tc-exercise-pager">
+              <button class="tc-exercise-pager-secondary">synthetic-unknown</button>
+              <button class="tc-exercise-pager-primary">synthetic-unknown</button></div>`);
+            assert.deepEqual(await page.evaluate(readManifestDiagnosticUi), { grade: "other", gradeDisabled: false, preview: "unrecognized-or-missing", operationError: false });
+            await page.setContent("");
+            assert.deepEqual(await page.evaluate(readManifestDiagnosticUi), { grade: "missing", gradeDisabled: null, preview: "unrecognized-or-missing", operationError: null });
+            let called = false;
+            assert.equal(await withManifestDiagnostic(async () => 7, () => { throw new Error("unexpected-publish"); }, async () => { called = true; }), 7);
+            assert.equal(called, false);
+            let hungAnnotation;
+            await assert.rejects(withManifestDiagnostic(async () => { throw failure; }, (value) => { hungAnnotation = value; }, () => new Promise(() => {})), (error) => error === failure);
+            assert.equal(JSON.parse(hungAnnotation).ui, null);
+            process.stdout.write("fixed WebKit probe positive and negative controls passed\n");
+          } finally {
+            await browser.close();
+          }
+          NODE'
+      - name: Stop only the isolated diagnostic containers
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
