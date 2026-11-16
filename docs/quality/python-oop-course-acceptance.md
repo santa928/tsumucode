@@ -1,5 +1,7 @@
 # Python OOP Courseの公開前統合受入（Issue #152）
 
+現行の完了判定・既存受入の再利用・正式Gateへの接続と配信後確認は、[Python OOPの既存受入と正式公開の残条件](python-oop-release-readiness.md)を参照します。2026-11-03の本人指示に従い、受入済み教材の3名評価を毎回やり直さず、AI評価を実人観察とは記録しません。以下の版・証拠・経緯は元の対象を保持します。
+
 2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。最新の[PR220で完了した影響再操作](python-computer-use-acceptance.md#pr220で完了した影響再操作)では、確認範囲の必須問題は解消済みです。初回・5192候補の観測と限界は同文書に保持します。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
 
 対象は `python-oop` の4 Chapter・9 Lesson・34 Slide・標準8演習・Guided Project1件、240分の草稿です。基準mainは `fdc77bf9ad6adde7a4eb801d6c930f5f7d72c11d`、Course revisionは `2026-10-14.3` です。#148〜#151の実装を統合済みで、Python基礎のFunction・スコープとPython実践のdataclassを学習前提にします。実践Courseが未公開であることと、OOPの独立設計・技術検証を進められることを分けます。
