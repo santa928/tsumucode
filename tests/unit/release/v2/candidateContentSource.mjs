@@ -46,7 +46,12 @@ export async function assertCandidateContentSource(rootInput, source, environmen
     const size = Number(sizeText);
     if (!Number.isSafeInteger(size) || size < 0 || size > 16 * 1024 * 1024 ||
       parts.some((part) => !part || part === '.' || part === '..' || part === '.git') ||
-      relative.includes('\\') || /[\u0000-\u001f\u007f]/u.test(relative) || expected.has(relative))
+      relative.includes('\\') ||
+      Array.from(relative).some((character) => {
+        const code = character.charCodeAt(0);
+        return code < 32 || code === 127;
+      }) ||
+      expected.has(relative))
       throw Error('Invalid candidate content tree');
     total += size;
     if (total > 128 * 1024 * 1024) throw Error('Candidate content exceeds limit');

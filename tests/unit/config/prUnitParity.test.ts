@@ -130,8 +130,9 @@ describe('PR CIと公開unitの範囲', () => {
     const step = premerge.steps.find((item) => item.run?.includes('npm run check:prepush'))!;
     expect(step.if).toBeUndefined();
     expect(step['continue-on-error']).not.toBe(true);
+    expect(step.env?.CHECKED_BASE_SHA).toBe('${{ steps.pr_binding.outputs.checked_base_sha }}');
     const command = 'run --rm -e BASE_PATH -e TSUMUCODE_CI_SOURCE_SHA -e TSUMUCODE_CI_SOURCE_REQUIRED=1 app npm run check:prepush -- synthetic-base';
-    const environment = { PR_BASE_SHA: 'synthetic-base' };
+    const environment = { CHECKED_BASE_SHA: 'synthetic-base' };
     const passing = runScript(step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'), '', environment);
     const failing = runScript(step.run!.replace('./scripts/docker-compose.sh', 'docker-compose.sh'), command, environment);
     expect(passing.status, passing.stderr).toBe(0);

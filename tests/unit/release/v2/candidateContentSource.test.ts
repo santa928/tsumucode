@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, realpath, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { expect, it } from 'vitest';
@@ -26,7 +26,7 @@ it('compiles current content only after binding it to the event Source tree', as
     execFileSync('/usr/bin/git', ['rev-parse', 'HEAD'], { cwd: root, env: environment, encoding: 'utf8' }).trim(),
   );
   await assertCandidateContentSource(root, source, environment);
-  const temporary = await mkdtemp(path.join(os.tmpdir(), 'candidate-content-compile-'));
+  const temporary = await mkdtemp(path.join(await realpath(os.tmpdir()), 'candidate-content-compile-'));
   try {
     const compiled = await compileContent({
       sourceRoot: path.join(root, 'content'),

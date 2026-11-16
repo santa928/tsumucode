@@ -35,7 +35,7 @@ function fixture() {
   return { root, source, git, environment };
 }
 
-for (const mutation of ['unchanged', 'wrong-source', 'bytes', 'same-size-bytes', 'missing', 'hidden-index', 'skip-worktree', 'ignored', 'untracked', 'mode', 'symlink', 'new-course', 'nested-empty', 'learning-empty']) {
+for (const mutation of ['unchanged', 'wrong-source', 'bytes', 'same-size-bytes', 'missing', 'hidden-index', 'skip-worktree', 'ignored', 'untracked', 'mode', 'symlink', 'new-course', 'control-path', 'nested-empty', 'learning-empty']) {
   test(`candidate source ${mutation}`, async () => {
     const { root, source, git, environment } = fixture();
     const content = path.join(root, 'content/course/lesson.yaml');
@@ -56,7 +56,13 @@ for (const mutation of ['unchanged', 'wrong-source', 'bytes', 'same-size-bytes',
       // The byte comparison does not assert that the compiler accepts this directory;
       // learningPaths.test.ts independently requires the real compiler to reject it.
       if (mutation === 'learning-empty') mkdirSync(path.join(root, 'content/learning-paths/unused'));
-      const result = () => assertCandidateContentSource(root, mutation === 'wrong-source' ? '0'.repeat(40) : source, environment);
+      let expectedSource = mutation === 'wrong-source' ? '0'.repeat(40) : source;
+      if (mutation === 'control-path') {
+        writeFileSync(path.join(root, 'content/course/invalid\nname.yaml'), 'synthetic\n');
+        git('add', 'content/course'); git('commit', '-qm', 'synthetic control path');
+        expectedSource = git('rev-parse', 'HEAD');
+      }
+      const result = () => assertCandidateContentSource(root, expectedSource, environment);
       if (mutation === 'unchanged' || mutation === 'nested-empty' || mutation === 'learning-empty') await assert.doesNotReject(result);
       else {
         const expected = {
@@ -71,6 +77,7 @@ for (const mutation of ['unchanged', 'wrong-source', 'bytes', 'same-size-bytes',
           mode: /Candidate content mode differs/u,
           symlink: /Unsafe candidate content/u,
           'new-course': /Unexpected candidate course/u,
+          'control-path': /Invalid candidate content tree/u,
         };
         await assert.rejects(result, expected[mutation]);
       }

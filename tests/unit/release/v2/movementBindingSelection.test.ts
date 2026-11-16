@@ -8,6 +8,7 @@ import {
   mkdtemp,
   open,
   readFile,
+  realpath,
   rm,
   symlink,
   writeFile,
@@ -53,7 +54,7 @@ afterEach(async () => {
 });
 
 async function temporaryRoot() {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'movement-binding-selection-'));
+  const root = await mkdtemp(path.join(await realpath(os.tmpdir()), 'movement-binding-selection-'));
   roots.push(root);
   await mkdir(path.join(root, 'docs/quality'), { recursive: true });
   return root;
