@@ -44,11 +44,6 @@ const env = {
   LC_ALL: 'C',
   GIT_CONFIG_NOSYSTEM: '1',
   GIT_CONFIG_GLOBAL: '/dev/null',
-  // Git's local upload-pack checks the source Git directory separately from
-  // the temporary destination; the fixed container runs as a different user.
-  GIT_CONFIG_COUNT: '1',
-  GIT_CONFIG_KEY_0: 'safe.directory',
-  GIT_CONFIG_VALUE_0: path.join(process.cwd(), '.git'),
   GIT_AUTHOR_NAME: 'Fixture',
   GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
   GIT_COMMITTER_NAME: 'Fixture',
@@ -61,6 +56,20 @@ async function git(...args: string[]) {
 }
 beforeAll(async () => {
   root = await mkdtemp(path.join(os.tmpdir(), 'retired-parent-'));
+  // Local upload-pack does not inherit GIT_CONFIG_COUNT settings from fetch.
+  // Use only a temporary config with the exact source Git directory, never a
+  // wildcard or the user's global config. The enclosing fixture removes it.
+  const config = path.join(root, 'fixture-gitconfig');
+  await exec(
+    'git',
+    ['config', '--file', config, '--add', 'safe.directory', path.join(process.cwd(), '.git')],
+    {
+      cwd: root,
+      env,
+      timeout: 30000,
+    },
+  );
+  env.GIT_CONFIG_GLOBAL = config;
   await git('init', '-b', 'main');
   await git('fetch', '--no-tags', process.cwd(), anchor);
   await mkdir(path.join(root, 'docs/quality/movement-history'), { recursive: true });
