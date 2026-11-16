@@ -216,6 +216,80 @@ jobs:
           echo "::warning::教材レビューの確認が必要です。動作検証とは別の結果で、公開前には必須です。Content review statusのログを確認してください。"
           echo "教材レビュー: 要確認。通常CIの成功は教材承認を意味しません。公開前のcheck:releaseは未承認・hash不一致で停止します。" >> "$GITHUB_STEP_SUMMARY"
 
+  retired_capture_contrast:
+    # Diagnostic-only branch: the normal full fast gate and its preview stay unchanged.
+    if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/retired-capture-phase-diagnostic' && needs.resolve.result == 'success' && (needs.fast.result == 'success' || needs.fast.result == 'failure')
+    needs: [resolve, fast]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TSUMUCODE_DOCKER_TARGET: development
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.resolve.outputs.checkout_sha }}
+      - name: Build the existing fixed image
+        run: ./scripts/docker-compose.sh build app
+      - name: Compare bounded three-file test runs
+        run: |
+          set -eu
+          private_dir=$(mktemp -d)
+          cleanup_contrast() {
+            saved=$?
+            trap - EXIT
+            if ! ./scripts/docker-compose.sh run --rm app rm -f test-results/retired-capture-raw.json > "$private_dir/cleanup.log" 2>&1; then
+              printf 'Retired capture contrast cleanup: failed\n'
+              if [ "$saved" = 0 ]; then saved=1; fi
+            fi
+            if ! rm -rf -- "$private_dir" 2>/dev/null; then
+              printf 'Retired capture private cleanup: failed\n'
+              if [ "$saved" = 0 ]; then saved=1; fi
+            fi
+            exit "$saved"
+          }
+          trap cleanup_contrast EXIT
+          report=test-results/retired-capture-raw.json
+          failure=0
+          for variant in default capped; do
+            if [ "$variant" = default ]; then
+              workers=default
+            else
+              workers=2
+            fi
+            if ./scripts/docker-compose.sh run --rm -e TSUMUCODE_RETIRE_TIMINGS=1 -e RETIRE_CONTRAST_WORKERS="$workers" app sh -c '
+              set -eu
+              if [ "$RETIRE_CONTRAST_WORKERS" = 2 ]; then export TSUMUCODE_TEST_MAX_WORKERS=2; else unset TSUMUCODE_TEST_MAX_WORKERS; fi
+              rm -f test-results/retired-capture-raw.json
+              node -e "const n = require(\"node:os\").availableParallelism(); const valid = Number.isInteger(n) && n > 0 && n <= 256; const d = valid ? Math.max(n - 1, 1) : null; const r = d === null ? \"unknown\" : 2 < d ? \"decrease\" : 2 > d ? \"increase\" : \"equal\"; console.log(\"RETIRED_CAPACITY=\" + (valid ? n : \"unknown\") + \",default=\" + (d ?? \"unknown\") + \",cap2=\" + r);"
+              printf "RETIRED_CONTRAST_READY\n"
+              exec npm run test:run -- tests/unit/release/v2/retiredMovementCaptureIntegration.test.ts tests/unit/runtime/checkQuizProject.test.ts tests/content/javascript-review-migration.test.ts
+            ' > "$private_dir/$variant.log" 2>&1; then
+              printf 'Retired capture contrast %s command: passed\n' "$variant"
+            else
+              printf 'Retired capture contrast %s command: failed\n' "$variant"
+              failure=1
+            fi
+            cpu_count=$(grep -Ec '^RETIRED_CAPACITY=([1-9][0-9]{0,2}|unknown),default=([1-9][0-9]{0,2}|unknown),cap2=(decrease|equal|increase|unknown)$' "$private_dir/$variant.log" || true)
+            if [ "$cpu_count" = 1 ]; then
+              grep -E '^RETIRED_CAPACITY=([1-9][0-9]{0,2}|unknown),default=([1-9][0-9]{0,2}|unknown),cap2=(decrease|equal|increase|unknown)$' "$private_dir/$variant.log"
+            else
+              printf 'RETIRED_CAPACITY=unknown,default=unknown,cap2=unknown\n'
+            fi
+            if grep -Fxq RETIRED_CONTRAST_READY "$private_dir/$variant.log" && [ -f "$report" ]; then
+              cp -- "$report" "$private_dir/$variant.json"
+            else
+              failure=1
+            fi
+          done
+          if ! node scripts/ci/retiredCaptureContrast.mjs "$private_dir/default.json" "$private_dir/capped.json"; then
+            failure=1
+          fi
+          exit "$failure"
+
   pr_visual:
     if: github.event_name == 'pull_request'
     needs: [resolve, fast]
