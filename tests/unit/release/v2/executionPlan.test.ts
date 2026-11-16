@@ -78,7 +78,7 @@ describe('workflow execution plan', () => {
             ? '--config=playwright.config.ts'
             : suite.suite === 'browser-performance'
               ? '--config=playwright.performance.config.ts'
-              : suite.suite === 'native-python'
+              : suite.suite === 'native-python' || suite.suite === 'native-python-fixtures'
                 ? '--config=playwright.python-local.config.ts'
                 : '--config=playwright.learning-native.config.ts';
       expect(testCommand(suite.suite, false)).toEqual([
@@ -88,7 +88,9 @@ describe('workflow execution plan', () => {
         '--grep-invert',
         suite.suite === 'browser-chromium-2'
           ? expect.stringContaining('@visual-extended|')
-          : '@visual-extended',
+          : suite.suite === 'native-python'
+            ? '@visual-extended|python-published-fixtures\\.spec\\.ts'
+            : '@visual-extended',
         '--workers=1',
         '--retries=0',
       ]);
@@ -99,7 +101,9 @@ describe('workflow execution plan', () => {
         '--grep-invert',
         suite.suite === 'browser-chromium-2'
           ? expect.stringContaining('@visual-extended|')
-          : '@visual-extended',
+          : suite.suite === 'native-python'
+            ? '@visual-extended|python-published-fixtures\\.spec\\.ts'
+            : '@visual-extended',
         '--list',
         '--reporter=json',
       ]);
@@ -138,4 +142,45 @@ describe('workflow execution plan', () => {
     if (failure === 'duplicate-driver') inputs[1]!.tests[0]!.exerciseIds = ['exercise'];
     expect(() => createExecutionPlan(plan, inputs)).toThrow();
   });
+});
+
+it('assigns Python fixture chunks to one fixed native suite and rejects forged ownership', async () => {
+  const { createExecutionPlan } = await import('../../../../scripts/release/v2/executionPlan');
+  const pythonPlan = { ...plan, targets: [{ ...fixture, runtimeKind: 'python', mode: 'cpython' }] };
+  const inputs = manifests();
+  inputs.find((item) => item.suite === 'native-python-fixtures')!.tests = [
+    { key: 'fixture/chunk-1', exerciseIds: ['exercise'] },
+    { key: 'fixture/chunk-2', exerciseIds: ['exercise'] },
+  ];
+  const execution = createExecutionPlan(pythonPlan, inputs);
+  const requirement = execution.requirements.find(
+    (item) => item.suite === 'native-python-fixtures',
+  )!;
+  expect(requirement.producerJobId).toBe('python_fixtures');
+  expect(requirement.targets).toEqual(
+    [
+      'test/native-python-fixtures/fixture/chunk-1',
+      'test/native-python-fixtures/fixture/chunk-2',
+      fixture.key,
+    ].sort(),
+  );
+  const missing = structuredClone(inputs);
+  missing
+    .find((item) => item.suite === 'native-python-fixtures')!
+    .tests.forEach((row) => {
+      row.exerciseIds = [];
+    });
+  expect(() => createExecutionPlan(pythonPlan, missing)).toThrow(
+    'Missing or duplicated actual fixture driver',
+  );
+  const duplicate = structuredClone(inputs);
+  duplicate.find((item) => item.suite === 'native-python')!.tests[0]!.exerciseIds = ['exercise'];
+  expect(() => createExecutionPlan(pythonPlan, duplicate)).toThrow(
+    'Missing or duplicated actual fixture driver',
+  );
+  const wrongProducer = structuredClone(inputs);
+  wrongProducer.find((item) => item.suite === 'native-python-fixtures')!.producerJobId = 'boundary';
+  expect(() => createExecutionPlan(pythonPlan, wrongProducer)).toThrow(
+    'Missing or untrusted test producer',
+  );
 });

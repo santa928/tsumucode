@@ -137,6 +137,7 @@ function setup(inventory: ReleaseInventory, historicalAcceptances: unknown) {
         public_boundary: 'success',
         performance: 'success',
         boundary: 'success',
+        python_fixtures: 'success',
       },
     },
   };
