@@ -1,0 +1,35 @@
+import { types } from 'node:util';
+
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype) as object;
+const bufferDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer');
+const lengthDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength');
+const offsetDescriptor = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset');
+
+/** Private byte copy only; this does not authenticate origin, privacy or authorization. */
+export function snapshotLineageBytes(input: unknown, max: number, message: string): Buffer {
+  try {
+    if (
+      !types.isUint8Array(input) ||
+      !bufferDescriptor?.get ||
+      !lengthDescriptor?.get ||
+      !offsetDescriptor?.get
+    )
+      throw Error(message);
+    const prototype: unknown = Object.getPrototypeOf(input);
+    if (prototype !== Uint8Array.prototype && prototype !== Buffer.prototype) throw Error(message);
+    const backing: unknown = bufferDescriptor.get.call(input);
+    const length: unknown = lengthDescriptor.get.call(input);
+    const offset: unknown = offsetDescriptor.get.call(input);
+    if (
+      !types.isArrayBuffer(backing) ||
+      typeof length !== 'number' ||
+      !length ||
+      length > max ||
+      typeof offset !== 'number'
+    )
+      throw Error(message);
+    return Buffer.from(new Uint8Array(backing, offset, length));
+  } catch {
+    throw Error(message);
+  }
+}

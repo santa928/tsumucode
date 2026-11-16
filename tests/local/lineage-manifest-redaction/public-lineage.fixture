@@ -6,6 +6,7 @@ import { QualificationSchema } from './admission';
 import { BaselineProofSchema } from './parent';
 import { AppRecordSchema } from './appRecord';
 import { hashBytes, hashValue } from './identity';
+import { snapshotLineageBytes } from './lineageByteSnapshot';
 
 /** Public metadata only. Parsing does not authenticate a signature or establish admission. */
 const PublicLineageSchema = z
@@ -35,8 +36,25 @@ const PublicLineageSchema = z
   })
   .strict();
 
+/** Limit newly attested record tags to the already-public Actions bot label.
+ * Timestamp and message still require separate source and disclosure checks. */
+export function assertApprovedRecordTagger(tagText: string): void {
+  if (typeof tagText !== 'string' || Buffer.byteLength(tagText, 'utf8') > 16 * 1024)
+    throw Error('Record tagger is not approved');
+  const separator = tagText.indexOf('\n\n');
+  const header = separator < 0 ? [] : tagText.slice(0, separator).split('\n');
+  const approved =
+    /^tagger github-actions\[bot\] <41898282\+github-actions\[bot\]@users\.noreply\.github\.com> [0-9]{1,12} [+-][0-9]{4}$/u;
+  if (header.length !== 4 || !approved.test(header[3]!))
+    throw Error('Record tagger is not approved');
+}
+
 function boundedCanonicalJson(input: Uint8Array): unknown {
-  if (!(input instanceof Uint8Array) || input.buffer instanceof SharedArrayBuffer || input.byteLength > 16 * 1024)
+  if (
+    !(input instanceof Uint8Array) ||
+    input.buffer instanceof SharedArrayBuffer ||
+    input.byteLength > 16 * 1024
+  )
     throw new Error('Public lineage input exceeds limit or is not bytes');
   const raw = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.from(input));
   const value: unknown = JSON.parse(raw);
@@ -61,19 +79,26 @@ export function assertPinnedAnchorEvidence(
     link.parentLineageDigest !== null ||
     link.anchorTagDigest !== '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b' ||
     link.declarationDigest !== '4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494' ||
-    link.parentTagDigest !== proof.tagDigest || link.parentSourceCommit !== proof.sourceCommit ||
-    link.parentDeploymentId !== proof.deploymentId || link.parentIdentityDigest !== hashValue({ ...proof, observedAt: null }) ||
+    link.parentTagDigest !== proof.tagDigest ||
+    link.parentSourceCommit !== proof.sourceCommit ||
+    link.parentDeploymentId !== proof.deploymentId ||
+    link.parentIdentityDigest !== hashValue({ ...proof, observedAt: null }) ||
     proof.repository !== link.repository
-  ) throw new Error('Pinned anchor lineage differs');
-  assertPinnedAnchorParent(proofInput,tagObject);
+  )
+    throw new Error('Pinned anchor lineage differs');
+  assertPinnedAnchorParent(proofInput, tagObject);
 }
 
 /** Checks only pinned historical bytes and identity; live capture and publication authorization remain separate. */
-export function assertPinnedAnchorParent(proofInput:Uint8Array,tagObject:Uint8Array) {
+export function assertPinnedAnchorParent(proofInput: Uint8Array, tagObject: Uint8Array) {
   const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofInput));
-  if (!(tagObject instanceof Uint8Array) || tagObject.buffer instanceof SharedArrayBuffer || tagObject.byteLength > 16 * 1024)
+  if (
+    !(tagObject instanceof Uint8Array) ||
+    tagObject.buffer instanceof SharedArrayBuffer ||
+    tagObject.byteLength > 16 * 1024
+  )
     throw new Error('Anchor tag exceeds limit or is not bytes');
-  const tagBytes=Buffer.from(tagObject);
+  const tagBytes = Buffer.from(tagObject);
   const source = 'b9306eb3414e69a2068603cfdbf2706ebe4e9284';
   const tagDigest = '005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b';
   const inventoryDigest = 'f66bdc9ce5fad39a76a22d79bb0f07b497efe7bdea1114278ecec80c47022310';
@@ -143,8 +168,29 @@ export function assertLineageConsistencyOnly(
   qualificationBytes: Uint8Array,
   tagBytes: Uint8Array,
 ) {
-  const link = parsePublicLineage(linkBytes);
-  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofBytes));
+  // Snapshot every byte input before parsing: no other caller-owned view can execute a getter
+  // or change the tag bytes later checked and hashed by this entry.
+  const recordTag = snapshotLineageBytes(tagBytes, 16 * 1024, 'Invalid record tag');
+  const linkCopy = snapshotLineageBytes(linkBytes, 16 * 1024, 'Invalid lineage input');
+  const proofCopy = snapshotLineageBytes(proofBytes, 16 * 1024, 'Invalid lineage input');
+  const planCopy = snapshotLineageBytes(planBytes, 4 * 1024 * 1024, 'Invalid lineage input');
+  const executionCopy = snapshotLineageBytes(
+    executionBytes,
+    4 * 1024 * 1024,
+    'Invalid lineage input',
+  );
+  const candidateCopy = snapshotLineageBytes(
+    candidateBytes,
+    4 * 1024 * 1024,
+    'Invalid lineage input',
+  );
+  const qualificationCopy = snapshotLineageBytes(
+    qualificationBytes,
+    4 * 1024 * 1024,
+    'Invalid lineage input',
+  );
+  const link = parsePublicLineage(linkCopy);
+  const proof = BaselineProofSchema.parse(boundedCanonicalJson(proofCopy));
   const parseBounded = (bytes: Uint8Array) => {
     if (!(bytes instanceof Uint8Array) || bytes.byteLength > 4 * 1024 * 1024)
       throw new Error('Lineage metadata exceeds limit or is not bytes');
@@ -152,16 +198,15 @@ export function assertLineageConsistencyOnly(
     const value: unknown = JSON.parse(raw);
     return { raw, value };
   };
-  const plan = PlanSchema.parse(parseBounded(planBytes).value);
-  const executionPlan = ExecutionPlanSchema.parse(parseBounded(executionBytes).value);
-  const candidate = BuildIdentitySchema.parse(parseBounded(candidateBytes).value);
-  const qualificationInput = parseBounded(qualificationBytes);
+  const plan = PlanSchema.parse(parseBounded(planCopy).value);
+  const executionPlan = ExecutionPlanSchema.parse(parseBounded(executionCopy).value);
+  const candidate = BuildIdentitySchema.parse(parseBounded(candidateCopy).value);
+  const qualificationInput = parseBounded(qualificationCopy);
   if (qualificationInput.raw !== JSON.stringify(qualificationInput.value, null, 2) + '\n')
     throw new Error('Qualification bytes differ from the documented producer');
   const qualification = QualificationSchema.parse(qualificationInput.value);
-  if (!(tagBytes instanceof Uint8Array) || tagBytes.byteLength > 16 * 1024)
-    throw new Error('App record tag exceeds limit or is not bytes');
-  const tagText = new TextDecoder('utf-8', { fatal: true }).decode(tagBytes);
+  const tagText = new TextDecoder('utf-8', { fatal: true }).decode(recordTag);
+  assertApprovedRecordTagger(tagText);
   const match =
     /^object ([a-f0-9]{40})\ntype commit\ntag ([A-Za-z0-9._-]+)\ntagger [^\n]+\n\n([\s\S]+)$/u.exec(
       tagText,
@@ -173,7 +218,7 @@ export function assertLineageConsistencyOnly(
   )
     throw new Error('App record tag identity differs');
   const record = AppRecordSchema.parse(JSON.parse(match[3]!) as unknown);
-  assertOriginalParentProof(linkBytes, proofBytes);
+  assertOriginalParentProof(linkCopy, proofCopy);
   if (
     link.repository !== proof.repository ||
     link.repository !== candidate.repository ||
@@ -187,7 +232,7 @@ export function assertLineageConsistencyOnly(
     link.planDigest !== candidate.planDigest ||
     candidate.planDigest !== hashValue({ plan, executionPlan }) ||
     executionPlan.releasePlanDigest !== hashValue(plan) ||
-    link.qualificationRawDigest !== hashBytes(qualificationBytes) ||
+    link.qualificationRawDigest !== hashBytes(qualificationCopy) ||
     link.qualificationDigest !== hashValue(qualification) ||
     qualification.candidateDigest !== hashValue(candidate) ||
     qualification.technical.candidateDigest !== hashValue(candidate) ||
@@ -203,7 +248,7 @@ export function assertLineageConsistencyOnly(
     hashValue(record.candidate) !== hashValue(candidate) ||
     record.inventoryDigest !== plan.inventoryDigest ||
     record.qualificationDigest !== hashValue(qualification) ||
-    link.recordTagDigest !== hashBytes(tagBytes) ||
+    link.recordTagDigest !== hashBytes(recordTag) ||
     Date.parse(proof.observedAt) > Date.parse(qualification.qualifiedAt) ||
     Date.parse(qualification.qualifiedAt) >= Date.parse(qualification.technical.expiresAt) ||
     Date.parse(qualification.qualifiedAt) > Date.parse(record.observedAt)

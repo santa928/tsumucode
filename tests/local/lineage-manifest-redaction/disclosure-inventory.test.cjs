@@ -40,6 +40,7 @@ const blocked = new Proxy(
   },
 );
 const schema = compile(source('schema.fixture'), { zod: deps('zod') });
+const snapshot = compile(source('lineage-byte-snapshot.fixture'), { 'node:util': deps('node:util') });
 const modules = {
   zod: deps('zod'),
   '../../../src/core/persistence/canonicalJson': { canonicalJson },
@@ -49,6 +50,7 @@ const modules = {
   './parent': blocked,
   './appRecord': blocked,
   './identity': blocked,
+  './lineageByteSnapshot': snapshot,
 };
 function auditFor(publicSource) {
   const parser = compile(publicSource, modules);
@@ -57,10 +59,36 @@ function auditFor(publicSource) {
   }).inspectDisclosureInventory;
 }
 const sourceText = source('public-lineage.fixture');
+const tagger = compile(sourceText, modules);
 const audit = auditFor(sourceText);
 const origin = compile(source('original-origin.fixture'), {});
 const bytes = (value) => Buffer.from(canonicalJson(value));
 const marker = 'synthetic-private-field-248';
+test('public tag label rejects unapproved fields without echoing them', () => {
+  const tag = 'object ' + 'a'.repeat(40) + '\ntype commit\ntag synthetic\ntagger github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> 1700000000 +0000\n\n{}';
+  assert.doesNotThrow(() => tagger.assertApprovedRecordTagger(tag));
+  assert.throws(() => tagger.assertApprovedRecordTagger(tag.replace('github-actions[bot]', marker)), (error) => {
+    assert.equal(error.message, 'Record tagger is not approved');
+    assert.equal(error.cause, undefined);
+    assert.equal(String(error.stack).includes(marker), false);
+    return true;
+  });
+});
+test('direct consistency rejects shared tag bytes before parsing other inputs', () => {
+  const ordinary = Buffer.from('{}');
+  const shared = new Uint8Array(new SharedArrayBuffer(8));
+  assert.throws(() => tagger.assertLineageConsistencyOnly(ordinary, ordinary, ordinary, ordinary, ordinary, ordinary, shared), /Invalid record tag/);
+});
+test('snapshot ignores own getter hooks and preserves the initial tag bytes', () => {
+  const tag = new Uint8Array([1, 2, 3]);
+  let touched = 0;
+  Object.defineProperty(tag, 'byteLength', { get() { touched++; throw Error(marker); } });
+  tag.valueOf = () => { touched++; throw Error(marker); };
+  const copy = snapshot.snapshotLineageBytes(tag, 16, 'Invalid record tag');
+  tag.fill(9);
+  assert.equal(touched, 0);
+  assert.deepEqual(Array.from(copy), [1, 2, 3]);
+});
 const subject = () => ({
   schemaVersion: 1,
   repository: 'santa928/tsumucode',
