@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { CourseCatalogV3Schema } from '../../../src/core/content/deliverySchema';
 import { BuildIdentitySchema, InventorySchema } from '../../../scripts/release/v2/schema';
 import { planPublishedOperations } from '../../../scripts/release/v2/publishedOperations';
+import { publishedProofUrl } from '../../../scripts/release/v2/publishedProofUrl';
 import { hashValue } from '../../../scripts/release/v2/identity';
 import { readSplitCourseArtifacts } from '../../../scripts/content/readSplitCourseArtifacts';
 import {
@@ -29,9 +30,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
     return courses.get(id)!;
   };
   async function proof(page: Page, info: TestInfo, key: string) {
-    const url = new URL(page.url());
-    url.hash = '';
-    url.search = '';
+    const siteUrl = publishedProofUrl(page.url(), info.project.use.baseURL);
     await info.attach('public-operation', {
       contentType: 'application/json',
       body: Buffer.from(
@@ -39,7 +38,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
           key,
           candidateDigest: hashValue(candidate),
           artifactDigest: candidate.artifactDigest,
-          siteUrl: url.href,
+          siteUrl,
         }),
       ),
     });
