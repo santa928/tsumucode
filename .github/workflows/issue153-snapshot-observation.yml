@@ -27,14 +27,14 @@ jobs:
           EVENT_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          source_sha=a61fb7962380d02cf618cf63b33ef9f70fe9e012
+          source_sha=8045e918af6721350fec1008fddeefb90b229572
           [[ "$EVENT_HEAD" =~ ^[a-f0-9]{40}$ ]]
           [[ "$EVENT_BASE" == "$source_sha" ]]
           [[ "$EVENT_HEAD_REF" == codex/issue153-snapshot-observation ]]
           [[ "$EVENT_BASE_REF" == codex/issue153-all-course-snapshots ]]
           [[ "$EVENT_HEAD_REPO" == "$EVENT_REPO" ]]
           [[ "$(git rev-parse HEAD)" == "$EVENT_HEAD" ]]
-          [[ "$(git rev-list --parents -n 1 HEAD)" == "$EVENT_HEAD $source_sha" ]]
+          [[ "$(git rev-list --parents -n 1 HEAD)" == "$EVENT_HEAD d440d3edd1179e9a469966d6b09fbe52b818d9d2 $source_sha" ]]
           [[ "$(git diff --name-status --no-renames "$source_sha" HEAD)" == $'A\t.github/workflows/issue153-snapshot-observation.yml' ]]
           git checkout --detach "$source_sha"
           [[ "$(git rev-parse HEAD)" == "$source_sha" ]]
