@@ -57,7 +57,7 @@ export function observeNextGuide(before: string): () => void {
         }
         if (card && removed === card) emit('card-removed');
         else if (guide && removed === guide) emit('guide-removed');
-        else emit('other-node-removed');
+        else if (card || guide) emit('other-node-removed');
       }
     }
   };
