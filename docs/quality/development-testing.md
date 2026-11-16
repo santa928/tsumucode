@@ -12,14 +12,19 @@ Docker内の実行コマンドは`node --import tsx scripts/ci/prVisual.ts`。
 `BASE_PATH=/<repository-name>/`とfastが保存したpreviewを使う。全Browser入り既存app imageの
 準備が1 job増えるが、アプリの再build、全機能E2E、Firefox/WebKit、性能検査は追加しない。
 上限2 CPU・4 GiB、job上限20分。初期見積もりはimage準備5～10分、6件2～5分で、実測は未確認。
-失敗時はJSON、画像・error-context・traceだけを7日保存し、進捗export等を包括収集しない。
+代表6件の診断はJSON、画像・error-context・traceだけを7日保存し、進捗export等を包括収集しない。
+
+2026-11-16追補: 同じ`pr_visual` jobは、同一runの固定previewとBrowser imageを使い、
+Python実践・OOPのHomeとCourse mapの入口案内もChromium・1 worker・retry 0で1件検査する。
+代表6件は維持する。追加1件の診断artifactは上記の保存対象に含まれない。
+このPR検査の成功は正式資格・実配信・配信後確認を意味しない。
 
 正式公開run 42111620240では、文言変更後も古いVisual期待が残り、Chromium shard 2/2の
 長時間実行後に6件が失敗した。このPR検査はその既存6件を早く返すための追加であり、
 新たなsnapshot自動更新や比較閾値変更を行わない。失敗中の期待値・画像の修正は別変更である。
 PR結果を正式qualificationへ取り込まない。正式公開では従来の独立manifest・固定candidate・
 同一Source/runの全件・retry 0・receipt照合を引き続き必須とする。
-以下の旧方針の「BrowserをPRへ追加しない」は、この代表6件のみ例外とする。
+以下の旧方針の「BrowserをPRへ追加しない」は、上記の代表6件と入口案内1件を例外とする。
 
 ## PRでの全件unit（2026-11-06）
 
@@ -39,7 +44,7 @@ PR #296の関連57ファイル・674件は、fsでworkflowやshellを読む`test
 PRの上限は30分とする。公開失敗runではLintが約2分34秒、全件testが約9分55秒であり、
 15分の枠へCompile・image準備・Buildを詰め込まない。push/ローカルの`check`は関連testのまま、
 push jobの上限は15分。以下の旧方針の「push/PRの関連test」「8分上限」はこの節で更新する。
-Browser・性能・公開receipt生成はPRへ追加しない。PR成功は正式な資格receiptでも公開実績でもなく、
+上記の代表表示検査を除き、Browser・性能・公開receipt生成はこの全件unit変更でPRへ追加しない。PR成功は正式な資格receiptでも公開実績でもなく、
 公開時には同一候補・同一runの全件unitと全公開gateを引き続き実行する。
 
 ## 同一run成果物の公開入口（2026-11-03）
