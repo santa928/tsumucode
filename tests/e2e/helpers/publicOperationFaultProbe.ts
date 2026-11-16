@@ -38,7 +38,7 @@ const knownResourceTypes = new Set([
 /** Verification-only observer, not connected to the published-operations gate. */
 export function watchPublicFaults(
   page: Page,
-  scope: 'primary' | 'transfer',
+  scope: string,
   failures: string[],
   resources: Set<string>,
 ): void {
@@ -47,7 +47,9 @@ export function watchPublicFaults(
     if (failures.length < 64) failures.push(`${scope}-${kind}`);
     else if (failures.length === 64) failures.push('observation-overflow');
   };
-  page.on('pageerror', () => record('page-error'));
+  page.on('pageerror', () => {
+    record('page-error');
+  });
   page.on('console', (message) => {
     try {
       const type = message.type();
@@ -67,5 +69,7 @@ export function watchPublicFaults(
     }
   });
   // Do not inspect or discard errors, including intentional or unknown aborts.
-  page.on('requestfailed', () => record('request-failed'));
+  page.on('requestfailed', () => {
+    record('request-failed');
+  });
 }
