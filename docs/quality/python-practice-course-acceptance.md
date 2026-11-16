@@ -1,5 +1,7 @@
 # Python実践Courseの公開前技術受入（Issue #147）
 
+現行の同一run公開方式への対応・旧受入の再利用範囲・配信後確認とclose条件は、[公開受入対応](python-practice-publication-readiness.md)を参照してください。以下の公開allowlist等の記述は各検証時点の履歴として保持します。
+
 2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。修正後の新規3名による影響再操作も[PR220で受入済み](python-computer-use-acceptance.md#pr220で完了した影響再操作)で、確認範囲の必須問題は解消しました。元Sourceと確認範囲を維持し、後続候補全体の受入へ自動で広げません。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
 
 対象は`python-practice`の3Chapter・5Lesson・11Slide・標準4演習・Guided Project1件、95分の草稿です。Python基礎のList・for・Function・例外を前提に、反復の状態とResource終了処理をデータ集計へ結びます。実行基盤を増やさず、固定CPython 3.14.2とPyodide 314.0.7を使います。
