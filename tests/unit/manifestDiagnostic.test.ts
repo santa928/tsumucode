@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { withManifestDiagnostic } from '../e2e/helpers/manifestDiagnostic';
+import {
+  readManifestDiagnosticUi,
+  withManifestDiagnostic,
+} from '../e2e/helpers/manifestDiagnostic';
 
 describe('manifest learning failure diagnostics', () => {
   it('publishes only fixed diagnostic state when the test fails and preserves the original error', async () => {
@@ -83,5 +86,104 @@ describe('manifest learning failure diagnostics', () => {
       grew: null,
       status: null,
     });
+  });
+
+  it('classifies only fixed button states and the presence of the operation error', () => {
+    document.body.innerHTML = `<div class="tc-exercise-pager">
+      <button class="tc-exercise-pager-secondary" disabled>更新しています</button>
+      <button class="tc-exercise-pager-primary" disabled>判定する</button>
+      <p class="tc-exercise-operation-error">private-marker</p></div>`;
+    expect(readManifestDiagnosticUi()).toEqual({
+      grade: 'ready-label',
+      gradeDisabled: true,
+      preview: 'updating',
+      operationError: true,
+    });
+    expect(JSON.stringify(readManifestDiagnosticUi())).not.toContain('private-marker');
+    document.querySelector('.tc-exercise-pager-primary')!.textContent = 'private-marker';
+    expect(readManifestDiagnosticUi().grade).toBe('other');
+    document.querySelector('.tc-exercise-pager-secondary')!.textContent = 'private-marker';
+    expect(readManifestDiagnosticUi().preview).toBe('unrecognized-or-missing');
+    document.querySelector('.tc-exercise-operation-error')!.remove();
+    expect(readManifestDiagnosticUi().operationError).toBe(false);
+    document.body.innerHTML = '';
+    expect(readManifestDiagnosticUi()).toEqual({
+      grade: 'missing',
+      gradeDisabled: null,
+      preview: 'unrecognized-or-missing',
+      operationError: null,
+    });
+  });
+
+  it('records a normalized snapshot only on failure without leaking arbitrary fields', async () => {
+    const failure = new Error('original-private-marker');
+    const publish = vi.fn<(value: string) => void>();
+    const probe = vi.fn(async () => ({
+      grade: 'private-marker',
+      gradeDisabled: true,
+      preview: 'updating',
+      operationError: false,
+      extra: 'private-marker',
+    }));
+    await expect(
+      withManifestDiagnostic(
+        async () => {
+          throw failure;
+        },
+        publish,
+        probe,
+      ),
+    ).rejects.toBe(failure);
+    expect((JSON.parse(publish.mock.calls[0]![0]) as { ui: unknown }).ui).toEqual({
+      grade: 'other',
+      gradeDisabled: true,
+      preview: 'updating',
+      operationError: false,
+    });
+    expect(publish.mock.calls[0]![0]).not.toContain('private-marker');
+    publish.mockClear();
+    probe.mockClear();
+    await expect(withManifestDiagnostic(async () => 7, publish, probe)).resolves.toBe(7);
+    expect(probe).not.toHaveBeenCalled();
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it('preserves the original failure when the optional snapshot is unavailable or hangs', async () => {
+    vi.useFakeTimers();
+    try {
+      const failure = new Error('original');
+      const publish = vi.fn<(value: string) => void>();
+      const result = withManifestDiagnostic(
+        async () => {
+          throw failure;
+        },
+        publish,
+        () => new Promise(() => {}),
+      );
+      const assertion = expect(result).rejects.toBe(failure);
+      await vi.advanceTimersByTimeAsync(251);
+      await assertion;
+      expect((JSON.parse(publish.mock.calls[0]![0]) as { ui: unknown }).ui).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps the original failure and excludes probe errors when probing rejects', async () => {
+    const failure = new Error('original');
+    const publish = vi.fn<(value: string) => void>();
+    await expect(
+      withManifestDiagnostic(
+        async () => {
+          throw failure;
+        },
+        publish,
+        async () => {
+          throw new Error('private-marker');
+        },
+      ),
+    ).rejects.toBe(failure);
+    expect((JSON.parse(publish.mock.calls[0]![0]) as { ui: unknown }).ui).toBeNull();
+    expect(publish.mock.calls[0]![0]).not.toContain('private-marker');
   });
 });

@@ -10,7 +10,11 @@ import { readStoredProgress } from './progress';
 import { selectAllAndCopyEditorDocument } from './editorDocument';
 import { testBasePath } from './testBasePath';
 import { pythonFixedFixtures } from '../../../src/core/runtime/pythonFixedFixtures.mjs';
-import { withManifestDiagnostic, type ManifestDiagnostic } from './manifestDiagnostic';
+import {
+  readManifestDiagnosticUi,
+  withManifestDiagnostic,
+  type ManifestDiagnostic,
+} from './manifestDiagnostic';
 const snapshotFile = '.release-v2/preparation.json';
 async function writeFiles(page: Page, exercise: AuthoringExercise, solution: boolean) {
   const merged = new Map(
@@ -253,6 +257,7 @@ export function declareManifestLearning(native: boolean) {
           (description) => {
             test.info().annotations.push({ type: 'manifest-learning-diagnostic', description });
           },
+          () => page.evaluate(readManifestDiagnosticUi),
         );
       },
     );
