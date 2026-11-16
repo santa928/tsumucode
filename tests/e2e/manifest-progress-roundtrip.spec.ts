@@ -36,8 +36,9 @@ function syntheticSnapshot(): RepositorySnapshot {
     )) {
       lessons[lesson.id] = {
         lessonId: lesson.id,
-        viewedSlideIds: [],
-        passedExerciseIds: [],
+        // 合成した部分進捗を各Courseに入れ、空配列の往復だけで成功にしない。
+        viewedSlideIds: lesson.slides.slice(0, 1).map(({ id }) => id),
+        passedExerciseIds: lesson.exercises.map(({ id }) => id),
         passedChecklistItemIds: [],
         passedRuleIds: [],
         passedViewportIds: [],
@@ -122,6 +123,12 @@ test('manifestの全Lesson・workspaceと既知進捗を実IndexedDBからExport
 }, info) => {
   test.setTimeout(90_000);
   const snapshot = syntheticSnapshot();
+  expect(Object.keys(snapshot.courses).length).toBeGreaterThan(0);
+  for (const course of Object.values(snapshot.courses)) {
+    const lessonProgress = Object.values(course.lessons);
+    expect(lessonProgress.some(({ viewedSlideIds }) => viewedSlideIds.length > 0)).toBe(true);
+    expect(lessonProgress.some(({ passedExerciseIds }) => passedExerciseIds.length > 0)).toBe(true);
+  }
   const expectedExerciseCount = indexes.reduce(
     (count, index) =>
       count +
