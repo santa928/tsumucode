@@ -16,6 +16,12 @@ test('Nextの入口に必要な前提と実習環境を表示する', async ({ p
         'guide-seen',
         'card-detached',
         'guide-detached',
+        'card-removed',
+        'guide-removed',
+        'other-node-removed',
+        'removal-budget-exhausted',
+        'hashchange',
+        'pagehide',
         'node-budget-exhausted',
         'observation-budget-exhausted',
       ].flatMap((category) =>
