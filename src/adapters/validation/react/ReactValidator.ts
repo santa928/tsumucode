@@ -1,8 +1,10 @@
+import { acceptsReactReadingScenarios } from '../../../core/content/reactReadingInteractions';
 import { acceptsReactQuizScenarios } from '../../../core/content/reactQuizInteractions';
 import { acceptsReactHookScenarios } from '../../../core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../../core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../../core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../../core/content/reactStateInteractions';
+import { acceptsReactTemperatureScenarios } from '../../../core/content/reactTemperatureInteractions';
 import {
   ReactExerciseRuntimeSchema,
   ReactLearningRuleDefinitionSchema,
@@ -25,6 +27,38 @@ function hookFeedback(
   goal: string | undefined,
   learned: boolean,
 ): { message: string; actual: string } | undefined {
+  if (goal === 'temperature-panel')
+    return learned
+      ? {
+          message: '自作の表示部品と、温度の値・クリック更新のつながりを確認できました。',
+          actual:
+            '有限な課題範囲で部品の使用とStateの経路を確認しました。設計理由は振り返りで説明します。',
+        }
+      : {
+          message:
+            '受け取った数値を自作の表示部品で表示し、実際に表示するStateをクリックから更新しましょう。',
+          actual: '使われない部品や表示につながらないStateになっていないか見直します。',
+        };
+  if (goal === 'reading-card')
+    return learned
+      ? {
+          message: '受け取った本を表示する部品と、親へ操作を伝える動作を確認できました。',
+          actual: '自作したBookCardと、対象の本を切り替えて戻す操作結果を確認しました。',
+        }
+      : {
+          message: 'BookCardを作り、受け取った本を表示して、押した本のIDをonToggleへ渡しましょう。',
+          actual: '自作部品の表示とCallbackを見直します。',
+        };
+  if (['reading-state', 'reading-filter'].includes(goal ?? ''))
+    return learned
+      ? {
+          message: '自作部品と親の値を、指定した読書リストの実操作へ接続できました。',
+          actual: '部品・親State・一覧のKeyと、繰り返した操作結果を確認しました。',
+        }
+      : {
+          message: '受け取った本とCallbackを表示へつなぎ、親のStateと安定したKeyを確認しましょう。',
+          actual: '自作部品と親のState、一覧のKeyを見直します。',
+        };
   if (['quiz-card', 'quiz-state', 'quiz-capstone'].includes(goal ?? ''))
     return learned
       ? {
@@ -143,6 +177,32 @@ export class ReactValidator implements ValidatorAdapter {
           ),
         });
         if (compiled.status !== 'ready') return blocked();
+        if (
+          ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(parsed.data.profile)
+        ) {
+          if (
+            !compiled.facts ||
+            !('definesBookComponent' in compiled.facts) ||
+            !acceptsReactReadingScenarios(parsed.data.learningGoal, context.interactionScenarios)
+          )
+            return blocked();
+          learned =
+            compiled.facts.definesBookComponent &&
+            (parsed.data.profile === 'reading-card-v1' ||
+              (compiled.facts.ownsReadingState && compiled.facts.usesStableBookKeys));
+        }
+        if (parsed.data.profile === 'component-design-v1') {
+          if (
+            !compiled.facts ||
+            !('rendersAuthoredDisplay' in compiled.facts) ||
+            !acceptsReactTemperatureScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+            )
+          )
+            return blocked();
+          learned = compiled.facts.rendersAuthoredDisplay && compiled.facts.usesInteractiveState;
+        }
         if (parsed.data.profile === 'static-components-v1') {
           if (!compiled.facts || !('reusesCardWithDistinctProps' in compiled.facts))
             return blocked();
@@ -190,7 +250,11 @@ export class ReactValidator implements ValidatorAdapter {
           if (
             !compiled.facts ||
             !('usesInputRef' in compiled.facts) ||
-            !acceptsReactHookScenarios(parsed.data.learningGoal, context.interactionScenarios)
+            !acceptsReactHookScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+              context.exerciseId,
+            )
           )
             return blocked();
           learned =
@@ -205,7 +269,11 @@ export class ReactValidator implements ValidatorAdapter {
           if (
             !compiled.facts ||
             !('usesExternalEffect' in compiled.facts) ||
-            !acceptsReactHookScenarios(parsed.data.learningGoal, context.interactionScenarios)
+            !acceptsReactHookScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+              context.exerciseId,
+            )
           )
             return blocked();
           learned =
@@ -251,7 +319,11 @@ export class ReactValidator implements ValidatorAdapter {
           if (
             !compiled.facts ||
             !('usesSingleState' in compiled.facts) ||
-            !acceptsReactFormScenarios(parsed.data.learningGoal, context.interactionScenarios)
+            !acceptsReactFormScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+              context.exerciseId,
+            )
           )
             return blocked();
           learned =

@@ -5,7 +5,10 @@ import type {
 } from './types';
 
 /** 空値・空白・異なる長さと送信/やり直しを、実入力と実submitの取消へ結ぶ。 */
-export function reactFormScenarios(goal: string | undefined): JavaScriptInteractionScenario[] {
+export function reactFormScenarios(
+  goal: string | undefined,
+  exerciseId?: string,
+): JavaScriptInteractionScenario[] {
   const form = goal === 'controlled-form';
   const actions: JavaScriptInteractionAction[] = form
     ? [
@@ -31,7 +34,11 @@ export function reactFormScenarios(goal: string | undefined): JavaScriptInteract
     : ['Ada', 'TypeScript', '   ', '', 'React', ''];
   return [
     {
-      id: form ? 'form-input-submit-reset' : 'shared-state-input-reset',
+      id: form
+        ? exerciseId === 'react-ch01-l06-compose-e01'
+          ? 'form-input-submit-reset-compose'
+          : 'form-input-submit-reset'
+        : 'shared-state-input-reset',
       label: form ? '1つのStateから入力・検証表示を導く' : '親Stateを兄弟の入力・要約へ共有する',
       actions,
       checkpoints: actions.map((action, index) => {
@@ -82,6 +89,7 @@ export function reactFormScenarios(goal: string | undefined): JavaScriptInteract
 export function acceptsReactFormScenarios(
   goal: string | undefined,
   scenarios: readonly JavaScriptInteractionScenario[] | undefined,
+  exerciseId?: string,
 ): boolean {
   if (!['controlled-form', 'shared-state'].includes(goal ?? '') || !Array.isArray(scenarios))
     return false;
@@ -100,7 +108,7 @@ export function acceptsReactFormScenarios(
       ]),
     );
   try {
-    return project(scenarios) === project(reactFormScenarios(goal));
+    return project(scenarios) === project(reactFormScenarios(goal, exerciseId));
   } catch {
     return false;
   }

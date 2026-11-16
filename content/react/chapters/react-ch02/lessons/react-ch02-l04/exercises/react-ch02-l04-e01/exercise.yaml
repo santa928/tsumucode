@@ -1,0 +1,498 @@
+id: react-ch02-l04-e01
+kind: standard
+workspaceId: react-ch02-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 自分で温度表示の部品を組み立てる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-component-design
+    minimumLevel: compose
+scaffoldLevel: compose
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: component-design-v1
+  learningGoal: temperature-panel
+# 仕様から制作する課題では、手順の代わりにinstructions全文を常設表示する。
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch02-l04-e01-r01
+    label: 最初の摂氏を20で表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#celsius'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '20'
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 最初の摂氏を20で表示する
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-r02
+    label: 最初の華氏を68で表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#fahrenheit'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '68'
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 最初の華氏を68で表示する
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-r03
+    label: 自作した表示部品と表示するStateを操作につなぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: temperature-panel
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 自作した表示部品と表示するStateを操作につなぐ
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-r04
+    label: 上げるbuttonを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: 'button#increase[type="button"]'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '1℃上げる'
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 上げるbuttonを表示する
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-r05
+    label: 下げるbuttonを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: 'button#decrease[type="button"]'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '1℃下げる'
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 下げるbuttonを表示する
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-r06
+    label: 最初に戻すbuttonを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: 'button#reset[type="button"]'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '最初に戻す'
+    feedback:
+      target: components.tsxとプレビュー
+      expected: 最初に戻すbuttonを表示する
+      nextAction: 数値を表示する部品と温度のState、クリック時の更新のつながりを確かめます。
+    hintId: react-ch02-l04-e01-h02
+    relatedSlideId: react-ch02-l04-s02
+interactionScenarios:
+  - id: temperature-synchronized-operations
+    label: 両方の温度と、最初に戻した後の操作を確かめる
+    actions:
+      - id: increase-once
+        kind: click
+        selector: '#increase'
+      - id: increase-again
+        kind: click
+        selector: '#increase'
+      - id: decrease
+        kind: click
+        selector: '#decrease'
+      - id: reset
+        kind: click
+        selector: '#reset'
+      - id: decrease-after-reset
+        kind: click
+        selector: '#decrease'
+      - id: reset-again
+        kind: click
+        selector: '#reset'
+      - id: increase-after-reset
+        kind: click
+        selector: '#increase'
+    checkpoints:
+      - id: after-increase-once
+        afterActionId: increase-once
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '21'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '69.8'
+      - id: after-increase-again
+        afterActionId: increase-again
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '22'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '71.6'
+      - id: after-decrease
+        afterActionId: decrease
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '21'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '69.8'
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '20'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '68'
+      - id: after-decrease-after-reset
+        afterActionId: decrease-after-reset
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '19'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '66.2'
+      - id: after-reset-again
+        afterActionId: reset-again
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '20'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '68'
+      - id: after-increase-after-reset
+        afterActionId: increase-after-reset
+        expectations:
+          - id: celsius
+            kind: selector-text
+            selector: '#celsius'
+            equals: '21'
+          - id: fahrenheit
+            kind: selector-text
+            selector: '#fahrenheit'
+            equals: '69.8'
+hints:
+  - id: react-ch02-l04-e01-h01
+    level: 1
+    title: 設計の手掛かり
+    text: '同じ温度が必要な表示を探し、どの部品が覚えると値を渡しやすいか考えます。StateをAppへ置くことは必須ではありません。'
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-h02
+    level: 2
+    title: 値と操作の流れを確かめる
+    text: '温度を覚える部品から数値をPropsで表示部品へ渡します。操作するbuttonを別部品へ分けたら、引数のないCallbackを渡せます。'
+    relatedSlideId: react-ch02-l04-s02
+  - id: react-ch02-l04-e01-h03
+    level: 3
+    title: 小さい書き方を確かめる
+    text: '数値を受け取るProps型はinterfaceやtypeで作れます。たとえばreadonly value: numberです。摂氏をcとすると、華氏の式はc * 9 / 5 + 32です。更新関数には次の数値かprevious => previous + 1の形を渡せます。'
+    relatedSlideId: react-ch02-l04-s02
+relatedSlideIds:
+  - react-ch02-l04-s01
+  - react-ch02-l04-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/solution.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: panel-owner
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/panel-owner.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: sibling-displays
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/sibling-displays.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: unused-display
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l04-e01-r03
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/unused-display.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: dummy-state
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l04-e01-r03
+      - interaction:temperature-synchronized-operations:after-increase-once:celsius
+      - interaction:temperature-synchronized-operations:after-increase-once:fahrenheit
+      - interaction:temperature-synchronized-operations:after-increase-again:celsius
+      - interaction:temperature-synchronized-operations:after-increase-again:fahrenheit
+      - interaction:temperature-synchronized-operations:after-decrease:celsius
+      - interaction:temperature-synchronized-operations:after-decrease:fahrenheit
+      - interaction:temperature-synchronized-operations:after-decrease-after-reset:celsius
+      - interaction:temperature-synchronized-operations:after-decrease-after-reset:fahrenheit
+      - interaction:temperature-synchronized-operations:after-increase-after-reset:celsius
+      - interaction:temperature-synchronized-operations:after-increase-after-reset:fahrenheit
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/dummy-state.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: one-side-frozen
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:temperature-synchronized-operations:after-increase-once:fahrenheit
+      - interaction:temperature-synchronized-operations:after-increase-again:fahrenheit
+      - interaction:temperature-synchronized-operations:after-decrease:fahrenheit
+      - interaction:temperature-synchronized-operations:after-decrease-after-reset:fahrenheit
+      - interaction:temperature-synchronized-operations:after-increase-after-reset:fahrenheit
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/one-side-frozen.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: frozen-after-reset
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:temperature-synchronized-operations:after-decrease-after-reset:celsius
+      - interaction:temperature-synchronized-operations:after-decrease-after-reset:fahrenheit
+      - interaction:temperature-synchronized-operations:after-increase-after-reset:celsius
+      - interaction:temperature-synchronized-operations:after-increase-after-reset:fahrenheit
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/frozen-after-reset.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: starter
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-interaction-target
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/starter.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: missing-button-id
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-interaction-target
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/missing-button-id.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: forbidden-dom
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/forbidden-dom.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: type-error
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2322
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/type-error.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
