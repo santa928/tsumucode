@@ -3,15 +3,15 @@ set -eu
 
 # The event's base SHA can be stale. The remote-tracking ref is the base fetched
 # by the immediately preceding trusted actions/checkout; it is not a freshness
-# proof after that checkout, so main and head must be checked again before merge.
-test "$PR_BASE_REF" = main
+# proof after that checkout, so base and head must be checked again before merge.
+test "$(git check-ref-format --branch "$PR_BASE_REF")" = "$PR_BASE_REF"
 test "$PR_BASE_REPO" = "$GITHUB_REPOSITORY"
 test "$(git remote get-url origin)" = "https://github.com/$GITHUB_REPOSITORY"
 for sha in "$PR_EVENT_BASE_SHA" "$PR_HEAD_SHA" "$PR_MERGE_SHA"; do
   case "$sha" in *[!0-9a-f]*|'') exit 1 ;; esac
   test "${#sha}" -eq 40
 done
-checked_base=$(git show-ref --verify --hash refs/remotes/origin/main)
+checked_base=$(git show-ref --verify --hash "refs/remotes/origin/$PR_BASE_REF")
 case "$checked_base" in *[!0-9a-f]*|'') exit 1 ;; esac
 test "${#checked_base}" -eq 40
 test "$(git rev-parse HEAD)" = "$PR_MERGE_SHA"

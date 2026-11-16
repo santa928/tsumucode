@@ -41,7 +41,16 @@ test('matching event and checkout base also succeeds, including a fork head', ()
   finally { rmSync(f.root, { recursive: true, force: true }); }
 });
 
-for (const mutation of ['wrong-repo', 'wrong-origin', 'wrong-branch', 'bad-sha', 'divergent-event-base', 'wrong-merge', 'wrong-head', 'advanced-main', 'missing-ref', 'head-does-not-include-base', 'tree-differs', 'three-parents']) {
+test('a stacked PR binds its named base branch from the same checkout', () => {
+  const f = fixture();
+  try {
+    f.git('update-ref', 'refs/remotes/origin/review/stack', f.base);
+    assert.equal(run(f, { PR_BASE_REF: 'review/stack' }).status, 0);
+    assert.match(readFileSync(f.output, 'utf8'), new RegExp(`^checked_base_sha=${f.base}$`, 'mu'));
+  } finally { rmSync(f.root, { recursive: true, force: true }); }
+});
+
+for (const mutation of ['wrong-repo', 'wrong-origin', 'wrong-branch', 'other-branch', 'unsafe-branch', 'option-branch', 'previous-branch', 'bad-sha', 'divergent-event-base', 'wrong-merge', 'wrong-head', 'advanced-main', 'missing-ref', 'head-does-not-include-base', 'tree-differs', 'three-parents']) {
   test(`rejects ${mutation}`, () => {
     const f = fixture();
     try {
@@ -49,6 +58,10 @@ for (const mutation of ['wrong-repo', 'wrong-origin', 'wrong-branch', 'bad-sha',
       if (mutation === 'wrong-repo') change.PR_BASE_REPO = 'other/repo';
       if (mutation === 'wrong-origin') f.git('remote', 'set-url', 'origin', 'https://github.com/other/repo');
       if (mutation === 'wrong-branch') change.PR_BASE_REF = 'other';
+      if (mutation === 'other-branch') { f.git('update-ref', 'refs/remotes/origin/review/old', f.old); change.PR_BASE_REF = 'review/old'; }
+      if (mutation === 'unsafe-branch') change.PR_BASE_REF = '../main';
+      if (mutation === 'option-branch') change.PR_BASE_REF = '--help';
+      if (mutation === 'previous-branch') change.PR_BASE_REF = '@{-1}';
       if (mutation === 'bad-sha') change.PR_EVENT_BASE_SHA = 'not-a-sha';
       if (mutation === 'divergent-event-base') change.PR_EVENT_BASE_SHA = f.head;
       if (mutation === 'wrong-merge') change.PR_MERGE_SHA = f.old;
