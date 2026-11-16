@@ -1,0 +1,67 @@
+name: Reading transfer exact verification
+
+on:
+  pull_request:
+    branches: [codex/reading-transfer-clarity]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/reading-transfer-verify' &&
+      github.event.pull_request.base.sha == 'b85912d2fe352065bc363e9e569a93bb2b05d5ec'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind diagnostic scope to the fixed Source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=b85912d2fe352065bc363e9e569a93bb2b05d5ec
+          read -r -a parents <<< "$(git show -s --format=%P HEAD)"
+          test "${#parents[@]}" -eq 1
+          test "${parents[0]}" = "$source_sha"
+          expected=$'A\t.github/workflows/reading-transfer-exact-verify.yml\nA\ttests/e2e/reading-transfer-observe.spec.ts'
+          test "$(git diff --no-renames --name-status "$source_sha" HEAD)" = "$expected"
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: b85912d2fe352065bc363e9e569a93bb2b05d5ec
+          path: observed-source
+          persist-credentials: false
+      - name: Verify fixed Source
+        run: test "$(git -C observed-source rev-parse HEAD)" = b85912d2fe352065bc363e9e569a93bb2b05d5ec
+      - name: Build the fixed browser image
+        run: docker build --target app --tag tsumucode-reading-observation observed-source
+      - name: Build the fixed Source
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-reading-observation npm run build
+      - name: Install the observation after building
+        run: cp tests/e2e/reading-transfer-observe.spec.ts observed-source/tests/e2e/
+      - name: Verify reading transfer guidance in Chromium
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-reading-observation node node_modules/@playwright/test/cli.js test
+          --config=playwright.authoring.config.ts tests/e2e/reading-transfer-observe.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
