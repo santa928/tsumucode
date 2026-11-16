@@ -2,6 +2,8 @@ import type { IDBPDatabase } from 'idb';
 import { describe, expect, it, vi } from 'vitest';
 import { IndexedDbProgressRepository } from '../../../src/adapters/persistence/indexeddb/IndexedDbProgressRepository';
 import type { ProgressDatabase } from '../../../src/adapters/persistence/indexeddb/openProgressDatabase';
+import { ContentProgressMigrationService } from '../../../src/core/persistence/contentProgressMigration';
+import { TransferService } from '../../../src/core/persistence/transferService';
 import type {
   CourseProgress,
   ExerciseDraft,
@@ -9,6 +11,11 @@ import type {
   RepositorySnapshot,
 } from '../../../src/core/persistence/contracts';
 import { schemaV1Progress } from '../../fixtures/progress/schema-v1';
+import { fixtureCourse } from '../../fixtures/course';
+import {
+  createAllCoursesSnapshot,
+  createExerciseDraft,
+} from '../../fixtures/progress/all-courses-bundle';
 
 type StoreName = 'courses' | 'drafts' | 'backups' | 'quarantine' | 'metadata';
 
@@ -182,6 +189,141 @@ function leaseProof(overrides: Readonly<Record<string, unknown>> = {}) {
 }
 
 describe('IndexedDbProgressRepository', () => {
+  it('移送serviceとrepositoryを接続し、混在revisionの置換前backupと別Courseを保つ', async () => {
+    const sourceDb = createFakeDatabase();
+    const source = new IndexedDbProgressRepository('source', async () => sourceDb.database);
+    await source.open();
+    const initial = createAllCoursesSnapshot();
+    const original: RepositorySnapshot = {
+      ...initial,
+      courses: {
+        ...initial.courses,
+        'html-css': { ...initial.courses['html-css']!, contentRevision: 'rev-1' },
+      },
+      drafts: {
+        'html-css:workspace-old': {
+          ...createExerciseDraft('html-css', 'rev-1', 'workspace-old'),
+          lessonId: 'lesson-old',
+          exerciseId: 'exercise-old',
+          lastPassingSnapshots: {
+            'exercise-old': {
+              editRevision: 1,
+              contentRevision: 'rev-1',
+              files: { 'index.html': '<main>passed</main>' },
+              evaluatedAt: '2026-07-15T00:00:00.000Z',
+            },
+          },
+        },
+        'sandbox:workspace-first-heading': {
+          ...createExerciseDraft('sandbox', 'rev-1'),
+          lastPassingSnapshots: {
+            'exercise-first-heading': {
+              editRevision: 1,
+              contentRevision: 'rev-1',
+              files: { 'index.html': '<main>sandbox passed</main>' },
+              evaluatedAt: '2026-07-15T00:00:00.000Z',
+            },
+          },
+        },
+      },
+    };
+    await source.replaceSnapshot(original);
+    const exported = await new TransferService(
+      source,
+      new ContentProgressMigrationService(source),
+      {
+        appVersion: '1.0.0',
+        now: () => '2026-07-15T00:00:00.000Z',
+      },
+    ).exportAll();
+
+    const targetDb = createFakeDatabase();
+    const target = new IndexedDbProgressRepository('target', async () => targetDb.database, {
+      id: () => 'before-transfer',
+      isoNow: () => '2026-07-15T00:00:00.000Z',
+    });
+    await target.open();
+    await target.putCourse(course());
+    await target.putDraft(draft());
+    const before = await target.snapshot();
+    const migrate = new ContentProgressMigrationService(target);
+    migrate.registerCourse({
+      ...fixtureCourse,
+      revision: 'rev-2',
+      progressMigrations: [
+        {
+          fromRevision: 'rev-1',
+          toRevision: 'rev-2',
+          steps: [
+            {
+              action: 'map-to',
+              entity: 'lesson',
+              fromId: 'lesson-old',
+              toId: 'lesson-first-heading',
+            },
+            {
+              action: 'map-to',
+              entity: 'exercise',
+              fromId: 'exercise-old',
+              toId: 'exercise-first-heading',
+            },
+            {
+              action: 'map-to',
+              entity: 'workspace',
+              fromId: 'workspace-old',
+              toId: 'workspace-first-heading',
+            },
+          ],
+        },
+      ],
+    });
+    const rejected = new TransferService(target, migrate, {
+      appVersion: '1.0.0',
+      now: () => '2026-07-15T00:00:00.000Z',
+    });
+    await expect(rejected.prepareImport(exported)).rejects.toThrow('未登録Course: sandbox');
+    expect(await target.snapshot()).toEqual(before);
+    expect(targetDb.stores.backups.size).toBe(0);
+
+    migrate.registerCourse({ ...fixtureCourse, id: 'sandbox', revision: 'rev-1' });
+    const service = new TransferService(target, migrate, {
+      appVersion: '1.0.0',
+      id: () => 'mixed-preview',
+      now: () => '2026-07-15T00:00:00.000Z',
+    });
+    const preview = await service.prepareImport(exported);
+    expect(await target.snapshot()).toEqual(before);
+    expect(targetDb.stores.backups.size).toBe(0);
+    await service.applyImport(preview.id);
+    const result = await target.snapshot();
+    expect(targetDb.stores.backups.get('before-transfer')).toMatchObject({
+      reason: 'before-import',
+      snapshot: before,
+    });
+    expect(result.courses['html-css']).toEqual({
+      ...original.courses['html-css'],
+      contentRevision: 'rev-2',
+    });
+    expect(result.drafts['html-css:workspace-first-heading']).toMatchObject({
+      lessonId: 'lesson-first-heading',
+      exerciseId: 'exercise-first-heading',
+      workspaceId: 'workspace-first-heading',
+      contentRevision: 'rev-2',
+      files: original.drafts['html-css:workspace-old']!.files,
+      lastPassingSnapshots: {
+        'exercise-first-heading': {
+          contentRevision: 'rev-2',
+          files: { 'index.html': '<main>passed</main>' },
+        },
+      },
+    });
+    expect(result.courses.sandbox).toEqual(original.courses.sandbox);
+    expect(result.drafts['sandbox:workspace-first-heading']).toEqual(
+      original.drafts['sandbox:workspace-first-heading'],
+    );
+    expect(result.drafts).not.toHaveProperty('html-css:workspace-old');
+    expect(await source.snapshot()).toEqual(original);
+  });
   it('空DBをschema v2で初期化し、未openとclose後の操作を拒否する', async () => {
     const fake = createFakeDatabase();
     const openDatabase = vi.fn().mockResolvedValue(fake.database);
