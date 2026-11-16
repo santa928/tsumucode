@@ -1,0 +1,59 @@
+name: Synthetic manifest WebKit diagnosis
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  diagnose:
+    if: github.event.pull_request.draft == true && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/manifest-webkit-diagnostics-main' && github.base_ref == 'main' && github.event.pull_request.base.sha == '5eb356fc5ca21c6b2c7cb7b7c1cd4080d3f5f1f3'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind the reviewed candidate
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Build the fixed verification image
+        run: ./scripts/docker-compose.sh build app
+      - name: Build app and create the two-lesson synthetic selection
+        run: |
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build
+          ./scripts/docker-compose.sh run --rm app node --import tsx tests/local/manifestDiagnosticPrepare.ts
+      - name: Execute exactly two WebKit learning tests
+        id: webkit
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: /workspace/.release-v2/diagnostic-report.json
+          TSUMUCODE_RELEASE_V2: '1'
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e PLAYWRIGHT_JSON_OUTPUT_FILE -e TSUMUCODE_RELEASE_V2
+          app node node_modules/@playwright/test/cli.js test tests/e2e/manifest-learning.spec.ts
+          --config=playwright.qualification.config.ts --project=webkit
+          '--grep=python-practice/python-practice-ch0[23]-l01 actual learning UI'
+          --workers=1 --retries=0 --reporter=json
+      - name: Write fixed diagnostic summary only
+        if: always() && (steps.webkit.outcome == 'success' || steps.webkit.outcome == 'failure')
+        run: ./scripts/docker-compose.sh run --rm app node tests/local/manifestDiagnosticWriteSummary.mjs
+      - name: Preserve fixed diagnostic summary only
+        if: always() && (steps.webkit.outcome == 'success' || steps.webkit.outcome == 'failure')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: synthetic-webkit-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2/diagnostic-summary.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - name: Stop only diagnostic containers
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
