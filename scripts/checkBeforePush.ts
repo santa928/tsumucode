@@ -93,7 +93,7 @@ writeFileSync(
     base,
     node: process.versions.node,
     lockSha256: createHash('sha256').update(lockBytes).digest('hex'),
-    testMaxWorkers: process.env['TSUMUCODE_TEST_MAX_WORKERS'] ?? 'CIと同じ既定値',
+    testMaxWorkers: process.env['TSUMUCODE_TEST_MAX_WORKERS'] ?? 'Vitest既定値（明示なし）',
     scope: args[1] === '--release' ? 'release-unit-build' : 'fast-quality',
   }),
 );

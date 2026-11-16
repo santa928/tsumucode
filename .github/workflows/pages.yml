@@ -183,7 +183,8 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
+          TSUMUCODE_TEST_MAX_WORKERS: 'adaptive:2'
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_TEST_MAX_WORKERS app npm run "$CHECK_SCRIPT"
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
