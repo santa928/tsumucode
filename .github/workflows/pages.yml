@@ -262,14 +262,22 @@ jobs:
           ulimit -f 2048
           scratch=$(mktemp -d)
           trap 'rm -rf -- "$scratch"' EXIT
+          if ! printf '%s\n' \
+            'FROM tsumucode-pr-visual' \
+            'RUN test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && mkdir /workspace/node_modules/.vite-temp' \
+            | docker build --network none --tag tsumucode-public-fault-probe - >"$scratch/build.log" 2>&1; then
+            echo 'public-fault-probe=failed'
+            exit 1
+          fi
           set +e
           docker run --rm --init --user 1000:1000 --network none --read-only --cap-drop ALL \
             --security-opt no-new-privileges:true --cpus 2 --memory 4g --memory-swap 4g \
             --pids-limit 512 --shm-size 512m --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+            --tmpfs /workspace/node_modules/.vite-temp:rw,nosuid,nodev,noexec,uid=1000,gid=1000,mode=0700,size=32m \
             --env BASE_PATH --env CI=true --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
             --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace,readonly" \
             --mount type=volume,target=/workspace/node_modules \
-            tsumucode-pr-visual node node_modules/@playwright/test/cli.js test \
+            tsumucode-public-fault-probe node node_modules/@playwright/test/cli.js test \
             --config=tests/verification/playwright.public-fault-probe.config.ts >"$scratch/probe.log" 2>&1
           status=$?
           set -e
