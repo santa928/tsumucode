@@ -154,8 +154,10 @@ jobs:
           ./scripts/docker-compose.sh run --rm app node -e
           'if (process.versions.node !== "24.18.0") process.exit(1)'
       - name: Run the existing pre-push checks
+        env:
+          TSUMUCODE_TEST_MAX_WORKERS: 'adaptive:2'
         run: >-
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:prepush -- "$PR_BASE_SHA"
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TSUMUCODE_TEST_MAX_WORKERS app npm run check:prepush -- "$PR_BASE_SHA"
 
   fast:
     if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true
@@ -184,7 +186,13 @@ jobs:
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
           TSUMUCODE_TEST_MAX_WORKERS: 'adaptive:2'
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_TEST_MAX_WORKERS app npm run "$CHECK_SCRIPT"
+        run: |
+          set -eu
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA -e TSUMUCODE_TEST_MAX_WORKERS app npm run "$CHECK_SCRIPT"
+          else
+            ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
+          fi
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
