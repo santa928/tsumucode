@@ -312,7 +312,7 @@ jobs:
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e RELEASE_V2_NEEDS
           -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT
           -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
-          app npm run release:flow -- qualify --output .release-v2/qualification.json
+          app npm run release:flow -- qualify --retirement-policy python-first-v1 --output .release-v2/qualification.json
       - name: Pin exact qualification bytes
         id: qualification_digest
         run: |

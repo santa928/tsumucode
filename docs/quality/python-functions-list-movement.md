@@ -20,7 +20,7 @@ Issue #259は、旧関数Lessonの複合目標を同じ加算題材の5段階へ
 
 l05の既存IDを維持し、新しい2目標は別IDにする。再利用されたl07/l08/l09は既存の`intentionally-reset`移行で旧達成・下書きを隔離保存する。旧Module/Exceptionの新しい移動先も、旧合格から自動で達成済みにしない。旧形式の保存読込・隔離・現行再試行は保存互換テストの対象である。
 
-`movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束する。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
+履歴の`movement-history/movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束した。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
 
 既存alias l05とProject ch02-l01の用語初出リンクもlearner投影に含まれる。同IDの一般carryはlearnerDigest完全一致を必要とする。Python-firstの`list-alias-and-console-references-v1`だけは、旧Source `16bbf55442a3166193c3e7de07c06d644126968d`と候補Source `19cbed7d95cac527d17b58f3522cdf4f05466b92`の固定2教材に対し、前提と用語初出リンクの実値を別契約で検査する。
 
@@ -36,7 +36,7 @@ aliasの前提はl04からl05-iterate、Listの初出はl05からl05-valuesへ�
 
 ## eb2実配信親への限定binding
 
-`movement-eb2-v2.json`と`movement-eb2-baseline-proof-v2.json`は、実deployment `7593230441`／Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`に対応する追加原本である。元の16bb宣言・proofは元bytesのまま履歴検証用に保持する。新宣言が存在するときはそれを選び、破損や検証失敗を旧宣言へのfallbackで隠さない。
+履歴の`movement-history/movement-eb2-v2.json`と`movement-eb2-baseline-proof-v2.json`は、実deployment `7593230441`／Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`に対応する原本である。旧2宣言は元bytesのまま保持し、既消費となった移行を後続公開で繰り返さない。終了の根拠と後続gateは[movement履歴](movement-history/README.md)に記録する。
 
 現行captureでeb2のhistorical Compileと467公開教材ファイルを照合し、16bb／eb2／候補19cbedの三者inventoryを比較した。旧親からeb2への変更はPython L02の説明・Hint、Tailwind公開状態、Pathで、旧関数と移動元2教材・reference-onlyの全67原本および投影は一致する。候補に対する保存移行・navigation等の技術差分は維持する。
 

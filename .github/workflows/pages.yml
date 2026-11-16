@@ -291,8 +291,8 @@ jobs:
           SITE_URL: https://santa928.github.io/tsumucode/
         run: |
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- baseline --repository "$GITHUB_REPOSITORY" --site-url "$SITE_URL" --output .release-v2/baseline.json
-          ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --baseline .release-v2/baseline.json --output .release-v2/preparation.json
-          ./scripts/docker-compose.sh run --rm app npm run release:flow -- stage-content --output .release-v2/content-receipts.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --retirement-policy python-first-v1 --baseline .release-v2/baseline.json --output .release-v2/preparation.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- stage-content --retirement-policy python-first-v1 --output .release-v2/content-receipts.json
       - name: Build public app once
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build:app
       - name: Check actual public bytes and early budgets
@@ -300,7 +300,7 @@ jobs:
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- static --snapshot .release-v2/preparation.json --output .release-v2/static.json
       - name: Freeze required checks for the same candidate
         run: |
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run release:flow -- freeze --snapshot .release-v2/preparation.json --baseline .release-v2/baseline.json --output .release-v2/execution-plan.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run release:flow -- freeze --retirement-policy python-first-v1 --snapshot .release-v2/preparation.json --baseline .release-v2/baseline.json --output .release-v2/execution-plan.json
       - name: Preserve exact candidate files
         id: candidate_files
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -316,7 +316,7 @@ jobs:
         run: >-
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID
           -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
-          app npm run release:flow -- candidate --snapshot .release-v2/preparation.json
+          app npm run release:flow -- candidate --retirement-policy python-first-v1 --snapshot .release-v2/preparation.json
           --baseline .release-v2/baseline.json --execution-plan .release-v2/execution-plan.json
           --artifact-id "$ARTIFACT_ID" --output .release-v2/candidate.json
       - name: Execute artifact preflight against the frozen candidate

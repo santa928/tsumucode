@@ -144,7 +144,7 @@ export async function verifyPythonFirstAnchor(candidateRoot: string) {
   const summary = await readBoundedRegularFile(summaryPath, 16 * 1024);
   if (hashBytes(summary) !== summaryDigest) throw Error('Historical anchor summary differs');
   const declarationBytes = await readBoundedRegularFile(
-    path.join(candidateRoot, 'docs/quality/movement-eb2-v2.json'),
+    path.join(candidateRoot, 'docs/quality/movement-history/movement-eb2-v2.json'),
     4 * 1024 * 1024,
   );
   const declaration = MovementDeclarationSchema.parse(

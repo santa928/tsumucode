@@ -20,7 +20,8 @@ import {
   readMovementDeclaration,
 } from '../../../../scripts/release/v2/movement';
 import { readMovementBaselineProofs } from '../../../../scripts/release/v2/movementBaseline';
-import { hashArtifact, hashValue } from '../../../../scripts/release/v2/identity';
+import { assertRetiredMovementFiles } from '../../../../scripts/release/v2/retiredMovementFiles';
+import { hashArtifact, hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
 import { compileContent } from '../../../../scripts/content/compile';
 import { buildInventory } from '../../../../scripts/release/v2/inventory';
 import { readMountInfoBounded, validatedReadonlyGitObjects } from './readonlyGitObjects.mjs';
@@ -140,11 +141,77 @@ async function declarationRoot() {
   );
   // 読込選択の合成protocol。実際の新しい承認や公開根拠としては使わない。
   const declaration = MovementDeclarationSchema.parse(
-    JSON.parse(await readFile('docs/quality/movement-v2.json', 'utf8')),
+    JSON.parse(await readFile('docs/quality/movement-history/movement-v2.json', 'utf8')),
   );
   declaration.body.candidateContentCommit = await git('rev-parse', 'HEAD');
   return { root, declaration };
 }
+
+it('preserves the retired declaration bytes without selecting either historical fallback', async () => {
+  const history = 'docs/quality/movement-history';
+  for (const [file, digest] of [
+    ['movement-eb2-v2.json', 'f128cace0b4ab2a0e57a518daf7fe8d0f5fdd3a98a6b2128cbf77f41583df1b8'],
+    ['movement-v2.json', '539ed1c598d02661275500e7fa222d4649e44c1a13e8b606924cb9ee6e8f55d3'],
+  ] as const) {
+    expect(hashBytes(await readFile(path.join(history, file)))).toBe(digest);
+    await expect(readFile(path.join('docs/quality', file))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  }
+  await expect(assertRetiredMovementFiles(process.cwd())).resolves.toBeUndefined();
+  await expect(readMovementDeclaration(process.cwd())).resolves.toBeUndefined();
+});
+
+it('fails closed when the retirement record and both historical declarations are absent', async () => {
+  const root = await temporaryRoot();
+  await expect(readMovementDeclaration(root)).resolves.toBeUndefined();
+  await expect(assertRetiredMovementFiles(root)).rejects.toThrow(
+    'Retired movement evidence is missing or changed',
+  );
+});
+
+it('rejects a symlinked retirement evidence directory', async () => {
+  const root = await temporaryRoot();
+  await symlink(
+    path.resolve('docs/quality/movement-history'),
+    path.join(root, 'docs/quality/movement-history'),
+  );
+  await expect(assertRetiredMovementFiles(root)).rejects.toThrow(
+    'Retired movement evidence is missing or changed',
+  );
+});
+
+it.each([
+  ['retirement-v1.json', 'missing'],
+  ['movement-eb2-v2.json', 'missing'],
+  ['movement-v2.json', 'missing'],
+  ['retirement-v1.json', 'changed'],
+  ['movement-eb2-v2.json', 'changed'],
+  ['movement-v2.json', 'changed'],
+  ['retirement-v1.json', 'symlink'],
+  ['movement-eb2-v2.json', 'executable'],
+] as const)('rejects %s retirement evidence when %s', async (file, mutation) => {
+  const root = await temporaryRoot();
+  const history = path.join(root, 'docs/quality/movement-history');
+  await mkdir(history);
+  for (const name of ['retirement-v1.json', 'movement-eb2-v2.json', 'movement-v2.json']) {
+    const destination = path.join(history, name);
+    const bytes = await readFile(path.join('docs/quality/movement-history', name));
+    if (name === file && mutation === 'missing') continue;
+    if (name === file && mutation === 'symlink') {
+      await symlink(path.resolve('docs/quality/movement-history', name), destination);
+      continue;
+    }
+    await writeFile(
+      destination,
+      name === file && mutation === 'changed' ? Buffer.from('changed') : bytes,
+    );
+    if (name === file && mutation === 'executable') await chmod(destination, 0o755);
+  }
+  await expect(assertRetiredMovementFiles(root)).rejects.toThrow(
+    'Retired movement evidence is missing or changed',
+  );
+});
 
 it('linked worktree の Git objects は一意な read-only mount と実directoryだけを受け入れる', async () => {
   const root = await temporaryRoot();
@@ -249,7 +316,7 @@ it('eb2の固定後続だけを許し、各教材とreceiptの追加変更を拒
   await writeFile(path.join(root, '.git/objects/info/alternates'), objects + '\n');
   await git('cat-file', '-e', source + '^{commit}');
   const declarationPath = 'docs/quality/movement-eb2-v2.json';
-  const original = await readFile(declarationPath, 'utf8');
+  const original = await readFile('docs/quality/movement-history/movement-eb2-v2.json', 'utf8');
   await git('update-ref', 'HEAD', source);
   await git('read-tree', '--reset', '-u', source);
   expect(await readMovementDeclaration(root, digest)).toEqual(JSON.parse(original));
