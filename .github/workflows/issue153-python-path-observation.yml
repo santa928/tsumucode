@@ -27,14 +27,14 @@ jobs:
           EVENT_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          source_sha=2a8d89fa74fb5ebde19fea288dc25db5ef748911
+          source_sha=f723a45449a1d1b6c88f52c5c5130ce477b179af
           [[ "$EVENT_HEAD" =~ ^[a-f0-9]{40}$ ]]
           [[ "$EVENT_BASE" == "$source_sha" ]]
           [[ "$EVENT_HEAD_REF" == codex/issue153-python-path-observation ]]
           [[ "$EVENT_BASE_REF" == codex/issue153-python-path-links ]]
           [[ "$EVENT_HEAD_REPO" == "$EVENT_REPO" ]]
           [[ "$(git rev-parse HEAD)" == "$EVENT_HEAD" ]]
-          [[ "$(git rev-list --parents -n 1 HEAD)" == "$EVENT_HEAD $source_sha" ]]
+          [[ "$(git rev-list --parents -n 1 HEAD)" == "$EVENT_HEAD c93d6fba4791ab0524f2e5f94bcb379760be9e4a $source_sha" ]]
           [[ "$(git diff --name-status --no-renames "$source_sha" HEAD)" == $'A\t.github/workflows/issue153-python-path-observation.yml' ]]
           git checkout --detach "$source_sha"
           [[ "$(git rev-parse HEAD)" == "$source_sha" ]]
