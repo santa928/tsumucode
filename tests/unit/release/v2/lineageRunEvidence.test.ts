@@ -48,6 +48,46 @@ it('hides hostile evidence getter errors', () => {
   expect(() => matchSameRunLineageEvidence(new Hostile(2), {})).toThrow('Invalid lineage evidence bytes');
 });
 
+it('does not expose unknown expected fields or accessor failures in errors', () => {
+  const anchor = test({ ...common, mode: 'anchor' });
+  const expected = { repository: common.repository, runId: common.runId, attempt: common.attempt,
+    source: common.source, producerJobId: common.producerJobId, verifierCommit: common.verifierCommit,
+    mode: 'anchor', sha256: anchor.sha256 };
+  const marker = 'synthetic-private-marker';
+  const getter = { ...expected, get repository(): string { throw Error(marker); } };
+  for (const input of [{ ...expected, [marker]: true }, getter]) {
+    try {
+      matchSameRunLineageEvidence(anchor.bytes, input);
+      throw Error('Expected rejection');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe('Invalid lineage expected context');
+      expect((error as Error).stack).not.toContain(marker);
+      expect((error as Error).cause).toBeUndefined();
+    }
+  }
+});
+
+it('does not expose unknown evidence fields or malformed JSON in errors', () => {
+  const marker = 'synthetic-private-marker';
+  const invalid = [test({ ...common, mode: 'anchor', [marker]: true }).bytes,
+    Buffer.from(`{"${marker}":`), Buffer.from([0xff])];
+  for (const bytes of invalid) {
+    const expected = { repository: common.repository, runId: common.runId, attempt: common.attempt,
+      source: common.source, producerJobId: common.producerJobId, verifierCommit: common.verifierCommit,
+      mode: 'anchor', sha256: hashBytes(bytes) };
+    try {
+      matchSameRunLineageEvidence(bytes, expected);
+      throw Error('Expected rejection');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe('Invalid lineage evidence');
+      expect((error as Error).stack).not.toContain(marker);
+      expect((error as Error).cause).toBeUndefined();
+    }
+  }
+});
+
 it('rejects foreign shared signed bytes', () => {
   const subject = Buffer.from('subject'), bundle = Buffer.from('bundle');
   const signed = { ...common, mode: 'signed', parentDeploymentId: '202',
@@ -64,6 +104,156 @@ it('hides hostile signed byte getter errors', () => {
     get buffer(): ArrayBuffer { throw Error('synthetic-secret-getter'); }
   }
   expect(() => matchLineageEvidenceFiles(signed, { subject: new Hostile(2), bundle: Buffer.from('bundle') })).toThrow('Invalid lineage file bytes');
+});
+
+it('does not expose untrusted evidence keys or file getter failures', () => {
+  const marker = 'synthetic-private-marker';
+  const anchor = { ...common, mode: 'anchor' };
+  const hostile = { get subject(): Uint8Array { throw Error(marker); } };
+  for (const [action, expected] of [
+    [() => matchLineageEvidenceFiles({ ...anchor, [marker]: true }, {}), 'Invalid lineage evidence'],
+    [() => matchLineageEvidenceFiles(anchor, hostile), 'Invalid lineage file input'],
+    [() => matchLineageEvidenceFiles(anchor, { get bundle(): Uint8Array { throw Error(marker); } }), 'Invalid lineage file input'],
+  ] as const) {
+    try {
+      action();
+      throw Error('Expected rejection');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe(expected);
+      expect((error as Error).stack).not.toContain(marker);
+      expect((error as Error).cause).toBeUndefined();
+    }
+  }
+  expect(() => matchLineageEvidenceFiles(anchor, {
+    subject: Buffer.from('subject'),
+    get bundle(): Uint8Array { throw Error(marker); },
+  })).toThrow('Anchor carries unexpected signed evidence');
+});
+
+it('snapshots signed subject before invoking the bundle getter', () => {
+  const good = Buffer.from('GOOD');
+  const bundle = Buffer.from('bundle');
+  const evidence = {
+    ...common, mode: 'signed', parentDeploymentId: '202',
+    subjectSha256: hashBytes(good), bundleSha256: hashBytes(bundle),
+  };
+  const badBefore = Buffer.from('BAD!');
+  expect(() => matchLineageEvidenceFiles(evidence, {
+    subject: badBefore,
+    get bundle(): Uint8Array { good.copy(badBefore); return bundle; },
+  })).toThrow('Signed parent bytes differ');
+  const goodBefore = Buffer.from(good);
+  const copied = matchLineageEvidenceFiles(evidence, {
+    subject: goodBefore,
+    get bundle(): Uint8Array { goodBefore.fill(0); return bundle; },
+  });
+  expect(copied.subject).toEqual(good);
+  let bundleRead = false;
+  expect(() => matchLineageEvidenceFiles(evidence, {
+    subject: new Uint8Array(),
+    get bundle(): Uint8Array { bundleRead = true; return bundle; },
+  })).toThrow('Invalid lineage file bytes');
+  expect(bundleRead).toBe(false);
+});
+
+it('does not expose untrusted evidence or parent fields in identity errors', () => {
+  const marker = 'synthetic-private-marker';
+  const anchor = { ...common, mode: 'anchor' };
+  for (const [evidence, parent, expected] of [
+    [{ ...anchor, [marker]: true }, {}, 'Invalid lineage evidence'],
+    [anchor, { ...releaseFixture().capturedBaseline, [marker]: true }, 'Invalid lineage parent'],
+    [anchor, { get baseline(): never { throw Error(marker); } }, 'Invalid lineage parent'],
+  ] as const) {
+    try {
+      matchLineageEvidenceParent(evidence, parent);
+      throw Error('Expected rejection');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe(expected);
+      expect((error as Error).stack).not.toContain(marker);
+      expect((error as Error).cause).toBeUndefined();
+    }
+  }
+});
+
+it('preserves the fixed baseline identity error for a valid-shaped inconsistent parent', () => {
+  const captured = releaseFixture().capturedBaseline;
+  const parent = {
+    ...captured,
+    baseline: { ...captured.baseline, sourceRecordDigest: '0'.repeat(64) },
+  };
+  expect(() => matchLineageEvidenceParent({ ...common, mode: 'anchor' }, parent))
+    .toThrow('Captured baseline identity differs from its proof');
+});
+
+it('reads an untrusted nested getter once and does not invoke toJSON', () => {
+  const captured = structuredClone(releaseFixture().capturedBaseline);
+  const deploymentId = captured.baseline.deploymentId;
+  let reads = 0;
+  let jsonCalls = 0;
+  Object.defineProperty(captured.baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; return deploymentId; },
+  });
+  Object.defineProperty(captured.baseline.inventory, 'toJSON', {
+    value() { jsonCalls += 1; throw Error('synthetic-private-marker'); },
+  });
+  expect(() => matchLineageEvidenceParent({ ...common, mode: 'anchor' }, captured))
+    .toThrow('Fresh parent identity differs');
+  expect(reads).toBe(1);
+  expect(jsonCalls).toBe(0);
+});
+
+it('does not invoke toJSON when returning a matched parent', () => {
+  const fixture = releaseFixture().capturedBaseline;
+  const proof = {
+    ...fixture.proof,
+    repository: 'santa928/tsumucode',
+    deploymentId: common.parentDeploymentId,
+    sourceCommit: common.parentSource,
+    workflowHeadCommit: common.parentSource,
+    tagDigest: common.parentTagDigest,
+  };
+  const baseline = {
+    ...fixture.baseline,
+    deploymentId: proof.deploymentId,
+    sourceCommit: proof.sourceCommit,
+    sourceRecordDigest: hashValue(proof),
+  };
+  const evidence = { ...common, mode: 'anchor', parentIdentityDigest: hashValue({ ...proof, observedAt: null }) };
+  const expected = canonicalJson({ baseline, proof });
+  const deploymentId = baseline.deploymentId;
+  let reads = 0;
+  let jsonCalls = 0;
+  Object.defineProperty(baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; return deploymentId; },
+  });
+  Object.defineProperty(baseline.inventory, 'toJSON', {
+    value() { jsonCalls += 1; throw Error('synthetic-private-marker'); },
+  });
+  expect(matchLineageEvidenceParent(evidence, { baseline, proof })).toBe(expected);
+  expect(reads).toBe(1);
+  expect(jsonCalls).toBe(0);
+});
+
+it('hides a throwing nested getter without re-reading it', () => {
+  const captured = structuredClone(releaseFixture().capturedBaseline);
+  let reads = 0;
+  Object.defineProperty(captured.baseline, 'deploymentId', {
+    enumerable: true,
+    get() { reads += 1; throw Error('synthetic-private-marker'); },
+  });
+  try {
+    matchLineageEvidenceParent({ ...common, mode: 'anchor' }, captured);
+    throw Error('Expected rejection');
+  } catch (error) {
+    expect((error as Error).message).toBe('Invalid lineage parent');
+    expect((error as Error).stack).not.toContain('synthetic-private-marker');
+    expect((error as Error).cause).toBeUndefined();
+  }
+  expect(reads).toBe(1);
 });
 it('matches bounded canonical evidence to independently supplied same-run context (shape only)', () => {
   const anchor = test({ ...common, mode: 'anchor' }),
@@ -117,7 +307,7 @@ it('matches bounded canonical evidence to independently supplied same-run contex
       mode: 'signed',
       sha256: fakeSignedAnchor.sha256,
     });
-  }).toThrow('Historical anchor cannot claim a signed lineage');
+  }).toThrow('Invalid lineage evidence');
   for (const bad of [
     { ...common, mode: 'signed', subjectSha256: 'e'.repeat(64) },
     { ...common, mode: 'signed', subjectSha256: 'e'.repeat(64), bundleSha256: 'f'.repeat(64) },

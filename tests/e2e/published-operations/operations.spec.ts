@@ -240,6 +240,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
           const fresh = await browser.newContext({ baseURL });
           try {
             const imported = await fresh.newPage();
+            imported.on('pageerror', (error) => errors.push(error.message));
             await imported.goto('./#/');
             const input = imported.getByLabel('書き出した学習データを読み込む');
             await expect(input).toBeEnabled();

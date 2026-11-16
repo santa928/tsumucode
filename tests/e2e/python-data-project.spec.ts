@@ -4,12 +4,20 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { testBasePath } from './helpers/testBasePath';
 import { readStoredProgress } from './helpers/progress';
+import { practiceIsPublished } from './helpers/pythonPracticePublication';
 
 const base = testBasePath();
 const lessonId = 'python-practice-ch03-l01';
 const exerciseId = `${lessonId}-e01`;
 const directory = `content/python-practice/chapters/python-practice-ch03/lessons/${lessonId}/exercises/${exerciseId}`;
 const route = `${base}#/courses/python-practice/lessons/${lessonId}/exercises/${exerciseId}`;
+
+test('実践Courseの掲載状態はdraft/publishedだけを受け入れる', () => {
+  expect(practiceIsPublished('draft')).toBe(false);
+  expect(practiceIsPublished('published')).toBe(true);
+  expect(() => practiceIsPublished('unknown')).toThrow();
+  expect(() => practiceIsPublished(undefined)).toThrow();
+});
 
 /** 画面外の行も含め、通常のコピー操作からEditorのSource全文を読む。 */
 async function editorSource(page: Page): Promise<string> {
@@ -227,6 +235,7 @@ test('旧実践revisionの移行とデータProjectの保存・Reset・JSON移�
   const previous = await draft(page, oldId);
   const course = parse(await readFile('content/python-practice/course.yaml', 'utf8')) as {
     revision: string;
+    publicationStatus: unknown;
   };
   // 同じ旧4教材IDの実成功記録を、前revisionの保存状態としてseedする。
   await page.goto(`${base}generated/content/catalog-v3.json`);
@@ -309,7 +318,14 @@ test('旧実践revisionの移行とデータProjectの保存・Reset・JSON移�
   await replaceEditorSource(page, solution);
   await grade(page, 'pass');
   await page.goto(`${base}#/`);
-  await expect(page.getByRole('link', { name: /Pythonの反復とデータ処理/ })).toHaveCount(0);
+  const courseLinks = page.getByRole('link', { name: /Pythonの反復とデータ処理/ });
+  if (practiceIsPublished(course.publicationStatus)) {
+    await expect(courseLinks.first()).toBeVisible();
+    await expect(courseLinks.first()).toHaveAttribute(
+      'href',
+      /#\/courses\/python-practice(?:\/|$)/u,
+    );
+  } else await expect(courseLinks).toHaveCount(0);
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す', exact: true }).click();
   const file = info.outputPath('python-data-project-progress.json');

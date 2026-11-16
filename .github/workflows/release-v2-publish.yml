@@ -485,8 +485,10 @@ jobs:
               await assertCurrentAttempt();
               await actual();
               ensure(typeof process.env.GH_TOKEN==='string' && process.env.GH_TOKEN.length>0,'Missing record writer authorization');
-              const annotation=await api('/git/tags',{tag:tagName,message:JSON.stringify(record),object:source,type:'commit'});
-              ensure(annotation.status===201 && /^[a-f0-9]{40}$/.test(annotation.body.sha) && annotation.body.tag===tagName && annotation.body.message===JSON.stringify(record) && annotation.body.object?.type==='commit' && annotation.body.object.sha===source,'Annotated record outcome uncertain; no ref write attempted');
+              // This fixed public label limits tag contents; it is not proof of the caller's identity.
+              const tagger={name:'github-actions[bot]',email:'41898282+github-actions[bot]@users.noreply.github.com'};
+              const annotation=await api('/git/tags',{tag:tagName,message:JSON.stringify(record),object:source,type:'commit',tagger});
+              ensure(annotation.status===201 && /^[a-f0-9]{40}$/.test(annotation.body.sha) && annotation.body.tag===tagName && annotation.body.message===JSON.stringify(record) && annotation.body.object?.type==='commit' && annotation.body.object.sha===source && annotation.body.tagger?.name===tagger.name && annotation.body.tagger?.email===tagger.email,'Annotated record outcome uncertain; no ref write attempted');
               await assertCurrentAttempt();
               await actual();
               // A lost/conflicting ref response is reconciled read-only. Never repeat POST or force update.

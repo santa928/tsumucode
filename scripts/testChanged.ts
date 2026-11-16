@@ -2,7 +2,9 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 
 const base = process.env['TEST_BASE_SHA'] || 'HEAD';
-const changedFiles = execFileSync('git', ['diff', '--name-only', base], { encoding: 'utf8' })
+const changedFiles = execFileSync('git', ['diff', '--no-renames', '--name-only', base], {
+  encoding: 'utf8',
+})
   .trim()
   .split('\n')
   .filter(Boolean);
@@ -54,6 +56,10 @@ if (fullSuite) {
     dynamicDirectories.push('tests/unit/release', 'scripts/release');
   }
   if (files.includes('scripts/testChanged.ts')) selected.add('scripts/testChanged.test.ts');
+  if (files.some((file) => /^docs\/quality\/typescript-ch01-l0[123]-draft\//u.test(file))) {
+    // Draftはtest実行時にPathを組み立てて読むためimport graphに現れない。
+    selected.add('tests/content/typescript-lesson-drafts.test.ts');
+  }
   if (compilerChanged) {
     // Workerの動的読込で切れる依存を、呼出側と教材契約の両方から補う。
     selected.add('src/adapters/runtime/typescript/TypeScriptCompilerClient.ts');
