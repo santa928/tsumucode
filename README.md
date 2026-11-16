@@ -291,6 +291,14 @@ Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Le
 
 ## GitHub Pagesへの公開
 
+現在の公開入口は[Pages workflow](.github/workflows/pages.yml)です。手動配信は`main`の`candidate`に限り、`source_sha`は空欄またはそのRunのSHAを指定します。Run開始時の一致だけで後続の最新性は保証されず、資格時にも現在の`main`を照合します。`course_id`は旧入口との互換入力で、現行方式は教材一覧から対象を選びます。`migration_checks`と`deploy`は同時に指定できず、`beta`・旧版への復旧はこの入口では扱いません。
+
+通常CIの成功は正式資格・配信・配信後確認の成功を意味しません。現行方式では同一Runの資格、配信親の照合、配信後確認を含む既存Gateを維持し、失敗や未確認を成功に読み替えません。署名付き証明方式は承認済みの別途検討中の案で、現行workflowの必須条件としては接続されていません。
+
+### 旧方式の手順と履歴
+
+以下の`course_id`別のdispatch、`beta`、旧Report／`--promote`の手順は当時の記録で、現行のPages workflowにそのまま使う操作例ではありません。教材受入と過去の検証範囲は元の記録として保持します。
+
 公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSの全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）の教材評価は、新規・未確認Lessonだけ独立3役で一度実施し、確認済みは保持します。実在初心者・自然な誤解頻度・物理実機の証明ではありません。HTML/CSSは別の5 Checkpointを維持し、2026-10-14に承認された独立computer useによる代替受入を使えます。方式と記録条件は[観察runbook](docs/quality/novice-observation-runbook.md)を参照してください。実証前の記録はdraftです。
 
 dispatch直前に最新main SHAを固定し、承認済みProduct commit P以降に品質記録・literal履歴以外のProduct変更がないworkflow head Mを確認します。`source_sha`はP、RunのheadはMへ結びます。自分のcommit SHAを同じcommit内の記録へ埋めません。`github-pages`の既存保護はmain限定で、2026-10-02確認時はrequired reviewer未設定です。Environment通過を記録し、取得していない独立Environment人承認を主張しません。
