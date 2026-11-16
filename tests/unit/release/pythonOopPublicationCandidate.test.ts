@@ -45,6 +45,24 @@ describe('Python OOP publication candidate', () => {
       },
     });
     const catalog = buildSplitContentDelivery(compiled, [python]).catalog;
+    // 現候補の各Courseへは、他Courseの未着手に関係なく先頭Slideから入れる。
+    const unstarted = summarizeLearningPathProgress(python, catalog.courses, new Map());
+    expect(
+      unstarted.steps.map(({ course, courseProgress }) => [course.id, courseProgress.actionPath]),
+    ).toEqual([
+      [
+        'python-basics',
+        '/courses/python-basics/lessons/python-basics-ch01-l01/slides/python-basics-ch01-l01-s01',
+      ],
+      [
+        'python-practice',
+        '/courses/python-practice/lessons/python-practice-ch01-l01/slides/python-practice-ch01-l01-s01',
+      ],
+      [
+        'python-oop',
+        '/courses/python-oop/lessons/python-oop-ch01-l01/slides/python-oop-ch01-l01-s01',
+      ],
+    ]);
     expect(catalog.courses.find(({ id }) => id === 'python-oop')).toMatchObject({
       publicationStatus: 'published',
       title: 'PythonのClassとobjectの設計',
