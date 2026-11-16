@@ -49,9 +49,27 @@ test('PythonのHome・Path・読書はcoreを取得せず、狭幅で予測を�
 
 test('Python Pathの3コースを順に表示し、未完の前提があっても各リンクを開ける', async ({ page }) => {
   const courses = [
-    { id: 'python-basics', title: 'Python 値と変数の第一歩', role: '必須' },
-    { id: 'python-practice', title: 'Pythonの反復とデータ処理', role: '選択' },
-    { id: 'python-oop', title: 'PythonのClassとobjectの設計', role: '選択' },
+    {
+      id: 'python-basics',
+      title: 'Python 値と変数の第一歩',
+      role: '必須',
+      lessonId: 'python-basics-ch01-l01',
+      slideId: 'python-basics-ch01-l01-s01',
+    },
+    {
+      id: 'python-practice',
+      title: 'Pythonの反復とデータ処理',
+      role: '選択',
+      lessonId: 'python-practice-ch01-l01',
+      slideId: 'python-practice-ch01-l01-s01',
+    },
+    {
+      id: 'python-oop',
+      title: 'PythonのClassとobjectの設計',
+      role: '選択',
+      lessonId: 'python-oop-ch01-l01',
+      slideId: 'python-oop-ch01-l01-s01',
+    },
   ];
   const pathRoute = `${base}#/paths/python-basics`;
   await page.goto(pathRoute);
@@ -76,8 +94,8 @@ test('Python Pathの3コースを順に表示し、未完の前提があって�
     await link.click();
     await expect
       .poll(() => new URL(page.url()).hash)
-      .toMatch(new RegExp(`^#/courses/${course.id}/lessons/`, 'u'));
-    await expect(page.getByTestId('slide-stage')).toBeVisible();
+      .toBe(`#/courses/${course.id}/lessons/${course.lessonId}/slides/${course.slideId}`);
+    await expect(page.getByTestId('slide-stage')).toHaveAttribute('data-slide-id', course.slideId);
   }
 });
 
