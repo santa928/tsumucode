@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
+import { parseQualificationNeeds } from './qualificationNeeds';
 import { captureBaseline } from './captureBaseline';
 import { qualifyRelease } from './admission';
 import { readRecipe } from './candidate';
@@ -61,15 +62,7 @@ export async function qualifyCurrentRelease(
     .string()
     .regex(/^[a-f0-9]{40}$/u)
     .parse(remote.split(/\s+/u)[0]);
-  const needs = z
-    .record(
-      z.string(),
-      z.object({ result: z.enum(['success', 'failure', 'cancelled', 'skipped']) }),
-    )
-    .parse(JSON.parse(environment.RELEASE_V2_NEEDS ?? 'null') as unknown);
-  const jobs = Object.fromEntries(
-    Object.entries(needs).map(([name, value]) => [name, value.result]),
-  );
+  const jobs = parseQualificationNeeds(environment.RELEASE_V2_NEEDS);
   // This caller can only run after its build dependency succeeds and supplies both same-run artifact IDs.
   jobs['build'] = 'success';
   const receipts = path.join(root, '.release-v2/receipts');
