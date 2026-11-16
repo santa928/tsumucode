@@ -36,6 +36,8 @@ it('fails closed on overflow and does not accept an untrusted scope', () => {
   for (let index = 0; index < 100; index += 1) page.emit('requestfailed');
   expect(failures).toHaveLength(65);
   expect(failures[64]).toBe('observation-overflow');
-  expect(() => watchPublicFaults(page as unknown as Page, 'synthetic-secret' as never, failures, resources))
+  expect(() => {
+    watchPublicFaults(page as unknown as Page, 'synthetic-secret', failures, resources);
+  })
     .toThrow('Invalid observation scope');
 });
