@@ -12,11 +12,12 @@ Docker内の実行コマンドは`node --import tsx scripts/ci/prVisual.ts`。
 `BASE_PATH=/<repository-name>/`とfastが保存したpreviewを使う。全Browser入り既存app imageの
 準備が1 job増えるが、アプリの再build、全機能E2E、Firefox/WebKit、性能検査は追加しない。
 上限2 CPU・4 GiB、job上限20分。初期見積もりはimage準備5～10分、6件2～5分で、実測は未確認。
-失敗時はJSON、画像・error-context・traceだけを7日保存し、進捗export等を包括収集しない。
+代表6件の診断はJSON、画像・error-context・traceだけを7日保存し、進捗export等を包括収集しない。
 
 2026-11-16追補: 同じ`pr_visual` jobは、同一runの固定previewとBrowser imageを使い、
 Python実践・OOPのHomeとCourse mapの入口案内もChromium・1 worker・retry 0で1件検査する。
-代表6件は維持する。このPR検査の成功は正式資格・実配信・配信後確認を意味しない。
+代表6件は維持する。追加1件の診断artifactは上記の保存対象に含まれない。
+このPR検査の成功は正式資格・実配信・配信後確認を意味しない。
 
 正式公開run 42111620240では、文言変更後も古いVisual期待が残り、Chromium shard 2/2の
 長時間実行後に6件が失敗した。このPR検査はその既存6件を早く返すための追加であり、
