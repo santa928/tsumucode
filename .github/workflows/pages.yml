@@ -250,6 +250,75 @@ jobs:
           tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
           --config=playwright.authoring.config.ts tests/e2e/python-course-guide.spec.ts
           --project=chromium --workers=1 --retries=0 --reporter=list
+      # Verification-only Draft: this branch-specific step is not a release gate.
+      - name: Probe public-operation fault observation
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/issue154-public-fault-probe'
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          ulimit -f 2048
+          scratch=$(mktemp -d)
+          trap 'rm -rf -- "$scratch"' EXIT
+          if ! printf '%s\n' \
+            'FROM tsumucode-pr-visual' \
+            'RUN test ! -e /workspace/node_modules/.vite-temp && test ! -L /workspace/node_modules/.vite-temp && mkdir /workspace/node_modules/.vite-temp' \
+            | docker build --network none --tag tsumucode-public-fault-probe - >"$scratch/build.log" 2>&1; then
+            echo 'probe-phase=image-build-failed'
+            echo 'public-fault-probe=failed'
+            exit 1
+          fi
+          echo 'probe-phase=image-ready'
+          set +e
+          docker run --rm --init --user 1000:1000 --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges:true --cpus 2 --memory 4g --memory-swap 4g \
+            --pids-limit 512 --shm-size 512m --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+            --tmpfs /workspace/node_modules/.vite-temp:rw,nosuid,nodev,noexec,uid=1000,gid=1000,mode=0700,size=32m \
+            --env BASE_PATH --env CI=true --env HOME=/tmp --env NODE_OPTIONS=--max-old-space-size=3072 \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace,readonly" \
+            --mount type=volume,target=/workspace/node_modules \
+            tsumucode-public-fault-probe node node_modules/@playwright/test/cli.js test \
+            --config=tests/verification/playwright.public-fault-probe.config.ts >"$scratch/probe.log" 2>&1
+          status=$?
+          set -e
+          python3 - "$scratch/probe.log" "$status" <<'PY'
+          import os, re, stat, sys
+          try:
+              status = sys.argv[2]
+              print('probe-docker-status=' + (status if status in ('0', '125', '126', '127', '137') else 'other'))
+              fd = os.open(sys.argv[1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+              try:
+                  info = os.fstat(fd)
+                  if not stat.S_ISREG(info.st_mode) or info.st_size > 1024 * 1024:
+                      raise ValueError()
+                  data = os.read(fd, 1024 * 1024 + 1)
+                  if len(data) != info.st_size:
+                      raise ValueError()
+              finally:
+                  os.close(fd)
+              text = data.decode('utf-8', errors='strict')
+              indicators = (
+                  ('sandbox', ('No usable sandbox!', 'Failed to move to new namespace')),
+                  ('browser-launch', ('browserType.launch:',)),
+                  ('webserver', ('Error: Process from config.webServer',)),
+                  ('no-tests', ('No tests found',)),
+              )
+              for label, needles in indicators:
+                  if any(needle in text for needle in needles):
+                      print('probe-indicator=' + label)
+              allowed = re.compile(r'probe-(?:normal=passed|synthetic=passed|phase=(?:normal-test-started|synthetic-test-started)|fault=(?:(?:primary|transfer)-(?:page-error|console-error|console-unknown|request-failed|request-type-unknown)|observation-overflow)|resource=(?:primary|transfer)-(?:document|stylesheet|image|media|font|script|texttrack|xhr|fetch|eventsource|websocket|manifest|other))')
+              lines = [line.strip() for line in text.splitlines() if allowed.fullmatch(line.strip())]
+              for line in lines:
+                  print(line)
+              if sys.argv[2] != '0' or 'probe-normal=passed' not in lines or 'probe-synthetic=passed' not in lines:
+                  raise ValueError()
+              print('public-fault-probe=passed')
+          except Exception:
+              print('public-fault-probe=failed')
+              sys.exit(1)
+          PY
       - name: Preserve bounded visual diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
