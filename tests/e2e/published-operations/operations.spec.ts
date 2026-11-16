@@ -76,7 +76,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
       { annotation: { type: 'public-operation', description: target.key } },
       async ({ page, browser }, info) => {
         const errors: string[] = [];
-        page.on('pageerror', (error) => errors.push(error.message));
+        page.on('pageerror', () => errors.push('page-error'));
         if (target.kind === 'launch') {
           await page.goto('./#/');
           await expect(page.getByRole('banner')).toBeVisible();
@@ -240,7 +240,7 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
           const fresh = await browser.newContext({ baseURL });
           try {
             const imported = await fresh.newPage();
-            imported.on('pageerror', (error) => errors.push(error.message));
+            imported.on('pageerror', () => errors.push('imported-page-error'));
             await imported.goto('./#/');
             const input = imported.getByLabel('書き出した学習データを読み込む');
             await expect(input).toBeEnabled();
