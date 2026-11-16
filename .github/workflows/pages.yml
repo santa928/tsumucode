@@ -250,20 +250,19 @@ jobs:
           tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
           --config=playwright.authoring.config.ts tests/e2e/python-course-guide.spec.ts
           --project=chromium --workers=1 --retries=0 --reporter=list
-      - name: Verify mixed revision transfer in IndexedDB
-        if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/issue153-real-db-transfer'
+      - name: Verify Next course guide entry points
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          TSUMUCODE_NEXT_DOM_DIAGNOSTICS: '1'
         run: >-
           docker run --rm --cpus 2 --memory 4g --memory-swap 4g
           --pids-limit 512 --shm-size 512m
-          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --env BASE_PATH --env TSUMUCODE_NEXT_DOM_DIAGNOSTICS --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
           --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
           --mount type=volume,target=/workspace/node_modules
           tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
-          --config=playwright.authoring.config.ts tests/e2e/runtime-persistence.spec.ts
-          --project=chromium --grep mixed-revision-real-indexeddb-transfer
-          --workers=1 --retries=0 --reporter=list
+          --config=playwright.authoring.config.ts tests/e2e/next-course-guide.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
       - name: Preserve bounded visual diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

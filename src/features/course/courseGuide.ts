@@ -54,7 +54,8 @@ const guides: Readonly<Record<string, CourseGuide>> = {
       'HTTPによるサーバー処理や画面URLの切り替えはNext.js側で学びます。修了だけで実務能力を保証しません。',
   },
   next: {
-    before: 'Reactの部品・Props・Stateを使います。コード実習にはPCのLocal Docker環境が必要です。',
+    before:
+      'TypeScriptの型と、Reactの部品・親から渡す値（Props）・変わる状態（State）を使います。コード実習にはPCでDockerを使って学習版を起動する必要があります。',
     practice:
       '用意されたサーバーの小さい修正から、データ取得・送信、仕様に沿う制作とSourceの持ち出しへ進みます。',
     outside: '本番サーバーへの配備、データベースや認証基盤の構築は扱いません。',
