@@ -277,7 +277,10 @@ describe('IndexedDbProgressRepository', () => {
         },
       ],
     });
-    const rejected = new TransferService(target, migrate, { appVersion: '1.0.0' });
+    const rejected = new TransferService(target, migrate, {
+      appVersion: '1.0.0',
+      now: () => '2026-07-15T00:00:00.000Z',
+    });
     await expect(rejected.prepareImport(exported)).rejects.toThrow('未登録Course: sandbox');
     expect(await target.snapshot()).toEqual(before);
     expect(targetDb.stores.backups.size).toBe(0);
@@ -286,6 +289,7 @@ describe('IndexedDbProgressRepository', () => {
     const service = new TransferService(target, migrate, {
       appVersion: '1.0.0',
       id: () => 'mixed-preview',
+      now: () => '2026-07-15T00:00:00.000Z',
     });
     const preview = await service.prepareImport(exported);
     expect(await target.snapshot()).toEqual(before);
@@ -296,7 +300,10 @@ describe('IndexedDbProgressRepository', () => {
       reason: 'before-import',
       snapshot: before,
     });
-    expect(result.courses['html-css']?.contentRevision).toBe('rev-2');
+    expect(result.courses['html-css']).toEqual({
+      ...original.courses['html-css'],
+      contentRevision: 'rev-2',
+    });
     expect(result.drafts['html-css:workspace-first-heading']).toMatchObject({
       lessonId: 'lesson-first-heading',
       exerciseId: 'exercise-first-heading',
@@ -314,6 +321,7 @@ describe('IndexedDbProgressRepository', () => {
     expect(result.drafts['sandbox:workspace-first-heading']).toEqual(
       original.drafts['sandbox:workspace-first-heading'],
     );
+    expect(result.drafts).not.toHaveProperty('html-css:workspace-old');
     expect(await source.snapshot()).toEqual(original);
   });
   it('空DBをschema v2で初期化し、未openとclose後の操作を拒否する', async () => {
