@@ -6,9 +6,11 @@ import path from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
+import authoringConfig from '../../../playwright.authoring.config';
 import { PR_VISUAL_ARGS, PR_VISUAL_TITLES, verifyPrVisualList } from '../../../scripts/ci/prVisual';
 
 interface Step {
+  name?: string;
   id?: string;
   if?: string;
   uses?: string;
@@ -102,6 +104,20 @@ function runFixture(mode: string) {
 }
 
 describe('PRの早期Visual検査', () => {
+  it('Next入口の失敗画面だけを実際のauthoring出力先から保存する', () => {
+    const step = workflow.jobs.pr_visual!.steps.find(
+      ({ name }) => name === 'Preserve bounded visual diagnostics',
+    )!;
+    expect(step.if).toBe('always()');
+    const paths = String(step.with?.path).split('\n');
+    const output = authoringConfig.outputDir!;
+    const nextPaths = paths.filter((entry) => entry.startsWith(`${output}/`));
+    expect(nextPaths).toEqual([
+      `${output}/next-course-guide-*/error-context.md`,
+      `${output}/next-course-guide-*/*.png`,
+    ]);
+  });
+
   it('全PRで同じcheckoutの同一run previewを再利用し、公開graphとは分離する', () => {
     const job = workflow.jobs.pr_visual!;
     for (const event of ['pull_request', 'push', 'workflow_dispatch']) {
