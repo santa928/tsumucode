@@ -343,6 +343,114 @@ describe('all-course transfer', () => {
     });
   });
 
+  it('複数Courseの移送で旧revisionだけ移行し、別CourseのDraftと成功版を保つ', async () => {
+    const current = createAllCoursesSnapshot();
+    const oldDraft = {
+      ...createExerciseDraft('html-css', 'rev-1', 'workspace-old'),
+      lessonId: 'lesson-old',
+      exerciseId: 'exercise-old',
+      files: { 'index.html': '<main>移行前の下書き</main>' },
+      lastPassingSnapshots: {
+        'exercise-old': {
+          editRevision: 1,
+          contentRevision: 'rev-1',
+          files: { 'index.html': '<main>移行前の成功版</main>' },
+          evaluatedAt: now,
+        },
+      },
+    };
+    const stableDraft = {
+      ...createExerciseDraft('sandbox', 'rev-1'),
+      files: { 'index.html': '<main>別Courseの下書き</main>' },
+      lastPassingSnapshots: {
+        'exercise-first-heading': {
+          editRevision: 1,
+          contentRevision: 'rev-1',
+          files: { 'index.html': '<main>別Courseの成功版</main>' },
+          evaluatedAt: now,
+        },
+      },
+    };
+    const original: RepositorySnapshot = {
+      ...current,
+      courses: {
+        ...current.courses,
+        'html-css': { ...current.courses['html-css']!, contentRevision: 'rev-1' },
+      },
+      drafts: {
+        'html-css:workspace-old': oldDraft,
+        'sandbox:workspace-first-heading': stableDraft,
+      },
+    };
+    const before = structuredClone(original);
+    const source = repositoryFor(original);
+    const exported = await new TransferService(
+      source,
+      new ContentProgressMigrationService(source),
+      {
+        appVersion: '1.0.0',
+        now: () => now,
+      },
+    ).exportAll();
+
+    const target = repositoryFor(empty);
+    const targetMigrations = new ContentProgressMigrationService(target);
+    targetMigrations.registerCourse(transferMigratingCourse);
+    targetMigrations.registerCourse(sandboxCourse);
+    const service = new TransferService(target, targetMigrations, {
+      appVersion: '1.0.0',
+      now: () => now,
+      id: () => 'mixed-preview',
+    });
+    const preview = await service.prepareImport(exported);
+    expect(preview.differences.map(({ courseId, kind }) => [courseId, kind])).toEqual([
+      ['html-css', 'add'],
+      ['sandbox', 'add'],
+    ]);
+    expect(mockMethod(target, 'replaceSnapshotWithBackup')).not.toHaveBeenCalled();
+    await service.applyImport(preview.id);
+    expect(mockMethod(target, 'replaceSnapshotWithBackup')).toHaveBeenCalledOnce();
+    const imported = mockMethod(target, 'replaceSnapshotWithBackup').mock
+      .calls[0]?.[0] as RepositorySnapshot;
+    expect(imported.courses['html-css']).toEqual({
+      courseId: 'html-css',
+      contentRevision: 'rev-2',
+      lessons: {},
+      currentComplete: false,
+      updatedAt: '2026-07-10T00:00:00.000Z',
+    });
+    expect(imported.courses.sandbox).toEqual(original.courses.sandbox);
+    expect(imported.drafts['sandbox:workspace-first-heading']).toEqual(stableDraft);
+    expect(imported.drafts['html-css:workspace-first-heading']).toMatchObject({
+      lessonId: 'lesson-first-heading',
+      exerciseId: 'exercise-first-heading',
+      workspaceId: 'workspace-first-heading',
+      contentRevision: 'rev-2',
+      files: oldDraft.files,
+      lastPassingSnapshots: {
+        'exercise-first-heading': {
+          contentRevision: 'rev-2',
+          files: oldDraft.lastPassingSnapshots['exercise-old'].files,
+        },
+      },
+    });
+    expect(imported.drafts).not.toHaveProperty('html-css:workspace-old');
+    expect(imported.quarantined).toEqual([]);
+    expect(original).toEqual(before);
+
+    const rejected = repositoryFor(empty);
+    const incompleteMigrations = new ContentProgressMigrationService(rejected);
+    incompleteMigrations.registerCourse(transferMigratingCourse);
+    const incompleteService = new TransferService(rejected, incompleteMigrations, {
+      appVersion: '1.0.0',
+      now: () => now,
+    });
+    await expect(incompleteService.prepareImport(exported)).rejects.toThrow(
+      '未登録Course: sandbox',
+    );
+    expect(mockMethod(rejected, 'replaceSnapshotWithBackup')).not.toHaveBeenCalled();
+  });
+
   it('quarantined keyを持たないschema v1 bundleをstorage schema v2へ移行する', async () => {
     const repository = repositoryFor(empty);
     let replacement: RepositorySnapshot | undefined;
