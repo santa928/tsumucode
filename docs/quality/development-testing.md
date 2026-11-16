@@ -16,7 +16,8 @@ Docker内の実行コマンドは`node --import tsx scripts/ci/prVisual.ts`。
 
 2026-11-16追補: 同じ`pr_visual` jobは、同一runの固定previewとBrowser imageを使い、
 Python実践・OOPのHomeとCourse mapの入口案内もChromium・1 worker・retry 0で1件検査する。
-代表6件は維持する。追加1件の診断artifactは上記の保存対象に含まれない。
+Nextの入口案内はPC幅と狭幅のHome・Course mapで別に1件検査する。
+代表6件は維持する。追加2件の診断artifactは上記の保存対象に含まれない。
 このPR検査の成功は正式資格・実配信・配信後確認を意味しない。
 
 正式公開run 42111620240では、文言変更後も古いVisual期待が残り、Chromium shard 2/2の
@@ -24,7 +25,7 @@ Python実践・OOPのHomeとCourse mapの入口案内もChromium・1 worker・re
 新たなsnapshot自動更新や比較閾値変更を行わない。失敗中の期待値・画像の修正は別変更である。
 PR結果を正式qualificationへ取り込まない。正式公開では従来の独立manifest・固定candidate・
 同一Source/runの全件・retry 0・receipt照合を引き続き必須とする。
-以下の旧方針の「BrowserをPRへ追加しない」は、上記の代表6件と入口案内1件を例外とする。
+以下の旧方針の「BrowserをPRへ追加しない」は、上記の代表6件と入口案内2件を例外とする。
 
 ## PRでの全件unit（2026-11-06）
 
