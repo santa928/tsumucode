@@ -44,6 +44,11 @@ const env = {
   LC_ALL: 'C',
   GIT_CONFIG_NOSYSTEM: '1',
   GIT_CONFIG_GLOBAL: '/dev/null',
+  // Git's local upload-pack checks the source Git directory separately from
+  // the temporary destination; the fixed container runs as a different user.
+  GIT_CONFIG_COUNT: '1',
+  GIT_CONFIG_KEY_0: 'safe.directory',
+  GIT_CONFIG_VALUE_0: path.join(process.cwd(), '.git'),
   GIT_AUTHOR_NAME: 'Fixture',
   GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
   GIT_COMMITTER_NAME: 'Fixture',
