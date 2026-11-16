@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { observeNextGuide, startNextGuideObservation } from './helpers/observeNextGuide';
 import { observeNextIdentity } from './helpers/observeNextIdentity';
+import { classifyNextHandle } from './helpers/classifyNextHandle';
 import { testBasePath } from './helpers/testBasePath';
 
 // Diagnostic prefix ends at mobile Home; the complete existing spec remains separate.
@@ -96,7 +97,19 @@ for (let iteration = 1; iteration <= 3; iteration += 1) {
             card.getByText('この端末の続き位置を確認しています。', { exact: true }),
           ).toHaveCount(0);
         }
-        await guide.scrollIntoViewIfNeeded();
+        // Playwright 1.61.1's locator scroll resolves one attached handle and scrolls it.
+        // Capture the category of that same handle before the scroll. This extra
+        // observation affects timing and is not the original uninstrumented run.
+        const handle = await guide.elementHandle();
+        try {
+          const observed = await handle.evaluate(classifyNextHandle).catch(() => 'unknown');
+          const allowedTargets = new Set(['course-map', 'home-card', 'unknown']);
+          const target = allowedTargets.has(observed) ? observed : 'unknown';
+          console.info(`[next-target] ${target}`);
+          await handle.scrollIntoViewIfNeeded();
+        } finally {
+          await handle.dispose();
+        }
         await expect(guide).toBeVisible();
         await expect
           .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))

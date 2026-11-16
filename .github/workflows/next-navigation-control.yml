@@ -1,8 +1,8 @@
-name: Next navigation identity observation
+name: Next navigation selected-handle observation
 
 on:
   pull_request:
-    branches: [codex/next-navigation-control]
+    branches: [codex/next-node-identity]
     types: [opened, reopened, synchronize]
 
 permissions:
@@ -12,8 +12,8 @@ jobs:
   observe:
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref == 'codex/next-node-identity' &&
-      github.event.pull_request.base.sha == 'c1cad3f2d98ee5e7940d0a78f9900a156e3d4483'
+      github.event.pull_request.head.ref == 'codex/next-handle-target' &&
+      github.event.pull_request.base.sha == '1773ea090110f8e7c0705799308bda10b6368798'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
@@ -30,11 +30,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base_sha=c1cad3f2d98ee5e7940d0a78f9900a156e3d4483
+          base_sha=1773ea090110f8e7c0705799308bda10b6368798
           read -r -a parents <<< "$(git show -s --format=%P HEAD)"
           test "${#parents[@]}" -eq 1
           test "${parents[0]}" = "$base_sha"
-          expected=$'M\t.github/workflows/next-navigation-control.yml\nA\ttests/e2e/helpers/observeNextIdentity.ts\nM\ttests/e2e/next-navigation-control.spec.ts\nA\ttests/unit/e2e/observeNextIdentity.test.ts'
+          expected=$'M\t.github/workflows/next-navigation-control.yml\nA\ttests/e2e/helpers/classifyNextHandle.ts\nM\ttests/e2e/next-navigation-control.spec.ts\nA\ttests/unit/e2e/classifyNextHandle.test.ts'
           test "$(git diff --no-renames --name-status "$base_sha" HEAD)" = "$expected"
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -57,7 +57,9 @@ jobs:
         run: |
           cp tests/e2e/next-navigation-control.spec.ts observed-source/tests/e2e/
           cp tests/e2e/helpers/observeNextIdentity.ts observed-source/tests/e2e/helpers/
+          cp tests/e2e/helpers/classifyNextHandle.ts observed-source/tests/e2e/helpers/
           cp tests/unit/e2e/observeNextIdentity.test.ts observed-source/tests/unit/e2e/
+          cp tests/unit/e2e/classifyNextHandle.test.ts observed-source/tests/unit/e2e/
       - name: Verify bounded identity observer on fixed Node
         run: >-
           docker run --rm --cpus 2 --memory 4g --memory-swap 4g
@@ -66,7 +68,8 @@ jobs:
           --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
           --mount type=volume,target=/workspace/node_modules
           tsumucode-next-control node node_modules/vitest/vitest.mjs run
-          tests/unit/e2e/observeNextIdentity.test.ts --maxWorkers=1
+          tests/unit/e2e/observeNextIdentity.test.ts
+          tests/unit/e2e/classifyNextHandle.test.ts --maxWorkers=1
       - name: Observe original and visible-loading-text-absent controls in Chromium
         run: >-
           docker run --rm --cpus 2 --memory 4g --memory-swap 4g
