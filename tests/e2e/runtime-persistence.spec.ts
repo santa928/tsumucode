@@ -934,7 +934,10 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
   expect(after.drafts).toContainEqual({ ...stableDraft, key: draftKey });
   expect(after.courses).toContainEqual(expectedOopCourse);
   expect(after.drafts).toContainEqual(expectedOopDraft);
-  expect(JSON.stringify(after.quarantined)).not.toContain('# synthetic old draft');
+  const quarantined = JSON.stringify(after.quarantined);
+  expect(quarantined).not.toContain('python-oop');
+  expect(quarantined).not.toContain('# synthetic old draft');
+  expect(quarantined).not.toContain('# synthetic old passing');
   expect(after.courses).toContainEqual(
     expect.objectContaining({
       courseId: 'html-css',
