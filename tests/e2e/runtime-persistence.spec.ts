@@ -806,7 +806,10 @@ test('mixed-revision-real-indexeddb-transfer', async ({ page }, testInfo) => {
 
   await openRuntimeFixture(page);
   await replaceEditorText(page, VALID_SOURCE);
-  await waitForDraftSaved(page);
+  await waitForStoredDraft(page, VALID_SOURCE);
+  await page.getByRole('button', { name: '判定する' }).click();
+  await expect.poll(async () => (await readStoredProgress(page)).courses.length).toBeGreaterThan(0);
+  await waitForStoredDraft(page, VALID_SOURCE);
   await page.goto(`${testBasePath()}#/`);
   const before = await readStoredProgress(page);
   expect(before.courses.length).toBeGreaterThan(0);
