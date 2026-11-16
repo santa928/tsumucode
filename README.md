@@ -56,7 +56,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 その下には、複数のコースをおすすめ順に並べる「学習パス」と自由に選べる教材棚を残しています。学習パスは順番を案内する設計図であり、各コースは独立して開始・完了できます。前のコースが未完了でもロックされず、学びたいコースから直接始められます。端末データのImport/Export・復旧操作もHome下部から利用できます。
 
-Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Tailwind CSSはHTML/CSS直後の選択式recommended Courseで、未開始・未完了でも後続の必須Courseへ進めます。Python基礎も独立した公開指定のCourseです。Python実践、Python OOPは`draft`で、通常の教材棚・公開学習パスへ掲載しません。これらはSource上の状態であり、実際のデプロイ状況の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
+Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Tailwind CSSはHTML/CSS直後の選択式recommended Courseで、未開始・未完了でも後続の必須Courseへ進めます。Python基礎も独立した公開指定のCourseです。Python実践とPython OOPもSource上は`published`で、Python学習パスに含まれます。これらはSource上の状態であり、実際のデプロイ状況や各Courseの受入完了の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
 JavaScriptはSourceで`published`を指定しており、安全な複数ファイル実行基盤とChapter 00〜13の52 Lessonを備えます。全202 Slideの種類別内訳はconcept170・comparison10・code21・diagram1です。54 Exerciseは標準必須46・追加Closure2・手順付き制作5・独立課題1に分かれます。`expectedTotals.standardExercises=48`は追加2件を含み、`expectedTotals.conceptSlides=202`は概念系4種類の最低枚数です。1,010分はLesson設定時間の合計で、人間の実測学習時間は未計測です。HTML/CSSを知るJavaScript初学者向けに、値・制御・データからDOM・Event・非同期へ進み、学習クイズの問題表示・回答・得点・結果・再挑戦を積み上げます。Capstoneではカテゴリ選択・進捗・Keyboard操作も扱います。この枚数・演習数で教材の十分性や実務能力を保証するものではありません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)から確認できます。`draft`の教材もProduction Artifactへ含まれるため、非掲載を機密性の保証として扱いません。
 
@@ -149,7 +149,7 @@ PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移�
 
 PagesとLocalは別Originですが、同じ教材IDで下書き・進捗・採点履歴をJSON移送できます。固定image、API、Browserとの違い、検証範囲は[Local CPythonの契約](docs/quality/local-python-runtime.md)を参照してください。
 
-独立した草稿Course「Pythonの反復とデータ処理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理、型注釈・dataclass・TestのデータProjectを5教材・95分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。HomeやPathの公開一覧には追加していません。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
+独立したCourse「Pythonの反復とデータ処理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理、型注釈・dataclass・TestのデータProjectを5教材・95分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。Source上は公開指定でPython学習パスに含まれますが、実際の配信や受入完了の確認とは別です。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
 
 ## 端末データ、容量、引き継ぎ
 
@@ -224,7 +224,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 作業中の`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`による全Unit/Component/Contentを維持し、変更関連検査も別途確認します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使います。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。
 
-Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
+Python実践・Python OOPの草稿段階の専用検査と私有原本照合は、[公開前契約の記録](docs/quality/draft-course-publication-contracts.md)を参照してください。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
 通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件をChromium・1 worker・retry 0で検査します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
@@ -331,6 +331,8 @@ gh run download <run ID> -n release-report-<source SHA> --dir .release-evidence
 tag ref作成後の通信断などでRunだけが失敗表示になった場合、Workflow全体を再実行して新しい`run_attempt`やArtifactを既存tagへ結び直してはいけません。元Runの`release-report-<source SHA>`を取得し、tag message・Report・公開URLを照合してrevision別の公開後記録を作成し、その元Run evidenceから`--promote`します。既存tagを検出したRunは成功扱いにせず停止します。
 
 ## 非対象
+
+次の3段落はTypeScript教材の草稿段階における開発記録です。「未完了」とした公開登録・Path掲載は当時の状態であり、現在のSource指定は上記の学習パスの説明を参照してください。
 
 TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
 

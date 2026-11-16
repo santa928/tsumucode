@@ -52,6 +52,12 @@ export const TEST_SUITES = [
     args: ['manifest-progress-roundtrip.spec.ts', '--project=chromium'],
   },
   { suite: 'native-python', producerJobId: 'boundary', project: '', args: [] },
+  {
+    suite: 'native-python-fixtures',
+    producerJobId: 'python_fixtures',
+    project: '',
+    args: ['python-published-fixtures.spec.ts'],
+  },
   ...(['chromium', 'firefox', 'webkit'] as const).map((engine) => ({
     suite: `native-learning-${engine}` as const,
     producerJobId: 'boundary' as const,
@@ -87,7 +93,7 @@ function fixtureOwner(
   const choices = manifests.filter(
     (manifest) =>
       (mode === 'cpython'
-        ? manifest.suite === 'native-python'
+        ? manifest.suite === 'native-python' || manifest.suite === 'native-python-fixtures'
         : manifest.suite === 'browser-chromium-1' || manifest.suite === 'browser-chromium-2') &&
       manifest.tests.some((test) => test.exerciseIds.includes(exerciseId)),
   );
@@ -199,7 +205,7 @@ export function testCommand(suite: string, list: boolean): string[] {
   if (!definition) throw new Error('Unknown fixed test suite');
   const config = suite.startsWith('native-learning-')
     ? 'playwright.learning-native.config.ts'
-    : suite === 'native-python'
+    : suite === 'native-python' || suite === 'native-python-fixtures'
       ? 'playwright.python-local.config.ts'
       : suite === 'browser-performance'
         ? 'playwright.performance.config.ts'
@@ -213,7 +219,9 @@ export function testCommand(suite: string, list: boolean): string[] {
     '--grep-invert',
     suite === 'browser-chromium-2'
       ? '@visual-extended|' + CHROMIUM_FIRST_GROUP
-      : '@visual-extended',
+      : suite === 'native-python'
+        ? '@visual-extended|python-published-fixtures\\.spec\\.ts'
+        : '@visual-extended',
     ...(list ? ['--list', '--reporter=json'] : ['--workers=1', '--retries=0']),
   ];
 }
@@ -238,7 +246,11 @@ export async function collectExecutionPlan(
         timeout: 120000,
         env: {
           ...process.env,
-          BASE_PATH: definition.producerJobId === 'boundary' ? '/' : process.env['BASE_PATH'],
+          BASE_PATH:
+            definition.producerJobId === 'boundary' ||
+            definition.producerJobId === 'python_fixtures'
+              ? '/'
+              : process.env['BASE_PATH'],
         },
       },
     );

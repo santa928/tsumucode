@@ -129,6 +129,7 @@ function setup() {
         public_boundary: 'success',
         performance: 'success',
         boundary: 'success',
+        python_fixtures: 'success',
       },
     },
   };
@@ -141,7 +142,9 @@ describe('final same-run admission', () => {
     expect(result.content).toMatchObject({ status: 'maintenance', newlyApprovedLessons: [] });
   });
   it.each(
-    (['unit', 'boundary', 'browser', 'public_boundary', 'performance'] as const).flatMap((job) =>
+    (
+      ['unit', 'boundary', 'python_fixtures', 'browser', 'public_boundary', 'performance'] as const
+    ).flatMap((job) =>
       (['failure', 'cancelled', 'skipped'] as const).map((status) => ({ job, status })),
     ),
   )('rejects admission when mandatory $job has status $status', async ({ job, status }) => {
@@ -149,6 +152,16 @@ describe('final same-run admission', () => {
     const input = setup();
     input.context.jobs[job] = status;
     expect(() => qualifyRelease(input)).toThrow(/job did not pass/i);
+  });
+  it('rejects a missing fixture producer job and mismatched receipt producer', async () => {
+    const { qualifyRelease } = await import('../../../../scripts/release/v2/admission');
+    const missing = setup();
+    const jobs = missing.context.jobs as Record<string, string>;
+    delete jobs['python_fixtures'];
+    expect(() => qualifyRelease(missing)).toThrow(/job did not pass/i);
+    const forged = setup();
+    forged.results.find((row) => row.suite === 'native-python-fixtures')!.jobId = 'boundary';
+    expect(() => qualifyRelease(forged)).toThrow(/mismatched evidence/i);
   });
   it.each([
     'main-moved',
