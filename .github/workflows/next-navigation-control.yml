@@ -1,0 +1,79 @@
+name: Next navigation bounded control
+
+on:
+  pull_request:
+    branches: [codex/next-detach-observe]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/next-navigation-control' &&
+      github.event.pull_request.base.sha == '7c0b42fd7ae34aa315e7807128cf43fa91dde95d'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /tsumucode/
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind diagnostic scope to the fixed Source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=7c0b42fd7ae34aa315e7807128cf43fa91dde95d
+          read -r -a parents <<< "$(git show -s --format=%P HEAD)"
+          test "${#parents[@]}" -eq 1
+          test "${parents[0]}" = ef4fd2238cf5331a7f499b1c5315e9c1e5554c23
+          test "$(git show -s --format=%P "${parents[0]}")" = a1d1f9db29ca2c139ca960182910c73c1f97db23
+          test "$(git show -s --format=%P a1d1f9db29ca2c139ca960182910c73c1f97db23)" = "$source_sha"
+          expected=$'A\t.github/workflows/next-navigation-control.yml\nA\ttests/e2e/next-navigation-control.spec.ts'
+          test "$(git diff --no-renames --name-status "$source_sha" HEAD)" = "$expected"
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 7c0b42fd7ae34aa315e7807128cf43fa91dde95d
+          path: observed-source
+          persist-credentials: false
+      - name: Verify fixed Source
+        run: test "$(git -C observed-source rev-parse HEAD)" = 7c0b42fd7ae34aa315e7807128cf43fa91dde95d
+      - name: Build the fixed browser image
+        run: docker build --target app --tag tsumucode-next-control observed-source
+      - name: Build the fixed Source
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-next-control npm run build
+      - name: Install the observation after building
+        run: cp tests/e2e/next-navigation-control.spec.ts observed-source/tests/e2e/
+      - name: Observe original and visible-loading-text-absent controls in Chromium
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE/observed-source,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-next-control node node_modules/@playwright/test/cli.js test
+          --config=playwright.authoring.config.ts tests/e2e/next-navigation-control.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
+      - name: Preserve bounded failure evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: next-navigation-control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            observed-source/test-results/e2e-artifacts/next-navigation-control-*/error-context.md
+            observed-source/test-results/e2e-artifacts/next-navigation-control-*/*.png
+          if-no-files-found: warn
+          retention-days: 7
