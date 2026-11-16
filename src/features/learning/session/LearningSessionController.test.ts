@@ -277,7 +277,7 @@ describe('LearningSessionController', () => {
   });
 
   it.each(['unsupported', 'system', 'limit', 'type'] as const)(
-    '%sでは下書き・過去の成功を保持し採点を保存しない',
+    '%sでは下書き・過去の成功を保持し、復帰後に同じSourceで再試行できる',
     async (kind) => {
       const runtime = runnerHarness();
       const validation = validatorHarness();
@@ -327,23 +327,32 @@ describe('LearningSessionController', () => {
         lastPassingSnapshots: storedDraft().lastPassingSnapshots,
       });
       expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('executionResult');
-      if (kind === 'limit') {
-        runtime.render.mockImplementation(renderNormally);
-        await controller.previewNow();
-        await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
-        await controller.flush();
-        const recovered = controller.getSnapshot();
-        expect(recovered.files['index.html']).toBe('<main>保持する下書き</main>');
-        expect(recovered.validationHistory).toHaveLength(before.validationHistory.length + 1);
-        expect(recovered.validationHistory.slice(0, -1)).toEqual(before.validationHistory);
-        expect(validation.validate).toHaveBeenCalledTimes(1);
-        expect(persistence.putDraft.mock.calls.at(-1)?.[0]).toMatchObject({
-          files: { 'index.html': '<main>保持する下書き</main>' },
-          lastPassingSnapshots: {
-            [baseExercise.id]: { files: { 'index.html': '<main>保持する下書き</main>' } },
-          },
-        });
+      const callsBeforeRecovery = runtime.render.mock.calls.length;
+      runtime.render.mockImplementation(renderNormally);
+      await controller.previewNow();
+      await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+      await controller.flush();
+      const recoveryCalls = runtime.render.mock.calls.slice(callsBeforeRecovery);
+      const expectedFiles = {
+        'index.html': '<main>保持する下書き</main>',
+        'old.html': '<p>旧File</p>',
+      };
+      expect(recoveryCalls.length).toBeGreaterThan(0);
+      for (const [input] of recoveryCalls) {
+        expect(input.files).toEqual(expectedFiles);
       }
+      const recovered = controller.getSnapshot();
+      expect(recovered.files).toEqual(expectedFiles);
+      expect(recovered.validationHistory).toHaveLength(before.validationHistory.length + 1);
+      expect(recovered.validationHistory.slice(0, -1)).toEqual(before.validationHistory);
+      expect(validation.validate).toHaveBeenCalledTimes(1);
+      expect(validation.validate.mock.calls[0]?.[0].files).toEqual(expectedFiles);
+      expect(persistence.putDraft.mock.calls.at(-1)?.[0]).toMatchObject({
+        files: { 'index.html': '<main>保持する下書き</main>' },
+        lastPassingSnapshots: {
+          [baseExercise.id]: { files: { 'index.html': '<main>保持する下書き</main>' } },
+        },
+      });
       await controller.dispose();
     },
   );
