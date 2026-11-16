@@ -25,6 +25,12 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   test: {
+    ...(process.env['TSUMUCODE_RETIRE_TIMINGS'] === '1'
+      ? {
+          reporters: ['default', 'json'] as const,
+          outputFile: { json: 'test-results/retired-capture-raw.json' },
+        }
+      : {}),
     ...(budgetProfile === 'constrained' ? { testTimeout: 20_000, hookTimeout: 60_000 } : {}),
     ...(workerLimit === undefined ? {} : { maxWorkers: Number(workerLimit) }),
     exclude: [

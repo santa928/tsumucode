@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { expect, it, vi } from 'vitest';
+import { createRetiredCaptureTiming } from './retiredCaptureTiming';
 import { compileContent } from '../../../../scripts/content/compile';
 import { captureBaseline } from '../../../../scripts/release/v2/captureBaseline';
 import { assertRetiredMovementParent } from '../../../../scripts/release/v2/retiredMovementFiles';
@@ -74,7 +75,16 @@ it('rejects dot selectors and an incorrect linked common directory', async () =>
 // Real code and public Source/tag, synthetic API/status and local expected bytes.
 // No intended network or private originals. JS fetch is forbidden, but child
 // processes are not network-sandboxed. No real parent or qualification proof.
-it('links synthetic b930 capture, retirement guard, real prepare and synthetic-receipt admission', async () => {
+it('links synthetic b930 capture, retirement guard, real prepare and synthetic-receipt admission', async ({
+  task,
+  signal,
+}) => {
+  const phase = createRetiredCaptureTiming(
+    task.meta,
+    signal,
+    process.env['TSUMUCODE_RETIRE_TIMINGS'] === '1',
+  );
+  phase('setup');
   const temporary = await mkdtemp(path.join(os.tmpdir(), 'retired-capture-chain-'));
   const candidate = path.join(temporary, 'candidate');
   const old = path.join(temporary, 'old');
@@ -154,12 +164,14 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
       result.stdout.trim(),
     );
     await git(candidate, 'worktree', 'add', '--detach', old, b930);
+    phase('fixture-compile');
     await compileContent({
       sourceRoot: path.join(old, 'content'),
       outputRoot: oldOutput,
       checkOnly: false,
       historicalSource: true,
     });
+    phase('capture-before');
     const captureOptions = {
       root: candidate,
       repository: 'santa928/tsumucode',
@@ -185,6 +197,7 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
       readPublicFile: async (relative: string) => readFile(path.join(oldOutput, relative)),
     };
     const captured = await captureBaseline(captureOptions);
+    phase('prepare');
     expect(captured.proof.sourceCommit).toBe(b930);
     await assertRetiredMovementParent(candidate, captured);
     const snapshot = await prepareRelease(
@@ -193,6 +206,7 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
       captured.baseline,
       captured.proof,
     );
+    phase('historical');
     expect(snapshot.plan.parent?.deploymentId).toBe('7699435659');
     const manifests = TEST_SUITES.map(({ suite, producerJobId, project }) => {
       const exerciseIds = snapshot.plan.targets
@@ -276,7 +290,9 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
       ...(await readVerifiedTailwindHistoricalAcceptance(candidate, snapshot.inventory)),
       ...(await readVerifiedPythonHistoricalAcceptances(candidate, snapshot.inventory)),
     ];
+    phase('capture-after');
     const current = await captureBaseline(captureOptions);
+    phase('admission');
     const admission = {
       inventory: snapshot.inventory,
       publicContent: snapshot.publicContent,
@@ -343,6 +359,7 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
     );
     await expect(assertRetiredMovementParent(candidate, captured)).rejects.toThrow();
     expect(network).not.toHaveBeenCalled();
+    phase('complete');
   } finally {
     network.mockRestore();
     await rm(temporary, { recursive: true, force: true });
