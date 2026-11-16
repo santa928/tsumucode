@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { observeNextGuide, startNextGuideObservation } from './helpers/observeNextGuide';
+import { observeNextIdentity } from './helpers/observeNextIdentity';
 import { testBasePath } from './helpers/testBasePath';
 
 // Diagnostic prefix ends at mobile Home; the complete existing spec remains separate.
@@ -30,13 +31,28 @@ const allowed = new Set(
     ),
   ),
 );
+const allowedIdentity = new Set(
+  [
+    'subtree-contains-card-at-delivery',
+    'subtree-contains-guide-at-delivery',
+    'card-identity-changed-at-delivery',
+    'guide-identity-changed-at-delivery',
+    'node-budget-exhausted',
+    'removal-budget-exhausted',
+    'observation-budget-exhausted',
+  ].map((category) => `[next-identity] ${category}`),
+);
 
 for (let iteration = 1; iteration <= 3; iteration += 1) {
   for (const variant of ['original', 'visible-loading-text-absent'] as const) {
     test(`Next same-page navigation ${String(iteration)} ${variant}`, async ({ page }) => {
       const events: string[] = [];
       page.on('console', (message) => {
-        if (allowed.has(message.text()) || message.text() === '[next-control] hashchange home') {
+        if (
+          allowed.has(message.text()) ||
+          allowedIdentity.has(message.text()) ||
+          message.text() === '[next-control] hashchange home'
+        ) {
           events.push(message.text());
         }
       });
@@ -46,6 +62,7 @@ for (let iteration = 1; iteration <= 3; iteration += 1) {
         });
       });
       await startNextGuideObservation(() => page.addInitScript(observeNextGuide, before));
+      await startNextGuideObservation(() => page.addInitScript(observeNextIdentity, before));
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto(`${testBasePath()}#/`);
       const desktopCard = page.getByRole('article', { name: title, exact: true });
