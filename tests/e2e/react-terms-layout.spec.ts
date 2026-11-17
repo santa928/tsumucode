@@ -52,8 +52,12 @@ for (const [name, width, height] of [
     await expectReadableText(page, card.getByText(description, { exact: true }));
     await page.screenshot({ path: info.outputPath('react-home-description.png') });
 
+    // 同名・同文のHome card（h3）を遷移先のCourse Map（h1）として扱わない。
+    const map = page.getByRole('article', { name: courseTitle, exact: true }).filter({
+      has: page.getByRole('heading', { level: 1, name: courseTitle, exact: true }),
+    });
+    await expect(map).toHaveCount(0);
     await page.goto(`${testBasePath()}#/courses/react`);
-    const map = page.getByRole('article', { name: courseTitle, exact: true });
     await expectReadableText(page, map.getByText(description, { exact: true }));
     await page.screenshot({ path: info.outputPath('react-map-description.png') });
     const project = map.getByRole('region', { name: '型付きクイズを制作する', exact: true });
