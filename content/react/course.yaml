@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: react
 title: React はじめの一歩
-description: Props・State・FormからRef/Effect/Custom Hookの責務を学び、既存クイズ題材のGuided 2工程と別BriefのCapstoneへ進むReact教材。
+description: 部品へ渡す値（Props）・変わる状態（State）・フォーム入力を学びます。画面要素への参照（Ref）、外部との同期（Effect）、同期処理の再利用（Custom Hook）を確かめ、クイズ題材の手順付き制作2工程と、別の仕様に沿う制作へ進みます。
 audience: TypeScriptのinterface・関数・readonlyとJavaScriptのDOMを学んだReact初学者
 estimatedMinutes: 490
 revision: 2026-10-07.7
@@ -61,7 +61,7 @@ phases:
       - chapters/react-ch01/chapter.yaml
   - id: react-p02-project
     title: 型付きクイズを制作する
-    description: 工程の引継ぎと別Briefへの応用を、独立したWorkspaceで確かめる。
+    description: 工程を引き継ぐ手順付き制作と、別の仕様に沿う制作を行います。後者の下書きは、手順付き制作とは別に保存します。
     chapterSources:
       - chapters/react-ch02/chapter.yaml
       - chapters/react-ch03/chapter.yaml
