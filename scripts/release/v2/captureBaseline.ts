@@ -49,6 +49,32 @@ async function beforeDeadline<T>(operation: Promise<T>, signal: AbortSignal): Pr
   }
 }
 
+/** Fixed failure metadata only: never URL, body, credentials, or arbitrary header values. */
+function httpFailureDiagnostic(url: string, response: Response): string {
+  try {
+    const target = new URL(url);
+    const source =
+      target.origin === 'https://api.github.com'
+        ? /^\/repos\/[^/]+\/[^/]+\/deployments$/.test(target.pathname)
+          ? 'github-deployments'
+          : /^\/repos\/[^/]+\/[^/]+\/deployments\/[0-9]+\/statuses$/.test(target.pathname)
+            ? 'github-statuses'
+            : 'github-api-other'
+        : target.origin === 'https://santa928.github.io' &&
+            target.pathname.startsWith('/tsumucode/generated/content/')
+          ? 'public-content'
+          : 'other';
+    const number = (name: string) => {
+      const value = response.headers.get(name);
+      return value !== null && /^[0-9]{1,12}$/.test(value) ? value : 'unknown';
+    };
+    return ` [source=${source}; remaining=${number('x-ratelimit-remaining')}; reset=${number('x-ratelimit-reset')}; retryAfter=${number('retry-after')}]`;
+  } catch {
+    // Diagnostic failure must not replace the original HTTP status.
+    return '';
+  }
+}
+
 /** Retry only bounded, transient delivery statuses; no failed response body becomes evidence. */
 export async function fetchBytes(url: string): Promise<Uint8Array> {
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -88,7 +114,11 @@ export async function fetchBytes(url: string): Promise<Uint8Array> {
       } catch {
         // A broken body must not replace the status error.
       }
-      throw new Error('Public baseline request failed: ' + String(response.status));
+      throw new Error(
+        'Public baseline request failed: ' +
+          String(response.status) +
+          httpFailureDiagnostic(url, response),
+      );
     }
     if (!response.body) return new Uint8Array();
     const reader = response.body.getReader();
