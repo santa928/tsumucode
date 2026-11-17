@@ -1,0 +1,45 @@
+# Issue #261 React初回の工程票
+
+## 範囲と既存案内の照合
+
+比較基点は `2c9e532917461f4bea4bd6aed895c0cf34b50da3`。Issue #261 の「既存指示の曖昧さは #259 / #260 の完成を待たず独立修正できる」に従い、React初回 `react-ch01-l01` の表示される工程票2行だけを直す。#260 の新しい教材・到達点を先取りしない。
+
+- JavaScript導入2教材は [既存内容レビュー](issue-261-javascript-content-review.md) に修正・未確認範囲を記録済み。現工程票は表示結果と更新・判定操作を明示している。今回再改訂・再承認しない。
+- Python基礎のModule教材は、関数の前提、別ファイルを使う範囲、表示8・10と直書きでは満たさない条件を明示している。実践・OOPの入口は必要な基礎と手順付き制作を `courseGuide.ts` で案内済み。今回の本文改訂対象ではない。
+- React初回の課題本文とSlide 4は既に指定値を明示しているが、工程票には「指定の文字列」としかなかった。実画面では `instructions.md` より工程票が優先されるため、その表示原本を修正する。
+- 全9コースの入口は `courseGuide.ts` と `CourseMapPage.tsx` で前提・到達点・扱わない範囲・練習の進め方を区別している。手順付き制作、仕様に沿う制作を自力設計能力の証明とは扱わない。全教材本文を読み直したという意味ではない。
+- 保存範囲は `ProgressTransferPanel.tsx` が合否を含む進捗・下書き・端末とサイトごとの保存・自動同期なしを説明し、`LibraryIndexPage.tsx` と `ReadingControls.tsx` が読書位置を別に説明している。保存仕様・文言は変更しない。
+
+## 変更前後と理由
+
+`change` の旧文は「問題文を指定の文字列へ直す」。新文は「問題文promptを、文字列『HTMLが受け持つものは？』へ直す」（実際の表示ではかぎ括弧）。対象ファイル `main.tsx` と編集対象 `prompt` は既存の工程票情報と結び、型を通すだけの任意の文字列ではなく、r01の実表示条件と同じ値を示す。
+
+`observe` の旧文は「型の案内が消え、問題カードの見出しに反映される」。新文は「『プレビューを更新』で型の案内が消えたことと問題カードの見出しを確認してから、『判定する』で課題の条件を確かめる」（実際の表示ではかぎ括弧）。実UIの操作名を用い、型・表示・課題の判定を別に確認する順番を示す。
+
+新しい用語や学習条件は追加しない。`transform` 段階で既に課題本文とSlide 4に公開していた指定値を工程票にも置くもので、完成コードの追加やHint段階の変更ではない。
+
+## 原本と内容承認
+
+Lesson内21ファイルの集合を比較し、20ファイルは基点と同byte。唯一の変更ファイルも上記2行以外は同byteである。掲載コード、Starter/Solution、5 Fixture、Hint、採点規則、Goal、ID、URL、進捗・下書き契約は不変。
+
+- 旧Lesson全文SHA-256: `c29b4cc17da0953d4bfc0d2857dcb1676b07a1c4b55b6b05e34ea4a9d7bf0dd0`
+- 新Lesson全文SHA-256: `a771cb4c71fec39641b87ce651f54f458c355cbc8d2a78b2054b74908e22447b`
+- 算出方法: `verifyContentReview.ts` と同じ相対pathの昇順、各 `path + NUL + bytes` のSHA-256。旧値は基点の台帳値と一致。
+
+旧台帳の `review_issue109` による原承認文は台帳のnotesに保持する。今回の `examplesExecuted` は、実行コードと採点が同byteの範囲で旧承認の実行記録を限定再利用する。今回の新規実行、旧生ログの再閲覧、初心者の理解の実証とは扱わない。独立レビュアー `review_issue261_clarity` は4 Slide、説明図の文字、instructions、Starter/Solution、5 Fixture、4採点規則、実表示コンポーネントと追加テストを静的読解した。2行変更のaccuracy・goalExerciseAlignmentをapproved、未説明語・意図しないHint漏洩・必須修正を各0とし、その承認範囲を同notesへ追記した。テスト実行、画像、読上げ操作の確認を含まない。
+
+## 検証の境界
+
+`react-first-step.test.ts` はauthoringと実配信用にcompileした双方の工程票で、対象・指定値・更新から型と見出しの確認、判定への順序、r01との対応を検査する。元の曖昧な2行はこの条件を満たさない。
+
+クラウド環境にはDockerがなく、READMEの検証専用Draft PR手順を利用する。ホストNode/npmや別のMac経路で代替実行しない。既存PR CIのDocker内compile・型・Lint・関連/全件unitと同一runの代表画面検査の結果はPRへ記録し、成功前にマージしない。既存CIのCourse map・読書目次検査は、この工程票のPC/狭幅表示や実演習の再確認には読み替えない。
+
+今回の修正だけでIssue #261全体、#260の改訂、全教材本文、全ブラウザ、正式公開を承認しない。工程票の代表PC/狭幅の表示・読み順と、最終Source/Artifactの公開bindingは別の確認として残る。
+
+## 初回CIで分かった固定テスト入力の問題
+
+PR #433 の初回 `pr_premerge` は追加Content testを含む2088件が成功し、既存2件が失敗した。固定公開候補のinventoryを比べる `movementBindingSelection` が、fixtureの旧Sourceではなく現作業treeをcompileしていたため、参照を固定rootへ揃えた。固定hashやclosure期待値は変更していない。
+
+`retiredMovementCaptureIntegration` は退役移行の合成chainを検査する際、毎回HEADを内容承認済み候補とみなしていた。今回の教材差分では `Missing content receipt: react/react-ch01-l01` となったため、その正の試験入力を承認済み教材の基点 `2c9e532917461f4bea4bd6aed895c0cf34b50da3` に固定した。現行コードによるcapture・prepare・admissionと既存の負の検査は維持する。実際の公開gate、内容receipt、原本、historical acceptanceは変更しない。
+
+この拒否は、新しい工程票を正式公開する前の独立content/UI receiptが未充足であることを示す。静的な台帳更新や通常CIの成功でその要件を満たしたとは扱わない。今回の固定化は合成テスト入力の安定化であり、現在HEADの公開承認を作るものではない。
