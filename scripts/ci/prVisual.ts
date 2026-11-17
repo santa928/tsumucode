@@ -11,12 +11,15 @@ export const PR_VISUAL_TITLES = [
   'library-index-mobile-primary',
   'library-index-tablet-portrait',
   'library-index-desktop-compact',
+  'react-terms-desktop',
+  'react-terms-mobile',
 ] as const;
 
 export const PR_VISUAL_ARGS = [
   'test',
   '--config=playwright.authoring.config.ts',
   'tests/e2e/visual-regression.spec.ts',
+  'tests/e2e/react-terms-layout.spec.ts',
   '--project=chromium',
   '--grep',
   `(?:${PR_VISUAL_TITLES.join('|')})$`,
@@ -32,7 +35,7 @@ export function verifyPrVisualList(report: unknown) {
   }
   visit(report);
   if (JSON.stringify(titles.sort()) !== JSON.stringify([...PR_VISUAL_TITLES].sort())) {
-    throw new Error('PR visual inventory must contain the exact six required views');
+    throw new Error('PR visual inventory must contain the exact eight required views');
   }
   return parseTestList(report, 'pr-visual', 'pr_visual', 'chromium');
 }

@@ -226,7 +226,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 Python実践・Python OOPの草稿段階の専用検査と私有原本照合は、[公開前契約の記録](docs/quality/draft-course-publication-contracts.md)を参照してください。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
-通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件をChromium・1 worker・retry 0で検査します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件に加え、React初回の用語・制作案内をPC/狭幅の2件で検査します。Chromium・1 worker・retry 0を維持します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 正式qualificationの候補Browser 4 suiteは`playwright.qualification.config.ts`で初回からtraceを記録し、失敗分だけを既存のsuite別診断Artifactへ7日間保存します。`--retries=0`、失敗exit、Chromium全件とFirefox/WebKitの対象範囲は維持します。DOM・通信・連続画像・source・添付はtraceへ収集せず、操作時刻・待機・エラーを診断します。成功時にも記録負荷は生じますが、成功traceは保存しません。`on-first-retry`はretry 0では記録自体がなく、初回失敗の診断に使えません（[Playwright trace仕様](https://playwright.dev/docs/api/class-testoptions#test-options-trace)）。
 

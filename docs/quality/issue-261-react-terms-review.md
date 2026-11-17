@@ -30,3 +30,13 @@ Lesson内21ファイル中18ファイルは基点と同byte。変更3 Slideの�
 PC/狭幅の表示・読み順、独立UI3役は未確認。先の候補UIへのブラウザ接続はERR_CONNECTION_REFUSEDだったため、別経路で迂回せず観察を保留する。実行可能な正規環境で最終文言を固定してから変更面を観察し、必要な4役の実承認原本を独立照合する。現段階でcontent-v2 receiptは追加しない。
 
 全コース本文、日本語先行の全件適合、実人の理解、Issue #261全体の完了、正式公開の承認には広げない。
+
+## 変更面のBrowser検査を補う設計
+
+初回head `dbaecf7567ef1145729758f45900fb1c904082e1` のPR CI run `44024244699` は成功した。premergeは178 files/2,098 tests、fastは404 files/4,699 tests、Lint 1,134 files、型・build・台帳も成功。ただし既存pr_visualはHTML/CSSの共通6画面とPython/Next入口であり、今回のReact文言の表示を検査していなかった。READMEのマージ前「変更面のBrowser確認」を未充足として、統合を保留した。
+
+追加は新たな環境への迂回ではなく、既存pr_visualの同一preview・同一Browser imageを使う規定テスト2件（1280×720、390×844）に限定する。別workflowの作成や既存workflowの権限変更はせず、`scripts/ci/prVisual.ts` の厳密な収集・実行照合を既存6件＋React2件へ拡張する。対象はHome/Course MapのReact説明、Course Map/Libraryの制作段階説明、初回3 Slideの見出しと初出段落。スクロール到達、文末までの非切断、本文とページ全体の横はみ出し、見出しから本文の配置と意味→正式名の順を確認し、既存の診断artifact内へ変更面の画像を保存する。
+
+代替の全React Runtime suiteや専用workflowは対象外の実行とCI重複を増やすため採らない。新しいBrowser build、アプリ再build、依存、権限、Worker故障操作、個人データ、receipt生成は追加しない。1 worker・retry 0・既存20分上限を維持する。追加コストは2件の検査と14枚の限定画像で、検査は数秒〜数十秒を想定するが実測前。head更新に伴う既存PR CI一式の再検証は必要であり、旧runの成功を新headへ転用しない。
+
+設計と実装差分は `review_issue261_clarity` が独立確認し、静的範囲で承認した（必須修正0）。CI実行・画像確認は別途行う。実行前のred/greenはDocker不在で未実施。否定入力（既存/新規case欠落、重複、余計な選択、skip、retry、別project）の拒否を既存CLI fixtureで検証する。この表示回帰検査は独立UI3役や理解の観察、#433の工程票操作、content-v2 receiptを代用しない。
