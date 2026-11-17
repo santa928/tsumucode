@@ -1,8 +1,8 @@
 ---
 id: react-ch01-l01-s01
-title: Componentは表示を返す関数
+title: 表示を返す関数（Component）
 kind: concept
-concept: Componentは表示を返す関数
+concept: 表示を返す関数（Component）
 layout: comparison
 teachesConceptIds: [react-component-role]
 masteryTarget: read
@@ -10,7 +10,7 @@ screenBudget: { maxTextCharacters: 420, maxCodeLines: 6, maxVisuals: 0 }
 assets: []
 ---
 
-Component（コンポーネント）は、表示のまとまりです。今回はQuestionCardという関数が、渡された問題の表示を返します。名前は大文字で始めます。
+ここでは、表示のまとまりを返す関数をコンポーネント（Component）と呼びます。今回はQuestionCardという関数が、渡された問題の表示を返します。名前は大文字で始めます。
 
 ```tsx
 function QuestionCard({ question }: { question: Question }) {

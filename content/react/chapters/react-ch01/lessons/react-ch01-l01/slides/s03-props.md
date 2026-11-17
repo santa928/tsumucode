@@ -1,8 +1,8 @@
 ---
 id: react-ch01-l01-s03
-title: Propsでデータを渡す
+title: 部品へ渡す値（Props）
 kind: concept
-concept: Propsでデータを渡す
+concept: 部品へ渡す値（Props）
 layout: code-preview
 teachesConceptIds: [react-props-data]
 masteryTarget: transform
@@ -15,7 +15,7 @@ assets:
     provenanceId: react-ch01-l01-s03-props-reading-flow-original
 ---
 
-Props（プロップス）は呼び出し元からComponentへ渡す値です。左のquestionは受け取る名前、右のquestionはTSで用意したオブジェクトです。
+呼び出し元からComponentへ渡す値をプロップス（Props）と呼びます。左のquestionは受け取る名前、右のquestionはTSで用意したオブジェクトです。
 
 ```tsx
 <QuestionCard question={question} />

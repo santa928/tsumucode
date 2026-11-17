@@ -31,10 +31,10 @@ const workflow = parse(readFileSync('.github/workflows/pages.yml', 'utf8')) as {
 function report(executed: boolean) {
   return {
     errors: [],
-    stats: { expected: 6, unexpected: 0, skipped: 0, flaky: 0 },
+    stats: { expected: 8, unexpected: 0, skipped: 0, flaky: 0 },
     suites: [
       {
-        specs: PR_VISUAL_TITLES.map((title, index) => ({
+        specs: PR_VISUAL_TITLES.map((title: string, index) => ({
           id: `test-${String(index)}`,
           title,
           tests: [
@@ -60,9 +60,14 @@ function runFixture(mode: string) {
     const list = report(false);
     const result = report(true);
     if (mode === 'missing') list.suites[0]!.specs.pop();
+    if (mode === 'missing-existing') list.suites[0]!.specs.shift();
+    if (mode === 'duplicate') list.suites[0]!.specs[0]!.title = 'react-terms-desktop';
+    if (mode === 'extra') {
+      list.suites[0]!.specs.push({ ...list.suites[0]!.specs[0]!, title: 'extra-view' });
+    }
     if (mode === 'skip') {
       result.stats.skipped = 1;
-      result.stats.expected = 5;
+      result.stats.expected = 7;
       result.suites[0]!.specs[0]!.tests[0]!.results = [];
     }
     if (mode === 'retry') result.suites[0]!.specs[0]!.tests[0]!.results[0]!.retry = 1;
@@ -143,13 +148,13 @@ describe('PRの早期Visual検査', () => {
     expect(workflow.jobs.qualification).not.toHaveProperty('if');
   });
 
-  it('同じ実specの収集で6画面・3幅を保証する（Browserは起動しない）', () => {
+  it('同じ実specの収集で既存6画面とReact変更面2幅を保証する（Browserは起動しない）', () => {
     const list = execFileSync(
       process.execPath,
       ['node_modules/@playwright/test/cli.js', ...PR_VISUAL_ARGS, '--list', '--reporter=json'],
       { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 },
     );
-    expect(verifyPrVisualList(JSON.parse(list) as unknown).tests).toHaveLength(6);
+    expect(verifyPrVisualList(JSON.parse(list) as unknown).tests).toHaveLength(8);
   });
 
   it.each([false, true])('workflowの実shellはpreview identityの不一致=%sを拒否する', (mismatch) => {
@@ -175,22 +180,30 @@ describe('PRの早期Visual検査', () => {
     }
   });
 
-  it.each(['pass', 'missing', 'failure', 'skip', 'retry', 'wrong-project'])(
-    '実entrypoint: %sを正しく判定する',
-    (mode) => {
-      const execution = runFixture(mode);
-      expect(execution.status, execution.stderr).toBe(mode === 'pass' ? 0 : 1);
-      expect(execution.calls).toHaveLength(mode === 'missing' ? 1 : 2);
-      if (mode !== 'missing') {
-        expect(execution.calls[1]).toEqual([
-          ...PR_VISUAL_ARGS,
-          '--workers=1',
-          '--retries=0',
-          '--trace=retain-on-failure',
-          '--reporter=list,json',
-          '--output=test-results/pr-visual-artifacts',
-        ]);
-      }
-    },
-  );
+  it.each([
+    'pass',
+    'missing',
+    'missing-existing',
+    'duplicate',
+    'extra',
+    'failure',
+    'skip',
+    'retry',
+    'wrong-project',
+  ])('実entrypoint: %sを正しく判定する', (mode) => {
+    const execution = runFixture(mode);
+    expect(execution.status, execution.stderr).toBe(mode === 'pass' ? 0 : 1);
+    const rejectedList = ['missing', 'missing-existing', 'duplicate', 'extra'].includes(mode);
+    expect(execution.calls).toHaveLength(rejectedList ? 1 : 2);
+    if (!rejectedList) {
+      expect(execution.calls[1]).toEqual([
+        ...PR_VISUAL_ARGS,
+        '--workers=1',
+        '--retries=0',
+        '--trace=retain-on-failure',
+        '--reporter=list,json',
+        '--output=test-results/pr-visual-artifacts',
+      ]);
+    }
+  });
 });
