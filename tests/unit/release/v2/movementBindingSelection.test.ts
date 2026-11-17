@@ -544,7 +544,7 @@ async function publicationFixture() {
 it('実践とOOP候補の全inventoryとcontent closureを固定する', async () => {
   const { root, expectAccepted } = await publicationFixture();
   const compiled = await compileContent({
-    sourceRoot: path.resolve('content'),
+    sourceRoot: path.join(root, 'content'),
     outputRoot: path.join(root, 'generated/content'),
     checkOnly: true,
   });

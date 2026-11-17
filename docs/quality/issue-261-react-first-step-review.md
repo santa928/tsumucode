@@ -35,3 +35,11 @@ Lesson内21ファイルの集合を比較し、20ファイルは基点と同byte
 クラウド環境にはDockerがなく、READMEの検証専用Draft PR手順を利用する。ホストNode/npmや別のMac経路で代替実行しない。既存PR CIのDocker内compile・型・Lint・関連/全件unitと同一runの代表画面検査の結果はPRへ記録し、成功前にマージしない。既存CIのCourse map・読書目次検査は、この工程票のPC/狭幅表示や実演習の再確認には読み替えない。
 
 今回の修正だけでIssue #261全体、#260の改訂、全教材本文、全ブラウザ、正式公開を承認しない。工程票の代表PC/狭幅の表示・読み順と、最終Source/Artifactの公開bindingは別の確認として残る。
+
+## 初回CIで分かった固定テスト入力の問題
+
+PR #433 の初回 `pr_premerge` は追加Content testを含む2088件が成功し、既存2件が失敗した。固定公開候補のinventoryを比べる `movementBindingSelection` が、fixtureの旧Sourceではなく現作業treeをcompileしていたため、参照を固定rootへ揃えた。固定hashやclosure期待値は変更していない。
+
+`retiredMovementCaptureIntegration` は退役移行の合成chainを検査する際、毎回HEADを内容承認済み候補とみなしていた。今回の教材差分では `Missing content receipt: react/react-ch01-l01` となったため、その正の試験入力を承認済み教材の基点 `2c9e532917461f4bea4bd6aed895c0cf34b50da3` に固定した。現行コードによるcapture・prepare・admissionと既存の負の検査は維持する。実際の公開gate、内容receipt、原本、historical acceptanceは変更しない。
+
+この拒否は、新しい工程票を正式公開する前の独立content/UI receiptが未充足であることを示す。静的な台帳更新や通常CIの成功でその要件を満たしたとは扱わない。今回の固定化は合成テスト入力の安定化であり、現在HEADの公開承認を作るものではない。
