@@ -204,7 +204,9 @@ test('CPythonの未対応・timeout・停止・古い結果を採点せず、入
   await replaceEditorText(page, loop);
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(
-    page.getByText('実行を停止しました。採点していません。', { exact: true }),
+    page.getByTestId('learning-stage').getByText('実行を停止しました。採点していません。', {
+      exact: true,
+    }),
   ).toBeVisible({ timeout: 15_000 });
   expect(await editorText(page)).toBe(loop);
   expect((await draft(page))?.['validationHistory']).toEqual([]);
@@ -214,9 +216,9 @@ test('CPythonの未対応・timeout・停止・古い結果を採点せず、入
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await created;
   await page.getByRole('button', { name: '実行を停止', exact: true }).click();
-  await expect(
-    page.getByText('実行を停止しました。採点していません。', { exact: true }),
-  ).toBeVisible();
+  const stopNotice = page.locator('.tc-exercise-pager').getByRole('alert');
+  await expect(stopNotice).toHaveText('実行を停止しました。採点していません。');
+  await expect(stopNotice).toBeVisible();
   const second = page.waitForResponse(
     (response) => response.url().endsWith('/api/grades') && response.status() === 202,
   );
