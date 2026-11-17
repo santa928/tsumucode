@@ -34,9 +34,9 @@ function report(executed: boolean) {
     stats: { expected: 8, unexpected: 0, skipped: 0, flaky: 0 },
     suites: [
       {
-        specs: PR_VISUAL_TITLES.map((title, index) => ({
+        specs: PR_VISUAL_TITLES.map((title: string, index) => ({
           id: `test-${String(index)}`,
-          title: String(title),
+          title,
           tests: [
             {
               projectName: 'chromium',
