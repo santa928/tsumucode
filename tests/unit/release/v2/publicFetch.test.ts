@@ -701,3 +701,60 @@ it.each(['data', 'done'] as const)(
     expect(fetchMock).toHaveBeenCalledOnce();
   },
 );
+
+it.each([
+  [
+    'https://api.github.com/repos/owner/repo/deployments?environment=github-pages',
+    'github-deployments',
+  ],
+  ['https://api.github.com/repos/owner/repo/deployments/123/statuses', 'github-statuses'],
+  ['https://api.github.com/repos/owner/repo/actions/runs/123/jobs', 'github-api-other'],
+  ['https://santa928.github.io/tsumucode/generated/content/private-marker', 'public-content'],
+  ['https://example.invalid/private-marker', 'other'],
+])('reports only fixed HTTP failure categories for %s', async (url, source) => {
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+    new Response('private-body', {
+      status: 403,
+      headers: {
+        'x-ratelimit-remaining': '0',
+        'x-ratelimit-reset': '1794888000',
+        'retry-after': '60',
+        'x-private': 'private-marker',
+      },
+    }),
+  );
+  await expect(fetchBytes(url)).rejects.toMatchObject({
+    message: `Public baseline request failed: 403 [source=${source}; remaining=0; reset=1794888000; retryAfter=60]`,
+  });
+  expect(fetchMock).toHaveBeenCalledOnce();
+});
+
+it('excludes arbitrary or oversized rate header values and response body', async () => {
+  vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+    new Response('private-body', {
+      status: 403,
+      headers: {
+        'x-ratelimit-remaining': 'private-marker',
+        'x-ratelimit-reset': '999999999999999999999',
+        'retry-after': 'Wed, 01 Jan 2030 00:00:00 GMT',
+      },
+    }),
+  );
+  await expect(fetchBytes('https://example.invalid/private-marker')).rejects.toMatchObject({
+    message:
+      'Public baseline request failed: 403 [source=other; remaining=unknown; reset=unknown; retryAfter=unknown]',
+  });
+});
+
+it('keeps the HTTP status when diagnostic headers throw', async () => {
+  const response = new Response('private-body', { status: 403 });
+  vi.spyOn(response.headers, 'get').mockImplementation(() => {
+    throw new Error('private-marker');
+  });
+  const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(response);
+  const error = await fetchBytes(TEST_URL).catch((failure: unknown) => failure);
+  expect(error).toBeInstanceOf(Error);
+  expect((error as Error).message).toBe('Public baseline request failed: 403');
+  expect((error as Error).cause).toBeUndefined();
+  expect(fetchMock).toHaveBeenCalledOnce();
+});
