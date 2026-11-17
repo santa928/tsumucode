@@ -8,7 +8,7 @@ import { act, isValidElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as jsxRuntime from 'react/jsx-runtime';
 import ts from 'typescript';
-import { expect, it } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { compileReactTypeScript } from '../../src/adapters/runtime/typescript/compileTypeScript';
 
 const require = createRequire(import.meta.url);
@@ -44,6 +44,14 @@ const support =
   "import type { Question } from './QuestionCard.js';\n" +
   "const question: Question = { prompt: 'HTMLが受け持つものは？', choices: ['内容', '見た目'], correctIndex: 0 };\n";
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+
+// React's documented act environment, limited to this example test file.
+beforeEach(() => {
+  vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 /** Only repository-owned examples run here, not learner code or a Browser/Worker substitute. */
 function executeExample(files: Readonly<Record<string, string>>): Record<string, unknown> {
