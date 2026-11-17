@@ -56,7 +56,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 その下には、複数のコースをおすすめ順に並べる「学習パス」と自由に選べる教材棚を残しています。学習パスは順番を案内する設計図であり、各コースは独立して開始・完了できます。前のコースが未完了でもロックされず、学びたいコースから直接始められます。端末データのImport/Export・復旧操作もHome下部から利用できます。
 
-Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Tailwind CSSはHTML/CSS直後の選択式recommended Courseで、未開始・未完了でも後続の必須Courseへ進めます。Python基礎も独立した公開指定のCourseです。Python実践、Python OOPは`draft`で、通常の教材棚・公開学習パスへ掲載しません。これらはSource上の状態であり、実際のデプロイ状況の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
+Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Tailwind CSSはHTML/CSS直後の選択式recommended Courseで、未開始・未完了でも後続の必須Courseへ進めます。Python基礎も独立した公開指定のCourseです。Python実践とPython OOPもSource上は`published`で、Python学習パスに含まれます。これらはSource上の状態であり、実際のデプロイ状況や各Courseの受入完了の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
 JavaScriptはSourceで`published`を指定しており、安全な複数ファイル実行基盤とChapter 00〜13の52 Lessonを備えます。全202 Slideの種類別内訳はconcept170・comparison10・code21・diagram1です。54 Exerciseは標準必須46・追加Closure2・手順付き制作5・独立課題1に分かれます。`expectedTotals.standardExercises=48`は追加2件を含み、`expectedTotals.conceptSlides=202`は概念系4種類の最低枚数です。1,010分はLesson設定時間の合計で、人間の実測学習時間は未計測です。HTML/CSSを知るJavaScript初学者向けに、値・制御・データからDOM・Event・非同期へ進み、学習クイズの問題表示・回答・得点・結果・再挑戦を積み上げます。Capstoneではカテゴリ選択・進捗・Keyboard操作も扱います。この枚数・演習数で教材の十分性や実務能力を保証するものではありません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)から確認できます。`draft`の教材もProduction Artifactへ含まれるため、非掲載を機密性の保証として扱いません。
 
@@ -149,7 +149,7 @@ PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移�
 
 PagesとLocalは別Originですが、同じ教材IDで下書き・進捗・採点履歴をJSON移送できます。固定image、API、Browserとの違い、検証範囲は[Local CPythonの契約](docs/quality/local-python-runtime.md)を参照してください。
 
-独立した草稿Course「Pythonの反復とデータ処理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理、型注釈・dataclass・TestのデータProjectを5教材・95分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。HomeやPathの公開一覧には追加していません。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
+独立したCourse「Pythonの反復とデータ処理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理、型注釈・dataclass・TestのデータProjectを5教材・95分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。Source上は公開指定でPython学習パスに含まれますが、実際の配信や受入完了の確認とは別です。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
 
 ## 端末データ、容量、引き継ぎ
 
@@ -222,11 +222,11 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳の保存先は`docs/quality/javascript-agent-learning.yaml`（現treeでは未作成）です。実記録があればrunbookの`release:learning-coverage`手順で確認済み／未確認を区別します。新規・未確認教材だけ3人で一度評価し、確認済み評価・原証拠・本人checkpointは新しいセッションでも引き継ぎます。
 
-作業中とpushの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`を必須とし、関連testの代わりに全Unit/Component/Contentを実行します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使い、Compile・Lint・Buildは各1回です。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。ローカルの差分基準は`HEAD`、push CIではpush前のSHAです。
+作業中の`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`による全Unit/Component/Contentを維持し、変更関連検査も別途確認します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使います。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。
 
-Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
+Python実践・Python OOPの草稿段階の専用検査と私有原本照合は、[公開前契約の記録](docs/quality/draft-course-publication-contracts.md)を参照してください。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
-通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件をChromium・1 worker・retry 0で検査します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
+通常Actionsのfast jobはブラウザ未導入のDocker stageを使い、pushは15分、全件unitを含むPRは30分を上限とします。PRでは別の`pr_visual` jobが同一runの静的previewを再利用し、Course mapとSlide library目次の代表3幅・6件に加え、React初回の用語・制作案内をPC/狭幅の2件で検査します。Chromium・1 worker・retry 0を維持します。公開qualificationの全件・固定Artifact・receiptは引き続き必須です。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 正式qualificationの候補Browser 4 suiteは`playwright.qualification.config.ts`で初回からtraceを記録し、失敗分だけを既存のsuite別診断Artifactへ7日間保存します。`--retries=0`、失敗exit、Chromium全件とFirefox/WebKitの対象範囲は維持します。DOM・通信・連続画像・source・添付はtraceへ収集せず、操作時刻・待機・エラーを診断します。成功時にも記録負荷は生じますが、成功traceは保存しません。`on-first-retry`はretry 0では記録自体がなく、初回失敗の診断に使えません（[Playwright trace仕様](https://playwright.dev/docs/api/class-testoptions#test-options-trace)）。
 
@@ -243,7 +243,11 @@ Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本
 ./scripts/docker-compose.sh run --rm app npm run format:check
 ```
 
-push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SHA（mainへのpushは変更前SHA）を明示して次を実行します。`check:prepush`はNode/直接依存の固定版を照合し、provenanceと既存の`check`全工程を実行します。手動で選んだテストやPrettierだけの成功を代用しません。失敗・OOM・signal終了・未commit変更・検証中のSource変更があれば成功記録を出さず、pushを止めます。
+未検証の変更は、公開されるcommitと差分に秘密情報・非公開資料が含まれないことを確認したうえで、検証専用のDraft PRに限りpushできます。Draftであっても公開リポジトリの内容は公開されます。未検証の変更をmainへ直接pushしたり、Draftを解除してマージ・公開したりしません。
+
+マージ前に、最終HEADとbase、それらに対応する仮mergeのSHA/treeを固定し、GitHub-hostedの隔離環境・固定Node/依存関係でprovenance、型、Lint、必要なテスト・build・変更面のBrowser確認を完了します。実行対象と結果を同じ候補に結び、skip・失敗・OOM・signal終了やSource/base変更を成功として扱いません。独立レビューと教材ごとの受入も別途必要です。branch protectionでの強制を前提とせず、各結果と最新のHEAD/baseをマージ前に確認します。PR CIの成功は正式資格や公開成功を意味しません。
+
+ローカルで確認できる場合は、変更をcommitしたcleanなcheckoutで、PRのbase SHAを指定して従来の`check:prepush`を実行できます。固定Node/直接依存とprovenance、型、既存の`check`、実行前後のHEAD/tree/baseを確認する検証であり、結果が未完でも上記の検証専用Draft PRへpushできます。
 
 低速・少メモリの作者検証環境で、実教材準備が既定のUnit用wall-clock枠を超える場合だけ、`TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を明示できます。未指定時のVitest既定値と通常CIは変えません。この固定プロファイルは作者側testを20秒・準備hookを60秒にし、各caseの明示期限、学習者Runnerの計算/待機/回収上限、性能のassertion、対象選択と検査内容は維持します。使用した環境・profile・HEADを検証記録に残し、性能合格や実人観察へ読み替えません。Composeでは `-e TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を渡します。
 
@@ -251,7 +255,7 @@ push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SH
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
 ```
 
-資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。対象・期待値・失敗条件はCIと同じです。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。Lintは同じESLint設定で選ばれる全ファイルを64件ずつ直列実行し、一括実行時のメモリ集中を避けます。失敗したbatchがあれば後続へ進まず全体を失敗にします。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後Sourceを変更した場合だけ影響範囲を検証し直します。必要な型・Lintがローカルで未完了のまま、確認をCIへ持ち越してpushしません。
+資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。選択した各testの期待値と失敗条件は維持し、PR CIでは別途全件を実行します。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。Lintは同じESLint設定で選ばれる全ファイルを64件ずつ直列実行し、一括実行時のメモリ集中を避けます。失敗したbatchがあれば後続へ進まず全体を失敗にします。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後HEAD・base・環境・検証条件が変わった場合は必要な検証をやり直します。ローカル検証を省略した場合も、同一候補の型・Lintと必要な検査がGitHub上で成功するまでマージしません。
 
 正式公開候補の確定後は、同じ入口へ`--release`を加え、教材承認と全Unit/Component/Contentを含む既存`check:release`を先に通します。実CLIの`release:target`も、workflowと同じCourse/Source/workflow-headと生成済み教材で解決を確認します。これらの成功はBrowser・性能・公開成功を意味しません。正式qualityではその同じ候補のBrowser/性能・出力集約を一度実行し、既存証拠はSource・生成物hash・検査条件が一致する範囲だけ再利用します。公開後の配信物と実操作確認も別に行います。
 
@@ -286,6 +290,14 @@ Home初期JSの過去版比増分20,480 bytesは警告値です。絶対上限25
 Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Lesson Manifest、Viteの静的import、安全な相対Path、Service Worker不在、配信容量を検証します。Course mapではIndexまで、Slideでは現在Lessonだけを取得するため、51 Lesson全体を初期表示で配信しません。このコマンドだけでは公開しません。
 
 ## GitHub Pagesへの公開
+
+現在の公開入口は[Pages workflow](.github/workflows/pages.yml)です。手動配信は`main`の`candidate`に限り、`source_sha`は空欄またはそのRunのSHAを指定します。Run開始時の一致だけで後続の最新性は保証されず、資格時にも現在の`main`を照合します。`course_id`は旧入口との互換入力で、現行方式は教材一覧から対象を選びます。`migration_checks`と`deploy`は同時に指定できず、`beta`・旧版への復旧はこの入口では扱いません。
+
+通常CIの成功は正式資格・配信・配信後確認の成功を意味しません。現行方式では同一Runの資格、配信親の照合、配信後確認を含む既存Gateを維持し、失敗や未確認を成功に読み替えません。署名付き証明方式は承認済みの別途検討中の案で、現行workflowの必須条件としては接続されていません。
+
+### 旧方式の手順と履歴
+
+以下の`course_id`別のdispatch、`beta`、旧Report／`--promote`の手順は当時の記録で、現行のPages workflowにそのまま使う操作例ではありません。教材受入と過去の検証範囲は元の記録として保持します。
 
 公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSの全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）の教材評価は、新規・未確認Lessonだけ独立3役で一度実施し、確認済みは保持します。実在初心者・自然な誤解頻度・物理実機の証明ではありません。HTML/CSSは別の5 Checkpointを維持し、2026-10-14に承認された独立computer useによる代替受入を使えます。方式と記録条件は[観察runbook](docs/quality/novice-observation-runbook.md)を参照してください。実証前の記録はdraftです。
 
@@ -327,6 +339,8 @@ gh run download <run ID> -n release-report-<source SHA> --dir .release-evidence
 tag ref作成後の通信断などでRunだけが失敗表示になった場合、Workflow全体を再実行して新しい`run_attempt`やArtifactを既存tagへ結び直してはいけません。元Runの`release-report-<source SHA>`を取得し、tag message・Report・公開URLを照合してrevision別の公開後記録を作成し、その元Run evidenceから`--promote`します。既存tagを検出したRunは成功扱いにせず停止します。
 
 ## 非対象
+
+次の3段落はTypeScript教材の草稿段階における開発記録です。「未完了」とした公開登録・Path掲載は当時の状態であり、現在のSource指定は上記の学習パスの説明を参照してください。
 
 TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
 

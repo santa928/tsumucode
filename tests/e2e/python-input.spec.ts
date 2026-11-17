@@ -383,12 +383,21 @@ test('Python Collection・Functionの読書と予測を狭幅・キーボード�
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const number of [5, 6, 7]) {
+  for (const [number, title] of [
+    [5, 'Listのindexと参照共有'],
+    [6, 'Dictをkeyで読み書きする'],
+    [7, '定義した関数を呼ぶ'],
+  ] as const) {
     const id = `python-basics-ch01-l0${String(number)}`;
     await page.goto(`${base}#/courses/python-basics/lessons/${id}/slides/${id}-s01`);
+    const heading = page.getByRole('heading', { name: title, level: 1, exact: true });
+    // ハッシュ遷移では旧スライドが残る間がある。遷移先の見出しへのフォーカス移動を待つ。
+    if (number === 5) await expect(heading).toBeVisible();
+    else await expect(heading).toBeFocused();
     const answer = page.getByText('答えと理由を見る', { exact: true });
     await expect(answer).toBeVisible();
     await answer.focus();
+    await expect(answer).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(page.locator('section[aria-label="結果を予測する"] details')).toHaveAttribute(
       'open',

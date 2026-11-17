@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -193,6 +193,46 @@ describe('HomePage', () => {
       screen.getByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
     ).toHaveAttribute('href', '/library/html-css');
     expect(await screen.findByRole('region', { name: '端末データPanel' })).toBeInTheDocument();
+  });
+
+  it('Python実践・OOPとNextの棚にそれぞれの前提と進め方を表示する', async () => {
+    const courses = [
+      { ...fixtureCatalog.courses[0]!, id: 'python-practice', title: 'Python実践' },
+      { ...fixtureCatalog.courses[0]!, id: 'python-oop', title: 'Python OOP' },
+      { ...fixtureCatalog.courses[0]!, id: 'next', title: 'Next.js' },
+    ];
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        loader: () => ({
+          catalog: { ...fixtureCatalog, courses, learningPaths: [] },
+          publishedCourses: courses,
+          publishedPaths: [],
+        }),
+        HydrateFallback: () => <p>教材を準備中</p>,
+        element: <HomePage />,
+      },
+    ]);
+    render(<RouterProvider router={router} />);
+
+    const practice = (await screen.findByRole('heading', { name: 'Python実践' })).closest(
+      'article',
+    );
+    const oop = screen.getByRole('heading', { name: 'Python OOP' }).closest('article');
+    const next = screen.getByRole('heading', { name: 'Next.js' }).closest('article');
+    expect(practice).not.toBeNull();
+    expect(oop).not.toBeNull();
+    expect(next).not.toBeNull();
+    expect(within(practice!).getByText(/リスト.*繰り返し.*関数.*例外/u)).toBeInTheDocument();
+    expect(within(oop!).getByText(/関数.*範囲.*データクラス/u)).toBeInTheDocument();
+    expect(within(practice!).getByText(/値の変換.*データ集計/u)).toBeInTheDocument();
+    expect(within(oop!).getByText(/3種類のメソッド.*記録プログラム/u)).toBeInTheDocument();
+    expect(
+      within(next!).getByText(/TypeScript.*親から渡す値.*Props.*状態.*State/u),
+    ).toBeInTheDocument();
+    expect(within(next!).getByText(/PC.*Docker.*学習版/u)).toBeInTheDocument();
+    expect(within(practice!).queryByText('スライドとコード実習')).not.toBeInTheDocument();
+    expect(within(oop!).queryByText('スライドとコード実習')).not.toBeInTheDocument();
   });
 
   it('保存済みの現在地点をHomeの最優先CTAから再開する', async () => {

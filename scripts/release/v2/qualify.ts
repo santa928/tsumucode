@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
+import { parseQualificationNeeds } from './qualificationNeeds';
 import { captureBaseline } from './captureBaseline';
 import { qualifyRelease } from './admission';
 import { readRecipe } from './candidate';
@@ -12,6 +13,7 @@ import { repositoryEnvironment, hashValue } from './identity';
 import { verifyStoredReports } from './reports';
 import { readVerifiedContentPolicy } from './contentOriginals';
 import { verifyCandidateArtifact } from './verify';
+import { assertRetiredMovementParent } from './retiredMovementFiles';
 import { readVerifiedPythonHistoricalAcceptances } from './pythonHistoricalAcceptance';
 import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 const exec = promisify(execFile);
@@ -19,6 +21,7 @@ const exec = promisify(execFile);
 export async function qualifyCurrentRelease(
   root: string,
   environment: NodeJS.ProcessEnv = process.env,
+  retirementPolicy?: 'python-first-v1',
 ) {
   const { snapshot, executionPlan, candidate, capturedBaseline } = await loadExecutionBundle(root);
   if (
@@ -30,8 +33,17 @@ export async function qualifyCurrentRelease(
     environment.GITHUB_REF !== 'refs/heads/main'
   )
     throw new Error('Wrong final release context');
+  // This Source retires the fixed python-first declaration. A final admission
+  // for this repository must opt into that Source policy; generic releases in
+  // other repositories retain their existing qualification contract.
+  if (
+    environment.GITHUB_REPOSITORY === 'santa928/tsumucode' &&
+    retirementPolicy !== 'python-first-v1'
+  )
+    throw new Error('Missing retirement policy');
   const recipe = await readRecipe(root, candidate.recipe.sourceCommit, candidate.recipe.basePath);
   if (hashValue(recipe) !== hashValue(candidate.recipe)) throw new Error('Final recipe changed');
+  if (retirementPolicy) await assertRetiredMovementParent(root, capturedBaseline);
   await verifyCandidateArtifact(candidate, path.join(root, 'dist'));
   const contentPolicy = await readVerifiedContentPolicy(
     root,
@@ -61,15 +73,7 @@ export async function qualifyCurrentRelease(
     .string()
     .regex(/^[a-f0-9]{40}$/u)
     .parse(remote.split(/\s+/u)[0]);
-  const needs = z
-    .record(
-      z.string(),
-      z.object({ result: z.enum(['success', 'failure', 'cancelled', 'skipped']) }),
-    )
-    .parse(JSON.parse(environment.RELEASE_V2_NEEDS ?? 'null') as unknown);
-  const jobs = Object.fromEntries(
-    Object.entries(needs).map(([name, value]) => [name, value.result]),
-  );
+  const jobs = parseQualificationNeeds(environment.RELEASE_V2_NEEDS);
   // This caller can only run after its build dependency succeeds and supplies both same-run artifact IDs.
   jobs['build'] = 'success';
   const receipts = path.join(root, '.release-v2/receipts');

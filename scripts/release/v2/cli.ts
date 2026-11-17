@@ -8,7 +8,7 @@ import { compileContent } from '../../content/compile';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 import { buildInventory } from './inventory';
 import { hashValue, ArtifactManifestSchema } from './identity';
-import { writeProtocolJson } from './json';
+import { writePreparationJson, writeProtocolJson } from './json';
 import { readLegacyEvidence } from './legacy';
 import { planRelease } from './plan';
 import { compareLegacy } from './shadow';
@@ -36,6 +36,7 @@ import { readInventoryAtSource } from './sourceInventory';
 import { readVerifiedPythonHistoricalAcceptances } from './pythonHistoricalAcceptance';
 import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 import { MovementInputsSchema, verifyMovementInputs, readMovementDeclaration } from './movement';
+import { assertRetiredMovementParent } from './retiredMovementFiles';
 
 const PreparationSchema = z
   .object({
@@ -49,16 +50,16 @@ const PreparationSchema = z
 const optionNames: Readonly<Record<string, readonly string[]>> = {
   shadow: [],
   'inspect-content': ['private-root', 'request'],
-  'stage-content': [],
+  'stage-content': ['retirement-policy'],
   'verify-native-catalog': ['file'],
   baseline: ['repository', 'site-url'],
-  prepare: ['baseline', 'public-output'],
-  candidate: ['snapshot', 'baseline', 'artifact-id', 'dist', 'execution-plan'],
-  freeze: ['snapshot', 'baseline'],
+  prepare: ['baseline', 'public-output', 'retirement-policy'],
+  candidate: ['snapshot', 'baseline', 'artifact-id', 'dist', 'execution-plan', 'retirement-policy'],
+  freeze: ['snapshot', 'baseline', 'retirement-policy'],
   static: ['snapshot', 'dist'],
   'run-suite': ['suite'],
   'observe-native': ['suite'],
-  qualify: [],
+  qualify: ['retirement-policy'],
   'public-smoke': [],
   'public-operations': [],
   'record-plan': [],
@@ -72,7 +73,7 @@ async function snapshotMovement(
   snapshot: z.infer<typeof PreparationSchema>,
   baseline: unknown,
 ) {
-  const declaration = await readMovementDeclaration(root);
+  const declaration = await readMovementDeclaration(root, hashValue(snapshot.inventory));
   if (hashValue(declaration ?? null) !== hashValue(snapshot.movementInputs?.declaration ?? null))
     throw Error('Movement snapshot differs from source policy');
   return snapshot.movementInputs === undefined
@@ -145,6 +146,9 @@ export async function runCli(
     ? validateCapturedBaseline(await jsonFile(input(values.baseline, '--baseline')))
     : undefined;
   const baseline = capturedBaseline?.baseline;
+  const retirementPolicy = values['retirement-policy'];
+  if (retirementPolicy !== undefined && retirementPolicy !== 'python-first-v1')
+    throw new Error('Unknown retirement policy');
   let result: unknown;
   switch (command) {
     case 'inspect-content': {
@@ -184,6 +188,7 @@ export async function runCli(
       const captured = validateCapturedBaseline(
         await jsonFile(path.join(root, '.release-v2/baseline.json')),
       );
+      if (retirementPolicy) await assertRetiredMovementParent(root, captured);
       const policy = await readVerifiedContentPolicy(
         root,
         path.join(root, 'docs/quality/content-v2-receipts.json'),
@@ -217,7 +222,7 @@ export async function runCli(
       );
       break;
     case 'qualify':
-      result = await qualifyCurrentRelease(root, environment);
+      result = await qualifyCurrentRelease(root, environment, retirementPolicy);
       break;
     case 'public-smoke':
       result = await verifyCurrentPublicDeployment(root, environment);
@@ -238,6 +243,7 @@ export async function runCli(
       );
       break;
     case 'prepare':
+      if (retirementPolicy) await assertRetiredMovementParent(root, capturedBaseline);
       result = await prepareRelease(
         path.join(root, 'content'),
         values['public-output']
@@ -259,6 +265,7 @@ export async function runCli(
       break;
     }
     case 'freeze': {
+      if (retirementPolicy) await assertRetiredMovementParent(root, capturedBaseline);
       const snapshot = PreparationSchema.parse(
         await jsonFile(input(values.snapshot, '--snapshot')),
       );
@@ -272,6 +279,7 @@ export async function runCli(
       break;
     }
     case 'candidate': {
+      if (retirementPolicy) await assertRetiredMovementParent(root, capturedBaseline);
       const snapshot = PreparationSchema.parse(
         await jsonFile(input(values.snapshot, '--snapshot')),
       );
@@ -323,7 +331,8 @@ export async function runCli(
     }
   }
   if (result === undefined) throw new Error('Unimplemented release command');
-  await writeProtocolJson(output, result);
+  if (command === 'prepare') await writePreparationJson(output, result);
+  else await writeProtocolJson(output, result);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   runCli(process.argv.slice(2)).catch((error: unknown) => {

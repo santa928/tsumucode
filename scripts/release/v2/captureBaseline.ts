@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { setTimeout as pause } from 'node:timers/promises';
+import { setImmediate as yieldToEventLoop, setTimeout as pause } from 'node:timers/promises';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -12,6 +12,7 @@ import { BuildIdentitySchema, CommitSchema } from './schema';
 import { buildInventory } from './inventory';
 import { hashBytes, hashValue, repositoryEnvironment } from './identity';
 import { AppRecordSchema, parseAppBinding } from './appRecord';
+import { PREDEPLOY_FAILURE_ID, recoverKnownPredeployParent } from './predeployFailure';
 
 const exec = promisify(execFile);
 export interface CaptureOptions {
@@ -21,26 +22,147 @@ export interface CaptureOptions {
   readonly readJson?: (url: string) => Promise<unknown>;
   readonly readPublicFile?: (relative: string) => Promise<Uint8Array>;
 }
+
+/** Preserve standard timeout errors without exposing arbitrary non-Error abort reasons. */
+function baselineAbortError(signal: AbortSignal): Error {
+  const reason: unknown = signal.reason;
+  return reason instanceof Error ? reason : new Error('Public baseline request aborted');
+}
+
+/** Bound even operations that do not react to the fetch signal themselves. */
+async function beforeDeadline<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+  let onAbort: (() => void) | undefined;
+  const deadline = new Promise<never>((_resolve, reject) => {
+    onAbort = () => {
+      reject(baselineAbortError(signal));
+    };
+    if (signal.aborted) onAbort();
+    else signal.addEventListener('abort', onAbort, { once: true });
+  });
+  try {
+    // Promise.race observes late operation rejections after a deadline failure too.
+    const value = await Promise.race([operation, deadline]);
+    if (signal.aborted) throw baselineAbortError(signal);
+    return value;
+  } finally {
+    if (onAbort) signal.removeEventListener('abort', onAbort);
+  }
+}
+
+/** Fixed failure metadata only: never URL, body, credentials, or arbitrary header values. */
+function httpFailureDiagnostic(url: string, response: Response): string {
+  try {
+    const target = new URL(url);
+    const source =
+      target.origin === 'https://api.github.com'
+        ? /^\/repos\/[^/]+\/[^/]+\/deployments$/.test(target.pathname)
+          ? 'github-deployments'
+          : /^\/repos\/[^/]+\/[^/]+\/deployments\/[0-9]+\/statuses$/.test(target.pathname)
+            ? 'github-statuses'
+            : 'github-api-other'
+        : target.origin === 'https://santa928.github.io' &&
+            target.pathname.startsWith('/tsumucode/generated/content/')
+          ? 'public-content'
+          : 'other';
+    const number = (name: string) => {
+      const value = response.headers.get(name);
+      return value !== null && /^[0-9]{1,12}$/.test(value) ? value : 'unknown';
+    };
+    return ` [source=${source}; remaining=${number('x-ratelimit-remaining')}; reset=${number('x-ratelimit-reset')}; retryAfter=${number('retry-after')}]`;
+  } catch {
+    // Diagnostic failure must not replace the original HTTP status.
+    return '';
+  }
+}
+
 /** Retry only bounded, transient delivery statuses; no failed response body becomes evidence. */
 export async function fetchBytes(url: string): Promise<Uint8Array> {
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const response = await fetch(url, {
+    const signal = AbortSignal.timeout(15000);
+    const pendingResponse = fetch(url, {
       redirect: 'error',
-      signal: AbortSignal.timeout(15000),
+      signal,
       headers: { 'Cache-Control': 'no-cache' },
     });
+    let response: Response;
+    try {
+      response = await beforeDeadline(pendingResponse, signal);
+    } catch (error) {
+      // A non-cooperative fetch might deliver a response after the caller has timed out.
+      // Best-effort cancellation does not delay or replace the original failure.
+      void pendingResponse.then(
+        (late) => {
+          try {
+            void late.body?.cancel().catch(() => {});
+          } catch {
+            // Cleanup must not replace the original failure.
+          }
+        },
+        () => {},
+      );
+      throw error;
+    }
     if (!response.ok) {
       if ([502, 503, 504].includes(response.status) && attempt < 3) {
-        await response.body?.cancel();
+        if (response.body) await beforeDeadline(response.body.cancel(), signal);
         await pause(attempt * 100);
         continue;
       }
-      throw new Error('Public baseline request failed: ' + String(response.status));
+      // Dispose of unused error bodies without delaying or hiding the status failure.
+      try {
+        void response.body?.cancel().catch(() => {});
+      } catch {
+        // A broken body must not replace the status error.
+      }
+      throw new Error(
+        'Public baseline request failed: ' +
+          String(response.status) +
+          httpFailureDiagnostic(url, response),
+      );
     }
-    const bytes = new Uint8Array(await response.arrayBuffer());
-    if (bytes.length > 16 * 1024 * 1024)
-      throw new Error('Public baseline response exceeds its limit');
-    return bytes;
+    if (!response.body) return new Uint8Array();
+    const reader = response.body.getReader();
+    const limit = 16 * 1024 * 1024;
+    let buffer = new Uint8Array(0);
+    let size = 0;
+    let readsSinceYield = 0;
+    let completed = false;
+    try {
+      let chunk = await beforeDeadline(reader.read(), signal);
+      while (!chunk.done) {
+        const { value } = chunk;
+        const nextSize = size + value.byteLength;
+        if (nextSize > limit)
+          throw new Error('Public baseline response exceeds its limit');
+        if (nextSize > buffer.byteLength) {
+          const capacity = Math.min(limit, Math.max(nextSize, buffer.byteLength * 2, 1024));
+          const expanded = new Uint8Array(capacity);
+          expanded.set(buffer.subarray(0, size));
+          buffer = expanded;
+        }
+        buffer.set(value, size);
+        size = nextSize;
+        readsSinceYield++;
+        if (readsSinceYield === 256) {
+          readsSinceYield = 0;
+          // Immediate small or empty reads must not starve the deadline timer.
+          await beforeDeadline(yieldToEventLoop(), signal);
+        }
+        chunk = await beforeDeadline(reader.read(), signal);
+      }
+      completed = true;
+      return buffer.byteLength === size ? buffer : buffer.slice(0, size);
+    } finally {
+      if (!completed) {
+        // Cancellation is best effort and must not replace the original failure or hang it.
+        try {
+          void reader.cancel().catch(() => {});
+        } catch {
+          // A broken stream must not hide the failure that stopped the read.
+        }
+      }
+      reader.releaseLock();
+    }
   }
   throw new Error('Public baseline attempt limit reached');
 }
@@ -59,12 +181,17 @@ export async function captureBaseline(options: CaptureOptions) {
     .array(z.unknown())
     .min(1)
     .parse(await readJson(api + '/deployments?environment=github-pages&per_page=1'));
-  const first = z.object({ id: z.number().int().positive() }).parse(deployments[0]);
+  const latest = z.object({ id: z.number().int().positive() }).parse(deployments[0]);
+  const first =
+    latest.id === PREDEPLOY_FAILURE_ID
+      ? await recoverKnownPredeployParent(repository, deployments[0], readJson)
+      : deployments[0];
+  const firstId = z.object({ id: z.number().int().positive() }).parse(first).id;
   const statuses = z
     .array(z.unknown())
     .min(1)
-    .parse(await readJson(api + '/deployments/' + String(first.id) + '/statuses'));
-  const actual = parseActualDeployment(deployments[0], statuses[0], repository, options.siteUrl);
+    .parse(await readJson(api + '/deployments/' + String(firstId) + '/statuses'));
+  const actual = parseActualDeployment(first, statuses[0], repository, options.siteUrl);
   const gitEnvironment = await repositoryEnvironment(options.root);
   const git = async (...args: string[]) =>
     (

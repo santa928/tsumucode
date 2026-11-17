@@ -23,7 +23,7 @@ export async function prepareRelease(
   const compilation = await compileContent({ sourceRoot, outputRoot, checkOnly: false });
   const inventory = buildInventory(compilation.compilations);
   verifyNativeCatalog(inventory, compilation.nativeWorkspaceCatalog);
-  const declaration = await readMovementDeclaration(path.dirname(sourceRoot));
+  const declaration = await readMovementDeclaration(path.dirname(sourceRoot), hashValue(inventory));
   let movementInputs;
   let movement;
   if (declaration) {

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    types: [opened, reopened, synchronize, edited]
   workflow_dispatch:
     inputs:
       migration_checks:
@@ -115,6 +115,48 @@ jobs:
         id: target
         run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
 
+  # A Draft PR may carry unverified code, but this job never authorizes a merge or publication.
+  pr_premerge:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_MERGE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind PR head and base
+        run: |
+          set -eu
+          for sha in "$PR_HEAD_SHA" "$PR_BASE_SHA" "$PR_MERGE_SHA"; do
+            case "$sha" in *[!0-9a-f]*|'') exit 1 ;; esac
+            [ "${#sha}" -eq 40 ] || exit 1
+          done
+          [ "$(git rev-parse HEAD)" = "$PR_MERGE_SHA" ]
+          [ "$(git rev-parse HEAD^1)" = "$PR_BASE_SHA" ]
+          [ "$(git rev-parse HEAD^2)" = "$PR_HEAD_SHA" ]
+          [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse "${PR_HEAD_SHA}^{tree}")" ]
+          git merge-base --is-ancestor "$PR_BASE_SHA" HEAD
+          printf 'PR head: `%s`\nBase: `%s`\nTest merge: `%s`\nTree: `%s`\n' \
+            "$PR_HEAD_SHA" "$PR_BASE_SHA" "$PR_MERGE_SHA" "$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_STEP_SUMMARY"
+      - name: Build the fixed pre-push image
+        run: ./scripts/docker-compose.sh build app
+      - name: Verify the required Node version
+        run: >-
+          ./scripts/docker-compose.sh run --rm app node -e
+          'if (process.versions.node !== "24.18.0") process.exit(1)'
+      - name: Run the existing pre-push checks
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm exec -- tsx scripts/runPrCiCheck.ts prepush "$PR_BASE_SHA"
+
   fast:
     if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true
     needs: resolve
@@ -141,7 +183,11 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
           CHECK_SCRIPT: ${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
+        run: |-
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            exec ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm exec -- tsx scripts/runPrCiCheck.ts fast
+          fi
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run "$CHECK_SCRIPT"
       - name: Bind the static preview to its checkout
         run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
       - name: Preserve static preview for independent UI review
@@ -196,6 +242,31 @@ jobs:
           --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
           --mount type=volume,target=/workspace/node_modules
           tsumucode-pr-visual node --import tsx scripts/ci/prVisual.ts
+      - name: Verify Python course guide entry points
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
+          --config=playwright.authoring.config.ts tests/e2e/python-course-guide.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
+      - name: Verify Next course guide entry points
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          TSUMUCODE_NEXT_DOM_DIAGNOSTICS: '1'
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env TSUMUCODE_NEXT_DOM_DIAGNOSTICS --env CI=true --env NODE_OPTIONS=--max-old-space-size=3072
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-pr-visual node node_modules/@playwright/test/cli.js test
+          --config=playwright.authoring.config.ts tests/e2e/next-course-guide.spec.ts
+          --project=chromium --workers=1 --retries=0 --reporter=list
       - name: Preserve bounded visual diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -237,8 +308,8 @@ jobs:
           SITE_URL: https://santa928.github.io/tsumucode/
         run: |
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- baseline --repository "$GITHUB_REPOSITORY" --site-url "$SITE_URL" --output .release-v2/baseline.json
-          ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --baseline .release-v2/baseline.json --output .release-v2/preparation.json
-          ./scripts/docker-compose.sh run --rm app npm run release:flow -- stage-content --output .release-v2/content-receipts.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --retirement-policy python-first-v1 --baseline .release-v2/baseline.json --output .release-v2/preparation.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- stage-content --retirement-policy python-first-v1 --output .release-v2/content-receipts.json
       - name: Build public app once
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build:app
       - name: Check actual public bytes and early budgets
@@ -246,7 +317,7 @@ jobs:
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- static --snapshot .release-v2/preparation.json --output .release-v2/static.json
       - name: Freeze required checks for the same candidate
         run: |
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run release:flow -- freeze --snapshot .release-v2/preparation.json --baseline .release-v2/baseline.json --output .release-v2/execution-plan.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run release:flow -- freeze --retirement-policy python-first-v1 --snapshot .release-v2/preparation.json --baseline .release-v2/baseline.json --output .release-v2/execution-plan.json
       - name: Preserve exact candidate files
         id: candidate_files
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -262,7 +333,7 @@ jobs:
         run: >-
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID
           -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
-          app npm run release:flow -- candidate --snapshot .release-v2/preparation.json
+          app npm run release:flow -- candidate --retirement-policy python-first-v1 --snapshot .release-v2/preparation.json
           --baseline .release-v2/baseline.json --execution-plan .release-v2/execution-plan.json
           --artifact-id "$ARTIFACT_ID" --output .release-v2/candidate.json
       - name: Execute artifact preflight against the frozen candidate

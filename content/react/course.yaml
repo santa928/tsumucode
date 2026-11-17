@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: react
 title: React はじめの一歩
-description: 値の受け渡し（Props）や画面の状態（State）、入力と外部データの扱いを学びます。読書リストを3段階で作り、手順付きのクイズ制作から、仕様に沿う仕上げ制作へ進みます。
+description: 部品へ渡す値（Props）・変わる状態（State）・フォーム入力を学びます。画面要素への参照（Ref）、外部との同期（Effect）、同期処理の再利用（Custom Hook）を確かめます。読書リストを3段階で作り、温度表示の部品分け、クイズ題材の手順付き制作2工程と、別の仕様に沿う制作へ進みます。
 audience: TypeScriptで型の形・関数・読み取り専用の配列と、JavaScriptで画面の要素を操作する基礎を学んだ方
 estimatedMinutes: 630
 revision: 2026-10-28.3
@@ -108,7 +108,7 @@ phases:
       - chapters/react-ch01/chapter.yaml
   - id: react-p02-project
     title: 部品を組み合わせて作品を作る
-    description: 読書リストで書く範囲を広げ、クイズの工程引継ぎと別Briefへの応用を確かめる。
+    description: 読書リストで書く範囲を広げ、温度表示の部品分けを考えます。クイズでは工程を引き継ぐ手順付き制作と、別の仕様に沿う制作を行います。後者の下書きは、手順付き制作とは別に保存します。
     chapterSources:
       - chapters/react-ch02/chapter.yaml
       - chapters/react-ch03/chapter.yaml

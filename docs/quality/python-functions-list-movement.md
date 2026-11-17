@@ -20,7 +20,7 @@ Issue #259は、旧関数Lessonの複合目標を同じ加算題材の5段階へ
 
 l05の既存IDを維持し、新しい2目標は別IDにする。再利用されたl07/l08/l09は既存の`intentionally-reset`移行で旧達成・下書きを隔離保存する。旧Module/Exceptionの新しい移動先も、旧合格から自動で達成済みにしない。旧形式の保存読込・隔離・現行再試行は保存互換テストの対象である。
 
-`movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束する。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
+履歴の`movement-history/movement-v2.json`はPython-firstの固定28fixture移動と旧関数10意図を、正式Compilerの全inventory・両側authoring/learner原本・独立審査scopeへ拘束した。Reactの25fixture移動は後続段階に残す。Moduleの前提説明の差分は新しいcontent receiptを要求し、Exceptionの同一投影と区別する。
 
 既存alias l05とProject ch02-l01の用語初出リンクもlearner投影に含まれる。同IDの一般carryはlearnerDigest完全一致を必要とする。Python-firstの`list-alias-and-console-references-v1`だけは、旧Source `16bbf55442a3166193c3e7de07c06d644126968d`と候補Source `19cbed7d95cac527d17b58f3522cdf4f05466b92`の固定2教材に対し、前提と用語初出リンクの実値を別契約で検査する。
 
@@ -36,10 +36,18 @@ aliasの前提はl04からl05-iterate、Listの初出はl05からl05-valuesへ�
 
 ## eb2実配信親への限定binding
 
-`movement-eb2-v2.json`と`movement-eb2-baseline-proof-v2.json`は、実deployment `7593230441`／Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`に対応する追加原本である。元の16bb宣言・proofは元bytesのまま履歴検証用に保持する。新宣言が存在するときはそれを選び、破損や検証失敗を旧宣言へのfallbackで隠さない。
+履歴の`movement-history/movement-eb2-v2.json`と`movement-eb2-baseline-proof-v2.json`は、実deployment `7593230441`／Source `eb2fe6f8e06409569f173efb2fe6275c46a535cf`に対応する原本である。旧2宣言は元bytesのまま保持し、既消費となった移行を後続公開で繰り返さない。終了の根拠と後続gateは[movement履歴](movement-history/README.md)に記録する。
 
 現行captureでeb2のhistorical Compileと467公開教材ファイルを照合し、16bb／eb2／候補19cbedの三者inventoryを比較した。旧親からeb2への変更はPython L02の説明・Hint、Tailwind公開状態、Pathで、旧関数と移動元2教材・reference-onlyの全67原本および投影は一致する。候補に対する保存移行・navigation等の技術差分は維持する。
 
 新しい全previous payloadと親bindingへ10意図の独立source比較を行い、別のinspectorが各原本を確認した新しい承認を宣言へ拘束する。旧10承認のSource・hash・日時を新親へ付け替えたものではなく、新UI観察・engine実行・実人理解・旧actorの再署名を意味しない。既存33 content/role receiptと限定歴史受入の未観察範囲は変更しない。
 
 reference-onlyは16bb→19cbedの歴史契約を保持し、同じ固定67原本・個別inventory・参照・採点等の全検査を満たすeb2→19cbedだけを追加する。任意Sourceへの一般化はしない。元proofと再captureは、各真正hashと`observedAt`以外の全field一致を引き続き要求する。親が再度変われば止め、新Sourceの正式same-run資格・公開後確認は別途必要である。
+
+## JavaScript教材との固定同梱
+
+eb2向け宣言の原本と承認を保持し、固定後続の全`content` tree・`content-v2-receipts.json` と現Compilerの全inventory digestが一致する場合に限り、JavaScriptの2教材を同じ候補に含める。旧宣言の候補commitとinventory digestは元の移行審査範囲を表す。候補全体の教材判定は通常の`stage-content`と正式資格検証で行い、教材や台帳が固定後続からさらに変われば比較で停止する。
+
+正式資格の画像比較で判明した生表示を解消するため、`javascript-ch00-l01` のs02・s03で説明文のバッククォートだけを除去した。固定後続は修正と対象Lessonの独立内容確認・3役の画面観測に対応するreceipt 4件を含む。`javascript-ch01-l01` の4件は従来の値を使う。差し替え前の台帳は #310の統合Source `637021d4` に保存されている。固定後続と各receiptのSourceを後続checkoutから参照できるよう、統合時はこれらのコミットを履歴に保持する。 [正式run 42451350967](https://github.com/santa928/tsumucode/actions/runs/42451350967)
+
+#327で更新したTailwindのコース説明1行を資格対象に含め、固定後続の参照先を `c01e02c8` に更新した。旧固定点 `db9811cd` と比較し、説明1行以外の教材とreceipt台帳が一致することを確認した。全inventory digestとeb2移行宣言は従来の値を使う。 [PR #327](https://github.com/santa928/tsumucode/pull/327)

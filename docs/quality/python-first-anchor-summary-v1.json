@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "scope": "python-first",
+  "repository": "santa928/tsumucode",
+  "sourceCommit": "b9306eb3414e69a2068603cfdbf2706ebe4e9284",
+  "deploymentId": "7699435659",
+  "runId": "42929117936",
+  "recordTagDigest": "005611a22025a12d925bda0fdfb47c96266cf0d3a57aef984f358528a74ead3b",
+  "qualificationDigest": "b691d873d0d32bf28cce69b23b98337a7e9b069a768853c85789340e074471dc",
+  "planDigest": "8b1f078a0361ad2fed64d67f62d4c75e4490ee7d3ee08df2286b273d705d2db6",
+  "movementDeclarationDigest": "4ce18d583429e685ee951def56982bb5c5b292b7e4ad78e162d5ebd2703da494",
+  "movedFixtureCount": 28,
+  "replacementIntentCount": 10,
+  "movementLearnerAcceptanceCount": 4,
+  "historicalInputs": {
+    "candidateMetadataArtifactId": "13816160734",
+    "candidateMetadataArchiveSha256": "d027d2a742ff6106ef42575651fc68f86813329cb7006756229af1b92b591729",
+    "qualificationArtifactId": "13820014017",
+    "qualificationArchiveSha256": "b3b95aa76a554946707369e392966222539f6e554dd61115d0b0545fce83c9ee"
+  }
+}

@@ -10,6 +10,11 @@ import { readStoredProgress } from './progress';
 import { selectAllAndCopyEditorDocument } from './editorDocument';
 import { testBasePath } from './testBasePath';
 import { pythonFixedFixtures } from '../../../src/core/runtime/pythonFixedFixtures.mjs';
+import {
+  readManifestDiagnosticUi,
+  withManifestDiagnostic,
+  type ManifestDiagnostic,
+} from './manifestDiagnostic';
 const snapshotFile = '.release-v2/preparation.json';
 async function writeFiles(page: Page, exercise: AuthoringExercise, solution: boolean) {
   const merged = new Map(
@@ -55,6 +60,8 @@ async function browserGrade(
   courseId: string,
   exercise: AuthoringExercise,
   pass: boolean,
+  diagnostic: ManifestDiagnostic,
+  round: number,
 ) {
   const draft = async () =>
     (await readStoredProgress(page)).drafts.find(
@@ -62,7 +69,9 @@ async function browserGrade(
     );
   const history = async () =>
     z.array(z.object({ status: z.string() })).parse((await draft())?.['validationHistory'] ?? []);
+  diagnostic.step('history-before', round);
   const before = (await history()).length;
+  diagnostic.history(before, before, undefined);
   if (exercise.runtime?.kind === 'python') {
     const profile = exercise.runtime.profile;
     if (profile === 'function-return-scope-v1') {
@@ -72,16 +81,21 @@ async function browserGrade(
     if (await input.isVisible())
       await input.fill((pythonFixedFixtures(profile)[0]?.inputLines ?? []).join('\n'));
   }
+  diagnostic.step('click', round);
   await page.getByRole('button', { name: '判定する', exact: true }).click();
+  diagnostic.step('history', round);
   const actual = expect.poll(
     async () => {
       const rows = await history();
-      return rows.length > before ? rows.at(-1)?.status : undefined;
+      const status = rows.length > before ? rows.at(-1)?.status : undefined;
+      diagnostic.history(before, rows.length, status);
+      return status;
     },
     { timeout: 45000 },
   );
   if (pass) await actual.toBe('pass');
   else await actual.toMatch(/^(?:incomplete|code-error)$/u);
+  diagnostic.step('feedback', round);
   // 履歴保存の後に進捗保存と画面遷移が続くため、可視の結果まで待つ。
   await expect(async () => {
     const feedback = await page.getByRole('dialog', { name: '判定結果' }).isVisible();
@@ -147,85 +161,104 @@ export function declareManifestLearning(native: boolean) {
       { annotation: { type: 'release-lesson', description: key } },
       async ({ page }) => {
         test.setTimeout(lesson.exercises.length * 180000);
-        const authoring = await loadAuthoringCourse('content/' + course.id);
-        if (!lesson.exercises.length) throw Error('Missing non-exercise reading UI capability');
-        for (const expected of lesson.exercises) {
-          const exercise = authoring.exercises.find((row) => row.id === expected.id);
-          if (!exercise) throw Error('Missing learning exercise');
-          const route =
-            testBasePath() +
-            '#/courses/' +
-            course.id +
-            '/lessons/' +
-            lesson.id +
-            '/exercises/' +
-            exercise.id;
-          const open = async () => {
-            await page.goto(route);
-            if (native) {
-              const connect = page.getByRole('button', { name: '環境へ接続', exact: true });
-              if (await connect.isVisible()) await connect.click();
-            }
-            await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
-            if (expected.runtimeKind !== 'next')
-              await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled(
-                { timeout: 15000 },
+        await withManifestDiagnostic(
+          async (diagnostic) => {
+            const authoring = await loadAuthoringCourse('content/' + course.id);
+            if (!lesson.exercises.length) throw Error('Missing non-exercise reading UI capability');
+            for (const expected of lesson.exercises) {
+              const exercise = authoring.exercises.find((row) => row.id === expected.id);
+              if (!exercise) throw Error('Missing learning exercise');
+              const route =
+                testBasePath() +
+                '#/courses/' +
+                course.id +
+                '/lessons/' +
+                lesson.id +
+                '/exercises/' +
+                exercise.id;
+              let round = 0;
+              const open = async () => {
+                diagnostic.step('opening', round);
+                await page.goto(route);
+                if (native) {
+                  const connect = page.getByRole('button', { name: '環境へ接続', exact: true });
+                  if (await connect.isVisible()) await connect.click();
+                }
+                await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+                if (expected.runtimeKind !== 'next')
+                  await expect(
+                    page.getByRole('button', { name: '判定する', exact: true }),
+                  ).toBeEnabled({ timeout: 15000 });
+              };
+              const grade = async (pass: boolean) => {
+                round += 1;
+                if (expected.runtimeKind === 'next') await nativeGrade(page, pass);
+                else await browserGrade(page, course.id, exercise, pass, diagnostic, round);
+              };
+              await open();
+              diagnostic.step('writing-starter', round);
+              await writeFiles(page, exercise, false);
+              await grade(false);
+              await open();
+              diagnostic.step('writing-solution', round);
+              await writeFiles(page, exercise, true);
+              await grade(true);
+              await open();
+              diagnostic.step('writing-starter', round);
+              await writeFiles(page, exercise, false);
+              await grade(false);
+              await open();
+              diagnostic.step('writing-solution', round);
+              await writeFiles(page, exercise, true);
+              await grade(true);
+              // 合格すると完了画面へ進む。保存した演習へ戻ってからreloadを検証する。
+              await open();
+              const files = new Map(
+                [...exercise.files, ...exercise.solutionFiles].map((file) => [file.path, file]),
               );
-          };
-          const grade = async (pass: boolean) => {
-            if (expected.runtimeKind === 'next') await nativeGrade(page, pass);
-            else await browserGrade(page, course.id, exercise, pass);
-          };
-          await open();
-          await writeFiles(page, exercise, false);
-          await grade(false);
-          await open();
-          await writeFiles(page, exercise, true);
-          await grade(true);
-          await open();
-          await writeFiles(page, exercise, false);
-          await grade(false);
-          await open();
-          await writeFiles(page, exercise, true);
-          await grade(true);
-          // 合格すると完了画面へ進む。保存した演習へ戻ってからreloadを検証する。
-          await open();
-          const files = new Map(
-            [...exercise.files, ...exercise.solutionFiles].map((file) => [file.path, file]),
-          );
-          const expectSavedFiles = async () => {
-            for (const file of files.values()) {
-              const tab = page.getByRole('tab', { name: file.path, exact: true });
-              await tab.click();
-              await expect(tab).toHaveAttribute('aria-selected', 'true');
-              const editor = page.getByRole('textbox', {
-                name: file.path + ' のコードエディター',
-                exact: true,
-              });
-              expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
+              const expectSavedFiles = async () => {
+                for (const file of files.values()) {
+                  const tab = page.getByRole('tab', { name: file.path, exact: true });
+                  await tab.click();
+                  await expect(tab).toHaveAttribute('aria-selected', 'true');
+                  const editor = page.getByRole('textbox', {
+                    name: file.path + ' のコードエディター',
+                    exact: true,
+                  });
+                  expect(await selectAllAndCopyEditorDocument(page, editor)).toBe(file.content);
+                }
+                // Draftはreadonlyを含むworkspace全filesを保存する。別workspaceの一致は使わない。
+                await expect
+                  .poll(
+                    async () =>
+                      (await readStoredProgress(page)).drafts.find(
+                        (row) =>
+                          row['courseId'] === course.id &&
+                          row['workspaceId'] === exercise.workspaceId,
+                      )?.['files'],
+                  )
+                  .toEqual(
+                    Object.fromEntries(
+                      [...files.values()].map((file) => [file.path, file.content]),
+                    ),
+                  );
+              };
+              diagnostic.step('saved-files', round);
+              await expectSavedFiles();
+              await page.reload();
+              await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
+              await expectSavedFiles();
+              if (expected.runtimeKind === 'next') {
+                const stop = page.getByRole('button', { name: '停止', exact: true });
+                if (await stop.isEnabled()) await stop.click();
+              }
             }
-            // Draftはreadonlyを含むworkspace全filesを保存する。別workspaceの一致は使わない。
-            await expect
-              .poll(
-                async () =>
-                  (await readStoredProgress(page)).drafts.find(
-                    (row) =>
-                      row['courseId'] === course.id && row['workspaceId'] === exercise.workspaceId,
-                  )?.['files'],
-              )
-              .toEqual(
-                Object.fromEntries([...files.values()].map((file) => [file.path, file.content])),
-              );
-          };
-          await expectSavedFiles();
-          await page.reload();
-          await expect(page.locator('.cm-content').first()).toBeVisible({ timeout: 15000 });
-          await expectSavedFiles();
-          if (expected.runtimeKind === 'next') {
-            const stop = page.getByRole('button', { name: '停止', exact: true });
-            if (await stop.isEnabled()) await stop.click();
-          }
-        }
+          },
+          (description) => {
+            test.info().annotations.push({ type: 'manifest-learning-diagnostic', description });
+          },
+          () => page.evaluate(readManifestDiagnosticUi),
+        );
       },
     );
 }

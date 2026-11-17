@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: tailwind
 title: Tailwind CSSと見た目の基本
-description: CSSと対応させ、Utility・操作状態・幅の条件からテーマと制作へつなぐ5レッスン。
+description: CSSの指定を短いクラス名（ユーティリティ／Utility）で書き、操作や画面幅に応じた見た目を作る5レッスン。
 audience: HTMLのclassとCSSのBox・Flexを学んだ初学者
 estimatedMinutes: 130
 revision: 2026-10-15.2

@@ -96,7 +96,7 @@ export async function pythonReferenceFixture() {
     inventory: buildInventory([old.compilation, react.compilation]),
   };
   const declaration = MovementDeclarationSchema.parse(
-    JSON.parse(await readFile('docs/quality/movement-v2.json', 'utf8')),
+    JSON.parse(await readFile('docs/quality/movement-history/movement-v2.json', 'utf8')),
   );
   const body = {
     ...declaration.body,

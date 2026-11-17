@@ -77,15 +77,72 @@ function formReceipts(stderr) {
     }));
 }
 
+/** 期限後、回収前の採点器を同じ200ms枠で観測し、固定値だけを出す。 */
+async function reportGradeDeadline(id, timing) {
+  let logs = 'unavailable';
+  let stderr = '';
+  let state;
+  if (id) {
+    const [output, inspected] = await Promise.allSettled([
+      docker('GET', `/containers/${id}/logs?stdout=0&stderr=1&tail=20`, undefined, 200, true),
+      docker('GET', `/containers/${id}/json`, undefined, 200),
+    ]);
+    if (output.status === 'fulfilled') {
+      logs = 'invalid';
+      try {
+        stderr = gradeOutput(output.value, 16 * 1024).stderr;
+        logs = 'no-marker';
+      } catch {
+        // 読み取れないDocker出力は本文を採用しない。
+      }
+    }
+    if (inspected.status === 'fulfilled') state = inspected.value?.State;
+  }
+  const last = gradeProgress(stderr).at(-1);
+  const responses = formResponses(stderr);
+  const receipts = formReceipts(stderr);
+  const graderState = [
+    'created',
+    'running',
+    'paused',
+    'restarting',
+    'removing',
+    'exited',
+    'dead',
+  ].includes(state?.Status)
+    ? state.Status
+    : 'unknown';
+  const exitCode = state?.ExitCode;
+  console.error(
+    'Next grade deadline',
+    JSON.stringify({
+      ...timing,
+      logs: last ? 'marker' : logs,
+      graderState,
+      graderExitCode:
+        graderState === 'exited' && Number.isInteger(exitCode) && exitCode >= 0 && exitCode <= 255
+          ? exitCode
+          : 'unknown',
+      graderOOMKilled: typeof state?.OOMKilled === 'boolean' ? state.OOMKilled : 'unknown',
+      phase: last?.phase ?? 'unknown',
+      elapsedMs: last?.elapsedMs ?? null,
+      ...(responses.length ? { responses } : {}),
+      ...(receipts.length ? { receipts } : {}),
+    }),
+  );
+}
+
 /** API入力からimage/command/権限を選ばず、固定Browserだけで現在runを観測する。 */
 export async function gradeProject({ owner, image, source, runId, socket, signal }) {
   if (!image || !/^tsumucode-learning-[a-z0-9-]+-grader:local$/u.test(image))
     throw new Error('Grader image is not configured');
-  const started = Date.now();
+  const started = globalThis.performance.now();
   const name = `${owner}-grade-${randomUUID()}`;
   const metadata = projectMetadata(source, runId);
   let id;
   let enginePhase = 'image-inspect';
+  let waitStarted;
+  let waitCompleted;
   let attempted = false;
   let stopping;
   let aborted = signal?.aborted;
@@ -98,47 +155,22 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
   const cancel = (deadline = false) => {
     aborted = true;
     rejectCancelled(cancelledError);
-    if (deadline && !id)
-      console.error(
-        'Next grade deadline',
-        JSON.stringify({ enginePhase, phase: 'unknown', elapsedMs: null }),
-      );
-    if (id)
-      stopping = (async () => {
-        try {
-          if (deadline) {
-            const output = await docker(
-              'GET',
-              `/containers/${id}/logs?stdout=0&stderr=1&tail=20`,
-              undefined,
-              200,
-              true,
-            );
-            const { stderr } = gradeOutput(output, 16 * 1024);
-            const last = gradeProgress(stderr).at(-1);
-            const responses = formResponses(stderr);
-            const receipts = formReceipts(stderr);
-            console.error(
-              'Next grade deadline',
-              JSON.stringify({
-                enginePhase,
-                phase: last?.phase ?? 'unknown',
-                elapsedMs: last?.elapsedMs ?? null,
-                ...(responses.length ? { responses } : {}),
-                ...(receipts.length ? { receipts } : {}),
-              }),
-            );
-          }
-        } catch {
-          if (deadline)
-            console.error(
-              'Next grade deadline',
-              JSON.stringify({ enginePhase, phase: 'unknown', elapsedMs: null }),
-            );
-        } finally {
-          await removeContainer(id).catch(() => {});
-        }
-      })();
+    const now = globalThis.performance.now();
+    const graderId = id;
+    stopping = (async () => {
+      try {
+        if (deadline)
+          await reportGradeDeadline(graderId, {
+            enginePhase,
+            engineElapsedMs: Math.round(now - started),
+            waitElapsedMs:
+              waitStarted === undefined ? null : Math.round((waitCompleted ?? now) - waitStarted),
+            waitCompleted: waitCompleted !== undefined,
+          });
+      } finally {
+        if (graderId) await removeContainer(graderId).catch(() => {});
+      }
+    })();
   };
   cancellation.catch(() => {});
   const timer = setTimeout(() => {
@@ -196,13 +228,16 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     await docker('POST', `/containers/${id}/start`);
     active();
     enginePhase = 'container-wait';
+    waitStarted = globalThis.performance.now();
     const ended = await Promise.race([
       docker('POST', `/containers/${id}/wait`, undefined, 10000),
       cancellation,
     ]);
     active();
+    waitCompleted = globalThis.performance.now();
     if (ended.StatusCode !== 0) {
-      const remaining = Math.max(1, 10000 - (Date.now() - started));
+      enginePhase = 'failure-diagnostics';
+      const remaining = Math.max(1, 10000 - (globalThis.performance.now() - started));
       const [diagnostic, inspected] = await Promise.allSettled([
         docker(
           'GET',
@@ -310,7 +345,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       )
         throw new Error('Invalid project grade checks');
     }
-    const engineElapsedMs = Date.now() - started;
+    const engineElapsedMs = Math.round(globalThis.performance.now() - started);
     if (engineElapsedMs >= 8000)
       console.error(
         'Next grade slow',

@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { request } from 'node:http';
 import { join } from 'node:path';
+import { performance } from 'node:perf_hooks';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 import { ORIGIN } from './protocol.mjs';
@@ -24,6 +25,10 @@ const solution = fixtures.find(({ id }) => id === 'solution');
 assert.ok(solution);
 const workspace = 'next-ch03-l02-e01';
 const path = `/api/workspaces/${workspace}`;
+const startedAt = performance.now();
+const timeline = [];
+const mark = (event) =>
+  timeline.push({ event, elapsedMs: Math.round(performance.now() - startedAt) });
 let token;
 let saved;
 let run;
@@ -122,10 +127,12 @@ function control(path, headers = {}) {
   });
 }
 
-function slowStream() {
+function slowStream(label) {
   let observed;
   let failed;
   let finish;
+  let terminal = false;
+  let deadlineExpired = false;
   const started = new Promise((resolve, reject) => {
     observed = resolve;
     failed = reject;
@@ -157,30 +164,60 @@ function slowStream() {
     },
     (res) => {
       res.on('data', (chunk) => {
+        if (body.length === 0) mark(`${label}:first-chunk`);
         body.push(chunk);
         const text = Buffer.concat(body).toString();
         observed({ status: res.statusCode, type: res.headers['content-type'], text });
       });
       res.on('end', () => {
+        terminal = true;
+        mark(`${label}:end`);
         failed(new Error(`RSC completed before cancellation: ${res.statusCode}`));
-        finish({ complete: true, body: Buffer.concat(body).toString() });
+        finish({ complete: true, reason: 'end' });
       });
       const aborted = () => {
+        terminal = true;
+        mark(`${label}:aborted`);
         failed(new Error('RSC aborted before loading'));
-        finish({ complete: false, body: Buffer.concat(body).toString() });
+        finish({ complete: false, reason: deadlineExpired ? 'deadline' : 'aborted' });
       };
       res.on('aborted', aborted);
-      res.on('error', aborted);
+      res.on('error', (error) => {
+        terminal = true;
+        mark(`${label}:response-error`);
+        failed(error);
+        finish({
+          complete: false,
+          reason: deadlineExpired ? 'deadline' : `response:${error.code ?? error.message}`,
+        });
+      });
     },
   );
-  const timer = setTimeout(() => req.destroy(new Error('Stream deadline')), 4000);
+  const timer = setTimeout(() => {
+    deadlineExpired = true;
+    req.destroy(new Error('Stream deadline'));
+  }, 4000);
   req.on('close', () => clearTimeout(timer));
   req.on('error', (error) => {
+    terminal = true;
+    mark(`${label}:request-error`);
     failed(error);
-    finish({ complete: false, body: Buffer.concat(body).toString() });
+    finish({ complete: false, reason: `request:${error.code ?? error.message}` });
   });
   req.end();
-  return { started, finished };
+  mark(`${label}:requested`);
+  return { started, finished, settled: () => terminal };
+}
+
+async function assertCancelled(stream) {
+  const result = await stream.finished;
+  assert.equal(result.complete, false, 'RSC ended normally instead of being cancelled');
+  assert.ok(
+    result.reason === 'aborted' ||
+      result.reason === 'request:ECONNRESET' ||
+      result.reason === 'response:ECONNRESET',
+    `RSC did not confirm cancellation: ${result.reason}`,
+  );
 }
 
 try {
@@ -214,16 +251,23 @@ try {
   assert.deepEqual(pausedSource.files, saved.files);
   await start();
   const previous = identity();
-  const changing = slowStream();
+  const page = 'app/weather/[state]/page.tsx';
+  mark('source-save:start');
+  await save({ ...solution.files, [page]: solution.files[page] + '\n' });
+  mark('source-save:end');
+  assert.equal(saved.lastRun.sourceRevision, previous.expectedSourceRevision);
+  assert.equal(saved.lastRun.sourceHash, previous.expectedSourceHash);
+  const changing = slowStream('apply-stream');
   const waiting = await changing.started;
   assert.equal(waiting.status, 200);
   assert.ok(waiting.type.startsWith('text/x-component'));
   assert.equal(waiting.text.includes('遅延後の晴れ'), false);
-  const page = 'app/weather/[state]/page.tsx';
-  await save({ ...solution.files, [page]: solution.files[page] + '\n' });
+  assert.equal(changing.settled(), false, 'RSC ended before apply');
+  mark('apply:requested');
   const applying = api(`${path}/apply`, identity());
-  assert.equal((await changing.finished).complete, false);
+  await assertCancelled(changing);
   const applied = await applying;
+  mark('apply:finished');
   assert.equal(applied.status, 200, JSON.stringify(applied.value));
   saved = applied.value;
   run = saved.lastRun;
@@ -231,14 +275,17 @@ try {
   const current = await api(`${path}/grade`, identity());
   assert.equal(current.value.status, 'pass', JSON.stringify(current.value));
 
-  const stopping = slowStream();
+  const stopping = slowStream('stop-stream');
   const pending = await stopping.started;
   assert.equal(pending.status, 200);
   assert.ok(pending.type.startsWith('text/x-component'));
   assert.equal(pending.text.includes('遅延後の晴れ'), false);
   const before = saved;
+  assert.equal(stopping.settled(), false, 'RSC ended before stop');
+  mark('stop:requested');
   assert.equal((await api(`${path}/stop`, { runId: run.runId })).status, 200);
-  assert.equal((await stopping.finished).complete, false);
+  await assertCancelled(stopping);
+  mark('stop:finished');
   run = undefined;
   saved = (await api(path)).value;
   assert.deepEqual(saved.files, before.files);
@@ -264,5 +311,6 @@ try {
     }),
   );
 } finally {
+  console.log(JSON.stringify({ weatherStreamTimeline: timeline }));
   if (run) await api(`${path}/stop`, { runId: run.runId }).catch(() => {});
 }

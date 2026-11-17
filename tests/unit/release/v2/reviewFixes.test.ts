@@ -171,6 +171,7 @@ function setup() {
         public_boundary: 'success',
         performance: 'success',
         boundary: 'success',
+        python_fixtures: 'success',
       },
     },
   };
@@ -182,6 +183,11 @@ describe('independent review regressions', () => {
     input.currentBaseline.proof.observedAt = '2026-10-28T12:59:00Z';
     input.currentBaseline.baseline.sourceRecordDigest = hashValue(input.currentBaseline.proof);
     expect(qualifyRelease(input).status).toBe('qualified');
+    const failedProducer = structuredClone(input);
+    failedProducer.context.jobs.python_fixtures = 'failure';
+    expect(() => qualifyRelease(failedProducer)).toThrow(
+      'Required native workflow job did not pass',
+    );
     const changed = structuredClone(input);
     changed.currentBaseline.proof.publicContentDigest = '0'.repeat(64);
     changed.currentBaseline.baseline.sourceRecordDigest = hashValue(changed.currentBaseline.proof);

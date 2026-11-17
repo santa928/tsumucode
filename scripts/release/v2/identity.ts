@@ -45,14 +45,20 @@ export const ArtifactManifestSchema = z
   });
 
 /** Hash the actual byte tree; never follow links or accept hidden host paths. */
-export async function hashArtifact(directory: string): Promise<ArtifactIdentity> {
+export async function hashArtifact(
+  directory: string,
+  options: { rejectEmptyDirectories?: boolean } = {},
+): Promise<ArtifactIdentity> {
   const root = path.resolve(directory);
   const files: ArtifactFile[] = [];
   async function visit(absolute: string): Promise<void> {
     const stat = await lstat(absolute);
     if (stat.isSymbolicLink()) throw new Error('Artifact symlink is forbidden');
     if (stat.isDirectory()) {
-      for (const child of (await readdir(absolute)).sort()) await visit(path.join(absolute, child));
+      const children = await readdir(absolute);
+      if (options.rejectEmptyDirectories && children.length === 0)
+        throw new Error('Artifact empty directory is forbidden');
+      for (const child of children.sort()) await visit(path.join(absolute, child));
     } else if (stat.isFile()) {
       const relative = path.relative(root, absolute).split(path.sep).join('/');
       if (

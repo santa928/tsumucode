@@ -29,7 +29,7 @@ test('PythonのHome・Path・読書はcoreを取得せず、狭幅で予測を�
   await expect(page.getByText('Python 値と変数の第一歩', { exact: true }).first()).toBeVisible();
   await page.goto(`${base}#/paths/python-basics`);
   await expect(
-    page.getByRole('heading', { name: 'Python入門の学習パス', exact: true }),
+    page.getByRole('heading', { name: 'Python基礎と実践の学習パス', exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/slides/${lessonId}-s03`);
@@ -45,6 +45,60 @@ test('PythonのHome・Path・読書はcoreを取得せず、狭幅で予測を�
   );
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({ path: info.outputPath('python-mobile-reading.png'), fullPage: true });
+});
+
+test('Python Pathの3コースを順に表示し、未完の前提があっても各リンクを開ける', async ({ page }) => {
+  const courses = [
+    {
+      id: 'python-basics',
+      title: 'Python 値と変数の第一歩',
+      role: '必須',
+      lessonId: 'python-basics-ch01-l01',
+      slideId: 'python-basics-ch01-l01-s01',
+    },
+    {
+      id: 'python-practice',
+      title: 'Pythonの反復とデータ処理',
+      role: '選択',
+      lessonId: 'python-practice-ch01-l01',
+      slideId: 'python-practice-ch01-l01-s01',
+    },
+    {
+      id: 'python-oop',
+      title: 'PythonのClassとobjectの設計',
+      role: '選択',
+      lessonId: 'python-oop-ch01-l01',
+      slideId: 'python-oop-ch01-l01-s01',
+    },
+  ];
+  const pathRoute = `${base}#/paths/python-basics`;
+  await page.goto(pathRoute);
+  const steps = page.getByRole('list', { name: '学習パスのコース順' }).getByRole('listitem');
+  await expect(steps).toHaveCount(courses.length);
+  for (const [index, course] of courses.entries()) {
+    const step = steps.nth(index);
+    await expect(
+      step.getByRole('heading', { level: 3, name: course.title, exact: true }),
+    ).toBeVisible();
+    await expect(step.getByText(course.role, { exact: true })).toBeVisible();
+  }
+
+  // 完了していない前提があっても、後続の選択Courseから直接始められる。
+  for (const index of [2, 1, 0]) {
+    await page.goto(pathRoute);
+    const course = courses[index]!;
+    const link = steps
+      .nth(index)
+      .getByRole('link', { name: `${course.title}を始める`, exact: true });
+    await expect(link).toBeEnabled();
+    await link.click();
+    await expect
+      .poll(() => new URL(page.url()).hash)
+      .toBe(`#/courses/${course.id}/lessons/${course.lessonId}/slides/${course.slideId}`);
+    const slide = page.getByTestId('slide-stage');
+    await expect(slide).toBeVisible();
+    await expect(slide).toHaveAttribute('data-slide-id', course.slideId);
+  }
 });
 
 test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知・新規Contextへの移送を確認する', async ({
