@@ -19,6 +19,7 @@ import { readBoundedRegularFile } from '../../../../scripts/release/v2/boundedFi
 
 const exec = promisify(execFile);
 const b930 = 'b9306eb3414e69a2068603cfdbf2706ebe4e9284';
+const acceptedCandidateSource = '2c9e532917461f4bea4bd6aed895c0cf34b50da3';
 
 async function sourceSelection(source: string, input: NodeJS.ProcessEnv) {
   const sourceMetadata = await lstat(path.join(source, '.git'));
@@ -74,7 +75,7 @@ it('rejects dot selectors and an incorrect linked common directory', async () =>
 // Real code and public Source/tag, synthetic API/status and local expected bytes.
 // No intended network or private originals. JS fetch is forbidden, but child
 // processes are not network-sandboxed. No real parent or qualification proof.
-it('links synthetic b930 capture, retirement guard, real prepare and synthetic-receipt admission', async () => {
+it('links synthetic b930 capture, retirement guard, fixed-candidate prepare and synthetic-receipt admission', async () => {
   const temporary = await mkdtemp(path.join(os.tmpdir(), 'retired-capture-chain-'));
   const candidate = path.join(temporary, 'candidate');
   const old = path.join(temporary, 'old');
@@ -120,7 +121,9 @@ it('links synthetic b930 capture, retirement guard, real prepare and synthetic-r
     );
     if (sourceLocator !== source)
       await git(temporary, 'config', '--file', gitconfig, '--add', 'safe.directory', sourceLocator);
-    const head = await git(source, 'rev-parse', 'HEAD');
+    // The retired-chain fixture needs a fixed accepted candidate, not future
+    // HEAD content whose required independent receipts may still be pending.
+    const head = await git(source, 'rev-parse', acceptedCandidateSource + '^{commit}');
     await git(candidate, 'init', '-b', 'main');
     // This fixed public acceptance Source is not a main ancestor; the real
     // checkout fetches all refs, including its existing public branch.

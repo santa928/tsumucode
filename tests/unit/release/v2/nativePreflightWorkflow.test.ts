@@ -38,6 +38,7 @@ it.each(['push', 'pull_request'] as const)(
     const paths: string[] = workflow.on[event].paths;
     for (const changed of [
       'tests/e2e/helpers/editorDocument.ts',
+      'tests/e2e/helpers/manifestDiagnostic.ts',
       'tests/e2e/helpers/manifestLearning.ts',
       'tests/local/manifest-next-learning.spec.ts',
       'playwright.learning-native.config.ts',
@@ -50,6 +51,16 @@ it.each(['push', 'pull_request'] as const)(
       ).toBe(true);
   },
 );
+
+it('includes the learning diagnostic helper in the isolated Native image', async () => {
+  const dockerfile = await readFile('Dockerfile.learning', 'utf8');
+  const stage = dockerfile
+    .split('FROM python-browser-checks AS learning-native-checks\n')[1]
+    ?.split('\nFROM ')[0];
+  expect(stage).toContain(
+    'COPY tests/e2e/helpers/manifestDiagnostic.ts ./tests/e2e/helpers/manifestDiagnostic.ts',
+  );
+});
 
 it('loads the actual baked Native image before expensive execution, retaining all three real engines', async () => {
   const workflow = parse(await readFile('.github/workflows/local-runtime.yml', 'utf8')) as {

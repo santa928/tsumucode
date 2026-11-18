@@ -1,8 +1,8 @@
 ---
 id: react-ch01-l01-s02
-title: JSXで値を表示する
+title: 表示を書く構文（JSX）
 kind: concept
-concept: JSXで値を表示する
+concept: 表示を書く構文（JSX）
 layout: comparison
 teachesConceptIds: [react-jsx-role]
 masteryTarget: read
@@ -10,7 +10,7 @@ screenBudget: { maxTextCharacters: 420, maxCodeLines: 6, maxVisuals: 0 }
 assets: []
 ---
 
-JSXは、JavaScriptの中で表示を書く構文です。HTMLの文字列ではありません。TSXはJSXを書けるTypeScriptファイルで、拡張子は.tsxです。型を確認し、JavaScriptへ変換してからReactが実DOMを作ります。
+JavaScriptの中で表示を書く構文をJSXと呼びます。HTMLの文字列ではありません。JSXを書けるTypeScriptファイルはTSXと呼び、拡張子は.tsxです。型を確認し、JavaScriptへ変換してからReactが実DOMを作ります。
 
 ```tsx
 <h1>{question.prompt}</h1>
