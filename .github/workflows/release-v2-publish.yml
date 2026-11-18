@@ -446,7 +446,16 @@ jobs:
               ensure(Number.isSafeInteger(history.total_count) && history.total_count>0 && history.total_count<=100 && Array.isArray(history.jobs) && history.jobs.length===history.total_count,'Incomplete record job history');
               ensure(new Set(history.jobs.map(job=>job.id)).size===history.jobs.length && history.jobs.every(job=>Number.isSafeInteger(job.id) && job.id>0),'Ambiguous record job history');
               const matches=history.jobs.filter(job=>job.name==='publish / record');
-              ensure(matches.length===1,'Missing or ambiguous prior record job');
+              const parents=history.jobs.filter(job=>job.name==='publish');
+              if(matches.length===0){
+                // A skipped reusable workflow has only its parent job, not skipped child jobs.
+                ensure(history.jobs.every(job=>job.run_id===Number(runId) && job.run_attempt===previous && job.head_sha===source && job.status==='completed' && typeof job.name==='string'),'Unverified prior publication history');
+                ensure(parents.length===1 && !history.jobs.some(job=>typeof job.name==='string' && job.name.startsWith('publish / ')),'Missing or ambiguous prior publication job');
+                const parent=parents[0];
+                ensure(parent.run_id===Number(runId) && parent.run_attempt===previous && parent.head_sha===source && parent.status==='completed' && parent.conclusion==='skipped' && Array.isArray(parent.steps) && parent.steps.length===0,'Unverified skipped publication parent');
+                continue;
+              }
+              ensure(matches.length===1 && parents.length===0,'Missing or ambiguous prior record job');
               const job=matches[0];
               ensure(job.run_id===Number(runId) && job.run_attempt===previous && job.head_sha===source && job.status==='completed' && Array.isArray(job.steps),'Unverified prior record job');
               if(job.conclusion==='skipped' && job.steps.length===0)continue;
