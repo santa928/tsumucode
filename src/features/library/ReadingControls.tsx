@@ -98,7 +98,7 @@ export function ReadingControls({ course, lesson, position, recordPosition = tru
       />
       <h2>あとでPCで試す</h2>
       <p>
-        URLで開く場所を渡せます。コードや進捗は端末間で自動同期されません。Pagesとローカル学習版も保存先が別です。学習データは通常学習のJSON書き出し・読み込みで引き継ぎます。
+        URLで開く場所を渡せます。コードや進捗は端末間で自動同期されません。Pagesとローカル学習版も保存先が別です。演習の進捗と下書きはJSONの書き出し・読み込みで引き継げます。読書の続き位置と「あとで試す印」はJSONに含まれません。
       </p>
       {lesson.exercises.map((exercise) => {
         const target = { scope, courseId, lessonId, exerciseId: exercise.id };
