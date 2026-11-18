@@ -1,10 +1,11 @@
 // @vitest-environment node
 import { beforeAll, expect, it } from 'vitest';
-import { z } from 'zod';
-import { readFile, cp, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import type { z } from 'zod';
+import { cp, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { ContentReceiptSchema, verifyContent } from '../../../../scripts/release/v2/content';
+import { verifyContent } from '../../../../scripts/release/v2/content';
+import type { ContentReceiptSchema } from '../../../../scripts/release/v2/content';
 import { hashValue } from '../../../../scripts/release/v2/identity';
 import { planRelease } from '../../../../scripts/release/v2/plan';
 import {
@@ -16,19 +17,31 @@ import {
   verifyMovementInputs,
   consumeVerifiedMovement,
 } from '../../../../scripts/release/v2/movement';
-import { pythonReferenceFixture, sealPythonReferenceFixture } from './pythonReferenceFixture';
+import {
+  pythonReferenceFixture,
+  pythonReferenceReceipts,
+  sealPythonReferenceFixture,
+} from './pythonReferenceFixture';
 
 let fixture: Awaited<ReturnType<typeof pythonReferenceFixture>>;
 let receipts: z.infer<typeof ContentReceiptSchema>[];
 beforeAll(async () => {
   fixture = sealPythonReferenceFixture(await pythonReferenceFixture());
-  const policy = z
-    .object({ receipts: z.array(ContentReceiptSchema) })
-    .parse(JSON.parse(await readFile('docs/quality/content-v2-receipts.json', 'utf8')));
-  receipts = policy.receipts.filter(({ courseId }) =>
-    fixture.inventory.courses.some(({ id }) => id === courseId),
-  );
+  receipts = await pythonReferenceReceipts(fixture.inventory);
 }, 60000);
+
+it('固定台帳でも別learnerDigestのReact receiptを追加すれば拒否する', () => {
+  const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
+  const stale = {
+    ...receipts[0]!,
+    courseId: 'react',
+    lessonId: 'react-ch01-l01',
+    learnerDigest: '0'.repeat(64),
+  };
+  expect(() =>
+    verifyContent(fixture.inventory, [...receipts, stale], fixture.baseline, [], [], movement),
+  ).toThrow(/Stale or unknown content receipt: react\/react-ch01-l01/u);
+});
 
 it('固定2教材の実Git参照差分を保全し、新roleの受入を作らない', () => {
   const verified = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
@@ -248,14 +261,7 @@ it('新markerをjointやReact後続へ拡張しない', () => {
 
 it('新rolesを要求せずnavigation/persistenceとfixture/project全件を維持する', () => {
   const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
-  const content = verifyContent(
-    fixture.inventory,
-    receipts,
-    fixture.baseline,
-    [],
-    [],
-    movement,
-  );
+  const content = verifyContent(fixture.inventory, receipts, fixture.baseline, [], [], movement);
   const plan = planRelease(fixture.inventory, fixture.baseline, movement);
   const fresh = planRelease(fixture.inventory);
   for (const id of ['python-basics-ch01-l05', 'python-basics-ch02-l01']) {
@@ -286,38 +292,35 @@ it('新rolesを要求せずnavigation/persistenceとfixture/project全件を維�
   ).toBe(3);
 });
 
-it.each(['previous', 'current'] as const)(
-  '%sのwithdrawalをreference carryで隠さない',
-  (side) => {
-    const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
-    const original = fixture.inputs.pythonReferenceOriginals[side][0]!;
-    const inventory = side === 'previous' ? fixture.baseline.inventory : fixture.inventory;
-    const lesson = inventory.courses
-      .find((c) => c.id === 'python-basics')!
-      .lessons.find((l) => l.id === original.lessonId)!;
-    expect(() =>
-      verifyContent(
-        fixture.inventory,
-        receipts,
-        fixture.baseline,
-        [
-          {
-            courseId: 'python-basics',
-            lessonId: original.lessonId,
-            learnerDigest: lesson.learnerDigest,
-            sourceCommit:
-              side === 'previous'
-                ? fixture.baseline.sourceCommit
-                : fixture.inputs.declaration.body.candidateContentCommit,
-            reason: 'known-finding',
-          },
-        ],
-        [],
-        movement,
-      ),
-    ).toThrow(/withdrawal/iu);
-  },
-);
+it.each(['previous', 'current'] as const)('%sのwithdrawalをreference carryで隠さない', (side) => {
+  const movement = verifyMovementInputs(fixture.inputs, fixture.inventory, fixture.baseline);
+  const original = fixture.inputs.pythonReferenceOriginals[side][0]!;
+  const inventory = side === 'previous' ? fixture.baseline.inventory : fixture.inventory;
+  const lesson = inventory.courses
+    .find((c) => c.id === 'python-basics')!
+    .lessons.find((l) => l.id === original.lessonId)!;
+  expect(() =>
+    verifyContent(
+      fixture.inventory,
+      receipts,
+      fixture.baseline,
+      [
+        {
+          courseId: 'python-basics',
+          lessonId: original.lessonId,
+          learnerDigest: lesson.learnerDigest,
+          sourceCommit:
+            side === 'previous'
+              ? fixture.baseline.sourceCommit
+              : fixture.inputs.declaration.body.candidateContentCommit,
+          reason: 'known-finding',
+        },
+      ],
+      [],
+      movement,
+    ),
+  ).toThrow(/withdrawal/iu);
+});
 
 it('実FSの全67fileを採取し、symlinkと余分なfileを拒否する', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'fixed-python-reference-'));

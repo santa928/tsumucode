@@ -1,6 +1,8 @@
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
+import { z } from 'zod';
+import { ContentReceiptSchema } from '../../../../scripts/release/v2/content';
 import { buildInventory } from '../../../../scripts/release/v2/inventory';
 import {
   hashBytes,
@@ -22,6 +24,21 @@ import { PythonReferenceOriginalsSchema } from '../../../../scripts/release/v2/p
 const exec = promisify(execFile);
 export const previousSource = '16bbf55442a3166193c3e7de07c06d644126968d';
 export const currentSource = '19cbed7d95cac527d17b58f3522cdf4f05466b92';
+// 19cbedの後に揃ったPython受入台帳。固定inventoryへ将来の別教材receiptを混ぜない。
+const receiptSource = 'ccea8af8aba3535c500d79163ad2d5c6738e4f4d';
+export async function pythonReferenceReceipts(inventory: ReturnType<typeof buildInventory>) {
+  const root = process.cwd();
+  const { stdout } = await exec(
+    'git',
+    ['show', receiptSource + ':docs/quality/content-v2-receipts.json'],
+    { cwd: root, env: await repositoryEnvironment(root) },
+  );
+  return z
+    .object({ receipts: z.array(ContentReceiptSchema) })
+    .parse(JSON.parse(stdout))
+    .receipts.filter(({ courseId }) => inventory.courses.some(({ id }) => id === courseId));
+}
+
 const cases = [
   [
     'python-basics-ch01-l05',
