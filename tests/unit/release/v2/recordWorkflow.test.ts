@@ -168,7 +168,28 @@ async function setup(mode = 'create') {
           if(mode==='history-timeout'&&previous===2)throw new DOMException('Synthetic timeout','TimeoutError');
           const skipped=previous===1||['history-skipped','history-run-changed','history-run-changed-after-tag','history-run-changed-after-ref'].includes(mode);
           const job={id:300+previous,run_id:101,run_attempt:previous,head_sha:mode==='history-wrong-source'&&previous===2?'0'.repeat(40):record.workflowHeadCommit,name:mode==='history-missing'&&previous===2?'another job':'publish / record',status:mode==='history-running'&&previous===2?'in_progress':'completed',conclusion:mode==='history-unknown'&&previous===2?null:skipped?'skipped':'failure',steps:skipped||mode==='history-incomplete-steps'?[]:[{number:4,name:'Record verified deployment without checkout or Source execution',status:'completed',conclusion:'failure'}]};
-          const jobs=mode==='history-duplicate'&&previous===2?[job,job]:mode==='history-multiple-records'&&previous===2?[job,{...job,id:job.id+50}]:[job];
+          let jobs=mode==='history-duplicate'&&previous===2?[job,job]:mode==='history-multiple-records'&&previous===2?[job,{...job,id:job.id+50}]:[job];
+          if(mode.startsWith('history-parent-')){
+            const parent={id:400+previous,run_id:101,run_attempt:previous,head_sha:record.workflowHeadCommit,name:'publish',status:'completed',conclusion:'skipped',steps:[]};
+            jobs=[parent];
+            if(previous===2){
+              if(mode==='history-parent-wrong-source')parent.head_sha='0'.repeat(40);
+              if(mode==='history-parent-wrong-run')parent.run_id=102;
+              if(mode==='history-parent-wrong-attempt')parent.run_attempt=1;
+              if(mode==='history-parent-running')parent.status='in_progress';
+              if(mode==='history-parent-failed')parent.conclusion='failure';
+              if(mode==='history-parent-success')parent.conclusion='success';
+              if(mode==='history-parent-steps')parent.steps=[{number:1,name:'unexpected',status:'completed',conclusion:'success'}];
+              if(mode==='history-parent-missing-steps')delete parent.steps;
+              if(mode==='history-parent-duplicate')jobs.push({...parent,id:parent.id+50});
+              if(mode==='history-parent-with-child')jobs.push({...job,conclusion:'skipped',steps:[]});
+              if(mode==='history-parent-with-other-child')jobs.push({...job,name:'publish / deploy',conclusion:'skipped',steps:[]});
+              if(mode==='history-parent-absent')jobs=[];
+              if(mode==='history-parent-foreign-history')jobs.push({...parent,id:parent.id+60,name:'build',run_id:102,conclusion:'success'});
+              if(mode==='history-parent-running-history')jobs.push({...parent,id:parent.id+60,name:'build',status:'in_progress',conclusion:null});
+              if(mode==='history-parent-other-job')jobs.push({...parent,id:parent.id+60,name:'build',conclusion:'success'});
+            }
+          }
           return reply({total_count:mode==='history-too-many'&&previous===2?101:mode==='history-truncated'&&previous===2?2:jobs.length,jobs});
         }
         if(relative==='/deployments?environment=github-pages&per_page=1'){
@@ -285,17 +306,33 @@ it.each([
     );
   }
 });
-it.each(['history-first-skipped', 'history-skipped'])(
-  'allows a first write after prior record jobs were explicitly skipped: %s',
-  async (mode) => {
-    const row = await setup(mode);
-    await row.run();
-    expect(
-      (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
-    ).toEqual(['/git/tags', '/git/refs']);
-  },
-);
 it.each([
+  'history-first-skipped',
+  'history-skipped',
+  'history-parent-skipped',
+  'history-parent-other-job',
+])('allows a first write after prior record jobs were explicitly skipped: %s', async (mode) => {
+  const row = await setup(mode);
+  await row.run();
+  expect(
+    (await row.calls()).filter((call) => call.method === 'POST').map((call) => call.relative),
+  ).toEqual(['/git/tags', '/git/refs']);
+});
+it.each([
+  'history-parent-foreign-history',
+  'history-parent-running-history',
+  'history-parent-wrong-source',
+  'history-parent-wrong-run',
+  'history-parent-wrong-attempt',
+  'history-parent-running',
+  'history-parent-failed',
+  'history-parent-success',
+  'history-parent-steps',
+  'history-parent-missing-steps',
+  'history-parent-duplicate',
+  'history-parent-with-child',
+  'history-parent-with-other-child',
+  'history-parent-absent',
   'history-write-invisible',
   'history-unavailable',
   'history-forbidden',
