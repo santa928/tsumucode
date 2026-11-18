@@ -278,6 +278,8 @@ jobs:
             test-results/pr-visual-artifacts/**/error-context.md
             test-results/pr-visual-artifacts/**/*.png
             test-results/pr-visual-artifacts/**/trace.zip
+            test-results/e2e-artifacts/next-course-guide-*/error-context.md
+            test-results/e2e-artifacts/next-course-guide-*/*.png
           if-no-files-found: warn
           retention-days: 7
 

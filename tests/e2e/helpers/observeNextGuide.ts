@@ -1,4 +1,4 @@
-/** Test-only observation. Unseen and within-batch changes are unknown. */
+/** Test-only observation. Unseen changes and exhausted budgets remain unknown. */
 export function observeNextGuide(before: string): () => void {
   const emitted = new Set<string>();
   let active = false;
@@ -41,7 +41,27 @@ export function observeNextGuide(before: string): () => void {
     card = currentCard;
     guide = currentGuide;
   };
-  const observer = new MutationObserver(() => {
+  const inspectRemovals = (records: readonly MutationRecord[]) => {
+    let inspected = 0;
+    for (const record of records) {
+      inspected += 1;
+      if (inspected > 128) {
+        emit('removal-budget-exhausted');
+        return;
+      }
+      for (const removed of record.removedNodes) {
+        inspected += 1;
+        if (inspected > 128) {
+          emit('removal-budget-exhausted');
+          return;
+        }
+        if (card && removed === card) emit('card-removed');
+        else if (guide && removed === guide) emit('guide-removed');
+        else if (card || guide) emit('other-node-removed');
+      }
+    }
+  };
+  const observer = new MutationObserver((records) => {
     if (!active) return;
     batches += 1;
     if (batches > 128) {
@@ -49,6 +69,7 @@ export function observeNextGuide(before: string): () => void {
       active = false;
       return;
     }
+    inspectRemovals(records);
     capture();
   });
   const start = () => {
@@ -62,19 +83,33 @@ export function observeNextGuide(before: string): () => void {
     capture();
   };
   const stop = () => {
-    if (active && observer.takeRecords().length > 0) capture();
+    const records = observer.takeRecords();
+    if (active && records.length > 0) {
+      inspectRemovals(records);
+      capture();
+    }
     if (active) emit('scope-stop');
     active = false;
     card = null;
     guide = null;
   };
+  const hashchange = () => {
+    if (active) emit('hashchange');
+  };
+  const pagehide = () => {
+    if (active) emit('pagehide');
+  };
   window.addEventListener('tsumucode-next-observe-start', start);
   window.addEventListener('tsumucode-next-observe-stop', stop);
+  window.addEventListener('hashchange', hashchange);
+  window.addEventListener('pagehide', pagehide);
   observer.observe(document, { childList: true, subtree: true });
   return () => {
     observer.disconnect();
     window.removeEventListener('tsumucode-next-observe-start', start);
     window.removeEventListener('tsumucode-next-observe-stop', stop);
+    window.removeEventListener('hashchange', hashchange);
+    window.removeEventListener('pagehide', pagehide);
   };
 }
 
