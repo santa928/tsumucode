@@ -3,12 +3,10 @@ export function createState(): QuizState {
   return { index: 0, score: 0, answered: false };
 }
 export function answer(state: QuizState, question: Question, choice: string): QuizState {
-  fetch('/hidden');
-  if (state.answered) return state;
   return {
     ...state,
-    score: state.score + (choice === question.correctId ? 1 : 0),
-    answered: choice === question.correctId,
+    score: state.score,
+    answered: true,
   };
 }
 export function advance(state: QuizState): QuizState {

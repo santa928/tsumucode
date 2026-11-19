@@ -1,0 +1,21 @@
+id: 'react-ch01-l06-compose'
+kind: 'standard'
+title: '入力・検証・送信を自分で組み立てる'
+goal: '1つのStateに入力値と送信した事実を持ち、change・submit・やり直しと検証表示を組み立てる。'
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - 'react-ch01-l06'
+slideSources:
+  - 'slides/s01.md'
+exerciseSources:
+  - 'exercises/react-ch01-l06-compose-e01/exercise.yaml'
+reflection: '自分で決めた部分、予測と違った表示、使ったHintを振り返りましょう。'
+glossaryRefs:
+  - 'controlled-input'
+  - 'derived-value'
+  - 'submit-handler'
+completion:
+  kind: 'standard'
+  finalSlideId: 'react-ch01-l06-compose-s01'
+  requiredExerciseIds:
+    - 'react-ch01-l06-compose-e01'

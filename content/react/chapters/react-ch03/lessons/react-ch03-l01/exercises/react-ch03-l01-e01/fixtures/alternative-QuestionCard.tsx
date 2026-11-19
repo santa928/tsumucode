@@ -9,7 +9,9 @@ export function QuestionCard({ question, answered, onAnswer }: QuestionCardProps
           id={choice}
           type="button"
           disabled={answered}
-          onClick={() => onAnswer(choice)}
+          onClick={() => {
+            onAnswer(choice);
+          }}
         >
           {choice}
         </button>

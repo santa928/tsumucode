@@ -4,15 +4,15 @@ import AxeBuilder from '@axe-core/playwright';
 import { readStoredProgress, waitForDraftSaved } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 import { expectStoredViewedSlide } from './helpers/releaseCourse';
-const lessons = ['react-ch02-l01', 'react-ch02-l02', 'react-ch03-l01'];
+const lessons = ['react-ch03-l01', 'react-ch03-l02', 'react-ch04-l01'];
 const route = (lesson: string) =>
   `${testBasePath()}#/courses/react/lessons/${lesson}/exercises/${lesson}-e01`;
 /** 同じworkspaceでも工程の読込完了を見出しで確認してから操作する。 */
 async function openExercise(page: Page, lesson: string): Promise<void> {
   const titles: Record<string, string> = {
-    'react-ch02-l01': '型付きの問題をComponentへ渡す',
-    'react-ch02-l02': 'クイズStateを純粋な関数で更新する',
-    'react-ch03-l01': '誤答から再回答できる練習クイズ',
+    'react-ch03-l01': '型付きの問題をComponentへ渡す',
+    'react-ch03-l02': 'クイズStateを純粋な関数で更新する',
+    'react-ch04-l01': '誤答から再回答できる練習クイズ',
   };
   const title = titles[lesson];
   if (title === undefined) throw new Error(`未登録の工程: ${lesson}`);
@@ -20,9 +20,9 @@ async function openExercise(page: Page, lesson: string): Promise<void> {
   await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible();
 }
 const workspace = (lesson: string) =>
-  lesson.includes('ch03') ? 'react-quiz-capstone' : 'react-quiz-guided';
+  lesson.includes('ch04') ? 'react-quiz-capstone' : 'react-quiz-guided';
 async function source(lesson: string, file: string, role = 'solution'): Promise<string> {
-  const chapter = lesson.includes('ch03') ? 'react-ch03' : 'react-ch02';
+  const chapter = lesson.includes('ch04') ? 'react-ch04' : 'react-ch03';
   return readFile(
     `content/react/chapters/${chapter}/lessons/${lesson}/exercises/${lesson}-e01/${role}/${file}`,
     'utf8',
@@ -270,7 +270,7 @@ test('390pxでProjectの9SlideとPC案内を読める', async ({ page }, info) =
       );
       await page.screenshot({ path: info.outputPath(`${slide}-mobile.png`), fullPage: true });
     }
-  await page.goto(route('react-ch03-l01'));
+  await page.goto(route('react-ch04-l01'));
   await expect(page.getByRole('heading', { name: 'PCで演習を開く', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toHaveCount(0);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

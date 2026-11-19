@@ -6,7 +6,7 @@ export function answer(state: QuizState, question: Question, choice: string): Qu
   return {
     ...state,
     score: state.score,
-    answered: choice === question.correctId,
+    answered: true,
   };
 }
 export function advance(state: QuizState): QuizState {

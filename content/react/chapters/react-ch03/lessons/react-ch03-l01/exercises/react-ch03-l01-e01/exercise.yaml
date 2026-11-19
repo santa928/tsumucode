@@ -1,12 +1,12 @@
 id: react-ch03-l01-e01
-kind: capstone
-projectId: react-quiz-capstone
-workspaceId: react-quiz-capstone
+kind: guided-project
+projectId: react-quiz-guided
+workspaceId: react-quiz-guided
 countsTowardStandardExerciseTotal: false
-title: 誤答から再回答できる練習クイズ
+title: 型付きの問題をComponentへ渡す
 instructionsSource: instructions.md
 requiresConcepts:
-  - conceptId: react-quiz-brief-transfer
+  - conceptId: react-quiz-components
     minimumLevel: compose
 scaffoldLevel: compose
 runtime:
@@ -15,17 +15,17 @@ runtime:
   sourceType: module
   capabilityProfile: dom
   primaryOutput: preview
-  profile: quiz-capstone-v1
-  learningGoal: quiz-capstone
+  profile: quiz-workshop-v1
+  learningGoal: quiz-card
 steps:
   - id: compose-current-step
-    file: quizState.ts
-    target: 誤答から再回答できる練習クイズ
-    starterAnchor: 'score: state.score'
-    change: 独立した2FileをBriefに合わせ、正解時だけ加点・回答済みにして、誤答では前の得点と問題を保つ
-    observe: 1問目正解後の誤答・再回答・重複拒否・結果・再挑戦と名前保持を確認する
+    file: QuestionCard.tsx
+    target: 型付きの問題をComponentへ渡す
+    starterAnchor: key={index}
+    change: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
+    observe: 名前を入力してCSSを押し、親が同じCSSを受け取ることを確認して保存する
     requiresConceptIds:
-      - react-quiz-brief-transfer
+      - react-quiz-components
     validationRuleIds:
       - react-ch03-l01-e01-r01
       - react-ch03-l01-e01-r02
@@ -96,66 +96,66 @@ validationRules:
     viewportIds:
       - desktop-1280
     feedback:
-      target: quizState.ts
+      target: QuestionCard.tsx
       expected: 練習クイズ
-      nextAction: 独立した2FileをBriefに合わせ、正解時だけ加点・回答済みにして、誤答では前の得点と問題を保つ
+      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
     hintId: react-ch03-l01-e01-h02
     relatedSlideId: react-ch03-l01-s02
   - id: react-ch03-l01-e01-r02
-    label: 初期得点
+    label: 受け取った問題
     target:
       kind: selector
-      selector: '#score'
+      selector: '#question'
     assertion:
       kind: text
       operator: equals
-      expected: '0'
+      expected: ページの骨組みを作る言語は？
     required: true
     group: all
     viewportMode: all
     viewportIds:
       - desktop-1280
     feedback:
-      target: quizState.ts
-      expected: '0'
-      nextAction: 独立した2FileをBriefに合わせ、正解時だけ加点・回答済みにして、誤答では前の得点と問題を保つ
+      target: QuestionCard.tsx
+      expected: ページの骨組みを作る言語は？
+      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
     hintId: react-ch03-l01-e01-h02
     relatedSlideId: react-ch03-l01-s02
   - id: react-ch03-l01-e01-r03
     label: 今回の元Sourceと値のつながり
     target:
       kind: react-learning
-      file: quizState.ts
+      file: QuestionCard.tsx
     assertion:
       kind: react-learning
-      goal: quiz-capstone
+      goal: quiz-card
     required: true
     group: all
     viewportMode: all
     viewportIds:
       - desktop-1280
     feedback:
-      target: quizState.ts
-      expected: 別Briefから必要な更新を選び、誤答でも累積得点を保って同じ問題へ再回答し、独立した作品を完成する。
-      nextAction: 独立した2FileをBriefに合わせ、正解時だけ加点・回答済みにして、誤答では前の得点と問題を保つ
+      target: QuestionCard.tsx
+      expected: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+      nextAction: 選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す
     hintId: react-ch03-l01-e01-h02
     relatedSlideId: react-ch03-l01-s02
 hints:
   - id: react-ch03-l01-e01-h01
     level: 1
     title: 修正位置を探す
-    text: Briefの「正解時だけ回答済み」「誤答では累積得点を保持」を、Guidedとの差として並べます。
+    text: mapが作るbuttonを探し、表示・Key・Callbackの3箇所を比べます。
     relatedSlideId: react-ch03-l01-s02
   - id: react-ch03-l01-e01-h02
     level: 2
     title: Briefと値をつなぐ
-    text: CardのKeyとCallbackを保ち、answerの得点とansweredを別々に考えます。1問目正解の後に2問目を誤答して、リセットとの違いを見ます。
+    text: 今回は各問内で選択肢の文字列が一意です。indexでなくその値を目印にし、押した値を親へ渡します。
     relatedSlideId: react-ch03-l01-s02
   - id: react-ch03-l01-e01-h03
     level: 3
     title: 別の対象の局所例
-    text: '別の例なら、const nextCount = accepted ? previousCount + 1 :
-      previousCount;。受理しないとき元の累積値を保つ考え方を応用します。'
+    text: 別の一覧なら、items.map(item => <button key={item.id} onClick={() =>
+      select(item.id)}>{item.label}</button>)。3つの値の由来を今回へ応用します。
     relatedSlideId: react-ch03-l01-s02
 relatedSlideIds:
   - react-ch03-l01-s01
@@ -167,38 +167,35 @@ previewViewports:
     height: 720
 assets: []
 interactionScenarios:
-  - id: quiz-practice-flow
-    label: 累積得点を保って同問へ再回答し、再挑戦する
+  - id: quiz-card-callback
+    label: 一覧の選択肢を親へ渡す
     actions:
+      - id: initial
+        kind: focus
+        selector: '#name'
       - id: name
         kind: fill
         selector: '#name'
         value: Ada
-      - id: early-next
+      - id: selected
         kind: click
-        selector: '#next'
-      - id: correct
-        kind: click
-        selector: '[id="2"]'
-      - id: next
-        kind: click
-        selector: '#next'
-      - id: wrong
-        kind: click
-        selector: '[id="true"]'
-      - id: second-correct
-        kind: click
-        selector: '[id="false"]'
-      - id: duplicate
-        kind: click
-        selector: '[id="false"]'
-      - id: result
-        kind: click
-        selector: '#next'
-      - id: retry
-        kind: click
-        selector: '#retry'
+        selector: '#CSS'
     checkpoints:
+      - id: initial
+        afterActionId: initial
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+          - id: first
+            kind: selector-text
+            selector: '#HTML'
+            equals: HTML
+          - id: second
+            kind: selector-text
+            selector: '#CSS'
+            equals: CSS
       - id: name
         afterActionId: name
         expectations:
@@ -206,200 +203,23 @@ interactionScenarios:
             kind: input-value
             selector: '#name'
             equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '0'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
-      - id: early-next
-        afterActionId: early-next
+      - id: selected
+        afterActionId: selected
         expectations:
           - id: name
             kind: input-value
             selector: '#name'
             equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '0'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
-      - id: correct
-        afterActionId: correct
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '1'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
           - id: received
             kind: selector-text
             selector: '#received'
-            equals: '2'
-      - id: next
-        afterActionId: next
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '1'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 3 > 5 の結果は？
-      - id: wrong
-        afterActionId: wrong
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '1'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 3 > 5 の結果は？
-          - id: received
-            kind: selector-text
-            selector: '#received'
-            equals: 'true'
-          - id: retry-choice
-            kind: selector-exists
-            selector: '[id="false"]:enabled'
-      - id: second-correct
-        afterActionId: second-correct
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '2'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 3 > 5 の結果は？
-          - id: received
-            kind: selector-text
-            selector: '#received'
-            equals: 'false'
-      - id: duplicate
-        afterActionId: duplicate
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '2'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 3 > 5 の結果は？
-          - id: received
-            kind: selector-text
-            selector: '#received'
-            equals: 'false'
-      - id: result
-        afterActionId: result
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '2'
-          - id: result
-            kind: selector-text
-            selector: '#result'
-            equals: 全問終了
-      - id: retry
-        afterActionId: retry
-        expectations:
-          - id: name
-            kind: input-value
-            selector: '#name'
-            equals: Ada
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '0'
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
-          - id: received
-            kind: selector-text
-            selector: '#received'
-            equals: 未回答
-  - id: quiz-practice-wrong-next
-    label: 誤答では次問へ進まず同じ問題を続ける
-    actions:
-      - id: wrong
-        kind: click
-        selector: '[id="3"]'
-      - id: next
-        kind: click
-        selector: '#next'
-    checkpoints:
-      - id: wrong
-        afterActionId: wrong
-        expectations:
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '0'
-      - id: next
-        afterActionId: next
-        expectations:
-          - id: question
-            kind: selector-text
-            selector: '#question'
-            equals: 1 + 1 の結果は？
-          - id: score
-            kind: selector-text
-            selector: '#score'
-            equals: '0'
+            equals: CSS
 fixtures:
   - id: starter
     expectedStatus: incomplete
     expectedFeedbackRuleIds:
       - react-ch03-l01-e01-r03
-      - interaction:quiz-practice-flow:correct:score
-      - interaction:quiz-practice-flow:next:score
-      - interaction:quiz-practice-flow:wrong:score
-      - interaction:quiz-practice-flow:second-correct:score
-      - interaction:quiz-practice-flow:duplicate:score
-      - interaction:quiz-practice-flow:result:score
+      - interaction:quiz-card-callback:selected:received
     files:
       - path: QuestionCard.tsx
         language: react
@@ -481,25 +301,17 @@ fixtures:
         language: html
         source: fixtures/index.html
         editable: false
-  - id: guided-copy
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch03-l01-e01-r03
-      - interaction:quiz-practice-flow:wrong:retry-choice
-      - interaction:quiz-practice-flow:second-correct:score
-      - interaction:quiz-practice-flow:second-correct:received
-      - interaction:quiz-practice-flow:duplicate:score
-      - interaction:quiz-practice-flow:duplicate:received
-      - interaction:quiz-practice-flow:result:score
-      - interaction:quiz-practice-wrong-next:next:question
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
     files:
       - path: QuestionCard.tsx
         language: react
-        source: fixtures/guided-copy-QuestionCard.tsx
+        source: fixtures/alias-QuestionCard.tsx
         editable: false
       - path: quizState.ts
         language: typescript
-        source: fixtures/guided-copy-quizState.ts
+        source: fixtures/alias-quizState.ts
         editable: false
       - path: main.tsx
         language: react
@@ -517,51 +329,18 @@ fixtures:
         language: html
         source: fixtures/index.html
         editable: false
-  - id: reset-prior-score
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch03-l01-e01-r03
-      - interaction:quiz-practice-flow:wrong:score
-      - interaction:quiz-practice-flow:second-correct:score
-      - interaction:quiz-practice-flow:duplicate:score
-      - interaction:quiz-practice-flow:result:score
-    files:
-      - path: QuestionCard.tsx
-        language: react
-        source: fixtures/reset-prior-score-QuestionCard.tsx
-        editable: false
-      - path: quizState.ts
-        language: typescript
-        source: fixtures/reset-prior-score-quizState.ts
-        editable: false
-      - path: main.tsx
-        language: react
-        source: fixtures/main.tsx
-        editable: false
-      - path: types.ts
-        language: typescript
-        source: fixtures/types.ts
-        editable: false
-      - path: data.ts
-        language: typescript
-        source: fixtures/data.ts
-        editable: false
-      - path: index.html
-        language: html
-        source: fixtures/index.html
-        editable: false
-  - id: missing-guard
+  - id: wrong-key
     expectedStatus: incomplete
     expectedFeedbackRuleIds:
       - react-ch03-l01-e01-r03
     files:
       - path: QuestionCard.tsx
         language: react
-        source: fixtures/missing-guard-QuestionCard.tsx
+        source: fixtures/wrong-key-QuestionCard.tsx
         editable: false
       - path: quizState.ts
         language: typescript
-        source: fixtures/missing-guard-quizState.ts
+        source: fixtures/wrong-key-quizState.ts
         editable: false
       - path: main.tsx
         language: react
@@ -583,6 +362,8 @@ fixtures:
     expectedStatus: incomplete
     expectedFeedbackRuleIds:
       - react-ch03-l01-e01-r03
+      - interaction:quiz-card-callback:initial:first
+      - interaction:quiz-card-callback:initial:second
     files:
       - path: QuestionCard.tsx
         language: react
@@ -591,6 +372,36 @@ fixtures:
       - path: quizState.ts
         language: typescript
         source: fixtures/fixed-label-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: wrong-callback
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch03-l01-e01-r03
+      - interaction:quiz-card-callback:selected:received
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/wrong-callback-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/wrong-callback-quizState.ts
         editable: false
       - path: main.tsx
         language: react

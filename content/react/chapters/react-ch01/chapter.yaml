@@ -2,7 +2,7 @@ id: react-ch01
 sequence: 0
 title: Propsから操作で変わる表示へ
 goal: PropsとStateの表示から、参照・外部同期・処理の再利用へ進み、責務を分ける。
-estimatedMinutes: 345
+estimatedMinutes: 390
 kind: standard
 lessonSources:
   - lessons/react-ch01-l01/lesson.yaml
@@ -11,9 +11,11 @@ lessonSources:
   - lessons/react-ch01-l04/lesson.yaml
   - lessons/react-ch01-l05/lesson.yaml
   - lessons/react-ch01-l06/lesson.yaml
+  - lessons/react-ch01-l06-compose/lesson.yaml
   - lessons/react-ch01-l07/lesson.yaml
   - lessons/react-ch01-l08/lesson.yaml
   - lessons/react-ch01-l09/lesson.yaml
   - lessons/react-ch01-l10/lesson.yaml
   - lessons/react-ch01-l11/lesson.yaml
+  - lessons/react-ch01-l11-compose/lesson.yaml
   - lessons/react-ch01-l12/lesson.yaml
