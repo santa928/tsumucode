@@ -1,4 +1,18 @@
+import { types } from 'node:util';
 import { NextLessonObservationError } from './next-observation-error.mjs';
+
+/** 例外本文やプロパティを出さず、filter失敗時の組込み型だけを有限分類する。 */
+export function projectGradeErrorKind(error) {
+  if (!types.isNativeError(error)) return 'non-error';
+  try {
+    if (error instanceof TypeError) return 'type-error';
+    if (error instanceof RangeError) return 'range-error';
+    if (error instanceof SyntaxError) return 'syntax-error';
+    return 'error';
+  } catch {
+    return 'error';
+  }
+}
 
 /** 制作の3工程を実文書・GET送信・画像応答で別々に観測する。 */
 export async function observeNextProduction(page, origin, base, goal, step) {
@@ -130,6 +144,7 @@ export async function observeNextProduction(page, origin, base, goal, step) {
     let filter = true;
     for (let i = 0; i < values.length; i++) {
       if (page.url() !== origin + base + section) await navigate(section);
+      step('project-filter-select');
       const select = page.getByLabel(capstone ? '受付状況' : '過ごす場所', { exact: true });
       const button = page.getByRole('button', { name: '絞り込む', exact: true });
       if ((await select.count()) !== 1 || (await button.count()) !== 1) {
@@ -138,6 +153,7 @@ export async function observeNextProduction(page, origin, base, goal, step) {
       }
       await stable(() => select.selectOption(values[i]));
       const path = `${section}?${key}=${values[i]}`;
+      step('project-filter-submit');
       const response = page.waitForResponse(
         (reply) =>
           reply.url() === origin + base + path &&
@@ -149,7 +165,9 @@ export async function observeNextProduction(page, origin, base, goal, step) {
       void response.catch(() => {});
       await button.focus();
       await page.keyboard.press('Enter');
+      step('project-filter-response');
       filter = (await documentResponse(await response, path)) && filter;
+      step('project-filter-verify');
       await page.waitForLoadState('load', { timeout: 2000 });
       filter = await stable(
         async () =>
@@ -160,6 +178,7 @@ export async function observeNextProduction(page, origin, base, goal, step) {
           filter,
       );
     }
+    step('project-filter-invalid');
     await navigate(`${section}?${key}=unknown`);
     filter = await stable(
       async () =>
@@ -167,6 +186,7 @@ export async function observeNextProduction(page, origin, base, goal, step) {
         (await page.locator('main li').count()) === 0 &&
         filter,
     );
+    step('project-filter-recovery');
     filter = (await follow('一覧へ戻る', section)) && filter;
     checks.push({
       goal: 'project-filter',

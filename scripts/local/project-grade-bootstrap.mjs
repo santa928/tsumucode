@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { isNextForm } from './next-form-preview.mjs';
 import { readPreviewBody } from './preview-body.mjs';
-import { observeNextProduction } from './next-production-observations.mjs';
+import { observeNextProduction, projectGradeErrorKind } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
 import { createNextFormResponses } from './next-form-response.mjs';
 import { watchNextFormReceipts } from './next-form-receipts.mjs';
@@ -561,6 +561,8 @@ try {
                   ? 'identity'
                   : 'unknown';
   process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
+  if (phase === 'project-filter' || phase?.startsWith('project-filter-'))
+    process.stderr.write(`TSUMUCODE_GRADE_ERROR_KIND:${projectGradeErrorKind(error)}\n`);
   throw error;
 } finally {
   formReceipts().forEach(emitFormReceipt);
