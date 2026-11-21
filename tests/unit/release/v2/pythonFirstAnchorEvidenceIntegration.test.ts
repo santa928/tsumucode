@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
 import type * as ChildProcess from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -13,6 +13,7 @@ import { installSafeAnchorTestEnvironment } from './anchorProcessTestEnvironment
 
 const mocks = vi.hoisted(() => ({
   observe: vi.fn(),
+  inspect: vi.fn(),
   trackedTree: vi.fn(),
   candidateRoot: '',
   source: '',
@@ -31,7 +32,7 @@ vi.mock('node:child_process', async (importOriginal) => {
         if (args.includes('ls-files')) return { stdout: 'H candidate.txt\0', stderr: '' };
         if (args.includes('rev-parse')) {
           if (options.cwd === mocks.verifierRoot)
-            return { stdout: '28edb392dccfaecd14c5b5b03470198abd8ec421\n', stderr: '' };
+            return { stdout: 'd50f304376d50dbfbdefb90636040b14abef7f98\n', stderr: '' };
           if (options.cwd === mocks.candidateRoot)
             return { stdout: mocks.source + '\n', stderr: '' };
         }
@@ -47,6 +48,7 @@ vi.mock('../../../../scripts/release/v2/pythonFirstAnchorVerifier', () => ({
 vi.mock('../../../../scripts/release/v2/anchorTrackedTree', () => ({
   assertAnchorTrackedTree: mocks.trackedTree,
 }));
+vi.mock('../../../../scripts/release/v2/pythonFirstHistory', () => ({ inspectPythonFirstHistory:mocks.inspect }));
 import { producePythonFirstAnchor } from '../../../../scripts/release/v2/pythonFirstAnchorProducer';
 import {
   matchSameRunLineageEvidence,
@@ -57,9 +59,11 @@ import {
 beforeEach(() => {
   installSafeAnchorTestEnvironment();
   mocks.trackedTree.mockResolvedValue(undefined);
+  mocks.inspect.mockReturnValue({ authorized:false });
 });
 afterEach(() => {
   mocks.trackedTree.mockReset();
+  mocks.inspect.mockReset();
   vi.unstubAllEnvs();
 });
 
@@ -91,9 +95,9 @@ it('binds minimal anchor evidence to a freshly recaptured parent without claimin
       env,
       encoding: 'utf8',
     }).trim();
-    mocks.candidateRoot = root;
+    mocks.candidateRoot = realpathSync(root);
     mocks.source = source;
-    mocks.verifierRoot = process.cwd();
+    mocks.verifierRoot = realpathSync(process.cwd());
     const original = releaseFixture().capturedBaseline;
     const proof = {
       ...original.proof,
@@ -127,14 +131,14 @@ it('binds minimal anchor evidence to a freshly recaptured parent without claimin
       eventName: 'workflow_dispatch',
       ref: 'refs/heads/main',
     };
-    const result = await producePythonFirstAnchor(root, process.cwd(), context);
+    const result = await producePythonFirstAnchor(root, process.cwd(), context, Buffer.from(snapshot), Buffer.from('{}'));
     const expected = {
       repository: context.repository,
       source,
       runId: context.runId,
       attempt: context.attempt,
       producerJobId: context.producerJobId,
-      verifierCommit: '28edb392dccfaecd14c5b5b03470198abd8ec421',
+      verifierCommit: 'd50f304376d50dbfbdefb90636040b14abef7f98',
       mode: 'anchor',
       sha256: result.evidenceSha256,
     };
