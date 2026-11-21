@@ -1,0 +1,52 @@
+name: Issue 143 anonymous deployment availability
+on:
+  pull_request:
+permissions: {}
+jobs:
+  probe:
+    if: ${{ github.event.pull_request.head.repo.full_name == 'santa928/tsumucode' && github.event.pull_request.head.ref == 'codex/issue143-anonymous-deployment-probe' && github.event.pull_request.base.ref == 'main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    env:
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Fetch reviewed public branch without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! [[ "$HEAD_SHA" =~ ^[a-f0-9]{40}$ ]] || [ "$BASE_SHA" != 2a0dfa3a196cca736c6c7b6129e0cacb1d263d20 ]; then
+            echo 'Candidate identity rejected' >&2
+            exit 1
+          fi
+          mkdir -m 700 "$RUNNER_TEMP/public-git-home"
+          git_public() {
+            env -i PATH=/usr/bin:/bin HOME="$RUNNER_TEMP/public-git-home" GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c core.hooksPath=/dev/null -c http.followRedirects=false "$@"
+          }
+          git_public init -q "$RUNNER_TEMP/candidate"
+          git_public -C "$RUNNER_TEMP/candidate" fetch -q --no-tags https://github.com/santa928/tsumucode.git refs/heads/codex/issue143-anonymous-deployment-probe
+          test "$(git_public -C "$RUNNER_TEMP/candidate" rev-parse FETCH_HEAD)" = "$HEAD_SHA"
+          git_public -C "$RUNNER_TEMP/candidate" checkout -q --detach "$HEAD_SHA"
+          git_public -C "$RUNNER_TEMP/candidate" merge-base --is-ancestor "$BASE_SHA" "$HEAD_SHA"
+          test -z "$(git_public -C "$RUNNER_TEMP/candidate" status --porcelain --untracked-files=all)"
+      - name: Verify exact probe inputs
+        shell: bash
+        working-directory: ${{ runner.temp }}/candidate
+        run: |
+          set -euo pipefail
+          sha256sum --check <<'SHA256'
+          191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8  package-lock.json
+          8f2b3dfffc96d989930159dd1eb9084e397a417040bbdbcb41fc377120c057ff  scripts/issue143-anonymous/probe.mjs
+          7250c37206106dbc39e16863cc305c90a8f398bf64ed5047ec5be7b2d8d6403b  scripts/issue143-anonymous/probe.node-test.mjs
+          SHA256
+      - name: Test and observe without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -m 700 "$RUNNER_TEMP/public-docker-config"
+          export DOCKER_CONFIG="$RUNNER_TEMP/public-docker-config"
+          image='node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5'
+          docker pull "$image"
+          docker run --rm --init --network none --read-only --user 1000:1000 --cpus 1 --memory 256m --pids-limit 64 --cap-drop ALL --security-opt no-new-privileges:true --mount "type=bind,src=$RUNNER_TEMP/candidate,dst=/repo,readonly" --workdir /repo "$image" node --test scripts/issue143-anonymous/probe.node-test.mjs
+          docker run --rm --init --network bridge --read-only --user 1000:1000 --cpus 1 --memory 256m --pids-limit 64 --cap-drop ALL --security-opt no-new-privileges:true --mount "type=bind,src=$RUNNER_TEMP/candidate,dst=/repo,readonly" --workdir /repo "$image" node scripts/issue143-anonymous/probe.mjs
