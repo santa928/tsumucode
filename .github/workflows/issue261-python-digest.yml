@@ -1,0 +1,115 @@
+name: Python practice digest observation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - .github/workflows/issue261-python-digest.yml
+      - .github/issue261-python-digest/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: issue261-python-digest-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout digest probe
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: observer
+          persist-credentials: false
+      - name: Checkout fixed public Source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: 45fc0e5d672fc6d3dde237c458f8dc018bc6badf
+          path: source
+          persist-credentials: false
+      - name: Verify Source and build fixed development image
+        run: |
+          set -eu
+          test "$(git -C source rev-parse HEAD)" = 45fc0e5d672fc6d3dde237c458f8dc018bc6badf
+          test -z "$(git -C source status --porcelain --untracked-files=all)"
+          docker build --target development --tag issue261-digest:45fc source
+      - name: Compare public Source and isolated three-sentence candidate
+        run: |
+          set -eu
+          mkdir -p digest-output
+          private=$(mktemp -d "$RUNNER_TEMP/issue261-private.XXXXXXXX")
+          case "$private" in "$RUNNER_TEMP"/issue261-private.*) ;; *) exit 1 ;; esac
+          probe=
+          cleanup() {
+            status=$?
+            trap - EXIT
+            if [ -n "$probe" ]; then
+              if docker rm "$probe" >/dev/null 2>&1; then
+                echo 'Digest probe container removed.'
+              else
+                echo 'Digest probe container cleanup incomplete.' >&2
+                if [ "$status" -eq 0 ]; then status=1; fi
+              fi
+            else
+              echo 'Digest probe container creation not confirmed.' >&2
+              status=1
+            fi
+            if [ -d "$private" ] && [ ! -L "$private" ] && rm -r -- "$private" >/dev/null 2>&1; then
+              echo 'Private diagnostic files removed.'
+            else
+              echo 'Private diagnostic cleanup incomplete.' >&2
+              if [ "$status" -eq 0 ]; then status=1; fi
+            fi
+            exit "$status"
+          }
+          trap cleanup EXIT
+          if ! probe=$(docker create --init --network none --read-only --user 65532:65532 \
+            --tmpfs /tmp:rw,nosuid,nodev,size=512m --cpus 2 --memory 2g --pids-limit 256 \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,src=$PWD/observer/.github/issue261-python-digest,dst=/tool,readonly" \
+            --workdir /workspace --entrypoint /workspace/node_modules/.bin/tsx \
+            issue261-digest:45fc /tool/digest-probe.mjs 2>"$private/create.err"); then
+            echo 'Digest probe container creation failed.' >&2
+            exit 1
+          fi
+          if ! [[ "$probe" =~ ^[0-9a-f]{64}$ ]]; then
+            probe=
+            echo 'Digest probe container identity invalid.' >&2
+            exit 1
+          fi
+          test "$(docker inspect --format '{{.Config.User}} {{.HostConfig.ReadonlyRootfs}} {{.HostConfig.NetworkMode}}' "$probe")" = '65532:65532 true none'
+          test "$(docker inspect --format '{{range .Mounts}}{{if eq .Type "bind"}}{{.Destination}} {{.RW}}{{end}}{{end}}' "$probe")" = '/tool false'
+          test "$(docker inspect --format '{{range .Mounts}}{{if and (ne .Destination "/tool") (ne .Destination "/tmp")}}unexpected{{end}}{{end}}' "$probe")" = ''
+          if ! docker start --attach "$probe" > "$private/stdout" 2> "$private/stderr"; then
+            echo 'Digest probe execution failed.' >&2
+            for phase in initial scratch scan-original copy edit scan-candidate compile-original compile-candidate compare-learner review review-original review-candidate review-control cleanup complete; do
+              if grep -Fxq "digest-probe=failed phase=$phase" "$private/stderr"; then
+                echo "digest-phase=$phase" >&2
+              fi
+            done
+            for entry in 'permission:EACCES|EPERM|Permission denied' 'read-only:EROFS|read-only file system' 'missing:ENOENT|no such file or directory' 'module:Cannot find module|ERR_MODULE_NOT_FOUND' 'transform:Transform failed|TransformError|SyntaxError'; do
+              category=${entry%%:*}
+              pattern=${entry#*:}
+              if grep -Eiq "$pattern" "$private/stderr"; then
+                echo "digest-error-marker=$category" >&2
+              fi
+            done
+            if grep -Fq 'scratch-cleanup=failed' "$private/stderr"; then
+              echo 'Digest scratch cleanup incomplete.' >&2
+            fi
+            exit 1
+          fi
+          test "$(docker inspect --format '{{.State.Status}} {{.State.ExitCode}}' "$probe")" = 'exited 0'
+          python3 observer/.github/issue261-python-digest/sanitize.py "$private/stdout" digest-output/report.txt
+      - name: Save digest-only diagnostic
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: issue261-python-digests-45fc-${{ github.run_attempt }}
+          path: digest-output/report.txt
+          if-no-files-found: warn
+          retention-days: 7
