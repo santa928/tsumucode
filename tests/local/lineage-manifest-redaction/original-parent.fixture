@@ -1,0 +1,66 @@
+import { corroboratePostdeployParent, type PostdeployParentLocal } from './lineagePostdeployParent';
+import type { PredeployParentInput } from './lineageInspectDraft';
+import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { z } from 'zod';
+import { authenticateFixedWorkflowAndDirectNeeds, authenticatePredeployObservation, type FutureProtectedSource } from './lineageProtectedOrigin';
+import { corroborateDirectNeedsCandidate, matchDirectNeedsPredeployObservation, snapshotDirectNeedsObservation } from './lineageDirectNeedsCandidate';
+
+type Local = Pick<PostdeployParentLocal,'baseline'|'preparation'|'execution'|'candidate'|'qualification'>;
+type ProtectedBinding = {
+  binding: Uint8Array;
+  evidence: Uint8Array;
+  parentTag: Uint8Array;
+  previous?: Uint8Array;
+  bundle?: Uint8Array;
+};
+const Manifest = z.object({ context:z.unknown(), needs:z.unknown(), pins:z.unknown(),
+  predeployActual:z.unknown(), signatureContext:z.unknown().optional() }).strict();
+function copyBounded(input: Uint8Array, max: number): Buffer {
+  if (!(input instanceof Uint8Array) || input.buffer instanceof SharedArrayBuffer ||
+      !input.byteLength || input.byteLength > max) throw Error('Invalid protected needs source bytes');
+  return Buffer.from(input);
+}
+/** Private bounded copies only; possession does not authenticate their origin. */
+export function snapshotProtectedNeedsSource(input: FutureProtectedSource): FutureProtectedSource {
+  return {manifest:copyBounded(input.manifest,64*1024),parentTag:copyBounded(input.parentTag,16*1024),
+    ...(input.previous===undefined?{}:{previous:copyBounded(input.previous,16*1024)}),
+    ...(input.bundle===undefined?{}:{bundle:copyBounded(input.bundle,4*1024*1024)})};
+}
+async function loadReviewedDirectNeeds(token: string): Promise<ProtectedBinding> {
+  const source = snapshotProtectedNeedsSource(await authenticateFixedWorkflowAndDirectNeeds());
+  const observation = snapshotDirectNeedsObservation(await authenticatePredeployObservation(snapshotProtectedNeedsSource(source)));
+  const text = new TextDecoder('utf-8', {fatal:true}).decode(source.manifest);
+  const manifest = Manifest.parse(JSON.parse(text) as unknown);
+  if (canonicalJson(manifest) !== text) throw Error('Protected needs manifest is not canonical');
+  const result = await corroborateDirectNeedsCandidate(manifest.context, manifest.needs, manifest.pins, token);
+  matchDirectNeedsPredeployObservation(result, observation);
+  const binding = Buffer.from(canonicalJson({
+    producer: result.producer,
+    snapshotSha256: result.snapshotSha256,
+    candidateArtifactId: result.candidateArtifactId,
+    qualificationSha256: result.qualificationSha256,
+    qualificationAttempt: result.qualificationAttempt,
+    consumerAttempt: result.consumerAttempt,
+    predeployActual: manifest.predeployActual,
+    ...(manifest.signatureContext === undefined ? {} : { signatureContext: manifest.signatureContext }),
+  }));
+  return { binding, evidence: result.evidence, parentTag: source.parentTag,
+    ...(source.previous === undefined ? {} : { previous: source.previous }),
+    ...(source.bundle === undefined ? {} : { bundle: source.bundle }) };
+}
+/**
+ * Production remains closed until loadReviewedDirectNeeds has a reviewed fixed workflow origin,
+ * direct same-run producer needs, immutable pin and pre-deploy fresh-parent authentication.
+ * Local candidate/receipt evidence must also have passed the existing qualification/report gates.
+ */
+export async function requireAuthenticatedPredeployParent(local:Local,token:string):Promise<PredeployParentInput> {
+  const snapshot:Local={baseline:copyBounded(local.baseline,4*1024*1024),
+    preparation:copyBounded(local.preparation,4*1024*1024),execution:copyBounded(local.execution,4*1024*1024),
+    candidate:copyBounded(local.candidate,4*1024*1024),qualification:copyBounded(local.qualification,4*1024*1024)};
+  const trusted=await loadReviewedDirectNeeds(token);
+  return corroboratePostdeployParent({baseline:snapshot.baseline,preparation:snapshot.preparation,
+    execution:snapshot.execution,candidate:snapshot.candidate,qualification:snapshot.qualification,
+    evidence:trusted.evidence,parentTag:trusted.parentTag,
+    ...(trusted.previous===undefined?{}:{previous:trusted.previous}),
+    ...(trusted.bundle===undefined?{}:{bundle:trusted.bundle})},trusted.binding,token);
+}
