@@ -1,0 +1,122 @@
+import path from 'node:path';
+import { z } from 'zod';
+import { assertReviewedCaller } from './lineageCallerPolicy';
+import { decodeNeedsEvidence } from './lineageNeedsIntake';
+import { inspectLineageProducer } from './lineageProducerMetadata';
+import { fetchLineageJobHistory } from './lineageJobHistoryTransport';
+import { inspectPredeployArtifactMetadata, inspectSameRunArtifactMetadata } from './lineageArtifactMetadata';
+import { LINEAGE_PARENT_BINDING_POLICY } from './lineageParentBindingPolicy';
+import { matchSameRunLineageEvidence } from './lineageRunEvidence';
+import { parsePrivateNeedsInput } from './lineageNeedsParse';
+
+const id=z.string().regex(/^[1-9]\d{0,15}$/u),commit=z.string().regex(/^[a-f0-9]{40}$/u),digest=z.string().regex(/^[a-f0-9]{64}$/u);
+const Context=z.object({repository:z.literal('santa928/tsumucode'),repositoryId:z.literal('1303564490'),
+  event:z.literal('workflow_dispatch'),ref:z.literal('refs/heads/main'),
+  workflowRef:z.literal('santa928/tsumucode/.github/workflows/pages.yml@refs/heads/main'),
+  runId:id,source:commit,workflowSha:commit,signerCommit:commit,attempt:z.number().int().min(1).max(25),
+  qualificationAttempt:z.number().int().positive(),reportAttempt:z.number().int().positive(),
+  workspace:z.string().min(1).max(4096)}).strict();
+const Needs=z.object({result:z.literal('success'),evidenceBase64:z.string().min(4).max(21848),
+  evidenceSha256:digest,snapshotSha256:digest,producerJobId:id,mode:z.enum(['anchor','signed'])}).strict();
+const Pins=z.object({candidateId:id,metadataId:id,qualificationId:id,reportId:id,
+  candidateArchive:digest,metadataArchive:digest,qualificationArchive:digest,reportArchive:digest,
+  qualificationSha256:digest}).strict();
+const PredeployContext=Context.omit({reportAttempt:true}).extend({phase:z.literal('predeploy')}).strict();
+const PredeployPins=Pins.omit({reportId:true,reportArchive:true});
+
+/**
+ * Pre-deploy corroboration only. All inputs, mocked API observations and outputs remain claims
+ * until trusted origin, archive bytes and a fresh parent are independently authenticated.
+ * No result from this function authorizes signing, deployment or consuming a movement.
+ */
+export async function corroboratePredeployDirectNeedsCandidate(contextInput:unknown,needsInput:unknown,pinsInput:unknown,token:string) {
+  const context=parsePrivateNeedsInput(PredeployContext,contextInput),needs=parsePrivateNeedsInput(Needs,needsInput),pins=parsePrivateNeedsInput(PredeployPins,pinsInput);
+  if(!path.isAbsolute(context.workspace) || context.workflowSha!==context.source ||
+     !token || token.length>8192 || /[\r\n]/u.test(token)) throw Error('Invalid predeploy direct-needs context');
+  if(context.attempt!==context.qualificationAttempt) throw Error('Predeploy attempt differs');
+  if(new Set([pins.candidateId,pins.metadataId,pins.qualificationId]).size!==3)
+    throw Error('Predeploy artifact IDs collide');
+  if(LINEAGE_PARENT_BINDING_POLICY.producerJobNames.length!==1)
+    throw Error('Reviewed producer job policy is not configured');
+  const producerJobName=LINEAGE_PARENT_BINDING_POLICY.producerJobNames[0]!;
+  const verifierCommit=needs.mode==='anchor'?LINEAGE_PARENT_BINDING_POLICY.anchorVerifierCommit:
+    LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits.length===1?LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits[0]:undefined;
+  if(!verifierCommit) throw Error('Reviewed signed verifier is not configured');
+  const evidence=decodeNeedsEvidence(needs.evidenceBase64);
+  const producer={repository:context.repository,runId:context.runId,attempt:context.attempt,source:context.source,
+    producerJobId:needs.producerJobId,producerJobName,verifierCommit,mode:needs.mode,sha256:needs.evidenceSha256};
+  await assertReviewedCaller(path.join(context.workspace,'candidate'),context.source,context.signerCommit);
+  const history=await fetchLineageJobHistory({runId:context.runId,source:context.source,currentAttempt:context.attempt,status:'in_progress'},token);
+  const matching=history[context.attempt-1]?.jobs.filter(job=>String(job.id)===needs.producerJobId && job.name===producerJobName);
+  if(!matching || matching.length!==1 || matching[0]!.status!=='completed' || matching[0]!.conclusion!=='success')
+    throw Error('Producer job history differs');
+  const observed=await inspectLineageProducer(evidence,producer,token);
+  const artifacts=await inspectPredeployArtifactMetadata({runId:context.runId,source:context.source,attempt:String(context.attempt),
+    candidateId:pins.candidateId,metadataId:pins.metadataId,qualificationId:pins.qualificationId},token);
+  const expectedDigests=[pins.candidateArchive,pins.metadataArchive,pins.qualificationArchive];
+  const expectedIds=[pins.candidateId,pins.metadataId,pins.qualificationId];
+  if(artifacts.length!==3 || artifacts.some((artifact,i)=>expectedDigests[i]===undefined || artifact.id!==expectedIds[i] ||
+    artifact.attempt!==String(context.attempt) || artifact.digest!==`sha256:${expectedDigests[i]}`))
+    throw Error('Predeploy artifact digest differs');
+  return {producer,evidence:Buffer.from(observed.bytes),snapshotSha256:needs.snapshotSha256,
+    candidateArtifactId:pins.candidateId,qualificationSha256:pins.qualificationSha256,
+    qualificationAttempt:context.qualificationAttempt,consumerAttempt:context.attempt};
+}
+/**
+ * Corroboration only. Context and needs are claims until a separate trusted loader proves their
+ * fixed workflow origin and direct needs edge. GitHub metadata cannot establish output provenance.
+ * This function never captures the old parent after deploy, and cannot authorize a release.
+ */
+export async function corroborateDirectNeedsCandidate(contextInput:unknown,needsInput:unknown,pinsInput:unknown,token:string) {
+  const context=parsePrivateNeedsInput(Context,contextInput),needs=parsePrivateNeedsInput(Needs,needsInput),pins=parsePrivateNeedsInput(Pins,pinsInput);
+  if(!path.isAbsolute(context.workspace) || context.workflowSha!==context.source ||
+     !token || token.length>8192 || /[\r\n]/u.test(token)) throw Error('Invalid direct-needs context');
+  if(context.attempt!==context.qualificationAttempt || context.attempt!==context.reportAttempt)
+    throw Error('Authenticated report retry history is not configured');
+  if(LINEAGE_PARENT_BINDING_POLICY.producerJobNames.length!==1)
+    throw Error('Reviewed producer job policy is not configured');
+  const producerJobName=LINEAGE_PARENT_BINDING_POLICY.producerJobNames[0]!;
+  const verifierCommit=needs.mode==='anchor'?LINEAGE_PARENT_BINDING_POLICY.anchorVerifierCommit:
+    LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits.length===1?LINEAGE_PARENT_BINDING_POLICY.signedVerifierCommits[0]:undefined;
+  if(!verifierCommit) throw Error('Reviewed signed verifier is not configured');
+  const evidence=decodeNeedsEvidence(needs.evidenceBase64);
+  const producer={repository:context.repository,runId:context.runId,attempt:context.attempt,source:context.source,
+    producerJobId:needs.producerJobId,producerJobName,verifierCommit,mode:needs.mode,sha256:needs.evidenceSha256};
+  await assertReviewedCaller(path.join(context.workspace,'candidate'),context.source,context.signerCommit);
+  const history=await fetchLineageJobHistory({runId:context.runId,source:context.source,currentAttempt:context.attempt,status:'in_progress'},token);
+  const matching=history[context.attempt-1]?.jobs.filter(job=>String(job.id)===needs.producerJobId && job.name===producerJobName);
+  if(!matching || matching.length!==1 || matching[0]!.status!=='completed' || matching[0]!.conclusion!=='success')
+    throw Error('Producer job history differs');
+  const observed=await inspectLineageProducer(evidence,producer,token);
+  const artifacts=await inspectSameRunArtifactMetadata({runId:context.runId,source:context.source,attempt:String(context.attempt),
+    candidateId:pins.candidateId,metadataId:pins.metadataId,qualificationId:pins.qualificationId,reportId:pins.reportId},token);
+  const expectedDigests=[pins.candidateArchive,pins.metadataArchive,pins.qualificationArchive,pins.reportArchive];
+  const expectedIds=[pins.candidateId,pins.metadataId,pins.qualificationId,pins.reportId];
+  if(artifacts.length!==4 || artifacts.some((artifact,i)=>expectedDigests[i]===undefined || artifact.id!==expectedIds[i] || artifact.attempt!==String(context.attempt) || artifact.digest!==`sha256:${expectedDigests[i]}`))
+    throw Error('Same-run artifact digest differs');
+  return {producer,evidence:Buffer.from(observed.bytes),snapshotSha256:needs.snapshotSha256,
+    candidateArtifactId:pins.candidateId,qualificationSha256:pins.qualificationSha256,
+    qualificationAttempt:context.qualificationAttempt,consumerAttempt:context.attempt};
+}
+
+const Observation = z.object({
+  runId:id, attempt:z.number().int().positive(), source:commit,
+  parentIdentityDigest:digest, snapshotSha256:digest,
+}).strict();
+/** Shape/copy only, not provenance authentication. */
+export function snapshotDirectNeedsObservation(input: unknown): z.infer<typeof Observation> {
+  return parsePrivateNeedsInput(Observation,input);
+}
+/** Equality only: the caller must independently authenticate this predeploy observation. */
+export function matchDirectNeedsPredeployObservation(
+  corroboration: Awaited<ReturnType<typeof corroborateDirectNeedsCandidate>>,
+  observationInput: unknown,
+): void {
+  const observation=snapshotDirectNeedsObservation(observationInput);
+  const {producerJobName,...expected}=corroboration.producer; void producerJobName;
+  const evidence=matchSameRunLineageEvidence(corroboration.evidence,expected);
+  if (observation.runId!==evidence.runId || observation.attempt!==evidence.attempt ||
+      observation.source!==evidence.source || observation.parentIdentityDigest!==evidence.parentIdentityDigest ||
+      observation.snapshotSha256!==corroboration.snapshotSha256)
+    throw Error('Authenticated predeploy observation differs');
+}
