@@ -1,0 +1,7 @@
+{
+  "name": "issue261-cli-tool-probe",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": { "@playwright/cli": "0.1.14" },
+  "overrides": { "playwright": "1.61.1", "playwright-core": "1.61.1" }
+}
