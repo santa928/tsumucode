@@ -266,7 +266,7 @@ jobs:
           docker exec -i "$controller" node --input-type=module < scripts/local/resident-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/acceptance.mjs
       - name: Verify bounded Python CI diagnostics
-        run: node --test scripts/local/python-ci-diagnostic.node-test.mjs
+        run: node --test scripts/local/python-ci-diagnostic.node-test.mjs scripts/local/python-grade-ci-diagnostic.node-test.mjs
       - name: Verify fixed CPython execution, constraints and recovery
         env:
           TSUMUCODE_RELEASE_CANDIDATE: ${{ inputs.candidate_artifact_id }}
@@ -512,6 +512,7 @@ jobs:
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -a -q controller)
           if [ -n "$controller" ]; then
+            timeout 3s docker exec "$controller" node /app/python-grade-ci-diagnostic.mjs --report 2>/dev/null || true
             docker inspect --format '{{json .State}}' "$controller" || true
             docker logs --timestamps --tail 80 "$controller" 2>&1 || true
           fi
