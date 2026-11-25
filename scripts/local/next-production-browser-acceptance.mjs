@@ -8,6 +8,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { parse } from 'yaml';
 import { unzipSync, strFromU8 } from 'fflate';
 import { bridge } from './browser-test-bridge.mjs';
+import { observeNavigation } from './next-navigation-diagnostics.mjs';
 import { nextWorkspace } from './next-project-protocol.mjs';
 import { ORIGIN } from './protocol.mjs';
 
@@ -69,27 +70,9 @@ async function grade(checks) {
   );
 }
 
-/** フォーカス確認済みのEnterから実GETを待ち、失敗時は秘密値を含まない遷移記録を残す。 */
-async function enterNavigation(frame, expectedUrl) {
-  const events = [];
-  const record = (event, request, status) => {
-    if (!request.isNavigationRequest()) return;
-    events.push({
-      event,
-      method: request.method(),
-      path: new URL(request.url()).pathname + new URL(request.url()).search,
-      ...(status === undefined ? {} : { status }),
-      sameFrame: request.frame() === frame,
-    });
-    if (events.length > 12) events.shift();
-  };
-  const requested = (request) => record('request', request);
-  const failed = (request) => record('requestfailed', request);
-  const responded = (response) => record('response', response.request(), response.status());
-  page.on('response', responded);
-  page.on('request', requested);
-  page.on('requestfailed', failed);
-  try {
+/** フォーカス確認済みのEnterから元の期限内に実GETとDocumentの読込を待つ。 */
+async function enterNavigation(frame, expectedUrl, routes) {
+  await observeNavigation(page, frame, routes, async () => {
     // focusや前の帰還をHTTPの30秒へ含めず、両Promiseの失敗を開始時から監視する。
     const [reply] = await Promise.all([
       page.waitForResponse(
@@ -104,23 +87,7 @@ async function enterNavigation(frame, expectedUrl) {
     assert.equal(reply.status(), 200);
     assert.equal(await reply.finished(), null);
     await frame.waitForURL(expectedUrl, { waitUntil: 'domcontentloaded' });
-  } catch (error) {
-    console.error(
-      JSON.stringify({
-        navigationFailure: {
-          expectedPath: new URL(expectedUrl).pathname + new URL(expectedUrl).search,
-          frameDetached: frame.isDetached(),
-          framePath: new URL(frame.url()).pathname,
-          events,
-        },
-      }),
-    );
-    throw error;
-  } finally {
-    page.off('response', responded);
-    page.off('request', requested);
-    page.off('requestfailed', failed);
-  }
+  });
 }
 
 async function stop() {
@@ -244,6 +211,11 @@ try {
     assert.ok(frame);
     const base = new URL(frame.url()).pathname;
     assert.ok(base.endsWith('/'));
+    const routes = new Map([
+      [base, 'home'],
+      [base + section, 'list'],
+      ...ids.map((id) => [base + section + '/' + id, 'detail']),
+    ]);
     assert.equal(await frame.title(), title);
     await expect(preview().locator('meta[name="description"]')).toHaveAttribute(
       'content',
@@ -270,7 +242,11 @@ try {
       const link = preview().getByRole('link', { name: names[index], exact: true });
       await link.focus();
       await expect(link).toBeFocused();
-      await enterNavigation(frame, new URL(base + section + '/' + ids[index], frame.url()).href);
+      await enterNavigation(
+        frame,
+        new URL(base + section + '/' + ids[index], frame.url()).href,
+        routes,
+      );
       await expect(preview().locator('h1#message')).toHaveText(names[index]);
       await expect(preview().locator(capstone ? '#booking-state' : '#area')).toHaveText(
         capstone ? (index === 0 ? '受付中' : '受付終了') : index === 0 ? '屋外' : '室内',
@@ -278,7 +254,7 @@ try {
       const back = preview().getByRole('link', { name: '一覧へ戻る', exact: true });
       await back.focus();
       await expect(back).toBeFocused();
-      await enterNavigation(frame, new URL(base + section, frame.url()).href);
+      await enterNavigation(frame, new URL(base + section, frame.url()).href, routes);
       await expect(preview().locator('h1#message')).toHaveText(
         capstone ? '読書会一覧' : '旅の一覧',
       );
@@ -294,6 +270,7 @@ try {
       await enterNavigation(
         frame,
         new URL(base + section + `?${key}=${values[index]}`, frame.url()).href,
+        routes,
       );
       await expect(preview().locator('main li')).toHaveCount(1);
       await expect(preview().getByRole('link', { name: names[index], exact: true })).toBeVisible();
@@ -304,11 +281,15 @@ try {
     }
     await page.getByLabel('表示する応答').selectOption(`${section}?${key}=unknown`);
     await expect(preview().locator('main [role="alert"]')).toHaveText('選択を確認してください。');
-    await preview().getByRole('link', { name: '一覧へ戻る', exact: true }).focus();
-    await page.keyboard.press('Enter');
-    await expect(preview().locator('main li')).toHaveCount(2);
-    await page.getByLabel('表示する応答').selectOption('');
-    await expect(preview().locator('h1#message')).toHaveText(title);
+    await observeNavigation(page, frame, routes, async (mark) => {
+      await preview().getByRole('link', { name: '一覧へ戻る', exact: true }).focus();
+      await page.keyboard.press('Enter');
+      await expect(preview().locator('main li')).toHaveCount(2);
+      mark('select', 'home');
+      await page.getByLabel('表示する応答').selectOption('');
+      mark('selected', 'home');
+      await expect(preview().locator('h1#message')).toHaveText(title);
+    });
     await handle.dispose();
 
     if (!capstone) {
@@ -438,10 +419,10 @@ try {
       progress: '独立2WS/3工程/部分達成/後工程破損/再回復/JSON export-import',
     }),
   );
-} catch (error) {
-  console.error(JSON.stringify({ observations, errors, status: await status().allTextContents() }));
-  await page.screenshot({ path: `${directory}/next-production-ui-failure.png`, fullPage: true });
-  throw error;
+} catch {
+  // Playwrightの例外・画面・ページエラーにはURLや表示本文が含まれるため、CIへ流さない。
+  console.error(JSON.stringify({ stage: 'acceptance-failed' }));
+  process.exitCode = 1;
 } finally {
   await page
     .getByRole('button', { name: '停止', exact: true })
