@@ -1,0 +1,322 @@
+name: Recover immutable record for 44287505917 (no deployment)
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: pages-release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  record:
+    if: github.repository == 'santa928/tsumucode' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Start with an unknown outcome, including on download failure
+        run: |
+          printf '%s\n' '{"schemaVersion":1,"state":"unknown","tagName":"tsumucode-app-44287505917-7883955817"}' > record-outcome.json
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          repository: santa928/tsumucode
+          run-id: '44287505917'
+          artifact-ids: '14419947400'
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: .release-v2/metadata
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          repository: santa928/tsumucode
+          run-id: '44287505917'
+          artifact-ids: '14430180591'
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: .release-v2/qualification
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          repository: santa928/tsumucode
+          run-id: '44287505917'
+          artifact-ids: '14428989313'
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: .release-v2/report
+      - name: Verify original evidence and recover only its immutable record
+        id: write_record
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'JS'
+          import { createHash } from 'node:crypto';
+          import { readFile, writeFile } from 'node:fs/promises';
+
+          // Incident constants, never derived from dispatch inputs, branches, or artifacts.
+          const PINS = {
+            "source": "820f572c29d6477b722394c29349d57611931855",
+            "tree": "8e4959db1c2b85c2753ff4825c0b59199fb2eb7a",
+            "created": "2026-11-18T13:00:23Z",
+            "targets": 18,
+            "record": "a05d4e3bd140b1408149ccf38358deedb6b70d4d5cd20195e88c20b1dfdb3b48",
+            "workflow": [40160, "ad055e00e04825a5f36932d7df7dba640c0410cbda3537c2cbcf5d652e301337"],
+            "log": [36776, "2dbd4e8208372adb628e37b711b1c184148c7d327288b6e1f96b038e5fce787c"],
+            "histories": [
+              "7c14eaef7230a6a7fa382211f72c21441d6f094b608ced266f02f79a17946cac",
+              "049e5781f64fe14705236744194b39edd8621ad10a53d97a389783fb13ce618f"
+            ],
+            "files": {
+              ".release-v2/metadata/candidate.json": [871, "59fe42181f1fbd5dedeec75989251d8e46ff904ea530a12f8e43f0d17363a437"],
+              ".release-v2/metadata/preparation.json": [1844367, "ec8e6cc153156e7503e8a1baad4a62f9be39bc3710444791eb7038557219850d"],
+              ".release-v2/qualification/qualification.json": [16567, "58afe783d07d216eca1e86ad5409ed8a322559844057b88528b46cafad0ec055"],
+              ".release-v2/report/public-smoke.json": [578, "8abe9ace222dfe4a6407df1d6ac7ae230df1690ec48c1e819126160fd4d6acf5"],
+              ".release-v2/report/public-operations.json": [1480, "b2934ff6792942c02fa03f7860cc02d94040b7db1da9356f39ae90145a9e1fb7"],
+              ".release-v2/report/app-record-plan.json": [3394, "a3ba0f81edb97e195c66ea1787415c3a082b6d97402e0664a9fad79c3cd4f3c5"]
+            }
+          }; // end fixed pins
+          const repository = 'santa928/tsumucode', repoId = 1303564490;
+          const run = 44287505917, deploymentId = '7883955817', recordJob = 134822671345;
+          const site = 'https://santa928.github.io/tsumucode/', tagName = 'tsumucode-app-44287505917-7883955817';
+          const recoveryPath = '.github/workflows/release-v2-record-recovery.yml';
+          const env = process.env, own = Number(env.GITHUB_RUN_ID);
+          const tagger = {name:'github-actions[bot]',email:'41898282+github-actions[bot]@users.noreply.github.com'};
+          const ensure = (ok, message) => { if (!ok) throw Error(message); };
+          const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+          // JSON data keys are compared by Unicode code point, as in the normal writer.
+          const compare = (a,b) => {
+            const x=Array.from(a,c=>c.codePointAt(0)), y=Array.from(b,c=>c.codePointAt(0));
+            for(let i=0;i<Math.min(x.length,y.length);i++) if(x[i]!==y[i]) return x[i]-y[i];
+            return x.length-y.length;
+          };
+          const canonical = v => Array.isArray(v) ? '['+v.map(canonical).join(',')+']' :
+            v!==null && typeof v==='object' ? '{'+Object.keys(v).sort(compare).map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}' : JSON.stringify(v);
+          const hash = value => digest(canonical(value));
+          const validSha = sha => typeof sha==='string' && /^[a-f0-9]{40}$/.test(sha);
+          const exact = (bytes, pin, description) => {
+            ensure(bytes.length===pin[0] && digest(bytes)===pin[1], description+' bytes changed');
+            return bytes;
+          };
+          const outcome = state => writeFile('record-outcome.json',JSON.stringify({schemaVersion:1,state,tagName}));
+          const options = (auth=false,extra={}) => ({
+            method:'GET', cache:'no-store', redirect:'error', signal:AbortSignal.timeout(15000),
+            headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',
+              ...(auth?{Authorization:'Bearer '+env.GH_TOKEN}:{}),...extra},
+          });
+          const prefix = 'https://api.github.com/repos/'+repository;
+          const bounded = async (response,limit) => {
+            ensure(response.body && Number(response.headers.get('content-length')??0)<=limit,'Missing or oversized API response');
+            const reader=response.body.getReader(), chunks=[]; let size=0;
+            try {
+              for (;;) {
+                const {done,value}=await reader.read(); if (done) break;
+                size+=value.length;
+                if(size>limit){await reader.cancel();throw Error('Oversized API response');}
+                chunks.push(value);
+              }
+            } finally { reader.releaseLock(); }
+            return Buffer.concat(chunks,size);
+          };
+          const json = async response => JSON.parse((await bounded(response,1024*1024)).toString('utf8'));
+          const get = async (path,auth=true) => {
+            const response=await fetch(prefix+path,options(auth));
+            ensure(response.status===200,'Unavailable '+path+' ('+response.status+')');
+            return json(response);
+          };
+          const sameRepo = r => r?.id===repoId && r.full_name===repository;
+          const sameRun = r => r.event==='workflow_dispatch' && r.head_branch==='main' && sameRepo(r.repository) && sameRepo(r.head_repository);
+          const checkRuns = async () => {
+            const original=await get('/actions/runs/'+run);
+            ensure(sameRun(original) && original.id===run && original.workflow_id===315500203 && original.path==='.github/workflows/pages.yml' &&
+              original.head_sha===PINS.source && original.run_attempt===2 && original.status==='completed' && original.conclusion==='failure','Original run changed');
+            const current=await get('/actions/runs/'+own);
+            ensure(sameRun(current) && current.id===own && current.path===recoveryPath && Number.isSafeInteger(current.workflow_id) && current.workflow_id>0 &&
+              current.head_sha===env.GITHUB_SHA && current.run_number===Number(env.GITHUB_RUN_NUMBER) && current.run_attempt===Number(env.GITHUB_RUN_ATTEMPT) &&
+              current.status==='in_progress' && current.conclusion===null,'Recovery run changed');
+            const main=await get('/git/ref/heads/main');
+            ensure(main.ref==='refs/heads/main' && main.object?.type==='commit' && main.object.sha===env.GITHUB_SHA,'Recovery is not current main');
+            return current;
+          };
+          const complete = (page,key) => {
+            const rows=page[key];
+            // An over-limit history is not a single complete page and grants no authority.
+            ensure(Number.isSafeInteger(page.total_count) && page.total_count>0 && page.total_count<=100 &&
+              Array.isArray(rows) && rows.length===page.total_count && rows.every(r=>Number.isSafeInteger(r.id) && r.id>0) &&
+              new Set(rows.map(r=>r.id)).size===rows.length,'Incomplete or ambiguous history');
+            return rows;
+          };
+          const firstExecution = async current => {
+            const rows=complete(await get('/actions/workflows/'+current.workflow_id+'/runs?per_page=100'),'workflow_runs');
+            const me=rows.find(r=>r.id===own);
+            ensure(me && rows.every(r=>r.workflow_id===current.workflow_id && r.path===recoveryPath) &&
+              sameRun(me) && me.head_sha===current.head_sha && me.run_number===current.run_number && me.run_attempt===current.run_attempt &&
+              me.status==='in_progress' && me.conclusion===null,'Recovery history changed');
+            // Run number also catches deleted prior runs; a rerun never reopens the write branch.
+            return rows.length===1 && current.run_number===1 && current.run_attempt===1;
+          };
+          const history = async attempt => {
+            const jobs=complete(await get('/actions/runs/'+run+'/attempts/'+attempt+'/jobs?per_page=100'),'jobs');
+            ensure(jobs.every(j=>j.run_id===run && j.run_attempt===attempt && j.head_sha===PINS.source && j.status==='completed'),'Foreign or active job');
+            const identity=[...jobs].sort((a,b)=>a.id-b.id).map(j=>[j.id,j.name,j.conclusion]);
+            ensure(hash(identity)===PINS.histories[attempt-1],'Original jobs changed');
+            return jobs;
+          };
+          const findJob = (jobs,id,name,conclusion) => {
+            const same=jobs.filter(j=>j.name===name);
+            ensure(same.length===1 && same[0].id===id && same[0].conclusion===conclusion,'Unexpected '+name+' producer or status');
+            return same[0];
+          };
+          async function originalEvidence() {
+            const first=await history(1), second=await history(2);
+            const parent=findJob(first,134797609873,'publish','skipped');
+            ensure(Array.isArray(parent.steps) && parent.steps.length===0 && !first.some(j=>j.name.startsWith('publish / ')),'Original publish was not skipped');
+            const failed=findJob(second,recordJob,'publish / record','failure');
+            const download='Run actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0';
+            const steps=['Set up job',download,download,download,'Record verified deployment without checkout or Source execution','Preserve exact recording outcome','Complete job'];
+            ensure(Array.isArray(failed.steps) && failed.steps.length===steps.length &&
+              failed.steps.every((s,i)=>s.number===i+1 && s.name===steps[i] && s.status==='completed' && s.conclusion===(i===4?'failure':'success')),'Different record failure');
+            const build=findJob(first,134743951133,'build','success'), aggregate=findJob(second,134817595555,'qualification / aggregate','success');
+            findJob(second,134819093526,'publish / deploy','success');
+            const report=findJob(second,134819366785,'publish / report','success');
+            const artifacts=[
+              [14419942359,'candidate-44287505917-1','579c6d08464e7621a8907ea990d6aa21fc0a337ac0deec5e320b62b720075c05',build],
+              [14419947400,'candidate-metadata-44287505917-1','889307fbc668263d32e0d610e72f826e18959ce0a2b39f4d73ca9963f7487b0c',build],
+              [14430180591,'qualification-44287505917-2','7a8fa05ef40e6ebb1f5fb037b1de8f0f5519e5b06bcfa250e38174fad7a1d05a',aggregate],
+              [14428989313,'public-report-44287505917-2','78294a61e7f0e001a3780c56d86ef81b4d7d07a9c17dc75e43c23de2ecbc6f86',report],
+            ];
+            for(const [id,name,archive,job] of artifacts){
+              const a=await get('/actions/artifacts/'+id,true), r=a.workflow_run;
+              ensure(a.id===id && a.name===name && a.digest==='sha256:'+archive && a.expired===false &&
+                r?.id===run && r.head_sha===PINS.source && r.head_branch==='main' && r.repository_id===repoId && r.head_repository_id===repoId &&
+                Date.parse(job.started_at)<=Date.parse(a.created_at) && Date.parse(a.created_at)<=Date.parse(job.completed_at),'Wrong artifact owner, digest or producer time');
+            }
+            const workflow=await fetch(prefix+'/contents/.github/workflows/release-v2-publish.yml?ref='+PINS.source,options(true,{Accept:'application/vnd.github.raw+json'}));
+            ensure(workflow.status===200,'Original workflow not available');
+            exact(await bounded(workflow,PINS.workflow[0]),PINS.workflow,'Original workflow');
+            // Only this exact GitHub job endpoint may supply a single signed HTTPS redirect.
+            let response=await fetch(prefix+'/actions/jobs/'+recordJob+'/logs',{...options(true),redirect:'manual'});
+            if(response.status===302){
+              const url=new URL(response.headers.get('location')??'');
+              ensure(url.protocol==='https:' && !url.username && !url.password,'Untrusted log redirect');
+              response=await fetch(url.href,{method:'GET',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(15000)});
+            }
+            ensure(response.status===200,'Original job log not available');
+            const log=exact(await bounded(response,PINS.log[0]),PINS.log,'Original job log').toString('utf8');
+            ensure(/ Error: Missing or ambiguous prior record job\r?\n[^\n]+ at ensure \([^\n]+\r?\n[^\n]+ at previousRecordMayHaveRun \(/u.test(log),'Original failure was not the proven pre-write guard');
+          }
+          async function publicEvidence() {
+            const pinned=async path=>{
+              const key='.release-v2/'+path+'.json';
+              return JSON.parse(exact(await readFile(key),PINS.files[key],path).toString('utf8'));
+            };
+            const candidate=await pinned('metadata/candidate'), snapshot=await pinned('metadata/preparation');
+            const q=await pinned('qualification/qualification'), smoke=await pinned('report/public-smoke');
+            const ops=await pinned('report/public-operations'), prepared=await pinned('report/app-record-plan'), record=prepared.record;
+            ensure(candidate.repository===repository && candidate.runId===String(run) && candidate.recipe.sourceCommit===PINS.source && candidate.recipe.sourceTree===PINS.tree &&
+              candidate.artifactId==='14419942359' && candidate.buildJobId==='build' && candidate.buildAttempt===1,'Wrong original build identity');
+            const cd=hash(candidate);
+            ensure(q.status==='qualified' && q.candidateDigest===cd && q.technical.candidateDigest===cd && q.technical.status==='technical-passed' &&
+              q.technical.buildAttempt===1 && hash(q.technical.verificationAttempts)===hash([1]),'Unqualified candidate');
+            ensure(prepared.schemaVersion===1 && prepared.state==='record-plan-only' && prepared.plan.action==='create-annotated-record' &&
+              prepared.plan.tagName===tagName && prepared.plan.targetCommit===PINS.source && prepared.plan.message===JSON.stringify(record) &&
+              hash(record)===PINS.record,'Original record plan changed');
+            ensure(record.schemaVersion===2 && record.state==='verified' && record.repository===repository && record.workflowHeadCommit===PINS.source &&
+              record.deploymentId===deploymentId && record.siteUrl===site && hash(record.candidate)===cd && record.qualificationDigest===hash(q) &&
+              record.inventoryDigest===hash(snapshot.inventory) && record.publicContentDigest===snapshot.publicContent.digest &&
+              record.smokeDigest===hash({bytes:smoke,operations:ops}),'Unbound record');
+            const actual={repository,deploymentId,workflowHeadCommit:PINS.source,runId:String(run),siteUrl:site,createdAt:PINS.created};
+            ensure(smoke.status==='passed' && smoke.candidateDigest===cd && smoke.artifactDigest===candidate.artifactDigest &&
+              smoke.checkedFiles===604 && hash(smoke.actual)===hash(actual),'Incomplete byte observation');
+            const courses=snapshot.inventory.courses.filter(c=>c.publicationStatus==='published').sort((a,b)=>compare(a.id,b.id));
+            const targets=[...new Set(['launch','reading-resume','progress-transfer',...courses.flatMap(c=>c.lessons.flatMap(l=>
+              l.exercises.map(e=>e.runtimeKind+'/'+e.capability+'/'+(e.runtimeKind==='next'?'local-guide':'grade-persist'))))])].sort();
+            ensure(ops.schemaVersion===1 && ops.status==='passed' && ops.producerJobId==='report' && ops.candidateDigest===cd &&
+              ops.artifactDigest===candidate.artifactDigest && ops.inventoryDigest===hash({...snapshot.inventory,courses}) && hash(ops.actual)===hash(actual) &&
+              targets.length===PINS.targets && Array.isArray(ops.targets) && hash([...ops.targets].sort())===hash(targets) &&
+              /^[a-f0-9]{64}$/.test(ops.reportDigest),'Incomplete public operation observation');
+            const created=Date.parse(PINS.created), observed=Date.parse(record.observedAt);
+            ensure(Date.parse(q.qualifiedAt)<=created && created<Date.parse(q.technical.expiresAt) && observed<=Date.now() &&
+              [smoke,ops].every(x=>created<=Date.parse(x.observedAt) && Date.parse(x.observedAt)<=observed),'Invalid qualification or observation time at deployment');
+            return record;
+          }
+          const actualDeployment = async () => {
+            const [d]=await get('/deployments?environment=github-pages&per_page=1',false);
+            ensure(d?.id===Number(deploymentId) && d.sha===PINS.source && d.ref==='main' && d.environment==='github-pages' && d.created_at===PINS.created,'Current deployment changed');
+            const [s]=await get('/deployments/'+deploymentId+'/statuses?per_page=1',false);
+            ensure(s?.state==='success' && s.environment==='github-pages' && s.environment_url===site &&
+              s.log_url==='https://github.com/'+repository+'/actions/runs/'+run+'/job/134819093526','Deployment status no longer verified');
+          };
+          const existing = async (record,expectedSha) => {
+            const resp=await fetch(prefix+'/git/ref/tags/'+tagName,options(true));
+            if(resp.status===404) return false;
+            ensure(resp.status===200,'Immutable ref not readable');
+            const ref=await json(resp), sha=ref.object?.sha;
+            ensure(ref.ref==='refs/tags/'+tagName && ref.object?.type==='tag' && validSha(sha) &&
+              (expectedSha===undefined || sha===expectedSha),'Immutable ref conflict');
+            const object=await get('/git/tags/'+sha);
+            ensure(object.sha===sha && object.tag===tagName && object.object?.type==='commit' && object.object.sha===PINS.source &&
+              object.message===JSON.stringify(record) && hash(JSON.parse(object.message))===hash(record) && object.tagger?.name===tagger.name && object.tagger?.email===tagger.email,'Immutable annotation conflict');
+            return true;
+          };
+          const reconcile = async (record,sha) => {
+            for(const wait of [0,1000,2000,4000,8000,16000,30000,60000]){
+              if(wait)await new Promise(resolve=>setTimeout(resolve,wait));
+              if(await existing(record,sha))return true;
+            }
+            return false;
+          };
+          const post = (path,body) => fetch(prefix+path,{
+            ...options(true,{'Content-Type':'application/json'}),method:'POST',body:JSON.stringify(body)
+          });
+          async function guard() {
+            const current=await checkRuns();
+            const first=await firstExecution(current);
+            await actualDeployment();
+            return first;
+          }
+          try {
+            ensure(env.GITHUB_REPOSITORY===repository && env.GITHUB_EVENT_NAME==='workflow_dispatch' && env.GITHUB_REF==='refs/heads/main' &&
+              validSha(env.GITHUB_SHA) && env.GITHUB_SHA!==PINS.source && Number.isSafeInteger(own) && own>0 && own!==run &&
+              [env.GITHUB_RUN_NUMBER,env.GITHUB_RUN_ATTEMPT].every(v=>/^[1-9]\d*$/.test(v) && Number.isSafeInteger(Number(v))) && env.GH_TOKEN,'Invalid recovery context');
+            await checkRuns();
+            await originalEvidence();
+            const record=await publicEvidence();
+            if(!(await guard())){
+              ensure(await reconcile(record),'Not the first recovery execution: read-only reconciliation failed');
+            } else if(!(await existing(record))){
+              ensure(await guard(),'Recovery authority changed before annotation');
+              const message=JSON.stringify(record);
+              const a=await post('/git/tags',{tag:tagName,message,object:PINS.source,type:'commit',tagger});
+              ensure(a.status===201,'Annotation outcome unknown; no ref write');
+              const annotation=await json(a);
+              ensure(validSha(annotation.sha) && annotation.tag===tagName && annotation.message===message &&
+                annotation.object?.type==='commit' && annotation.object.sha===PINS.source && annotation.tagger?.name===tagger.name &&
+                annotation.tagger?.email===tagger.email,'Unverified annotation; no ref write');
+              ensure(await guard(),'Recovery authority changed after annotation');
+              // Never retry either POST. Only reconcile against this exact annotation ID.
+              let response;
+              try { response=await post('/git/refs',{ref:'refs/tags/'+tagName,sha:annotation.sha}); }
+              catch { console.log('Ref outcome uncertain; reading the exact annotation'); }
+              if(response?.status===201){
+                const result=await json(response);
+                ensure(result.ref==='refs/tags/'+tagName && result.object?.type==='tag' && result.object.sha===annotation.sha,'Ref creation response conflict');
+              }
+              ensure(await reconcile(record,annotation.sha),'Exact ref not visible after bounded reconciliation');
+            }
+            await guard();
+            await outcome('recorded');
+          } catch(error) {
+            await outcome('unknown');
+            // Do not print request headers, bodies, signed redirect URLs, or arbitrary API errors.
+            if(error instanceof TypeError)throw Error('Recovery request or response invalid');
+            throw error instanceof SyntaxError ? Error('Invalid recovery evidence') : error;
+          }
+          JS
+      - name: Preserve recovery outcome
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: record-recovery-outcome-${{ github.run_id }}-${{ github.run_attempt }}
+          path: record-outcome.json
+          if-no-files-found: error
+          retention-days: 90

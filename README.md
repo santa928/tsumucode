@@ -60,6 +60,8 @@ Sourceで`published`を指定している「フロントエンド学習パス」
 
 JavaScriptはSourceで`published`を指定しており、安全な複数ファイル実行基盤とChapter 00〜13の52 Lessonを備えます。全202 Slideの種類別内訳はconcept170・comparison10・code21・diagram1です。54 Exerciseは標準必須46・追加Closure2・手順付き制作5・独立課題1に分かれます。`expectedTotals.standardExercises=48`は追加2件を含み、`expectedTotals.conceptSlides=202`は概念系4種類の最低枚数です。1,010分はLesson設定時間の合計で、人間の実測学習時間は未計測です。HTML/CSSを知るJavaScript初学者向けに、値・制御・データからDOM・Event・非同期へ進み、学習クイズの問題表示・回答・得点・結果・再挑戦を積み上げます。Capstoneではカテゴリ選択・進捗・Keyboard操作も扱います。この枚数・演習数で教材の十分性や実務能力を保証するものではありません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)から確認できます。`draft`の教材もProduction Artifactへ含まれるため、非掲載を機密性の保証として扱いません。
 
+2026-11-19時点の配信Source・9 Courseの受入記録・残る追加改訂は、[公開済み範囲の証拠集約](docs/quality/issue-155-published-scope.md)を参照してください。Sourceの公開指定、実配信、ロードマップ全体の完了を区別します。
+
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
 通常演習は工程と編集中ファイルを保存し、Course Mapから作業中の下書きを再開できます。再読込の前は「保存済み」を確認してください。工程位置を含むJSONは、工程復元に対応した版で読み込みます。[保存・再開の範囲と旧版への読込み制約](docs/quality/learning-resume-state.md)を参照してください。
@@ -141,7 +143,7 @@ PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移�
 
 ## ローカルPython学習
 
-同じ学習モードで「Python 値と変数の第一歩」からコード演習へ進みます。画面には「ローカル CPython 3.14.2で実行」と表示します。値・変数からModule・例外・小制作までの10教材です。「プレビューを更新」は事前入力で実出力を確認します。「練習実行」は同じrunへ1行ずつ入力し、空文字列とEOFを区別できます。練習は正誤・進捗へ反映しません。「判定する」は同じSourceを固定入力の新しい実行へ渡し、全ケースの出力と教材のコード条件を確認します。Browser版は従来の事前入力方式を維持します。
+同じ学習モードで「Python 値と変数の第一歩」からコード演習へ進みます。画面には「ローカル CPython 3.14.2で実行」と表示します。値・変数からModule・例外・小制作までの16 Lessonです（配信Source `820f572`、Course revision `2026-11-03.1` の構成）。「プレビューを更新」は事前入力で実出力を確認します。「練習実行」は同じrunへ1行ずつ入力し、空文字列とEOFを区別できます。練習は正誤・進捗へ反映しません。「判定する」は同じSourceを固定入力の新しい実行へ渡し、全ケースの出力と教材のコード条件を確認します。Browser版も通常Previewと採点は事前入力を使います。入力・条件分岐・反復の3教材の未採点練習は、対応するPyodide環境では途中入力を使え、非対応環境は未対応と表示します。
 
 練習の入力要求はプログラムの申告で、本物のinput待機の証明ではありません。偽の要求で不要な入力欄が出る場合があります。要求を受けたらコンテナ全体の一時停止を確認し、累計60秒まで入力を待ちます。計算は累計5秒、全体は65秒、入力は最大16行・UTF-8で1 KiBです。入力は保存・共有されませんが、今回の出力に含まれる場合があります。終了コード0と教材の合格は別です。
 
@@ -220,7 +222,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 ## 品質ゲート
 
-新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳の保存先は`docs/quality/javascript-agent-learning.yaml`（現treeでは未作成）です。実記録があればrunbookの`release:learning-coverage`手順で確認済み／未確認を区別します。新規・未確認教材だけ3人で一度評価し、確認済み評価・原証拠・本人checkpointは新しいセッションでも引き継ぎます。
+新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳は[`docs/quality/javascript-agent-learning.yaml`](docs/quality/javascript-agent-learning.yaml)です。runbookの`release:learning-coverage`手順で確認済み／未確認と承認された評価対象を区別します。新規・変更教材の必要な評価だけを実施し、確認済み評価・原証拠・本人checkpointと、評価対象外として残した未確認範囲は新しいセッションでも引き継ぎます。
 
 作業中の`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。PRでは`check:ci`による全Unit/Component/Contentを維持し、変更関連検査も別途確認します。公開qualificationのunitと同じ`lint`・`test:run`、既定Vitest設定を使います。PRの成功は正式な公開資格receiptや公開実績ではなく、公開時の全件gateも引き続き必須です。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。`check`のtestはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時は全件へ拡大します。
 
@@ -360,4 +362,4 @@ TsumuCodeは個人・身内向けに制作した非商用の独立学習サイ�
 
 ## 予測と任意の追加練習
 
-HTML/CSS導入とClosureの一部スライドには「考えてみよう」があります。「答えと理由を見る」を開く前に結果を予測し、理由を照合します。開閉は演習合格や習得率として保存しません。Closureは既存ガイドに加え、毎回初期化されるコードの修正と、増分が異なる2つの係を使う任意練習を選べます。詳しい範囲と未実施の初心者観察は[パイロット記録](docs/quality/issue-23-learning-practice.md)に記載しています。
+HTML/CSS導入とClosureの一部スライドには「考えてみよう」があります。「答えと理由を見る」を開く前に結果を予測し、理由を照合します。開閉は演習合格や習得率として保存しません。Closureは既存ガイドに加え、毎回初期化されるコードの修正と、増分が異なる2つの係を使う任意練習を選べます。承認済みの代替観察と未確認範囲は[パイロット記録](docs/quality/issue-23-learning-practice.md)に記載しています。
