@@ -19,6 +19,7 @@ import {
 export { MOVEMENT_ID, PURE_MOVES } from './movementStage';
 import {
   compareInitialReactCopyContract,
+  isPublishedReactIntroParent,
   LearnerMovementOriginalsSchema,
   verifyLearnerMovement,
 } from './learnerMovement';
@@ -731,6 +732,7 @@ export function verifyMovementInputs(
     lookup(inventory, courseId!, lessonId!);
   }
   const result = Object.freeze({ declarationDigest: declaration.declarationDigest });
+  const publishedIntro = isPublishedReactIntroParent(stage, baseline.sourceCommit);
   const learnerCarries = verifyLearnerMovement(
     inputs.learnerOriginals,
     inventory,
@@ -738,6 +740,7 @@ export function verifyMovementInputs(
     body.candidateContentCommit,
     declaration.declarationDigest,
     moves,
+    publishedIntro,
   );
   if (inputs.pythonReferenceOriginals) {
     for (const [key, carry] of verifyPythonReferenceOriginals(
@@ -753,7 +756,7 @@ export function verifyMovementInputs(
     const oldInitial = oldOriginals.get('react/react-ch01-l01-e01');
     const currentInitial = currentOriginals.get('react/react-ch01-l01-e01');
     if (!oldInitial || !currentInitial) throw Error('Missing initial React learner contract');
-    compareInitialReactCopyContract(oldInitial, currentInitial);
+    compareInitialReactCopyContract(oldInitial, currentInitial, publishedIntro);
   }
   verified.set(result, {
     inputs,
