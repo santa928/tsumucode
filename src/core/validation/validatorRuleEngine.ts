@@ -1,3 +1,4 @@
+import { matchesDomText } from './matchesDomText';
 import { containsCssDeclarations } from './cssSourceDeclarations';
 import type {
   HtmlCssRuleAssertion,
@@ -593,7 +594,7 @@ function evaluateNodeAssertion(
       return {
         passed:
           assertion.operator === 'equals'
-            ? node.text === assertion.expected
+            ? matchesDomText(node.text, assertion.expected, assertion.optionalSpaces)
             : node.text.includes(assertion.expected),
         actual: displayValue(node.text),
       };

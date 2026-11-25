@@ -1,10 +1,15 @@
 import { z } from 'zod';
+import type { MovementStage } from './movementStage';
 import type { AuthoringExercise, CompiledCourseArtifacts } from '../../content/compileCourse';
 import { javascriptLearnerContentProjection } from '../javascriptLessonEvaluation';
 import { hashValue } from './identity';
 import { CommitSchema, DigestSchema, IdSchema, type ReleaseInventory } from './schema';
 
 type Moves = readonly (readonly [string, string, string, number])[];
+// 正式run 44287505917で既に公開された初回教材の、可視投影と作者用演習全体。
+const publishedReactIntroSource = '820f572c29d6477b722394c29349d57611931855';
+const publishedIntroProjection = '4c70c5b748a9b4ffe4ab13870b82b6826be0b3e42779b4e03432fe082db76fc8';
+const publishedIntroExercise = '9ad4105aa6dcdb9068a182f2ec7ae0296d95bd2e0b2f3a90be1b04f0a0b16260';
 const INITIAL_REACT = ['react', 'react-ch01-l01', 'react-ch01-l01'] as const;
 const OriginalSchema = z
   .object({
@@ -194,13 +199,28 @@ function applyFixedCopyDelta(
   return true;
 }
 
+/** 認証済みbaselineと段階が一致したときだけ、公開済み初回教材の両原本を固定値と照合する。 */
+export function isPublishedReactIntroParent(stage: MovementStage, source: string) {
+  return stage === 'react-after-python' && source === publishedReactIntroSource;
+}
+
+function requirePublishedIntroPair(previous: unknown, current: unknown, expected: string) {
+  if (hashValue(previous) !== expected || hashValue(current) !== expected)
+    throw Error('Published React intro differs from its fixed original');
+}
+
 /** 移動外のReact初回も、表示外のruntime/全fixtureをcopy差分に同居させない。 */
 export function compareInitialReactCopyContract(
   previous: AuthoringExercise,
   current: AuthoringExercise,
+  publishedIntro: boolean,
 ) {
   if (previous.id !== 'react-ch01-l01-e01' || current.id !== previous.id)
     throw Error('Unexpected initial React learner contract identity');
+  if (publishedIntro) {
+    requirePublishedIntroPair(previous, current, publishedIntroExercise);
+    return;
+  }
   const normalized = structuredClone(previous);
   applyFixedCopyDelta(
     { exercises: [normalized] },
@@ -219,6 +239,7 @@ export function verifyLearnerMovement(
   candidateContentCommit: string,
   declarationDigest: string,
   moves: Moves,
+  publishedIntro: boolean,
 ) {
   const carries = new Map<string, Carry>();
   if (!originals) return carries;
@@ -256,6 +277,11 @@ export function verifyLearnerMovement(
     const current = originals.current.find(
       (row) => row.courseId === courseId && row.lessonId === toLessonId,
     )!;
+    if (publishedIntro && courseId === 'react' && fromLessonId === INITIAL_REACT[1]) {
+      requirePublishedIntroPair(previous.projection, current.projection, publishedIntroProjection);
+      // 初回教材は同じID・同じ内容で公開済み。通常の同一digestの受入照合へ渡す。
+      continue;
+    }
     const mapped = mappedProjection(previous.projection, courseId, moves);
     const delta = applyFixedCopyDelta(mapped, current.projection, courseId, toLessonId);
     if (hashValue(mapped) !== hashValue(current.projection))

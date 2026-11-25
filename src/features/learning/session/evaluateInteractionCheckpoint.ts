@@ -7,6 +7,8 @@ import type {
   SubmitEvidence,
 } from '../../../core/runtime/contracts';
 
+import { matchesDomText } from '../../../core/validation/matchesDomText';
+
 const MAX_ACTUAL_LENGTH = 2_000;
 
 /** Validatorへ渡すactualを表示・保存可能な上限へ丸める。 */
@@ -109,7 +111,9 @@ export function evaluateInteractionCheckpoint(
       const actual = first?.text;
       return {
         expectationId: expectation.id,
-        passed: nodes.some(({ text }) => text === expectation.equals),
+        passed: nodes.some(({ text }) =>
+          matchesDomText(text, expectation.equals, expectation.optionalSpaces),
+        ),
         actual: actual === undefined ? 'not found' : boundedActual(actual),
       };
     }

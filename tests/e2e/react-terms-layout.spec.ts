@@ -35,9 +35,9 @@ async function expectReadableText(page: Page, target: Locator) {
 
 const courseTitle = 'React はじめの一歩';
 const description =
-  '部品へ渡す値（Props）・変わる状態（State）・フォーム入力を学びます。画面要素への参照（Ref）、外部との同期（Effect）、同期処理の再利用（Custom Hook）を確かめ、クイズ題材の手順付き制作2工程と、別の仕様に沿う制作へ進みます。';
+  '部品へ渡す値（Props）・変わる状態（State）・フォーム入力を学びます。画面要素への参照（Ref）、外部との同期（Effect）、同期処理の再利用（Custom Hook）を確かめます。読書リストを3段階で作り、温度表示の部品分け、クイズ題材の手順付き制作2工程と、別の仕様に沿う制作へ進みます。';
 const projectDescription =
-  '工程を引き継ぐ手順付き制作と、別の仕様に沿う制作を行います。後者の下書きは、手順付き制作とは別に保存します。';
+  '読書リストで書く範囲を広げ、温度表示の部品分けを考えます。クイズでは工程を引き継ぐ手順付き制作と、別の仕様に沿う制作を行います。後者の下書きは、手順付き制作とは別に保存します。';
 
 for (const [name, width, height] of [
   ['desktop', 1280, 720],
@@ -60,7 +60,7 @@ for (const [name, width, height] of [
     await page.goto(`${testBasePath()}#/courses/react`);
     await expectReadableText(page, map.getByText(description, { exact: true }));
     await page.screenshot({ path: info.outputPath('react-map-description.png') });
-    const project = map.getByRole('region', { name: '型付きクイズを制作する', exact: true });
+    const project = map.getByRole('region', { name: '部品を組み合わせて作品を作る', exact: true });
     await expectReadableText(page, project.getByText(projectDescription, { exact: true }));
     await page.screenshot({ path: info.outputPath('react-map-project.png') });
 
