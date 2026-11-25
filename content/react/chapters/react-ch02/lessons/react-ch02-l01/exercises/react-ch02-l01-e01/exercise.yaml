@@ -86,7 +86,8 @@ validationRules:
     assertion:
       kind: text
       operator: equals
-      expected: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+      optionalSpaces: true
+      expected: 星の地図 未読 読了にする 雨の日の本 既読 未読にする 森の記録 未読 読了にする
     feedback:
       target: BookCard.tsxとプレビュー
       expected: 最初の3冊の題名と読書状態を表示する
@@ -142,7 +143,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図既読未読にする雨の日の本既読未読にする森の記録未読読了にする
+            optionalSpaces: true
+            equals: 星の地図 既読 未読にする 雨の日の本 既読 未読にする 森の記録 未読 読了にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -164,7 +166,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 既読 未読にする 森の記録 未読 読了にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -186,7 +189,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録未読読了にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 未読 読了にする 森の記録 未読 読了にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -208,7 +212,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録既読未読にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 未読 読了にする 森の記録 既読 未読にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -230,7 +235,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 既読 未読にする 森の記録 未読 読了にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -252,7 +258,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録既読未読にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 既読 未読にする 森の記録 既読 未読にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'
@@ -274,7 +281,8 @@ interactionScenarios:
           - id: books
             kind: selector-text
             selector: '#books'
-            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+            optionalSpaces: true
+            equals: 星の地図 未読 読了にする 雨の日の本 既読 未読にする 森の記録 未読 読了にする
           - id: state-stars
             kind: attribute
             selector: '#toggle-stars'

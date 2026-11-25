@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { readFile } from 'node:fs/promises';
 import YAML from 'yaml';
+import { reactReadingScenarios } from '../../src/core/content/reactReadingInteractions';
+import { matchesDomText } from '../../src/core/validation/matchesDomText';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { ExerciseSourceSchema } from '../../scripts/content/sourceSchema';
@@ -71,6 +73,43 @@ describe('読書リスト3段階の配布範囲と採点', () => {
     }
   });
 
+  it('カードの境界にある空白だけを許し、題名・状態・操作名・冊数・順序はすべて照合する', async () => {
+    const { exercises } = await course;
+    const exercise = exercises.find(({ id }) => id === 'react-ch02-l01-e01')!;
+    const initial = exercise.validationRules[0]!.assertion;
+    const afterToggle = exercise.interactionScenarios![0]!.checkpoints[0]!.expectations[0]!;
+    if (
+      initial.kind !== 'text' ||
+      initial.operator !== 'equals' ||
+      afterToggle.kind !== 'selector-text'
+    ) {
+      throw new Error('読書カードの初期判定と操作後判定が必要です');
+    }
+    const stars = '星の地図 未読 読了にする';
+    const rain = '雨の日の本既読未読にする';
+    const forest = '森の記録 未読読了にする';
+    const list = [stars, rain, forest].join(' ');
+    const matchesInitial = (text: string) =>
+      matchesDomText(text, initial.expected, initial.optionalSpaces);
+    expect(matchesInitial(list)).toBe(true);
+    expect(matchesInitial(list.replaceAll(' ', ''))).toBe(true);
+    for (const wrong of [
+      list.replace('星の地図', '星の 地図'),
+      list.replace('未読', '未 読'),
+      list.replace('読了にする', '読了 にする'),
+      list.replace(stars, '星の地図 既読 未読にする'),
+      [rain, stars, forest].join(' '),
+      [stars, forest].join(' '),
+      [stars, rain, forest, forest].join(' '),
+    ]) {
+      expect(matchesInitial(wrong)).toBe(false);
+    }
+    const changed = list.replace(stars, '星の地図 既読 未読にする');
+    expect(matchesDomText(changed, afterToggle.equals, afterToggle.optionalSpaces)).toBe(true);
+    expect(matchesDomText(list, afterToggle.equals, afterToggle.optionalSpaces)).toBe(false);
+    expect(matchesDomText('既読1件/全3件', '既読1件 / 全3件')).toBe(false);
+  });
+
   it.each([1, 2, 3])('第%s段階の連続操作を削除・弱体化した教材を拒否する', async (stage) => {
     const lesson = `react-ch02-l0${String(stage)}`;
     const source = ExerciseSourceSchema.parse(
@@ -87,6 +126,51 @@ describe('読書リスト3段階の配布範囲と採点', () => {
       .find((item) => item.id === lesson)!.exercises[0]!;
     expect(ExerciseSchema.safeParse(published).success).toBe(true);
     const scenarios = source.interactionScenarios!;
+    if (source.runtime?.kind !== 'react') throw new Error('React実行契約が必要です');
+    const legacyScenarios = reactReadingScenarios(source.runtime.learningGoal, false);
+    const legacyRules = source.validationRules.map((rule) => {
+      const { assertion } = rule;
+      if (assertion.kind !== 'text' || assertion.operator !== 'equals' || !assertion.optionalSpaces)
+        return rule;
+      return {
+        ...rule,
+        assertion: {
+          kind: 'text',
+          operator: 'equals',
+          expected: assertion.expected.replaceAll(' ', ''),
+        },
+      };
+    });
+    for (const [schema, exercise] of [
+      [ExerciseSourceSchema, source],
+      [ExerciseSchema, published],
+    ] as const) {
+      expect(
+        schema.safeParse({
+          ...exercise,
+          validationRules: legacyRules,
+          interactionScenarios: legacyScenarios,
+        }).success,
+      ).toBe(true);
+      expect(schema.safeParse({ ...exercise, validationRules: legacyRules }).success).toBe(false);
+      expect(schema.safeParse({ ...exercise, interactionScenarios: legacyScenarios }).success).toBe(
+        false,
+      );
+      const first = scenarios[0]!;
+      expect(
+        schema.safeParse({
+          ...exercise,
+          interactionScenarios: [
+            {
+              ...first,
+              checkpoints: [legacyScenarios[0]!.checkpoints[0]!, ...first.checkpoints.slice(1)],
+            },
+            ...scenarios.slice(1),
+          ],
+        }).success,
+      ).toBe(false);
+    }
+
     for (const interactionScenarios of [
       undefined,
       scenarios.map((scenario) => ({ ...scenario, checkpoints: scenario.checkpoints.slice(1) })),

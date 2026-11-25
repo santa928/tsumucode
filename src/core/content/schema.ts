@@ -576,6 +576,7 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
       kind: z.literal('selector-text'),
       selector: InteractionSelectorSchema,
       equals: InteractionLongValueSchema,
+      optionalSpaces: z.literal(true).optional(),
     })
     .strict(),
   z
@@ -777,6 +778,7 @@ const TextEqualsAssertionSchema = z
     kind: z.literal('text'),
     operator: z.literal('equals'),
     expected: z.string(),
+    optionalSpaces: z.literal(true).optional(),
   })
   .strict();
 const TextContainsAssertionSchema = z
@@ -1329,6 +1331,18 @@ export const HtmlCssValidationRuleDefinitionSchema = z
   })
   .strict()
   .superRefine((rule, context) => {
+    if (
+      rule.assertion.kind === 'text' &&
+      rule.assertion.operator === 'equals' &&
+      rule.assertion.optionalSpaces &&
+      rule.target.kind !== 'selector'
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: 'optionalSpacesはselector targetだけで使用できます',
+      });
+    }
     if (rule.target.kind === 'source' && rule.assertion.kind !== 'text') {
       context.addIssue({
         code: 'custom',
@@ -1682,7 +1696,11 @@ export const ExerciseSchema = z
       ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(
         exercise.runtime.profile,
       ) &&
-      !acceptsReactReadingScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+      !acceptsReactReadingScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+        exercise.validationRules,
+      )
     ) {
       context.addIssue({
         code: 'custom',

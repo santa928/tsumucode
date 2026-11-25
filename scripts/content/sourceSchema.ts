@@ -426,7 +426,11 @@ export const ExerciseSourceSchema = z
       ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(
         exercise.runtime.profile,
       ) &&
-      !acceptsReactReadingScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+      !acceptsReactReadingScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+        exercise.validationRules,
+      )
     ) {
       context.addIssue({
         code: 'custom',

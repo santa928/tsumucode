@@ -156,7 +156,8 @@ function assertRuleAssertion(value: Readonly<Record<string, unknown>>): void {
     case 'text':
       if (
         value.operator === 'equals' &&
-        exact(['expected', 'kind', 'operator']) &&
+        exact(['expected', 'kind', 'operator'], ['optionalSpaces']) &&
+        (!Object.hasOwn(value, 'optionalSpaces') || value.optionalSpaces === true) &&
         typeof value.expected === 'string'
       )
         return;
@@ -286,6 +287,9 @@ function parseRuleEnvelope(value: unknown): HtmlCssValidationRuleDefinition {
   }
   assertRuleTarget(target);
   assertRuleAssertion(assertion);
+  if (assertion.optionalSpaces && target.kind !== 'selector') {
+    throw new Error('optionalSpacesはselector targetだけで使用できます');
+  }
   if (target.kind === 'source' && assertion.kind !== 'text') {
     throw new Error('source targetはtext assertionだけ使用できます');
   }

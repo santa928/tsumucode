@@ -183,7 +183,11 @@ export class ReactValidator implements ValidatorAdapter {
           if (
             !compiled.facts ||
             !('definesBookComponent' in compiled.facts) ||
-            !acceptsReactReadingScenarios(parsed.data.learningGoal, context.interactionScenarios)
+            !acceptsReactReadingScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+              context.rules,
+            )
           )
             return blocked();
           learned =

@@ -1,4 +1,4 @@
-import type { JavaScriptInteractionScenario } from './types';
+import type { JavaScriptInteractionScenario, ValidationRuleDefinition } from './types';
 
 const books = [
   { id: 'stars', title: '星の地図' },
@@ -6,8 +6,25 @@ const books = [
   { id: 'forest', title: '森の記録' },
 ] as const;
 
+function bookListText(
+  visible: readonly (typeof books)[number][],
+  state: readonly boolean[],
+  separator: string,
+): string {
+  return visible
+    .flatMap((book) =>
+      state[books.indexOf(book)]
+        ? [book.title, '既読', '未読にする']
+        : [book.title, '未読', '読了にする'],
+    )
+    .join(separator);
+}
+
 /** 正負Fixtureと採点で共有する、個別更新・再操作・0件・resetの実DOM仕様。 */
-export function reactReadingScenarios(goal: string | undefined): JavaScriptInteractionScenario[] {
+export function reactReadingScenarios(
+  goal: string | undefined,
+  optionalSpaces = true,
+): JavaScriptInteractionScenario[] {
   if (!['reading-card', 'reading-state', 'reading-filter'].includes(goal ?? '')) return [];
   const filtering = goal === 'reading-filter';
   const operations: readonly [string, string, readonly boolean[], string][] = filtering
@@ -65,12 +82,8 @@ export function reactReadingScenarios(goal: string | undefined): JavaScriptInter
             id: 'books',
             kind: 'selector-text',
             selector: '#books',
-            equals: visible
-              .map((book) => {
-                const read = state[books.indexOf(book)];
-                return book.title + (read ? '既読未読にする' : '未読読了にする');
-              })
-              .join(''),
+            ...(optionalSpaces ? { optionalSpaces: true as const } : {}),
+            equals: bookListText(visible, state, optionalSpaces ? ' ' : ''),
           },
           ...visible.map((book) => ({
             id: 'state-' + book.id,
@@ -112,8 +125,30 @@ export function reactReadingScenarios(goal: string | undefined): JavaScriptInter
 export function acceptsReactReadingScenarios(
   goal: string | undefined,
   scenarios: readonly JavaScriptInteractionScenario[] | undefined,
+  rules: readonly ValidationRuleDefinition[],
 ): boolean {
-  if (!scenarios || !reactReadingScenarios(goal).length) return false;
+  const initialRules = rules.filter(
+    (rule) => rule.target.kind === 'selector' && rule.target.selector === '#books',
+  );
+  const initial = initialRules[0];
+  if (
+    !scenarios ||
+    initialRules.length !== 1 ||
+    !initial?.required ||
+    initial.group !== 'all' ||
+    initial.assertion.kind !== 'text' ||
+    initial.assertion.operator !== 'equals'
+  )
+    return false;
+  // 旧教材は完全一致、新教材は指定した区切りだけ空白を許す。初期判定と全操作で同じ契約を要求する。
+  const optionalSpaces = initial.assertion.optionalSpaces === true;
+  if (
+    initial.assertion.expected !==
+    bookListText(books, [false, true, false], optionalSpaces ? ' ' : '')
+  )
+    return false;
+  const expected = reactReadingScenarios(goal, optionalSpaces);
+  if (expected.length === 0) return false;
   const project = (items: readonly JavaScriptInteractionScenario[]): string =>
     JSON.stringify(
       items.map((scenario) => [
@@ -128,5 +163,5 @@ export function acceptsReactReadingScenarios(
         ]),
       ]),
     );
-  return project(scenarios) === project(reactReadingScenarios(goal));
+  return project(scenarios) === project(expected);
 }
