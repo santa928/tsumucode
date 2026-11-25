@@ -6,7 +6,10 @@ import { matchesDomText } from '../../src/core/validation/matchesDomText';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { ExerciseSourceSchema } from '../../scripts/content/sourceSchema';
-import { ExerciseSchema } from '../../src/core/content/schema';
+import {
+  ExerciseSchema,
+  HtmlCssValidationRuleDefinitionSchema,
+} from '../../src/core/content/schema';
 import { analyzeReadingList } from '../../src/adapters/runtime/react/checkReadingListSource';
 import { isReadingWorkspace } from '../../src/adapters/runtime/react/readingListScaffold';
 
@@ -76,7 +79,9 @@ describe('読書リスト3段階の配布範囲と採点', () => {
   it('カードの境界にある空白だけを許し、題名・状態・操作名・冊数・順序はすべて照合する', async () => {
     const { exercises } = await course;
     const exercise = exercises.find(({ id }) => id === 'react-ch02-l01-e01')!;
-    const initial = exercise.validationRules[0]!.assertion;
+    const initial = HtmlCssValidationRuleDefinitionSchema.parse(
+      exercise.validationRules[0],
+    ).assertion;
     const afterToggle = exercise.interactionScenarios![0]!.checkpoints[0]!.expectations[0]!;
     if (
       initial.kind !== 'text' ||
@@ -129,7 +134,8 @@ describe('読書リスト3段階の配布範囲と採点', () => {
     if (source.runtime?.kind !== 'react') throw new Error('React実行契約が必要です');
     const legacyScenarios = reactReadingScenarios(source.runtime.learningGoal, false);
     const legacyRules = source.validationRules.map((rule) => {
-      const { assertion } = rule;
+      if (rule.target.kind !== 'selector' || rule.target.selector !== '#books') return rule;
+      const { assertion } = HtmlCssValidationRuleDefinitionSchema.parse(rule);
       if (assertion.kind !== 'text' || assertion.operator !== 'equals' || !assertion.optionalSpaces)
         return rule;
       return {
