@@ -87,15 +87,15 @@ lessons:
       2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: 'react-ch01-l06-compose'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: '2cbf9d37d533e8b3b1ddabc40fddccfdd34240368d4775103def2437c0706f61'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: '6251ec7f81f975984b203a0431845639f3fcdd6923e4316eb262e3854a3b4597'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。新掲載fenceは0。処理を本人が書く範囲を確認し、演習実行やUI受入は別証拠として扱う。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '予測の開示前後とフォームの入力・送信・やり直しを確認した。'
   - lessonId: react-ch01-l07
     authorId: tsumucode-react-form-authoring
     reviewerId: review_issue109
@@ -177,15 +177,15 @@ lessons:
       2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: 'react-ch01-l11-compose'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: '367d3a7b8b279ab7269bba1b99234462dd14c572ed066a1d57f10478df081f3d'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: '21a888477a3d24ef1c3ce78ce131e0d8e6b8ccc5fff3767f6d2723633d36470d'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。説明能力を自動判定する表現は、実際に検査する文字数の直接計算へ修正済み。新掲載fenceは0。処理を本人が書く範囲を確認し、演習実行やUI受入は別証拠として扱う。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '予測の開示前後、任意ヒント、入力の切替・非表示・再表示を確認した。'
   - lessonId: react-ch01-l12
     authorId: tsumucode-react-hook-authoring
     reviewerId: review_issue109
@@ -204,48 +204,48 @@ lessons:
       2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: 'react-ch02-l01'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: '5ab48841802f094e1b4c8cd40561bdb84285df3fbe08cf44bc41dfdfefc98485'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: '3daf3300cbee9335ad70be022b14d69caa85cd936ed145e2e8a962cbbcab3c3d'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '掲載例と2問の予測を確認した。カード表示の要素間空白を許容し、操作名内部の変更を拒否する採点を確認した。'
   - lessonId: 'react-ch02-l02'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: '10ef3efd2883cd403753d1af14a0a276f98059c90303b975d9b20bfa75a7b2b2'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: '38028171fa6cb3f2e70208753c9aa87f043e182b73141a44136bab67f82f5784'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '掲載例と2問の予測、個別の本の連続切替と初期化を確認した。'
   - lessonId: 'react-ch02-l03'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: '272c942e4f2fb4cbee5f7c9fb0e2530d7550b33abdd66a1f7e8a89356d617a90'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: 'c1a8a51c35313439c7adcfe6108df38cb5ce3c3c3566f34d16699499b656fb01'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。同一掲載コード・文脈・入力・期待の過去実行だけを再利用し、現環境で再実行したとは扱わない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '掲載例と2問の予測、未読0件から全冊へ戻す操作と件数の採点を確認した。'
   - lessonId: 'react-ch02-l04'
     authorId: 'root-representative-editor'
-    reviewerId: 'representative-content-f1f8'
-    sourceHash: 'ba1fdc3556a146a16b7fe91c6219958755ac22e6053506d34de2b64ccb205078'
+    reviewerId: 'react-content-c91d-20261125'
+    sourceHash: '436ecb3ba154a30798b03737c5fb64fa54ca7cbdad4919300081985626ab6a77'
     accuracy: 'approved'
     goalExerciseAlignment: 'approved'
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: 'approved'
-    notes: '現目標への新たな内容レビュー。独立AI内容役が現目標・本文・常設仕様・Hint・採点期待を照合し、必須不足0。旧同IDの別目標の承認は流用しない。他担当が実行した現掲載例の原文・文脈・期待・実測を照合した。Reviewer自身の実行ではない。これはAI内容レビューであり、新3学習者役のUI完了・独力・実人理解・公開資格の承認ではない。'
+    notes: '掲載例、温度の予測、選んだ部品境界と温度を持つ場所、初期化後の再操作を確認した。'
   - lessonId: 'react-ch03-l01'
     authorId: 'tsumucode-react-quiz-authoring'
     reviewerId: 'representative-content-f1f8'
