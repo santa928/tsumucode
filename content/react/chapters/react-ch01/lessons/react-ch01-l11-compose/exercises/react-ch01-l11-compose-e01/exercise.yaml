@@ -22,7 +22,7 @@ steps:
   - id: compose-effect-lifecycle
     file: components.tsx
     target: 'components.tsxのSourcePanel。処理は未実装です。StateとEffectを書いてから型と動作を確認します。開始時の診断は未実装を知らせています。型・起動・切替ボタン・外部入力・subscribeは配布済みで、編集はcomponents.tsxだけです。'
-    change: '空文字列で始まるStateを1つ、その次にEffectを1つ書きます。setupでsubscribeへPropsのtargetとStateのsetterを渡します。subscribeは現在値をすぐsetterへ渡し、その後の入力も通知します。返された同じ解除関数をcleanupとして返し、setup中には呼びません。依存配列は[target]にします。'
+    change: '外部入力の現在値を受け取り、その後の入力も画面に反映するSourcePanelを作ります。対象を切り替えたら新しい対象だけを購読し、非表示の間は購読を残しません。購読をいつ始め、どのタイミングで終えるかを考えて書いてください。'
     observe: '対象変更では前のcleanupから次のsetupへ進み、表示終了でもcleanupします。Stateと解除関数の変数名は別名でも構いません。値はid="observed"へ、文字数はid="length"へStateから直接表示します。文字数を別StateやEffectで保存しません。'
     starterAnchor: 'export function SourcePanel'
     requiresConceptIds:
